@@ -164,6 +164,96 @@ func test_untrusted_aim_flag() -> void:
 	check(InputFrame.from_dict(f.to_dict()).aim, "aim survives a round trip")
 
 
+# ---------------------------------------------------------------- toggle aim
+
+func test_toggle_aim_is_default() -> void:
+	var p := _player()
+	await wait_physics(2)
+	var input := p.player_input
+	check(input.aim_toggle, "toggle aim on by default (Magic Mouse friendly)")
+	check(input.update_aim(true, false), "first click raises the sights")
+	check(input.update_aim(true, false), "still up while the button is held")
+	check(input.update_aim(false, false), "stays up after letting go")
+	check(input.update_aim(false, false), "and keeps staying up")
+	check(not input.update_aim(true, false), "second click lowers them")
+	check(not input.update_aim(false, false), "stays down")
+
+
+func test_toggle_aim_lets_you_fire_with_one_button() -> void:
+	make_static_box(Vector3(20, 1, 20), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
+	var p := _player()
+	await wait_physics(3)
+	var input := p.player_input
+	# Click aim once, release, then hold fire only (what a Magic Mouse can do)
+	var f := _frame()
+	f.aim = input.update_aim(true, false)
+	await _run(p, f, 1)
+	var ammo := p.weapon.ammo_in_magazine
+	for i in 30:
+		f = _frame()
+		f.aim = input.update_aim(false, false)
+		f.fire = true
+		await _run(p, f, 1)
+	check(p.aim_amount > 0.99, "still aimed while firing")
+	check(p.weapon.ammo_in_magazine < ammo - 3, "fired while aimed (%d rounds)" % (ammo - p.weapon.ammo_in_magazine))
+
+
+func test_sprint_ladder_medkit_and_death_drop_toggled_aim() -> void:
+	var rig: Array = await _ladder_rig()
+	var p: PlayerController = rig[0]
+	var input := p.player_input
+	input.update_aim(true, false)
+	input.update_aim(false, false)
+	check(not input.update_aim(false, true), "sprinting lowers the sights")
+	check(not input.update_aim(false, false), "and they stay down after the sprint")
+	input.update_aim(true, false)
+	input.update_aim(false, false)
+	var w := _frame(Vector2(0, -1))
+	for i in 120:
+		await _run(p, w, 1)
+		if p.ladder != null:
+			break
+	check(p.ladder != null and not input.is_aiming_toggled(), "grabbing a ladder lowers the sights")
+	input.update_aim(true, false)
+	input.update_aim(false, false)
+	p.health.apply_damage(DamageInfo.create(30.0, DamageInfo.Type.FALL))
+	var jump := _frame()
+	jump.jump = true
+	await _run(p, jump, 1)
+	await _run(p, _frame(), 120)
+	check(p.request_use_item(p.inventory.find_best_medical()) and not input.is_aiming_toggled(), "using a medkit lowers the sights")
+	input.update_aim(true, false)
+	input.update_aim(false, false)
+	p.health.apply_damage(DamageInfo.create(500.0, DamageInfo.Type.FALL))
+	check(not input.is_aiming_toggled(), "dying lowers the sights")
+
+
+func test_reload_pauses_toggled_aim_then_resumes() -> void:
+	make_static_box(Vector3(20, 1, 20), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
+	var p := _player()
+	await wait_physics(3)
+	var input := p.player_input
+	input.update_aim(true, false)
+	p.weapon.ammo_in_magazine = 3
+	var f := _frame(Vector2.ZERO, input.update_aim(false, false))
+	f.reload = true
+	await _run(p, f, 1)
+	await _run(p, _frame(Vector2.ZERO, input.update_aim(false, false)), 20)
+	check(p.aim_amount == 0.0, "sights down during the reload")
+	await _run(p, _frame(Vector2.ZERO, input.update_aim(false, false)), 150)
+	check(p.aim_amount > 0.99, "back up after the reload without clicking again")
+
+
+func test_hold_aim_option() -> void:
+	var p := _player()
+	await wait_physics(2)
+	var input := p.player_input
+	input.aim_toggle = false
+	check(input.update_aim(true, false), "held: aiming")
+	check(not input.update_aim(false, false), "released: not aiming")
+	check(not input.update_aim(true, true), "no aiming while sprinting")
+
+
 # ---------------------------------------------------------------- ladders
 
 func test_ladder_reach() -> void:

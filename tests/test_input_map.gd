@@ -43,3 +43,10 @@ func test_right_mouse_aims() -> void:
 	press.button_index = MOUSE_BUTTON_RIGHT
 	press.pressed = true
 	check(InputMap.event_is_action(press, "aim"), "right mouse button should aim")
+
+
+func test_q_also_aims() -> void:
+	var press := InputEventKey.new()
+	press.physical_keycode = KEY_Q
+	press.pressed = true
+	check(InputMap.event_is_action(press, "aim"), "Q should also aim")

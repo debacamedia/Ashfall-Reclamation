@@ -1,9 +1,10 @@
 # Increment 6.5 — Aim down sights and ladders
 
-**Status:** complete. 143 automated tests pass in headless Godot 4.7, 16 of them new: 14 in `tests/test_aim_and_ladders.gd`, the guard-tower climb in `test_outpost_17.gd`, and the right-click binding in `test_input_map.gd`. A real-window playtest with injected right-click and W key presses aimed the rifle, climbed a guard tower, and aimed from the top.
+**Status:** complete. 149 automated tests pass in headless Godot 4.7, 22 of them new: 19 in `tests/test_aim_and_ladders.gd` (including toggle aim), the guard-tower climb in `test_outpost_17.gd`, and the right-click and Q bindings in `test_input_map.gd`. A real-window run with injected Magic-Mouse-style input (right-click and release, then hold left-click) stayed aimed while firing. A real-window playtest with injected right-click and W key presses aimed the rifle, climbed a guard tower, and aimed from the top.
 
 **Playable result:**
-- **Hold right-click to aim down the sights.**
+- **Click right-click (or press Q) to raise the sights; click again to lower them.** It's a toggle, so a Mac Magic Mouse (which can't hold right and left click at once) can aim and fire. Hold-to-aim is available as a setting (§5).
+  - Sprinting, grabbing a ladder, using a medkit or dying lowers the sights. A reload lowers them only while it runs; they come back up afterwards.
   - The rifle comes up to your eye in 0.2 s and you look through a see-through red-dot sight. The view zooms 1.4×.
   - The crosshair fades out. Hit markers still show.
   - Spread drops to 35%, recoil to 65% and walking speed to 55%.
@@ -35,7 +36,7 @@
 | `scripts/player/player_controller.gd` | Aiming (`aim_amount`, `is_aiming`), ladder state (`ladder`, `CLIMBING`), walking moved into `_simulate_walking()` |
 | `scripts/combat/weapon_definition.gd` | New **Aiming down sights** group |
 | `scripts/combat/hitscan_weapon.gd` | `aim_amount`, `aim_camera`, `get_ads_offset()`; the ADS pose lines `%SightAnchor` up with the screen centre |
-| `scripts/core/input_frame.gd`, `player_input.gd` | `aim` flag (right mouse) |
+| `scripts/core/input_frame.gd`, `player_input.gd` | `aim` flag; toggle (default) or hold via `PlayerInput.aim_toggle`; `update_aim()`, `cancel_aim()` |
 | `scripts/ui/crosshair.gd`, `hud.gd` | `reticle_alpha` fades the crosshair while aiming |
 | `scripts/player/player_audio.gd` | Ladder rung and aim-in sounds |
 | `tests/test_runner.gd` | Optional filter: `... -s res://tests/test_runner.gd -- ladder` runs only matching tests |
@@ -78,7 +79,7 @@ Player/Audio  + %LadderStep (AudioStreamPlayer3D, ladder_step set) + %AimSound (
 
 | Action | Input |
 |---|---|
-| `aim` | **Right mouse button** (hold) |
+| `aim` | **Right mouse button**, **Q** (click to toggle; hold if Aim Toggle is off) |
 
 Ladders use the existing move keys (W/S) and `jump` (Space).
 
@@ -95,6 +96,8 @@ Ladders use the existing move keys (W/S) and `jump` (Space).
 | Ads Move Multiplier | 0.55 | Walking speed while aimed |
 | Ads Eye Distance | 0.2 m | Eye to the back of the sight |
 
+**Player → PlayerInput → Aim Toggle:** on (default). Turn off for hold-to-aim on a two-button mouse. An options menu will expose this later.
+
 **Player → Ladders:** Climb Speed 2.6 m/s · Ladder Regrab Delay 0.4 s · Ladder Step Distance 0.45 m · Ladder Look Down Degrees 40 · Ladder Jump Off Speed 3.
 
 **Ladder:** Height · Width (0.55, 0.5 on towers) · Handhold Height 1.0 · Rung Spacing 0.3 · Material · Stand Off 0.45 · Reach Depth 0.9.
@@ -110,7 +113,7 @@ Ladders use the existing move keys (W/S) and `jump` (Space).
 
 ## 7. Editor assembly (by hand)
 
-1. **Input Map:** add `aim` and bind it to the right mouse button.
+1. **Input Map:** add `aim` and bind it to the right mouse button and Q.
 2. **Rifle sight:**
    - Make the optic hollow so you can see through it. Set the lens material to Transparency Alpha.
    - Add a small unshaded red mesh with **No Depth Test** on and Render Priority 10 at the lens centre.
@@ -134,6 +137,7 @@ Ladders use the existing move keys (W/S) and `jump` (Space).
   - No aiming during a reload or a medkit use; aiming resumes after.
   - **The red dot and the back of the sight sit within 1.5 mm of the screen centre**, 0.2 m from the eye, with the barrel parallel to the view. The pose returns to the hip afterwards.
   - A non-boolean `aim` from the network is rejected.
+- **Toggle aim:** click up, stays up when released, second click lowers; firing with only the left button while aimed; sprint, ladder, medkit and death lower the sights; a reload pauses aiming then resumes; hold mode still works.
 - **Ladders:**
   - Reach box: in front, behind the top, not through the wall.
   - Walking into a ladder grabs it (state CLIMBING) and climbs ~2.6 m/s on the climbing line, with rung sounds. You step off onto the platform at the top, unhurt.
@@ -145,7 +149,7 @@ Ladders use the existing move keys (W/S) and `jump` (Space).
 - **Level:** every guard tower's ladder faces into the compound, and the player can walk to it, climb it and stand on the platform, unhurt.
 
 **Manually:**
-1. Press F5 and hold right-click: the view zooms and you look through the red dot. Fire short bursts: much less climb than hip fire.
+1. Press F5 and click right-click (or Q): the view zooms and you look through the red dot. Fire short bursts: much less climb than hip fire.
 2. Walk to the north-west guard tower and walk into the ladder. Hold W to the top and you step onto the platform.
 3. From the top, aim at the range or the gate. Raiders can't follow you up.
 4. Walk back towards the ladder gap to climb down with W, or press Space partway down to jump off.
@@ -154,6 +158,7 @@ Ladders use the existing move keys (W/S) and `jump` (Space).
 
 | Symptom | Fix |
 |---|---|
+| Right-click does nothing on a Mac | Turn on System Settings → Mouse → **Secondary Click** ("Click on Right Side"). Or use **Q**. |
 | Right-click does nothing | Make sure the `aim` action exists (Project Settings → Input Map). You can't aim while reloading, healing or on a ladder. |
 | The red dot is off-centre while aiming | The weapon scene needs a `%SightAnchor` marker exactly on the sight line. Check `Ads Eye Distance` isn't smaller than the camera's near plane (0.05). |
 | Can't see through the sight | The optic must be hollow and the lens material transparent. |
