@@ -1,0 +1,47 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/concrete.tres" id="1_upgvf"]
+[ext_resource type="Material" path="res://assets/materials/concrete_stained.tres" id="2_cqro2"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_6o5pb"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_qiaq0"]
+size = Vector3(2.4, 3.6, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qhvfn"]
+size = Vector3(2.4, 3.6, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mhtef"]
+size = Vector3(2.4, 0.4, 1.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7vgbl"]
+size = Vector3(2.4, 0.4, 1.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rqi2l"]
+size = Vector3(0.2, 0.15, 0.32)
+
+[node name="ConcreteWallSegment" type="StaticBody3D" unique_id=1188945795]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Slab" type="MeshInstance3D" parent="." unique_id=1885640486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+material_override = ExtResource("1_upgvf")
+mesh = SubResource("BoxMesh_qiaq0")
+
+[node name="SlabCol" type="CollisionShape3D" parent="." unique_id=495160017]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+shape = SubResource("BoxShape3D_qhvfn")
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=1767614319]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+material_override = ExtResource("2_cqro2")
+mesh = SubResource("BoxMesh_mhtef")
+
+[node name="BaseCol" type="CollisionShape3D" parent="." unique_id=1755637719]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+shape = SubResource("BoxShape3D_7vgbl")
+
+[node name="LiftingLug" type="MeshInstance3D" parent="." unique_id=1694778060]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.65, 0)
+material_override = ExtResource("3_6o5pb")
+mesh = SubResource("BoxMesh_rqi2l")

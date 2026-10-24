@@ -1,0 +1,33 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_t2ydv"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.1, 0.1, 0.1, 1, 0.16, 0.16, 0.15, 1, 0.22, 0.21, 0.2, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_de4uf"]
+frequency = 0.2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3ejiv"]
+noise = SubResource("FastNoiseLite_de4uf")
+color_ramp = SubResource("Gradient_t2ydv")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qk73k"]
+frequency = 0.25
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_35mhl"]
+noise = SubResource("FastNoiseLite_qk73k")
+seamless = true
+as_normal_map = true
+bump_strength = 2.0
+
+[resource]
+resource_name = "asphalt"
+albedo_texture = SubResource("NoiseTexture2D_3ejiv")
+roughness = 0.9
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_35mhl")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+uv1_world_triplanar = true

@@ -1,0 +1,32 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_m0x27"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.2, 0.17, 0.12, 1, 0.3, 0.26, 0.19, 1, 0.36, 0.32, 0.24, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_24myh"]
+frequency = 0.03
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_edki3"]
+noise = SubResource("FastNoiseLite_24myh")
+color_ramp = SubResource("Gradient_m0x27")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xyki8"]
+frequency = 0.06
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_f7hpv"]
+noise = SubResource("FastNoiseLite_xyki8")
+seamless = true
+as_normal_map = true
+bump_strength = 3.0
+
+[resource]
+resource_name = "earth_berm"
+albedo_texture = SubResource("NoiseTexture2D_edki3")
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_f7hpv")
+uv1_scale = Vector3(0.1, 0.1, 0.1)
+uv1_triplanar = true
+uv1_world_triplanar = true

@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "hazard_yellow"
+albedo_color = Color(0.8, 0.62, 0.1, 1)
+metallic = 0.1
+roughness = 0.6

@@ -1,0 +1,32 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_u1bjp"]
+offsets = PackedFloat32Array(0, 0.33333334, 0.6666667, 1)
+colors = PackedColorArray(0.17, 0.15, 0.11, 1, 0.27, 0.24, 0.18, 1, 0.36, 0.32, 0.24, 1, 0.41, 0.37, 0.28, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_tm6u5"]
+frequency = 0.02
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_loejj"]
+noise = SubResource("FastNoiseLite_tm6u5")
+color_ramp = SubResource("Gradient_u1bjp")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ptjul"]
+frequency = 0.06
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d8fnh"]
+noise = SubResource("FastNoiseLite_ptjul")
+seamless = true
+as_normal_map = true
+bump_strength = 3.0
+
+[resource]
+resource_name = "ground_dirt"
+albedo_texture = SubResource("NoiseTexture2D_loejj")
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_d8fnh")
+uv1_scale = Vector3(0.07, 0.07, 0.07)
+uv1_triplanar = true
+uv1_world_triplanar = true

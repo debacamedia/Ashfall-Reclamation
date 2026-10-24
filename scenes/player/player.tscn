@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_dovo2"]
+[ext_resource type="Script" path="res://scripts/player/player_input.gd" id="2_gmlin"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lvxji"]
+resource_local_to_scene = true
+radius = 0.35
+height = 1.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_p47bc"]
+radius = 0.3
+
+[node name="Player" type="CharacterBody3D" unique_id=1105365724]
+collision_layer = 4
+collision_mask = 11
+floor_max_angle = 0.80285144
+floor_snap_length = 0.25
+script = ExtResource("1_dovo2")
+
+[node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_lvxji")
+
+[node name="Head" type="Node3D" parent="." unique_id=801003417]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.68, 0)
+
+[node name="Camera" type="Camera3D" parent="Head" unique_id=652389468]
+unique_name_in_owner = true
+far = 1500.0
+
+[node name="HeadClearance" type="ShapeCast3D" parent="." unique_id=545696862]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+enabled = false
+shape = SubResource("SphereShape3D_p47bc")
+target_position = Vector3(0, 0.7, 0)
+collision_mask = 3
+
+[node name="PlayerInput" type="Node" parent="." unique_id=1391201170]
+unique_name_in_owner = true
+script = ExtResource("2_gmlin")

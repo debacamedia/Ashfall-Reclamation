@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_8cjda"]
+[ext_resource type="Material" path="res://assets/materials/flag_cloth.tres" id="2_dqvre"]
+[ext_resource type="Material" path="res://assets/materials/concrete.tres" id="3_85u4r"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_iag1a"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 9.0
+radial_segments = 10
+
+[sub_resource type="BoxMesh" id="BoxMesh_b5aud"]
+size = Vector3(0.02, 1, 1.6)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_axjvi"]
+top_radius = 0.4
+bottom_radius = 0.4
+height = 0.3
+radial_segments = 12
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_730d4"]
+size = Vector3(0.8, 0.3, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jkm7j"]
+size = Vector3(0.12, 9, 0.12)
+
+[node name="FlagPole" type="StaticBody3D" unique_id=1506597232]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Pole" type="MeshInstance3D" parent="." unique_id=925573153]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
+material_override = ExtResource("1_8cjda")
+mesh = SubResource("CylinderMesh_iag1a")
+
+[node name="Flag" type="MeshInstance3D" parent="." unique_id=1779128297]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.3, 0.82)
+material_override = ExtResource("2_dqvre")
+mesh = SubResource("BoxMesh_b5aud")
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=378806381]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+material_override = ExtResource("3_85u4r")
+mesh = SubResource("CylinderMesh_axjvi")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=738219451]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+shape = SubResource("BoxShape3D_730d4")
+
+[node name="PoleCol" type="CollisionShape3D" parent="." unique_id=1650149654]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
+shape = SubResource("BoxShape3D_jkm7j")

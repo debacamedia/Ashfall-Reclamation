@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "chain_link"
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.55, 0.56, 0.56, 0.3)
+metallic = 0.8
+roughness = 0.5

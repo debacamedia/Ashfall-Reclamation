@@ -1,0 +1,89 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_sl5um"]
+[ext_resource type="Material" path="res://assets/materials/chain_link.tres" id="2_8umli"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jkpx8"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 2.4
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3i5jg"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 2.4
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_efm4y"]
+top_radius = 0.025
+bottom_radius = 0.025
+height = 3.0
+radial_segments = 8
+
+[sub_resource type="BoxMesh" id="BoxMesh_3u8lx"]
+size = Vector3(3, 2.2, 0.01)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ctwwq"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 3.0
+radial_segments = 4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vepua"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 3.0
+radial_segments = 4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_82h2q"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 3.0
+radial_segments = 4
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_42wg1"]
+size = Vector3(3, 2.4, 0.1)
+
+[node name="ChainLinkFence" type="StaticBody3D" unique_id=368225125]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Post" type="MeshInstance3D" parent="." unique_id=1953688908]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 0)
+material_override = ExtResource("1_sl5um")
+mesh = SubResource("CylinderMesh_jkpx8")
+
+[node name="Post2" type="MeshInstance3D" parent="." unique_id=1934718967]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.2, 0)
+material_override = ExtResource("1_sl5um")
+mesh = SubResource("CylinderMesh_3i5jg")
+
+[node name="TopRail" type="MeshInstance3D" parent="." unique_id=570294519]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.3, 0)
+material_override = ExtResource("1_sl5um")
+mesh = SubResource("CylinderMesh_efm4y")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=701648709]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+material_override = ExtResource("2_8umli")
+mesh = SubResource("BoxMesh_3u8lx")
+
+[node name="BarbedStrand" type="MeshInstance3D" parent="." unique_id=1934498946]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.45, 0)
+material_override = ExtResource("1_sl5um")
+mesh = SubResource("CylinderMesh_ctwwq")
+
+[node name="BarbedStrand2" type="MeshInstance3D" parent="." unique_id=1166461631]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.57, 0)
+material_override = ExtResource("1_sl5um")
+mesh = SubResource("CylinderMesh_vepua")
+
+[node name="BarbedStrand3" type="MeshInstance3D" parent="." unique_id=80899842]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 2.69, 0)
+material_override = ExtResource("1_sl5um")
+mesh = SubResource("CylinderMesh_82h2q")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=1846942660]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("BoxShape3D_42wg1")

@@ -1,0 +1,215 @@
+class_name PlayerController
+extends CharacterBody3D
+## First-person character: mouse look, walk, sprint, crouch and jump.
+##
+## Movement is driven only by InputFrames passed to simulate(). The local
+## player gathers its own frames from PlayerInput; remote players (co-op,
+## later) and automated tests call simulate() directly with
+## controlled_locally = false.
+##
+## Scene: res://scenes/player/player.tscn
+
+signal jumped
+signal landed(impact_speed: float)            ## Vertical speed at touchdown (m/s). Fall damage hooks in here.
+signal stance_changed(is_crouching: bool)
+signal movement_state_changed(state: MovementState)
+
+enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE }
+
+@export_group("Speeds (m/s)")
+@export var walk_speed := 4.5
+@export var sprint_speed := 7.5
+@export var crouch_speed := 2.2
+@export var jump_velocity := 4.8
+
+@export_group("Acceleration")
+@export var ground_acceleration := 12.0
+@export var ground_deceleration := 14.0
+@export var air_acceleration := 2.0
+
+@export_group("Stance (m)")
+@export var stand_height := 1.8
+@export var crouch_height := 1.1
+## Distance from the top of the capsule down to the eyes.
+@export var eye_offset := 0.12
+@export var stance_transition_speed := 10.0
+
+@export_group("Look")
+@export_range(10.0, 89.0) var max_pitch_degrees := 89.0
+
+@export_group("Head bob")
+@export var head_bob_enabled := true
+@export var head_bob_amplitude := 0.035
+## Metres travelled per full left-right step cycle.
+@export var head_bob_stride := 1.5
+
+@export_group("Control")
+## True for the player at this keyboard. False for remote players and tests,
+## which drive the character by calling simulate().
+@export var controlled_locally := true
+## Falling below this height teleports back to the spawn point. Temporary
+## safety net until death/respawn arrives in Increment 3.
+@export var kill_plane_y := -30.0
+
+var movement_state: MovementState = MovementState.IDLE
+var is_crouching := false
+
+var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+var _current_height := 0.0
+var _bob_distance := 0.0
+var _spawn_transform := Transform3D.IDENTITY
+
+@onready var collision_shape: CollisionShape3D = %CollisionShape
+@onready var head: Node3D = %Head
+@onready var camera: Camera3D = %Camera
+@onready var head_clearance: ShapeCast3D = %HeadClearance
+@onready var player_input: PlayerInput = %PlayerInput
+
+
+func _ready() -> void:
+	add_to_group("players")
+	_current_height = stand_height
+	_apply_height(stand_height)
+	_spawn_transform = global_transform
+	if controlled_locally:
+		camera.make_current()
+	else:
+		player_input.process_mode = Node.PROCESS_MODE_DISABLED
+		camera.current = false
+
+
+func _physics_process(delta: float) -> void:
+	if controlled_locally:
+		simulate(player_input.gather(), delta)
+	if global_position.y < kill_plane_y:
+		respawn()
+
+
+## Advances the character by one physics tick. The same frames always give
+## the same result, so the host can re-run a guest's movement.
+func simulate(frame: InputFrame, delta: float) -> void:
+	_apply_look(frame.look)
+	_update_stance(frame.crouch, delta)
+
+	var on_floor := is_on_floor()
+	if not on_floor:
+		velocity.y -= _gravity * delta
+	elif frame.jump and not is_crouching:
+		velocity.y = jump_velocity
+		on_floor = false
+		jumped.emit()
+
+	# Horizontal movement relative to where the body faces
+	var wish := global_basis * Vector3(frame.move.x, 0.0, frame.move.y)
+	wish.y = 0.0
+	wish = wish.limit_length(1.0)
+	var target := wish * _target_speed(frame)
+	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+	if on_floor:
+		var rate := ground_acceleration if target.length() > 0.01 else ground_deceleration
+		horizontal = horizontal.lerp(target, 1.0 - exp(-rate * delta))
+	elif target.length() > 0.01:
+		horizontal = horizontal.lerp(target, 1.0 - exp(-air_acceleration * delta))
+	velocity.x = horizontal.x
+	velocity.z = horizontal.z
+
+	var was_on_floor := is_on_floor()
+	var impact_speed := -velocity.y
+	move_and_slide()
+	if not was_on_floor and is_on_floor():
+		landed.emit(impact_speed)
+
+	_update_movement_state()
+	_update_head_bob(delta)
+
+
+## Returns to the spawn point with no momentum.
+func respawn() -> void:
+	global_transform = _spawn_transform
+	velocity = Vector3.ZERO
+	head.rotation.x = 0.0
+
+
+func set_spawn_transform(spawn: Transform3D) -> void:
+	_spawn_transform = spawn
+
+
+func get_horizontal_speed() -> float:
+	return Vector2(velocity.x, velocity.z).length()
+
+
+func get_state_name() -> String:
+	return MovementState.keys()[movement_state]
+
+
+# ---------------------------------------------------------------- internals
+
+func _apply_look(look: Vector2) -> void:
+	rotate_y(-look.x)
+	var limit := deg_to_rad(max_pitch_degrees)
+	head.rotation.x = clampf(head.rotation.x - look.y, -limit, limit)
+
+
+func _target_speed(frame: InputFrame) -> float:
+	if is_crouching:
+		return crouch_speed
+	# Sprint only while moving mostly forward
+	if frame.sprint and frame.move.y < -0.3:
+		return sprint_speed
+	return walk_speed
+
+
+func _update_stance(wants_crouch: bool, delta: float) -> void:
+	var crouch := wants_crouch
+	if not crouch and is_crouching and _is_head_blocked():
+		crouch = true  # can't stand up under a low ceiling
+	if crouch != is_crouching:
+		is_crouching = crouch
+		stance_changed.emit(is_crouching)
+
+	var target_height := crouch_height if is_crouching else stand_height
+	_current_height = lerpf(_current_height, target_height, 1.0 - exp(-stance_transition_speed * delta))
+	if absf(_current_height - target_height) < 0.002:
+		_current_height = target_height
+	_apply_height(_current_height)
+
+
+func _apply_height(height: float) -> void:
+	var capsule := collision_shape.shape as CapsuleShape3D
+	capsule.height = height
+	collision_shape.position.y = height / 2.0
+	head.position.y = height - eye_offset
+
+
+func _is_head_blocked() -> bool:
+	head_clearance.force_shapecast_update()
+	return head_clearance.is_colliding()
+
+
+func _update_movement_state() -> void:
+	var state: MovementState
+	var speed := get_horizontal_speed()
+	if not is_on_floor():
+		state = MovementState.AIRBORNE
+	elif is_crouching:
+		state = MovementState.CROUCHING
+	elif speed < 0.2:
+		state = MovementState.IDLE
+	elif speed > walk_speed + 0.5:
+		state = MovementState.SPRINTING
+	else:
+		state = MovementState.WALKING
+	if state != movement_state:
+		movement_state = state
+		movement_state_changed.emit(state)
+
+
+func _update_head_bob(delta: float) -> void:
+	var target := Vector3.ZERO
+	var speed := get_horizontal_speed()
+	if head_bob_enabled and is_on_floor() and speed > 0.2:
+		_bob_distance += speed * delta
+		var phase := _bob_distance / head_bob_stride * TAU
+		var amplitude := head_bob_amplitude * clampf(speed / walk_speed, 0.0, 1.5)
+		target = Vector3(sin(phase) * amplitude * 0.6, absf(sin(phase)) * amplitude, 0.0)
+	camera.position = camera.position.lerp(target, 1.0 - exp(-12.0 * delta))

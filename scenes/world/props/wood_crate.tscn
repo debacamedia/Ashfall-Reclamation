@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="1_l35kx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_jaofa"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n4yr6"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ykm8l"]
+size = Vector3(1.02, 0.08, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2sipe"]
+size = Vector3(0.04, 0.08, 1.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rd7pr"]
+size = Vector3(1.02, 0.08, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ti7jt"]
+size = Vector3(0.04, 0.08, 1.02)
+
+[node name="WoodCrate" type="StaticBody3D" unique_id=512671566]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Box" type="MeshInstance3D" parent="." unique_id=942586678]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+material_override = ExtResource("1_l35kx")
+mesh = SubResource("BoxMesh_jaofa")
+
+[node name="BoxCol" type="CollisionShape3D" parent="." unique_id=348520465]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_n4yr6")
+
+[node name="Slat" type="MeshInstance3D" parent="." unique_id=1806305241]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.5)
+material_override = ExtResource("1_l35kx")
+mesh = SubResource("BoxMesh_ykm8l")
+
+[node name="Slat2" type="MeshInstance3D" parent="." unique_id=2311336]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0)
+material_override = ExtResource("1_l35kx")
+mesh = SubResource("BoxMesh_2sipe")
+
+[node name="Slat3" type="MeshInstance3D" parent="." unique_id=446388174]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.5)
+material_override = ExtResource("1_l35kx")
+mesh = SubResource("BoxMesh_rd7pr")
+
+[node name="Slat4" type="MeshInstance3D" parent="." unique_id=348367707]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0)
+material_override = ExtResource("1_l35kx")
+mesh = SubResource("BoxMesh_ti7jt")

@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "glass_dirty"
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.25, 0.3, 0.32, 0.55)
+roughness = 0.15

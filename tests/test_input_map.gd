@@ -1,0 +1,29 @@
+extends "res://tests/test_case.gd"
+## Checks that every action the player uses exists in the Input Map and that
+## pressing its key actually triggers the action.
+
+const REQUIRED := {
+	"move_forward": KEY_W, "move_back": KEY_S, "move_left": KEY_A, "move_right": KEY_D,
+	"jump": KEY_SPACE, "sprint": KEY_SHIFT, "crouch": KEY_C, "pause": KEY_ESCAPE,
+	"toggle_debug": KEY_F3,
+}
+
+
+func test_actions_exist() -> void:
+	for action: String in REQUIRED:
+		check(InputMap.has_action(action), "missing input action: " + action)
+
+
+func test_keys_trigger_actions() -> void:
+	for action: String in REQUIRED:
+		var press := InputEventKey.new()
+		press.physical_keycode = REQUIRED[action]
+		press.pressed = true
+		check(InputMap.event_is_action(press, action), "%s does not trigger '%s'" % [OS.get_keycode_string(REQUIRED[action]), action])
+
+
+func test_ctrl_also_crouches() -> void:
+	var press := InputEventKey.new()
+	press.physical_keycode = KEY_CTRL
+	press.pressed = true
+	check(InputMap.event_is_action(press, "crouch"), "Ctrl should also crouch")

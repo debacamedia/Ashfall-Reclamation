@@ -1,0 +1,33 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_c3btn"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.2, 0.19, 0.17, 1, 0.28, 0.27, 0.24, 1, 0.34, 0.32, 0.29, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_dqod7"]
+frequency = 0.25
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bd61o"]
+noise = SubResource("FastNoiseLite_dqod7")
+color_ramp = SubResource("Gradient_c3btn")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8fu0k"]
+frequency = 0.3
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mw4c2"]
+noise = SubResource("FastNoiseLite_8fu0k")
+seamless = true
+as_normal_map = true
+bump_strength = 4.0
+
+[resource]
+resource_name = "gravel"
+albedo_texture = SubResource("NoiseTexture2D_bd61o")
+roughness = 0.95
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_mw4c2")
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+uv1_world_triplanar = true

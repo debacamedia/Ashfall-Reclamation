@@ -1,0 +1,33 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_0x1xo"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.33, 0.32, 0.3, 1, 0.42, 0.41, 0.38, 1, 0.48, 0.47, 0.44, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4y412"]
+frequency = 0.06
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0113i"]
+noise = SubResource("FastNoiseLite_4y412")
+color_ramp = SubResource("Gradient_0x1xo")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_o7n2m"]
+frequency = 0.08
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_s8f70"]
+noise = SubResource("FastNoiseLite_o7n2m")
+seamless = true
+as_normal_map = true
+bump_strength = 1.5
+
+[resource]
+resource_name = "concrete"
+albedo_texture = SubResource("NoiseTexture2D_0113i")
+roughness = 0.88
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_s8f70")
+uv1_scale = Vector3(0.35, 0.35, 0.35)
+uv1_triplanar = true
+uv1_world_triplanar = true

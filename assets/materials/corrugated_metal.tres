@@ -1,0 +1,34 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[sub_resource type="Gradient" id="Gradient_0ras5"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.36, 0.37, 0.38, 1, 0.44, 0.45, 0.45, 1, 0.5, 0.48, 0.45, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ol0ox"]
+frequency = 0.05
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ad4lc"]
+noise = SubResource("FastNoiseLite_ol0ox")
+color_ramp = SubResource("Gradient_0ras5")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xr0um"]
+frequency = 0.1
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3eeh4"]
+noise = SubResource("FastNoiseLite_xr0um")
+seamless = true
+as_normal_map = true
+bump_strength = 1.2
+
+[resource]
+resource_name = "corrugated_metal"
+albedo_texture = SubResource("NoiseTexture2D_ad4lc")
+metallic = 0.6
+roughness = 0.55
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_3eeh4")
+uv1_scale = Vector3(0.35, 0.35, 0.35)
+uv1_triplanar = true
+uv1_world_triplanar = true
