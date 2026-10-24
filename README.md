@@ -14,6 +14,11 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 
 Controls: WASD move · Mouse look · Left click fire · R reload · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
 
+## After pulling an update — important
+Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.
+
+**Why:** Godot keeps a cache of script class names in the hidden `.godot/` folder, and only the editor rebuilds it. If an update adds new scripts and you press **Run** in the Project Manager, the cache is stale: the new scripts fail to load, and the game sits frozen on its first frame with a red-tinted screen and placeholder HUD values. Opening the editor once fixes it.
+
 ## Tests
 ```
 godot --headless --path . -s res://tests/test_runner.gd
