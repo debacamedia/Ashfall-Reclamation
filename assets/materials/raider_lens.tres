@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "raider_lens"
+albedo_color = Color(0.6, 0.35, 0.1, 1)
+metallic = 0.5
+roughness = 0.2

@@ -96,6 +96,9 @@ static func describe_cause(info: DamageInfo) -> String:
 		DamageInfo.Type.EXPLOSIVE:
 			return "Killed by an explosion"
 	if info.source != null:
+		var source_name: Variant = info.source.get("display_name")
+		if source_name is String and source_name != "":
+			return "Killed by %s" % source_name
 		return "Killed by %s" % info.source.name
 	match info.type:
 		DamageInfo.Type.MELEE:

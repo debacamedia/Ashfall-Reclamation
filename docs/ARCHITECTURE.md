@@ -41,7 +41,7 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 | Combat (weapon) | One hitscan rifle via physics ray queries, ammo, reload | Node + `WeaponDefinition` Resource | 2 ✅ |
 | Health | `HealthComponent` node, damage and death signals (player and NPCs) | Node component | 2 ✅ |
 | Death and respawn | Player death, respawn at Outpost 17 spawn point | PlayerController + `GameMode` node in the level | 3 ✅ |
-| Enemy NPC | `NavigationAgent3D` pathing on a baked `NavigationRegion3D`, chase and melee | `CharacterBody3D` scene | 4 |
+| Enemy NPC | `NavigationAgent3D` pathing on a baked `NavigationRegion3D`, sight + hearing, chase and melee, `EnemySpawner` | `CharacterBody3D` scene | 4 ✅ |
 | Interaction | Ray from the camera, `Interactable` component, prompt UI | Node component + RayCast3D | 5 |
 | Items and resources | `ItemDefinition` Resource, world pickups (scrap, cloth, fuel...) | Resource + scene | 5 |
 | **InventoryManager** | `InventoryComponent` (slots, stacks, weight cap), transfers, signals | Node component + Resources | 6 |
@@ -101,6 +101,7 @@ res://
 ├── scripts/
 │   ├── core/                  input_frame.gd, physics_layers.gd, game_mode.gd
 │   ├── player/                player_controller.gd, player_input.gd
+│   ├── npcs/                  raider.gd, enemy_spawner.gd (NPC behaviour)
 │   ├── world/                 scripts for world props (shipping_container.gd)
 │   ├── ui/                    hud.gd
 │   ├── combat/ inventory/ construction/ settlement/ economy/
@@ -116,6 +117,7 @@ res://
 ```
 
 **Changes from the proposed structure, and why:**
+- **`scripts/npcs/` added** (Increment 4). NPC behaviour (raiders, later settlers and soldiers) mirrors `scripts/player/`.
 - **`scripts/player/` added.** The player controller and input don't fit under `core/` or `combat/`, and they'll grow (stamina, interaction, equipment).
 - **`scenes/world/` split into `structures/` and `props/`.** Outposts reuse dozens of pieces, and the split keeps both lists scannable. `scenes/buildings/` is reserved for *player-built* structures, which carry BuildingManager data such as cost, health and upgrades. World set dressing does not.
 - **`scripts/ui/` and `scripts/world/` added.** Scripts sit next to the scene category they serve.
@@ -151,7 +153,7 @@ res://
 | 1 ✅ | Project structure, player controller, Outpost 17 | Walk, sprint, crouch and jump around a 3D military outpost |
 | 2 ✅ | Rifle + HealthComponent + target dummies | Shoot targets that take damage |
 | 3 ✅ | Player health, death and respawn | Take damage, die and respawn at the outpost |
-| 4 | Enemy NPC with navigation and melee attack | A raider paths around the outpost and attacks |
+| 4 ✅ | Enemy NPC with navigation and melee attack | A raider paths around the outpost and attacks |
 | 5 | Interaction system + collectible resources | Look at a pickup, press E, collect scrap |
 | 6 | Inventory (data + UI) | Open the inventory, see stacks and weight |
 | 7 | Salvage containers | Search crates and transfer loot |

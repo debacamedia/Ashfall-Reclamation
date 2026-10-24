@@ -162,6 +162,8 @@ func _fire(aim: Transform3D, shooter: CollisionObject3D) -> Vector2:
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 
 	fired.emit(origin, direction)
+	if definition.noise_radius > 0.0:
+		get_tree().call_group("noise_listeners", "hear_noise", origin, definition.noise_radius, shooter)
 	if not result.is_empty():
 		_resolve_hit(result, origin, direction, shooter)
 

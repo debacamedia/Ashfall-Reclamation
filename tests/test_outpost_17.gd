@@ -9,13 +9,16 @@ var _level: Node3D
 var _player: PlayerController
 
 
-func _load_level() -> void:
+## Raiders are off by default so earlier tests aren't interrupted by attacks.
+func _load_level(raiders := false) -> void:
 	_level = LEVEL.instantiate() as Node3D
 	_player = _level.get_node("Player") as PlayerController
 	_player.controlled_locally = false
 	_player.head_bob_enabled = false
+	(_level.get_node("RaiderSpawner") as EnemySpawner).enabled = raiders
 	add_child(_level)
 	await wait_physics(30)
+	await wait_for_navigation(_level.get_world_3d().navigation_map)
 
 
 func _walk(move: Vector2, ticks: int, crouch := false) -> void:
@@ -159,3 +162,86 @@ func test_death_screen_and_respawn_loop() -> void:
 	check(_player.global_position.distance_to(spawn.global_position) < 0.5, "back at PlayerSpawn")
 	check(not death_screen.visible, "death screen hidden")
 	check((hud.get_node("%HealthLabel") as Label).text == "100", "HUD back to 100")
+
+
+# ---------------------------------------------------------------- Increment 4
+
+func _nav_path(from: Vector3, to: Vector3) -> PackedVector3Array:
+	return NavigationServer3D.map_get_path(_level.get_world_3d().navigation_map, from, to, true)
+
+
+func test_navmesh_routes_through_gate_into_buildings() -> void:
+	await _load_level()
+	var path := _nav_path(Vector3(-6, 0, 66), Vector3(12, 0, -15.5))
+	check(path.size() > 2, "path from the south spawn to the barracks exists")
+	if path.size() > 0:
+		check(path[path.size() - 1].distance_to(Vector3(12, 0.5, -15.5)) < 1.0, "path ends inside the barracks")
+		var via_gate := false
+		for pt in path:
+			if absf(pt.x) < 4.0 and pt.z > 21.0 and pt.z < 28.0:
+				via_gate = true
+		check(via_gate, "path goes through the main gate")
+
+
+func test_navmesh_culvert_too_low_for_raiders() -> void:
+	await _load_level()
+	var path := _nav_path(Vector3(-24, 0, 0), Vector3(-24, 0, -12))
+	var length := 0.0
+	for i in range(1, path.size()):
+		length += path[i].distance_to(path[i - 1])
+	check(length > 14.0, "raiders must go around the culvert (path %.1f m, straight is 12 m)" % length)
+
+
+func test_spawner_fills_outside_the_walls() -> void:
+	await _load_level(true)
+	await wait_physics(5)
+	var spawner := _level.get_node("RaiderSpawner") as EnemySpawner
+	var raiders := spawner.get_alive()
+	check(raiders.size() == 3, "3 raiders alive (got %d)" % raiders.size())
+	for r in raiders:
+		var p := r.global_position
+		check(absf(p.x) > 33.0 or absf(p.z) > 26.0, "raider spawned outside the walls at %s" % p.snappedf(0.1))
+		check(p.distance_to(_player.global_position) > 25.0, "not near the player")
+
+
+func test_raider_comes_through_gate_and_attacks_player_in_yard() -> void:
+	var spawner_node: EnemySpawner
+	_level = LEVEL.instantiate() as Node3D
+	_player = _level.get_node("Player") as PlayerController
+	_player.controlled_locally = false
+	_player.head_bob_enabled = false
+	spawner_node = _level.get_node("RaiderSpawner") as EnemySpawner
+	spawner_node.max_alive = 1
+	add_child(_level)
+	await wait_physics(30)
+	await wait_for_navigation(_level.get_world_3d().navigation_map)
+	await _teleport(Vector3(0, 0.05, 5), 0)
+	var raider := spawner_node.get_alive()[0] as Raider
+	raider.alert_to(_player)
+	var passed_gate := false
+	for i in 60 * 45:
+		await _walk(Vector2.ZERO, 1)
+		if absf(raider.global_position.x) < 4.5 and absf(raider.global_position.z - 24.5) < 2.0:
+			passed_gate = true
+		if _player.health.current_health < 100.0:
+			break
+	check(passed_gate, "came in through the main gate")
+	check(_player.health.current_health < 100.0, "reached and hit the player in the yard")
+
+
+func test_spawner_replaces_killed_raider() -> void:
+	_level = LEVEL.instantiate() as Node3D
+	_player = _level.get_node("Player") as PlayerController
+	_player.controlled_locally = false
+	var spawner := _level.get_node("RaiderSpawner") as EnemySpawner
+	spawner.max_alive = 1
+	spawner.respawn_delay = 0.3
+	add_child(_level)
+	await wait_physics(10)
+	var first := spawner.get_alive()[0] as Raider
+	first.health.apply_damage(DamageInfo.create(500.0, DamageInfo.Type.BALLISTIC))
+	check(spawner.get_alive().is_empty(), "none alive right after the kill")
+	await get_tree().create_timer(0.4).timeout
+	await wait_physics(2)
+	var alive := spawner.get_alive()
+	check(alive.size() == 1 and alive[0] != first, "a new raider spawned after the delay")

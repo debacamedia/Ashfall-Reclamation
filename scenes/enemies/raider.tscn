@@ -1,0 +1,267 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/raider.gd" id="1_uwhn6"]
+[ext_resource type="Material" path="res://assets/materials/raider_cloth.tres" id="2_dcynr"]
+[ext_resource type="Material" path="res://assets/materials/raider_gear.tres" id="3_bku8t"]
+[ext_resource type="Material" path="res://assets/materials/raider_leather.tres" id="4_ipk3o"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="5_3fitl"]
+[ext_resource type="Material" path="res://assets/materials/raider_skin.tres" id="6_fd4na"]
+[ext_resource type="Material" path="res://assets/materials/raider_bandana.tres" id="7_ix6vl"]
+[ext_resource type="Material" path="res://assets/materials/raider_lens.tres" id="8_hyeps"]
+[ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="9_clo11"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cbrhk"]
+radius = 0.35
+height = 1.45
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_xcp24"]
+radius = 0.16
+
+[sub_resource type="BoxMesh" id="BoxMesh_fvnhr"]
+size = Vector3(0.17, 0.8, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dc808"]
+size = Vector3(0.19, 0.13, 0.29)
+
+[sub_resource type="BoxMesh" id="BoxMesh_71ugl"]
+size = Vector3(0.18, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_w64xd"]
+size = Vector3(0.17, 0.8, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jqa7p"]
+size = Vector3(0.19, 0.13, 0.29)
+
+[sub_resource type="BoxMesh" id="BoxMesh_st5r7"]
+size = Vector3(0.18, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1a5in"]
+size = Vector3(0.46, 0.09, 0.27)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ji6yc"]
+size = Vector3(0.48, 0.55, 0.28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x3ecq"]
+size = Vector3(0.07, 0.62, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jd5go"]
+size = Vector3(0.22, 0.09, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rqjxy"]
+size = Vector3(0.03, 0.12, 0.03)
+
+[sub_resource type="BoxMesh" id="BoxMesh_iunrb"]
+size = Vector3(0.11, 0.09, 0.11)
+
+[sub_resource type="SphereMesh" id="SphereMesh_ipnhw"]
+radius = 0.14
+height = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_dodlj"]
+size = Vector3(0.27, 0.1, 0.27)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5uug2"]
+size = Vector3(0.25, 0.06, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5xytc"]
+size = Vector3(0.07, 0.05, 0.01)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ovkh5"]
+size = Vector3(0.07, 0.05, 0.01)
+
+[sub_resource type="BoxMesh" id="BoxMesh_juj0c"]
+size = Vector3(0.04, 0.08, 0.24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_l6n86"]
+size = Vector3(0.13, 0.62, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fp2ou"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v2mph"]
+size = Vector3(0.13, 0.62, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_f2jbi"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rsfjy"]
+size = Vector3(0.04, 0.04, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bdjmi"]
+size = Vector3(0.015, 0.07, 0.5)
+
+[node name="Raider" type="CharacterBody3D" unique_id=759929979]
+collision_layer = 8
+collision_mask = 15
+floor_max_angle = 0.80285144
+script = ExtResource("1_uwhn6")
+
+[node name="BodyShape" type="CollisionShape3D" parent="." unique_id=1809975729]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+shape = SubResource("CapsuleShape3D_cbrhk")
+metadata/damage_multiplier = 1.0
+
+[node name="HeadShape" type="CollisionShape3D" parent="." unique_id=1484375810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+shape = SubResource("SphereShape3D_xcp24")
+metadata/damage_multiplier = 2.0
+
+[node name="Visual" type="Node3D" parent="." unique_id=1876314567]
+unique_name_in_owner = true
+
+[node name="Leg" type="MeshInstance3D" parent="Visual" unique_id=909759325]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.42, 0)
+material_override = ExtResource("2_dcynr")
+mesh = SubResource("BoxMesh_fvnhr")
+
+[node name="Boot" type="MeshInstance3D" parent="Visual" unique_id=1368859906]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.065, -0.04)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_dc808")
+
+[node name="KneePad" type="MeshInstance3D" parent="Visual" unique_id=1961983343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.45, -0.11)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_71ugl")
+
+[node name="Leg2" type="MeshInstance3D" parent="Visual" unique_id=694088431]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.42, 0)
+material_override = ExtResource("2_dcynr")
+mesh = SubResource("BoxMesh_w64xd")
+
+[node name="Boot2" type="MeshInstance3D" parent="Visual" unique_id=849921072]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.065, -0.04)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_jqa7p")
+
+[node name="KneePad2" type="MeshInstance3D" parent="Visual" unique_id=1807467005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.45, -0.11)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_st5r7")
+
+[node name="Belt" type="MeshInstance3D" parent="Visual" unique_id=1355792989]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.84, 0)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_1a5in")
+
+[node name="Torso" type="MeshInstance3D" parent="Visual" unique_id=171912685]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
+material_override = ExtResource("4_ipk3o")
+mesh = SubResource("BoxMesh_ji6yc")
+
+[node name="ChestStrap" type="MeshInstance3D" parent="Visual" unique_id=1070733484]
+transform = Transform3D(0.8480481, -0.52991927, 0, 0.52991927, 0.8480481, 0, 0, 0, 1, 0.08, 1.13, 0)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_x3ecq")
+
+[node name="TirePad" type="MeshInstance3D" parent="Visual" unique_id=286520690]
+transform = Transform3D(0.95105654, -0.309017, 0, 0.309017, 0.95105654, 0, 0, 0, 1, -0.27, 1.43, 0)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_jd5go")
+
+[node name="Spike" type="MeshInstance3D" parent="Visual" unique_id=1074947542]
+transform = Transform3D(0.90630776, -0.42261827, 0, 0.42261827, 0.90630776, 0, 0, 0, 1, -0.31, 1.52, 0)
+material_override = ExtResource("5_3fitl")
+mesh = SubResource("BoxMesh_rqjxy")
+
+[node name="Neck" type="MeshInstance3D" parent="Visual" unique_id=1041641897]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.44, 0)
+material_override = ExtResource("6_fd4na")
+mesh = SubResource("BoxMesh_iunrb")
+
+[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=166333017]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+material_override = ExtResource("6_fd4na")
+mesh = SubResource("SphereMesh_ipnhw")
+
+[node name="Bandana" type="MeshInstance3D" parent="Visual" unique_id=1726625135]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.53, -0.01)
+material_override = ExtResource("7_ix6vl")
+mesh = SubResource("BoxMesh_dodlj")
+
+[node name="Goggles" type="MeshInstance3D" parent="Visual" unique_id=1137502207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, -0.12)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_5uug2")
+
+[node name="Lens" type="MeshInstance3D" parent="Visual" unique_id=1046577236]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06, 1.65, -0.152)
+material_override = ExtResource("8_hyeps")
+mesh = SubResource("BoxMesh_5xytc")
+
+[node name="Lens2" type="MeshInstance3D" parent="Visual" unique_id=1898520159]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06, 1.65, -0.152)
+material_override = ExtResource("8_hyeps")
+mesh = SubResource("BoxMesh_ovkh5")
+
+[node name="Mohawk" type="MeshInstance3D" parent="Visual" unique_id=287644688]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0.01)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_juj0c")
+
+[node name="LeftArm" type="Node3D" parent="Visual" unique_id=492908092]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.9848077, -0.17364818, 0, 0.17364818, 0.9848077, -0.31, 1.36, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/LeftArm" unique_id=1070805918]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+material_override = ExtResource("4_ipk3o")
+mesh = SubResource("BoxMesh_l6n86")
+
+[node name="Hand" type="MeshInstance3D" parent="Visual/LeftArm" unique_id=301524510]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, 0)
+material_override = ExtResource("6_fd4na")
+mesh = SubResource("BoxMesh_fp2ou")
+
+[node name="RightArm" type="Node3D" parent="Visual" unique_id=1477027017]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.9659258, -0.25881904, 0, 0.25881904, 0.9659258, 0.31, 1.36, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/RightArm" unique_id=885250944]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+material_override = ExtResource("4_ipk3o")
+mesh = SubResource("BoxMesh_v2mph")
+
+[node name="Hand" type="MeshInstance3D" parent="Visual/RightArm" unique_id=74849667]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, 0)
+material_override = ExtResource("6_fd4na")
+mesh = SubResource("BoxMesh_f2jbi")
+
+[node name="Handle" type="MeshInstance3D" parent="Visual/RightArm" unique_id=1501506670]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, -0.06)
+material_override = ExtResource("3_bku8t")
+mesh = SubResource("BoxMesh_rsfjy")
+
+[node name="Blade" type="MeshInstance3D" parent="Visual/RightArm" unique_id=2054873403]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62, -0.38)
+material_override = ExtResource("5_3fitl")
+mesh = SubResource("BoxMesh_bdjmi")
+
+[node name="Eyes" type="Marker3D" parent="." unique_id=1277066174]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, -0.1)
+
+[node name="NavAgent" type="NavigationAgent3D" parent="." unique_id=2048225281]
+unique_name_in_owner = true
+path_desired_distance = 0.8
+target_desired_distance = 0.8
+path_height_offset = 0.5
+path_max_distance = 3.0
+height = 1.75
+radius = 0.4
+
+[node name="HealthComponent" type="Node" parent="." unique_id=2055268037]
+unique_name_in_owner = true
+script = ExtResource("9_clo11")
+max_health = 80.0
+
+[node name="AlertLabel" type="Label3D" parent="." unique_id=326016557]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
+pixel_size = 0.004
+billboard = 1
+no_depth_test = true
+modulate = Color(1, 0.35, 0.1, 1)
+text = "!"
+font_size = 120
+outline_size = 18

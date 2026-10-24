@@ -2,8 +2,9 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Milestone 1, Increment 3
+## Current state: Milestone 1, Increment 4
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
+- **Increment 4:** raider enemies. They roam outside the walls, see and hear you, path through the gate and around cover on a baked navmesh, and attack with a dodgeable machete swing. A spawner keeps 3 alive.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback (health bar, red vignette, direction arcs), death screen, and respawn via `GameMode`.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate with targets at 10–50 m (damage numbers, headshots, knock-down and reset).
 

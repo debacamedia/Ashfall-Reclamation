@@ -26,6 +26,9 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 @export var starting_reserve := 90
 @export var reload_time := 2.3
 
+## Enemies within this distance hear each shot (m). 0 = silent.
+@export var noise_radius := 60.0
+
 @export_group("Accuracy (degrees)")
 ## Cone half-angle when standing still and not firing.
 @export var base_spread := 0.35

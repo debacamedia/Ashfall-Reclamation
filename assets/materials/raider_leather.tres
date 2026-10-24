@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "raider_leather"
+albedo_color = Color(0.3, 0.2, 0.13, 1)
+roughness = 0.75

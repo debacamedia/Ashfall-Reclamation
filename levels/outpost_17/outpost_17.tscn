@@ -28,6 +28,9 @@
 [ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="26_wmgfa"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/range_tower.tscn" id="27_wmgfa"]
 [ext_resource type="Script" path="res://scripts/core/game_mode.gd" id="28_ouv22"]
+[ext_resource type="NavigationMesh" path="res://levels/outpost_17/outpost_17_navmesh.tres" id="29_2tvmt"]
+[ext_resource type="Script" path="res://scripts/npcs/enemy_spawner.gd" id="30_iodjj"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/raider.tscn" id="31_j2khw"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -118,7 +121,7 @@ light_energy = 1.2
 shadow_enabled = true
 directional_shadow_max_distance = 150.0
 
-[node name="Terrain" type="StaticBody3D" parent="." unique_id=355777769]
+[node name="Terrain" type="StaticBody3D" parent="." unique_id=355777769 groups=["navigation_geometry"]]
 collision_mask = 0
 
 [node name="Ground" type="MeshInstance3D" parent="Terrain" unique_id=129602332]
@@ -187,7 +190,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 48)
 material_override = ExtResource("6_ouv22")
 mesh = SubResource("BoxMesh_otu0x")
 
-[node name="Perimeter" type="Node3D" parent="." unique_id=425559506]
+[node name="Perimeter" type="Node3D" parent="." unique_id=425559506 groups=["navigation_geometry"]]
 
 [node name="NorthWall" parent="Perimeter" unique_id=1188945795 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.625, 0, -24.5)
@@ -453,10 +456,10 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.
 [node name="EastWall20" parent="Perimeter" unique_id=620905666 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 23.275)
 
-[node name="MainGate" parent="." unique_id=1225674280 instance=ExtResource("8_iodjj")]
+[node name="MainGate" parent="." unique_id=1225674280 groups=["navigation_geometry"] instance=ExtResource("8_iodjj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24.5)
 
-[node name="GuardTowers" type="Node3D" parent="." unique_id=384893514]
+[node name="GuardTowers" type="Node3D" parent="." unique_id=384893514 groups=["navigation_geometry"]]
 
 [node name="GuardTower" parent="GuardTowers" unique_id=1866840479 instance=ExtResource("9_j2khw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 0, -21)
@@ -470,7 +473,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 0, 21)
 [node name="GuardTower4" parent="GuardTowers" unique_id=934465257 instance=ExtResource("9_j2khw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, 21)
 
-[node name="Buildings" type="Node3D" parent="." unique_id=650262360]
+[node name="Buildings" type="Node3D" parent="." unique_id=650262360 groups=["navigation_geometry"]]
 
 [node name="CommandPost" parent="Buildings" unique_id=1461665727 instance=ExtResource("10_3a7hk")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -16)
@@ -481,7 +484,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -16)
 [node name="Warehouse" parent="Buildings" unique_id=1709048150 instance=ExtResource("11_e0ma5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -20, 0, 8)
 
-[node name="Props" type="Node3D" parent="." unique_id=1695839539]
+[node name="Props" type="Node3D" parent="." unique_id=1695839539 groups=["navigation_geometry"]]
 
 [node name="ContainerA" parent="Props" unique_id=95388897 instance=ExtResource("12_b53bt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -20.5)
@@ -579,17 +582,13 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13, 
 [node name="MotorPoolFence11" parent="Props" unique_id=378812763 instance=ExtResource("19_so4bl")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13, 0, 18.5)
 
-[node name="BurningBarrelYard" type="StaticBody3D" parent="Props" unique_id=1904776390 instance=ExtResource("19_c0itq")]
+[node name="BurningBarrelYard" parent="Props" unique_id=1904776390 instance=ExtResource("19_c0itq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -3)
-collision_layer = 2
-collision_mask = 0
 
-[node name="BurningBarrelMotorPool" type="StaticBody3D" parent="Props" unique_id=2060302660 instance=ExtResource("19_c0itq")]
+[node name="BurningBarrelMotorPool" parent="Props" unique_id=2060302660 instance=ExtResource("19_c0itq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 5)
-collision_layer = 2
-collision_mask = 0
 
-[node name="Vehicles" type="Node3D" parent="." unique_id=92360141]
+[node name="Vehicles" type="Node3D" parent="." unique_id=92360141 groups=["navigation_geometry"]]
 
 [node name="TruckA" parent="Vehicles" unique_id=660792814 instance=ExtResource("20_78cal")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 19, 0, 11)
@@ -597,7 +596,7 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 19, 
 [node name="TruckB" parent="Vehicles" unique_id=108252690 instance=ExtResource("20_78cal")]
 transform = Transform3D(-0.9848077, 0, 0.1736483, 0, 1, 0, -0.1736483, 0, -0.9848077, 24, 0, 10)
 
-[node name="DrainageCulvert" parent="." unique_id=1635426294 instance=ExtResource("21_xntxo")]
+[node name="DrainageCulvert" parent="." unique_id=1635426294 groups=["navigation_geometry"] instance=ExtResource("21_xntxo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, -6)
 
 [node name="PlayerSpawn" type="Marker3D" parent="." unique_id=688822765]
@@ -610,7 +609,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 14)
 player = NodePath("../Player")
 game_mode = NodePath("../GameMode")
 
-[node name="FiringRange" type="Node3D" parent="." unique_id=649963290]
+[node name="FiringRange" type="Node3D" parent="." unique_id=649963290 groups=["navigation_geometry"]]
 
 [node name="LaneGravel" type="MeshInstance3D" parent="FiringRange" unique_id=1304399243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0.012, 36)
@@ -735,12 +734,29 @@ pixel_size = 0.004
 text = "←  FIRING RANGE"
 font_size = 48
 
-[node name="RangeTower" type="StaticBody3D" parent="FiringRange" unique_id=1758733183 instance=ExtResource("27_wmgfa")]
+[node name="RangeTower" parent="FiringRange" unique_id=1758733183 instance=ExtResource("27_wmgfa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 47)
-collision_layer = 2
-collision_mask = 0
 
 [node name="GameMode" type="Node" parent="." unique_id=1547692427 node_paths=PackedStringArray("spawn_point", "players")]
 script = ExtResource("28_ouv22")
 spawn_point = NodePath("../PlayerSpawn")
 players = [NodePath("../Player")]
+
+[node name="Navigation" type="NavigationRegion3D" parent="." unique_id=378893162]
+navigation_mesh = ExtResource("29_2tvmt")
+
+[node name="RaiderSpawner" type="Node3D" parent="." unique_id=1843430352]
+script = ExtResource("30_iodjj")
+enemy_scene = ExtResource("31_j2khw")
+
+[node name="SpawnSouthWest" type="Marker3D" parent="RaiderSpawner" unique_id=1936389027]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0.1, 58)
+
+[node name="SpawnSouthEast" type="Marker3D" parent="RaiderSpawner" unique_id=305557079]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0.1, 62)
+
+[node name="SpawnSouth" type="Marker3D" parent="RaiderSpawner" unique_id=894637810]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.1, 66)
+
+[node name="SpawnNorthWest" type="Marker3D" parent="RaiderSpawner" unique_id=41013368]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.1, -48)
