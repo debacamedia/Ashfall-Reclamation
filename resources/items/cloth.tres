@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/icons/cloth.png" id="1_0rk8q"]
 [ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_3xi74"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_0rk8q"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/cloth.tscn" id="3_hmme0"]
@@ -9,6 +10,7 @@ script = ExtResource("2_0rk8q")
 id = &"cloth"
 display_name = "Cloth"
 description = "Salvaged fabric for bandages, bedding and sandbags."
+icon = ExtResource("1_0rk8q")
 weight = 0.2
 world_model = ExtResource("3_hmme0")
 pickup_sound = ExtResource("1_3xi74")

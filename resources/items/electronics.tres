@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
+[ext_resource type="Texture2D" path="res://assets/icons/electronics.png" id="1_8kbdr"]
 [ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_cugiq"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_8kbdr"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/electronics.tscn" id="3_d2mg5"]
@@ -9,6 +10,7 @@ script = ExtResource("2_8kbdr")
 id = &"electronics"
 display_name = "Electronics"
 description = "Circuit boards and wiring pulled from dead equipment."
+icon = ExtResource("1_8kbdr")
 weight = 0.3
 base_value = 6
 world_model = ExtResource("3_d2mg5")

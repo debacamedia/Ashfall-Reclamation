@@ -97,10 +97,10 @@ func test_instant_pickup_adds_resources() -> void:
 	_look_at_point(p, pk.global_position + Vector3(0, 0.2, 0))
 	await _tick(p, 2)
 	var received := []
-	p.resources.item_received.connect(func(i: ItemDefinition, q: int) -> void: received.append([i.id, q]))
+	p.inventory.item_received.connect(func(i: ItemDefinition, q: int) -> void: received.append([i.id, q]))
 	await _press(p)
 	await wait_physics(2)
-	check(p.resources.get_count(&"scrap_metal") == 3, "3 scrap carried (got %d)" % p.resources.get_count(&"scrap_metal"))
+	check(p.inventory.count_of(&"scrap_metal") == 3, "3 scrap carried (got %d)" % p.inventory.count_of(&"scrap_metal"))
 	check(not is_instance_valid(pk), "pickup removed from the world")
 	check(received == [[&"scrap_metal", 3]], "item_received signal")
 
@@ -113,7 +113,7 @@ func test_holding_e_picks_up_only_one_item() -> void:
 	_look_at_point(p, a.global_position + Vector3(0, 0.2, 0))
 	await _tick(p, 2)
 	await _tick(p, 30, true)  # hold E
-	check(p.resources.get_count(&"scrap_metal") == 1, "holding E doesn't vacuum up a second item")
+	check(p.inventory.count_of(&"scrap_metal") == 1, "holding E doesn't vacuum up a second item")
 
 
 func test_hold_to_pick_up_fuel() -> void:
@@ -127,50 +127,49 @@ func test_hold_to_pick_up_fuel() -> void:
 	check(p.interactor.hold_progress > 0.3 and p.interactor.hold_progress < 0.6, "hold progress reported (%.2f)" % p.interactor.hold_progress)
 	await _tick(p, 2, false)   # let go early
 	check(p.interactor.hold_progress < 0.0, "releasing cancels the hold")
-	check(p.resources.get_count(&"fuel") == 0, "not picked up after a short hold")
+	check(p.inventory.count_of(&"fuel") == 0, "not picked up after a short hold")
 	await _tick(p, 55, true)   # 0.92 s
 	await wait_physics(2)
-	check(p.resources.get_count(&"fuel") == 1, "picked up after holding for 0.8 s")
+	check(p.inventory.count_of(&"fuel") == 1, "picked up after holding for 0.8 s")
 
 
-func test_medkit_refused_at_full_health_then_heals() -> void:
+func test_medkit_is_stored_even_at_full_health() -> void:
 	var p := _player()
 	var pk := _pickup(MEDKIT, 1, Vector3(0, 0, -1.8))
 	await _tick(p, 3)
+	var before := p.inventory.count_of(&"medkit")
 	_look_at_point(p, pk.global_position + Vector3(0, 0.2, 0))
 	await _tick(p, 2)
-	var refusals := []
-	p.interactor.interaction_refused.connect(func(_t: Interactable, r: String) -> void: refusals.append(r))
-	check(pk.get_block_reason(p) == "Already at full health", "block reason at full health")
-	await _tick(p, 40, true)
-	await _tick(p, 2)
-	check(is_instance_valid(pk), "medkit stays when not needed")
-	check(refusals.size() >= 1, "refusal reported (for the HUD sound)")
-	p.health.apply_damage(DamageInfo.create(50.0, DamageInfo.Type.FALL))
-	await _tick(p, 40, true)   # medkit hold 0.5 s
+	check(pk.get_block_reason(p) == "", "medkits can be picked up at full health")
+	await _press(p)
 	await wait_physics(2)
-	check_near(p.health.current_health, 90.0, 0.01, "healed 40 (50 -> 90)")
-	check(not is_instance_valid(pk), "medkit used up")
+	check(p.inventory.count_of(&"medkit") == before + 1, "medkit stored in the inventory")
+	check_near(p.health.current_health, 100.0, 0.01, "not used on pickup")
+	check(not is_instance_valid(pk), "pickup removed")
 
 
-func test_ammo_refills_reserve_up_to_max_and_leaves_remainder() -> void:
+func test_ammo_goes_into_inventory_and_full_inventory_leaves_remainder() -> void:
 	var p := _player()
 	await _tick(p, 2)
 	var start := p.weapon.reserve_ammo
+	check(start == p.inventory.count_ammo(&"rifle_556"), "weapon reserve reads the inventory")
 	var pk := _pickup(AMMO, 30, Vector3(0, 0, -1.8))
 	_look_at_point(p, pk.global_position + Vector3(0, 0.2, 0))
 	await _tick(p, 2)
 	await _press(p)
 	await wait_physics(2)
 	check(p.weapon.reserve_ammo == start + 30, "reserve +30 (%d -> %d)" % [start, p.weapon.reserve_ammo])
-	p.weapon.reserve_ammo = p.weapon.definition.max_reserve - 10
-	var pk2 := _pickup(AMMO, 30, Vector3(0, 0, -1.8))
+	# Fill every free slot with cloth, leaving room for only 10 more rounds
+	p.inventory.max_weight = 0.0
+	var cloth := load("res://resources/items/cloth.tres") as ItemDefinition
+	p.inventory.add_item(cloth, cloth.max_stack * p.inventory.get_free_slot_count())
+	var ammo_room := p.inventory.can_add(AMMO, 1000)
+	var pk2 := _pickup(AMMO, ammo_room + 20, Vector3(0, 0, -1.8))
 	await _tick(p, 2)
 	await _press(p)
 	await wait_physics(2)
-	check(p.weapon.reserve_ammo == p.weapon.definition.max_reserve, "filled to max")
-	check(is_instance_valid(pk2) and pk2.quantity == 20, "20 rounds left on the ground")
-	check(pk2.get_block_reason(p) == "Ammo full", "now refused: ammo full")
+	check(is_instance_valid(pk2) and pk2.quantity == 20, "the 20 that didn't fit stay on the ground")
+	check(pk2.get_block_reason(p) == "Inventory full", "now refused: '%s'" % pk2.get_block_reason(p))
 
 
 func test_try_interact_validates_distance() -> void:
@@ -178,7 +177,7 @@ func test_try_interact_validates_distance() -> void:
 	var pk := _pickup(SCRAP, 1, Vector3(0, 0, -10))
 	await _tick(p, 2)
 	check(not pk.try_interact(p, p.head.global_position), "a request from 10 m away is rejected")
-	check(p.resources.get_count(&"scrap_metal") == 0, "nothing received")
+	check(p.inventory.count_of(&"scrap_metal") == 0, "nothing received")
 
 
 func test_dead_player_cannot_interact() -> void:

@@ -5,15 +5,18 @@
 [ext_resource type="PackedScene" path="res://scenes/weapons/service_rifle.tscn" id="2_p47bc"]
 [ext_resource type="Script" path="res://scripts/interaction/player_interactor.gd" id="3_fm80t"]
 [ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="4_lvxji"]
-[ext_resource type="Script" path="res://scripts/inventory/player_resources.gd" id="6_gx1jg"]
 [ext_resource type="Script" path="res://scripts/player/player_audio.gd" id="7_ugbui"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/footstep_gravel.tres" id="8_fcs02"]
 [ext_resource type="AudioStream" path="res://assets/audio/land.wav" id="9_myrg7"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/player_hurt.tres" id="10_kvlxm"]
 [ext_resource type="AudioStream" path="res://assets/audio/heartbeat.wav" id="11_uf5tr"]
+[ext_resource type="Script" path="res://scripts/inventory/player_inventory.gd" id="12_fcs02"]
 [ext_resource type="AudioStream" path="res://assets/audio/death_sting.wav" id="12_lgqa7"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="13_myrg7"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="14_kvlxm"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="15_uf5tr"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8ydkj"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fcs02"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
@@ -31,7 +34,7 @@ script = ExtResource("1_dovo2")
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_8ydkj")
+shape = SubResource("CapsuleShape3D_fcs02")
 
 [node name="Head" type="Node3D" parent="." unique_id=801003417]
 unique_name_in_owner = true
@@ -66,10 +69,6 @@ script = ExtResource("2_gmlin")
 [node name="HealthComponent" type="Node" parent="." unique_id=1371505208]
 unique_name_in_owner = true
 script = ExtResource("4_lvxji")
-
-[node name="Resources" type="Node" parent="." unique_id=1887040850]
-unique_name_in_owner = true
-script = ExtResource("6_gx1jg")
 
 [node name="Audio" type="Node3D" parent="." unique_id=1547060927]
 script = ExtResource("7_ugbui")
@@ -109,3 +108,11 @@ bus = &"SFX"
 unique_name_in_owner = true
 volume_db = -4.0
 bus = &"SFX"
+
+[node name="Inventory" type="Node" parent="." unique_id=817297279]
+unique_name_in_owner = true
+script = ExtResource("12_fcs02")
+starting_items = Dictionary[ExtResource("13_myrg7"), int]({
+ExtResource("14_kvlxm"): 120,
+ExtResource("15_uf5tr"): 1
+})

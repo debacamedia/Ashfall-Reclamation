@@ -1,9 +1,8 @@
 class_name Pickup
 extends Interactable
-## An item lying in the world. Interacting gives it to the interactor's
-## PlayerResources (which decides what accepting it means: ammo refills the
-## weapon, medkits heal, resources are stored). Partially accepted stacks
-## stay behind with the remainder.
+## An item lying in the world. Interacting puts it into the interactor's
+## inventory (InventoryComponent). If only part fits (slots or weight), the
+## remainder stays on the ground.
 ##
 ## Scene: res://scenes/items/pickup.tscn — set `item` and `quantity`; the
 ## item's world_model is shown automatically.
@@ -59,10 +58,10 @@ func _refresh() -> void:
 func get_block_reason(interactor: Node3D) -> String:
 	if item == null or quantity <= 0:
 		return "Empty"
-	var resources := PlayerResources.find_on(interactor)
-	if resources == null:
+	var inventory := InventoryComponent.find_on(interactor)
+	if inventory == null:
 		return "Can't carry this"
-	return resources.get_refusal_reason(item, quantity)
+	return inventory.get_refusal_reason(item, quantity)
 
 
 func get_prompt(_interactor: Node3D) -> String:
@@ -84,8 +83,8 @@ func set_highlighted(on: bool) -> void:
 
 
 func _perform(interactor: Node3D) -> void:
-	var resources := PlayerResources.find_on(interactor)
-	var taken := resources.receive(item, quantity)
+	var inventory := InventoryComponent.find_on(interactor)
+	var taken := inventory.receive(item, quantity)
 	if taken <= 0:
 		return
 	picked_up.emit(item, taken, interactor)

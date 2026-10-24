@@ -1,7 +1,7 @@
 class_name PlayerAudio
 extends Node3D
 ## The player's own sounds: footsteps (by distance walked), landing, getting
-## hurt, a heartbeat at low health, the death sting and pickup sounds.
+## hurt, a heartbeat at low health, the death sting, pickup and item-use sounds.
 ## Purely presentation: reads the player, never changes game state.
 ##
 ## Child of the Player scene; its sound players are child nodes.
@@ -34,8 +34,12 @@ func _ready() -> void:
 		_death.play())
 	_player.respawned.connect(func() -> void: _death.stop())
 	_player.health.damaged.connect(_on_damaged)
-	if _player.resources != null:
-		_player.resources.item_received.connect(_on_item_received)
+	if _player.inventory != null:
+		_player.inventory.item_received.connect(_on_item_received)
+	_player.item_use_finished.connect(func(item: ItemDefinition) -> void:
+		if item.use_sound != null:
+			_pickup.stream = item.use_sound
+			_pickup.play())
 
 
 func _physics_process(delta: float) -> void:

@@ -1,18 +1,22 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="AudioStream" path="res://assets/audio/heal.wav" id="1_3kx6o"]
+[ext_resource type="Texture2D" path="res://assets/icons/medkit.png" id="1_c3uck"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_7q60m"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="2_8jc5w"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/medkit.tscn" id="3_c3uck"]
 
 [resource]
 script = ExtResource("2_7q60m")
 id = &"medkit"
 display_name = "Medkit"
-description = "Field dressing kit. Restores 40 health."
+description = "Field dressing kit. Restores 40 health over 2 seconds. Quick-use: H."
 category = 2
+icon = ExtResource("1_c3uck")
 max_stack = 5
 base_value = 15
 world_model = ExtResource("3_c3uck")
-pickup_hold_time = 0.5
-pickup_sound = ExtResource("1_3kx6o")
+pickup_sound = ExtResource("2_8jc5w")
 heal_amount = 40.0
+use_time = 2.0
+use_sound = ExtResource("1_3kx6o")

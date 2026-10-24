@@ -33,7 +33,6 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/raider.tscn" id="31_j2khw"]
 [ext_resource type="AudioStream" path="res://assets/audio/wind_loop.wav" id="32_uf8n3"]
 [ext_resource type="PackedScene" path="res://scenes/items/pickup.tscn" id="33_ixxyf"]
-[ext_resource type="Script" path="res://scripts/interaction/pickup.gd" id="34_wpo68"]
 [ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="35_so4bl"]
 [ext_resource type="Resource" path="res://resources/items/electronics.tres" id="36_78cal"]
 [ext_resource type="Resource" path="res://resources/items/cloth.tres" id="37_xntxo"]
@@ -779,193 +778,105 @@ bus = &"Ambience"
 
 [node name="Loot" type="Node3D" parent="." unique_id=466982758]
 
-[node name="WarehouseShelfScrap" type="Area3D" parent="Loot" unique_id=1900172670 instance=ExtResource("33_ixxyf")]
+[node name="WarehouseShelfScrap" parent="Loot" unique_id=1900172670 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.92050487, 0, -0.3907311, 0, 1, 0, 0.3907311, 0, -0.92050487, -24.5, 1.33, 13)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("35_so4bl")
 quantity = 6
 
-[node name="WarehouseShelfElectronics" type="Area3D" parent="Loot" unique_id=1617385848 instance=ExtResource("33_ixxyf")]
+[node name="WarehouseShelfElectronics" parent="Loot" unique_id=1617385848 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.6819983, 0, 0.7313537, 0, 1, 0, -0.7313537, 0, -0.6819983, -24.5, 1.33, 8)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("36_78cal")
 quantity = 2
 
-[node name="WarehouseShelfCloth" type="Area3D" parent="Loot" unique_id=242789195 instance=ExtResource("33_ixxyf")]
+[node name="WarehouseShelfCloth" parent="Loot" unique_id=242789195 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -24.5, 0.18, 3)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("37_xntxo")
 quantity = 4
 
-[node name="WarehouseFuel" type="Area3D" parent="Loot" unique_id=339978174 instance=ExtResource("33_ixxyf")]
+[node name="WarehouseFuel" parent="Loot" unique_id=339978174 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.034899764, 0, -0.99939084, 0, 1, 0, 0.99939084, 0, -0.034899764, -21.5, 0, 10.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("38_0486g")
 
-[node name="WarehouseAmmo" type="Area3D" parent="Loot" unique_id=284468071 instance=ExtResource("33_ixxyf")]
+[node name="WarehouseAmmo" parent="Loot" unique_id=284468071 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.52991927, 0, 0.8480481, 0, 1, 0, -0.8480481, 0, 0.52991927, -19, 0, 4)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("39_ig36p")
 quantity = 30
 
-[node name="BarracksMedkit" type="Area3D" parent="Loot" unique_id=964685730 instance=ExtResource("33_ixxyf")]
-transform = Transform3D(-0.8480481, 0, -0.52991927, 0, 1, 0, 0.52991927, 0, -0.8480481, 9.5, 0, -17.6)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
+[node name="BarracksMedkit" parent="Loot" unique_id=964685730 instance=ExtResource("33_ixxyf")]
+transform = Transform3D(-0.8480481, 0, -0.52991927, 0, 1, 0, 0.52991927, 0, -0.8480481, 9, 1, -17.5)
 item = ExtResource("40_ck1o8")
 
-[node name="BarracksCloth" type="Area3D" parent="Loot" unique_id=647439875 instance=ExtResource("33_ixxyf")]
+[node name="BarracksCloth" parent="Loot" unique_id=647439875 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.9396926, 0, -0.34202015, 0, 1, 0, 0.34202015, 0, -0.9396926, 14.5, 0, -14.8)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("37_xntxo")
 quantity = 3
 
-[node name="CommandPostElectronics" type="Area3D" parent="Loot" unique_id=1209440535 instance=ExtResource("33_ixxyf")]
+[node name="CommandPostElectronics" parent="Loot" unique_id=1209440535 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.97437006, 0, 0.22495106, 0, 1, 0, -0.22495106, 0, 0.97437006, -9.5, 0, -17.4)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("36_78cal")
 quantity = 3
 
-[node name="CommandPostAmmo" type="Area3D" parent="Loot" unique_id=2020992982 instance=ExtResource("33_ixxyf")]
+[node name="CommandPostAmmo" parent="Loot" unique_id=2020992982 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.6691307, 0, -0.74314475, 0, 1, 0, 0.74314475, 0, -0.6691307, -14.5, 0, -14.6)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("39_ig36p")
 quantity = 30
 
-[node name="MotorPoolFuelA" type="Area3D" parent="Loot" unique_id=582737957 instance=ExtResource("33_ixxyf")]
+[node name="MotorPoolFuelA" parent="Loot" unique_id=582737957 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.017452296, 0, -0.9998477, 0, 1, 0, 0.9998477, 0, -0.017452296, 21.5, 0, 16.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("38_0486g")
 
-[node name="MotorPoolFuelB" type="Area3D" parent="Loot" unique_id=379376210 instance=ExtResource("33_ixxyf")]
+[node name="MotorPoolFuelB" parent="Loot" unique_id=379376210 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 25.5, 0, 6.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("38_0486g")
 
-[node name="MotorPoolScrap" type="Area3D" parent="Loot" unique_id=1919497997 instance=ExtResource("33_ixxyf")]
+[node name="MotorPoolScrap" parent="Loot" unique_id=1919497997 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.12186929, 0, 0.99254614, 0, 1, 0, -0.99254614, 0, -0.12186929, 16.5, 0, 18)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("35_so4bl")
 quantity = 5
 
-[node name="YardScrap" type="Area3D" parent="Loot" unique_id=1609374218 instance=ExtResource("33_ixxyf")]
+[node name="YardScrap" parent="Loot" unique_id=1609374218 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 2, 0, -17.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("35_so4bl")
 quantity = 4
 
-[node name="YardCloth" type="Area3D" parent="Loot" unique_id=744243434 instance=ExtResource("33_ixxyf")]
+[node name="YardCloth" parent="Loot" unique_id=744243434 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.19080906, 0, 0.98162717, 0, 1, 0, -0.98162717, 0, 0.19080906, -6.5, 0, -7.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("37_xntxo")
 quantity = 2
 
-[node name="GateMedkit" type="Area3D" parent="Loot" unique_id=1392387145 instance=ExtResource("33_ixxyf")]
+[node name="GateMedkit" parent="Loot" unique_id=1392387145 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.88294756, 0, 0.46947157, 0, 1, 0, -0.46947157, 0, 0.88294756, 5.5, 0, 19.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("40_ck1o8")
 
-[node name="RangeAmmoA" type="Area3D" parent="Loot" unique_id=456897799 instance=ExtResource("33_ixxyf")]
+[node name="RangeAmmoA" parent="Loot" unique_id=456897799 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.60181504, 0, 0.79863554, 0, 1, 0, -0.79863554, 0, 0.60181504, 11.5, 0.94, 35.4)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("39_ig36p")
 quantity = 30
 
-[node name="RangeAmmoB" type="Area3D" parent="Loot" unique_id=1601169538 instance=ExtResource("33_ixxyf")]
+[node name="RangeAmmoB" parent="Loot" unique_id=1601169538 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.5877853, 0, 0.809017, 0, 1, 0, -0.809017, 0, 0.5877853, 11.5, 0.94, 36.6)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("39_ig36p")
 quantity = 30
 
-[node name="WastelandScrap" type="Area3D" parent="Loot" unique_id=1626198856 instance=ExtResource("33_ixxyf")]
+[node name="WastelandScrap" parent="Loot" unique_id=1626198856 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.25881904, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, -0.25881904, -30, 0, 40)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("35_so4bl")
 quantity = 8
 
-[node name="WastelandElectronics" type="Area3D" parent="Loot" unique_id=400188132 instance=ExtResource("33_ixxyf")]
+[node name="WastelandElectronics" parent="Loot" unique_id=400188132 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.42261833, 0, 0.90630776, 0, 1, 0, -0.90630776, 0, -0.42261833, 40, 0, 50)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("36_78cal")
 quantity = 4
 
-[node name="WastelandFuel" type="Area3D" parent="Loot" unique_id=2136334785 instance=ExtResource("33_ixxyf")]
+[node name="WastelandFuel" parent="Loot" unique_id=2136334785 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(-0.9612617, 0, -0.2756373, 0, 1, 0, 0.2756373, 0, -0.9612617, -45, 0, -30)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("38_0486g")
 
-[node name="WastelandAmmo" type="Area3D" parent="Loot" unique_id=294585565 instance=ExtResource("33_ixxyf")]
+[node name="WastelandAmmo" parent="Loot" unique_id=294585565 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.9702958, 0, -0.24192177, 0, 1, 0, 0.24192177, 0, 0.9702958, 24, 0, 55)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("39_ig36p")
 quantity = 40
 
-[node name="WastelandMedkit" type="Area3D" parent="Loot" unique_id=562473794 instance=ExtResource("33_ixxyf")]
+[node name="WastelandMedkit" parent="Loot" unique_id=562473794 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.6427875, 0, -0.7660445, 0, 1, 0, 0.7660445, 0, 0.6427875, -40, 0, 52)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("34_wpo68")
 item = ExtResource("40_ck1o8")

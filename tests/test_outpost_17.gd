@@ -297,3 +297,28 @@ func test_can_pick_loot_off_warehouse_shelves() -> void:
 		_player.head.rotation.x = atan2(target.y - eye.y, flat.length())
 		await _walk(Vector2.ZERO, 3)
 		check(_player.interactor.focused == pk, "%s on the rack can be targeted" % spec[0])
+		var item_id := pk.item.id
+		var before := _player.inventory.count_of(item_id)
+		var f := InputFrame.new()
+		f.interact = true
+		await get_tree().physics_frame
+		_player.simulate(f, DT)
+		f.interact = false
+		await get_tree().physics_frame
+		_player.simulate(f, DT)
+		check(_player.inventory.count_of(item_id) > before, "%s actually picked up with E" % spec[0])
+
+
+func test_no_loot_overlaps_solid_geometry() -> void:
+	await _load_level()
+	var space := _level.get_world_3d().direct_space_state
+	var box := BoxShape3D.new()
+	box.size = Vector3(0.35, 0.25, 0.35)
+	for pk: Node3D in _level.get_node("Loot").get_children():
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = box
+		q.transform = Transform3D(pk.global_basis, pk.global_position + Vector3(0, 0.2, 0))
+		q.collision_mask = PhysicsLayers.WORLD_SOLID
+		var hits := space.intersect_shape(q, 4)
+		var names := hits.map(func(h: Dictionary) -> String: return str((h["collider"] as Node).name))
+		check(hits.is_empty(), "%s is clear of solid geometry (overlaps %s)" % [pk.name, names])

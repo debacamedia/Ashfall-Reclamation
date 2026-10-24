@@ -11,6 +11,10 @@ signal mouse_capture_changed(captured: bool)
 ## Press crouch once to crouch, again to stand (instead of holding).
 @export var crouch_toggle := false
 
+## True while a menu (inventory) is open: the mouse is free and gameplay
+## input is ignored.
+var ui_open := false
+
 var _look_accumulator := Vector2.ZERO
 var _crouch_latched := false
 ## After a click recaptures the mouse, ignore that click as a trigger pull.
@@ -22,6 +26,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if ui_open:
+		return
 	if event is InputEventMouseMotion and is_mouse_captured():
 		var delta := (event as InputEventMouseMotion).relative * mouse_sensitivity
 		if invert_y:
@@ -42,9 +48,9 @@ func _unhandled_input(event: InputEvent) -> void:
 func gather() -> InputFrame:
 	var frame := InputFrame.new()
 	frame.crouch = _crouch_latched if crouch_toggle else false
-	if not is_mouse_captured():
+	if ui_open or not is_mouse_captured():
 		_look_accumulator = Vector2.ZERO
-		return frame  # neutral frame while the mouse is free
+		return frame  # neutral frame while the mouse is free or a menu is open
 
 	frame.move = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	frame.look = _look_accumulator
@@ -60,6 +66,7 @@ func gather() -> InputFrame:
 	frame.fire = fire_held
 	frame.reload = Input.is_action_just_pressed("reload")
 	frame.interact = Input.is_action_pressed("interact")
+	frame.use_heal = Input.is_action_just_pressed("use_medkit")
 	_look_accumulator = Vector2.ZERO
 	return frame
 
@@ -76,3 +83,14 @@ func capture_mouse() -> void:
 func release_mouse() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	mouse_capture_changed.emit(false)
+
+
+## Opens or closes "menu mode" (mouse free, gameplay input ignored).
+func set_ui_open(open: bool) -> void:
+	ui_open = open
+	if open:
+		release_mouse()
+	else:
+		capture_mouse()
+		# Don't treat the click that closed the menu as a trigger pull
+		_fire_blocked_until_release = true

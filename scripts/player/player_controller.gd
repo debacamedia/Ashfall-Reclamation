@@ -1,7 +1,8 @@
 class_name PlayerController
 extends CharacterBody3D
 ## First-person character: mouse look, walk, sprint, crouch, jump, an equipped
-## HitscanWeapon (fire, reload, recoil), health, fall damage and death.
+## HitscanWeapon (fire, reload, recoil), health, fall damage, death, an
+## inventory (ammo comes from it) and using items such as medkits.
 ##
 ## Movement is driven only by InputFrames passed to simulate(). The local
 ## player gathers its own frames from PlayerInput; remote players (co-op,
@@ -23,6 +24,12 @@ signal movement_state_changed(state: MovementState)
 signal died(info: DamageInfo)
 signal respawn_requested
 signal respawned
+## Using an item (e.g. a medkit) takes time; these report its progress.
+signal item_use_started(item: ItemDefinition, duration: float)
+signal item_use_finished(item: ItemDefinition)
+signal item_use_cancelled(item: ItemDefinition)
+signal item_use_refused(reason: String)
+signal item_dropped(item: ItemDefinition, quantity: int)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD }
 
@@ -66,6 +73,10 @@ enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD }
 ## Landing at this speed or faster is lethal (≈ a 16.5 m drop).
 @export var lethal_fall_speed := 18.0
 
+@export_group("Using items")
+## Movement speed multiplier while using an item (bandaging, etc.).
+@export var use_move_multiplier := 0.5
+
 @export_group("Control")
 ## True for the player at this keyboard. False for remote players and tests,
 ## which drive the character by calling simulate().
@@ -80,6 +91,8 @@ var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _current_height := 0.0
 var _bob_distance := 0.0
 var _death_tween: Tween
+var _using_item: ItemDefinition = null
+var _use_left := 0.0
 
 @onready var collision_shape: CollisionShape3D = %CollisionShape
 @onready var head: Node3D = %Head
@@ -90,7 +103,7 @@ var _death_tween: Tween
 ## The equipped weapon, if any (scene node %Weapon under the camera).
 @onready var weapon: HitscanWeapon = get_node_or_null("%Weapon")
 @onready var interactor: PlayerInteractor = get_node_or_null("%Interactor")
-@onready var resources: PlayerResources = get_node_or_null("%Resources")
+@onready var inventory: PlayerInventory = get_node_or_null("%Inventory")
 
 
 func _ready() -> void:
@@ -99,6 +112,8 @@ func _ready() -> void:
 	_apply_height(stand_height)
 	health.died.connect(_on_health_died)
 	landed.connect(_on_landed)
+	if weapon != null and inventory != null:
+		weapon.set_ammo_source(inventory)
 	if controlled_locally:
 		camera.make_current()
 	else:
@@ -129,6 +144,7 @@ func simulate(frame: InputFrame, delta: float) -> void:
 
 	_apply_look(frame.look)
 	_update_stance(frame.crouch, delta)
+	_update_item_use(frame, delta)
 
 	var on_floor := is_on_floor()
 	if not on_floor:
@@ -166,8 +182,9 @@ func simulate(frame: InputFrame, delta: float) -> void:
 	if weapon != null:
 		# Aim from the head (not the bobbing camera). Can't shoot mid-sprint;
 		# pressing fire cancels sprint, so there is a short sprint-to-fire delay.
-		var recoil := weapon.tick(delta, frame.fire, frame.reload, head.global_transform, self,
-			_spread_multiplier(), movement_state != MovementState.SPRINTING)
+		weapon.lowered = is_using_item()
+		var recoil := weapon.tick(delta, frame.fire, frame.reload and not is_using_item(), head.global_transform, self,
+			_spread_multiplier(), movement_state != MovementState.SPRINTING and not is_using_item())
 		if recoil != Vector2.ZERO:
 			_apply_look(Vector2(recoil.x, -recoil.y))
 
@@ -190,7 +207,11 @@ func respawn_at(spawn: Transform3D) -> void:
 	_apply_height(stand_height)
 	if weapon != null:
 		weapon.visible = true
-		weapon.restock()  # temporary until ammo lives in the inventory (Increment 6)
+		weapon.lowered = false
+		# Never respawn without ammo; the inventory itself is kept on death for now
+		if inventory != null:
+			inventory.ensure_minimum_ammo(weapon.definition.ammo_type, weapon.definition.starting_reserve)
+		weapon.restock()
 	movement_state = MovementState.IDLE
 	movement_state_changed.emit(movement_state)
 	respawned.emit()
@@ -210,6 +231,118 @@ func fall_damage_for_speed(impact_speed: float) -> float:
 		return 0.0
 	var t := (impact_speed - safe_fall_speed) / maxf(lethal_fall_speed - safe_fall_speed, 0.01)
 	return health.max_health * t
+
+
+# ---------------------------------------------------------------- items
+
+func is_using_item() -> bool:
+	return _using_item != null
+
+
+## 0..1 progress of the current item use (-1 when not using one).
+func get_item_use_progress() -> float:
+	if _using_item == null:
+		return -1.0
+	return 1.0 - _use_left / maxf(_using_item.use_time, 0.001)
+
+
+func get_item_in_use() -> ItemDefinition:
+	return _using_item
+
+
+## Starts using an item from the inventory (validated). Returns true if begun.
+## Called for the quick-heal key and from the inventory screen.
+func request_use_item(item: ItemDefinition) -> bool:
+	var reason := _use_refusal_reason(item)
+	if reason != "":
+		item_use_refused.emit(reason)
+		return false
+	_using_item = item
+	_use_left = item.use_time
+	item_use_started.emit(item, item.use_time)
+	if item.use_time <= 0.0:
+		_finish_item_use()
+	return true
+
+
+func cancel_item_use() -> void:
+	if _using_item == null:
+		return
+	var item := _using_item
+	_using_item = null
+	_use_left = 0.0
+	item_use_cancelled.emit(item)
+
+
+## Drops (part of) an inventory slot on the ground in front of the player.
+## Returns the Pickup created, or null.
+func request_drop_slot(index: int, quantity: int = -1) -> Pickup:
+	if inventory == null or is_dead():
+		return null
+	var taken := inventory.take_from_slot(index, quantity)
+	if taken.is_empty():
+		return null
+	var forward := -global_basis.z
+	forward.y = 0.0
+	var at := global_position + forward.normalized() * 1.0 + Vector3.UP * 0.5
+	var q := PhysicsRayQueryParameters3D.create(at, at + Vector3.DOWN * 3.0, PhysicsLayers.WORLD_SOLID)
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if not hit.is_empty():
+		at = hit["position"]
+	var parent := get_parent() if get_parent() != null else get_tree().current_scene
+	var pickup := Pickup.spawn(parent, taken["item"], taken["qty"], at)
+	item_dropped.emit(taken["item"], taken["qty"])
+	return pickup
+
+
+func _use_refusal_reason(item: ItemDefinition) -> String:
+	if is_dead():
+		return "Can't do that now"
+	if item == null:
+		return "No medkits"
+	if inventory == null or inventory.count_of(item.id) <= 0:
+		return "You don't have that"
+	if is_using_item():
+		return "Already busy"
+	match item.category:
+		ItemDefinition.Category.MEDICAL:
+			if health.current_health >= health.max_health:
+				return "Already at full health"
+		_:
+			return "Can't use that"
+	return ""
+
+
+func _update_item_use(frame: InputFrame, delta: float) -> void:
+	if frame.use_heal:
+		if is_using_item():
+			cancel_item_use()
+		elif inventory != null:
+			request_use_item(inventory.find_best_medical())
+		return
+	if not is_using_item():
+		return
+	var sprinting := frame.sprint and frame.move.y < -0.3
+	if frame.fire or sprinting:
+		cancel_item_use()
+		return
+	_use_left -= delta
+	if _use_left <= 0.0:
+		_finish_item_use()
+
+
+func _finish_item_use() -> void:
+	var item := _using_item
+	_using_item = null
+	_use_left = 0.0
+	# Validate again: the item could have been dropped or health topped up
+	if inventory == null or inventory.count_of(item.id) <= 0:
+		item_use_cancelled.emit(item)
+		return
+	inventory.remove_item(item.id, 1)
+	if item.heal_amount > 0.0:
+		health.heal(item.heal_amount)
+	item_use_finished.emit(item)
 
 
 # ---------------------------------------------------------------- internals
@@ -234,6 +367,7 @@ func _on_landed(impact_speed: float) -> void:
 
 
 func _on_health_died(info: DamageInfo) -> void:
+	cancel_item_use()
 	movement_state = MovementState.DEAD
 	movement_state_changed.emit(movement_state)
 	if weapon != null:
@@ -256,6 +390,8 @@ func _apply_look(look: Vector2) -> void:
 
 
 func _target_speed(frame: InputFrame) -> float:
+	if is_using_item():
+		return (crouch_speed if is_crouching else walk_speed) * use_move_multiplier
 	if is_crouching:
 		return crouch_speed
 	# Sprint only while moving mostly forward

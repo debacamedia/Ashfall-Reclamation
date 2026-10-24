@@ -32,6 +32,10 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC }
 @export_group("Use")
 ## Health restored when used (medical items).
 @export var heal_amount := 0.0
+## Seconds it takes to use one (medkits: 2 s, during which the gun is lowered).
+@export var use_time := 0.0
+## Sound played when the use completes.
+@export var use_sound: AudioStream
 ## For ammo items: the weapon ammo type this refills (matches WeaponDefinition.ammo_type).
 @export var ammo_type: StringName = &""
 

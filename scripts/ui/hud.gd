@@ -30,7 +30,10 @@ extends CanvasLayer
 @onready var _prompt_reason: Label = %PromptReason
 @onready var _hold_bar: ProgressBar = %HoldBar
 @onready var _notices: VBoxContainer = %Notices
-@onready var _resources_label: Label = %ResourcesLabel
+@onready var _quick_slot: Label = %QuickSlotLabel
+@onready var _use_label: Label = %UseLabel
+@onready var _use_bar: ProgressBar = %UseBar
+@onready var inventory_screen: InventoryScreen = %InventoryScreen
 @onready var _ui_sound: AudioStreamPlayer = %UISound
 
 const SOUND_HIT := preload("res://assets/audio/ui_hit.wav")
@@ -40,7 +43,8 @@ const SOUND_DENIED := preload("res://assets/audio/ui_denied.wav")
 var _weapon: HitscanWeapon
 var _health: HealthComponent
 var _interactor: PlayerInteractor
-var _resources: PlayerResources
+var _inventory: PlayerInventory
+var _player_signals_bound: PlayerController = null
 var _flash := 0.0
 var _pulse_time := 0.0
 var _trail_fraction := 1.0
@@ -63,9 +67,14 @@ func _process(delta: float) -> void:
 		_damage_indicator.player = player
 	if player.interactor != _interactor:
 		_bind_interactor(player.interactor)
-	if player.resources != _resources:
-		_bind_resources(player.resources)
+	if player.inventory != _inventory:
+		_bind_inventory(player.inventory)
+	if _player_signals_bound != player:
+		_player_signals_bound = player
+		player.item_use_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
+		inventory_screen.player = player
 	_update_prompt()
+	_update_item_use()
 	_update_notices(delta)
 
 	if _weapon != null:
@@ -210,23 +219,36 @@ func _on_interaction_refused(_target: Interactable, _reason: String) -> void:
 	_play_ui(SOUND_DENIED)
 
 
-# ---------------------------------------------------------------- resources
+# ---------------------------------------------------------------- inventory
 
-func _bind_resources(resources: PlayerResources) -> void:
-	if _resources != null:
-		_resources.item_received.disconnect(_on_item_received)
-		_resources.counts_changed.disconnect(_refresh_resources)
-	_resources = resources
-	if resources != null:
-		resources.item_received.connect(_on_item_received)
-		resources.counts_changed.connect(_refresh_resources)
-	_refresh_resources()
+func _bind_inventory(inventory: PlayerInventory) -> void:
+	if _inventory != null:
+		_inventory.item_received.disconnect(_on_item_received)
+		_inventory.contents_changed.disconnect(_on_inventory_changed)
+	_inventory = inventory
+	if inventory != null:
+		inventory.item_received.connect(_on_item_received)
+		inventory.contents_changed.connect(_on_inventory_changed)
+	_on_inventory_changed(PackedInt32Array())
+
+
+func _on_inventory_changed(_slots: PackedInt32Array) -> void:
+	var medkits := _inventory.count_medical() if _inventory != null else 0
+	_quick_slot.text = "[H]  MEDKIT ×%d" % medkits
+	_quick_slot.modulate = Color.WHITE if medkits > 0 else Color(1, 1, 1, 0.35)
+
+
+func _update_item_use() -> void:
+	var progress := player.get_item_use_progress()
+	_use_bar.visible = progress >= 0.0
+	_use_label.visible = progress >= 0.0
+	if progress >= 0.0:
+		_use_bar.value = progress * 100.0
+		_use_label.text = "Using %s…  (fire or sprint to cancel)" % player.get_item_in_use().display_name
 
 
 func _on_item_received(item: ItemDefinition, quantity: int) -> void:
 	var text := "+%d %s" % [quantity, item.display_name]
-	if item.category == ItemDefinition.Category.MEDICAL:
-		text = "+%d health  (%s)" % [roundi(item.heal_amount), item.display_name]
 	var notice := Label.new()
 	notice.text = text
 	notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -247,19 +269,6 @@ func _update_notices(delta: float) -> void:
 		notice.modulate.a = clampf(left / 0.6, 0.0, 1.0)
 		if left <= 0.0:
 			notice.queue_free()
-
-
-func _refresh_resources() -> void:
-	if _resources == null or _resources.counts.is_empty():
-		_resources_label.text = ""
-		return
-	var lines: PackedStringArray = []
-	var ids := _resources.counts.keys()
-	ids.sort()
-	for id in ids:
-		var def: ItemDefinition = _resources.definitions[id]
-		lines.append("%s  %d" % [def.display_name.to_upper(), _resources.counts[id]])
-	_resources_label.text = "\n".join(lines)
 
 
 func _play_ui(stream: AudioStream) -> void:

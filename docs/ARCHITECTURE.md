@@ -44,8 +44,8 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 | Enemy NPC | `NavigationAgent3D` pathing on a baked `NavigationRegion3D`, sight + hearing, chase and melee, `EnemySpawner` | `CharacterBody3D` scene | 4 ✅ |
 | Interaction | Ray from the camera, `Interactable` (Area3D), prompt UI, hold-to-interact | Area3D + RayCast3D | 5 ✅ |
 | Items and resources | `ItemDefinition` Resource, world pickups (scrap, cloth, fuel...) | Resource + scene | 5 ✅ |
-| **InventoryManager** | `InventoryComponent` (slots, stacks, weight cap), transfers, signals | Node component + Resources | 6 |
-| Inventory UI | Grid UI bound to an `InventoryComponent` | `Control` scene | 6 |
+| **InventoryManager** | `InventoryComponent` (slots, stacks, weight cap), transfers, signals | Node component + Resources | 6 ✅ |
+| Inventory UI | Grid UI bound to an `InventoryComponent` | `Control` scene | 6 ✅ |
 | Salvage containers | Interactable containers with their own inventory and loot tables | Scene + `LootTable` Resource | 7 |
 | **SaveManager** | Save/load player, inventories and container state to `user://saves/`, versioned JSON | Autoload | 8 |
 
@@ -158,8 +158,16 @@ res://
 | 3 ✅ | Player health, death and respawn | Take damage, die and respawn at the outpost |
 | 4 ✅ | Enemy NPC with navigation and melee attack | A raider paths around the outpost and attacks |
 | 5 ✅ | Interaction system + collectible resources (+ sound pass) | Look at a pickup, press E, collect scrap |
-| 6 | Inventory (data + UI) | Open the inventory, see stacks and weight |
+| 6 ✅ | Inventory (data + UI) + stored medkits / quick-heal | Open the inventory, see stacks and weight; heal with H |
 | 7 | Salvage containers | Search crates and transfer loot |
 | 8 | SaveManager | Save and load the player, inventory and opened containers |
 
 Each increment adds a guide in `docs/increments/` and tests in `tests/`.
+
+### Milestone 2 (early, planned)
+| Increment | Playable result |
+|---|---|
+| Weapon slots + new guns | Carry a pistol, shotgun and scoped rifle in numbered slots (1–3, mouse wheel); each draws its own ammo item from the inventory |
+| Crafting | Use a workbench at Outpost 17 to turn scrap, cloth, electronics and fuel into ammo, medkits and weapon parts via `RecipeDefinition` Resources |
+
+Then co-op networking (`NetworkManager`), settlements, building and the economy.

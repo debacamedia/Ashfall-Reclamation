@@ -30,8 +30,31 @@ const MAX_IMPACT_EFFECTS := 64
 @export var spawn_impact_effects := true
 
 var ammo_in_magazine := 0
-var reserve_ammo := 0
+## Spare rounds. With an ammo source (the player's inventory) this reads and
+## writes the inventory; without one (NPCs, tests) it's a plain counter.
+var reserve_ammo: int:
+	get:
+		if _ammo_source != null:
+			return _ammo_source.count_ammo(definition.ammo_type)
+		return _reserve
+	set(value):
+		value = maxi(value, 0)
+		if _ammo_source != null:
+			var diff := value - _ammo_source.count_ammo(definition.ammo_type)
+			if diff < 0:
+				_ammo_source.take_ammo(definition.ammo_type, -diff)
+			elif diff > 0:
+				var item := ItemDatabase.find_ammo_item(definition.ammo_type)
+				if item != null:
+					_ammo_source.add_item(item, diff)
+		else:
+			_reserve = value
 var is_reloading := false
+## Visual only: lowers the weapon (e.g. while using a medkit).
+var lowered := false
+var _reserve := 0
+var _ammo_source: InventoryComponent = null
+var _lower := 0.0
 
 var _cooldown := 0.0
 var _reload_left := 0.0
@@ -58,7 +81,7 @@ var _model_rest := Vector3.ZERO
 func _ready() -> void:
 	assert(definition != null, "HitscanWeapon needs a WeaponDefinition")
 	ammo_in_magazine = definition.magazine_size
-	reserve_ammo = definition.starting_reserve
+	_reserve = definition.starting_reserve
 	_model_rest = _model.position
 	_muzzle_flash.visible = false
 	if spawn_impact_effects:
@@ -132,7 +155,23 @@ func cancel_reload() -> void:
 		_reload_sound.stop()
 
 
-## Adds spare rounds (from ammo pickups), up to max_reserve. Returns how many fit.
+## Takes spare ammo from an inventory instead of the internal counter. Reloads
+## then remove rounds from it, and inventory changes update the HUD.
+func set_ammo_source(source: InventoryComponent) -> void:
+	if _ammo_source != null and _ammo_source.contents_changed.is_connected(_on_source_changed):
+		_ammo_source.contents_changed.disconnect(_on_source_changed)
+	_ammo_source = source
+	if source != null:
+		source.contents_changed.connect(_on_source_changed)
+	ammo_changed.emit(ammo_in_magazine, reserve_ammo)
+
+
+func _on_source_changed(_slots: PackedInt32Array) -> void:
+	ammo_changed.emit(ammo_in_magazine, reserve_ammo)
+
+
+## Adds spare rounds to the internal counter (no ammo source), up to
+## max_reserve. Returns how many fit.
 func add_reserve_ammo(amount: int) -> int:
 	var added := clampi(amount, 0, definition.max_reserve - reserve_ammo)
 	if added > 0:
@@ -146,7 +185,8 @@ func add_reserve_ammo(amount: int) -> int:
 func restock() -> void:
 	cancel_reload()
 	ammo_in_magazine = definition.magazine_size
-	reserve_ammo = definition.starting_reserve
+	if _ammo_source == null:
+		_reserve = definition.starting_reserve
 	_bloom = 0.0
 	ammo_changed.emit(ammo_in_magazine, reserve_ammo)
 
@@ -248,9 +288,14 @@ func _zone_multiplier(collider: Node, shape_index: int) -> float:
 
 
 func _finish_reload() -> void:
-	var taken := mini(definition.magazine_size - ammo_in_magazine, reserve_ammo)
+	var needed := definition.magazine_size - ammo_in_magazine
+	var taken := 0
+	if _ammo_source != null:
+		taken = _ammo_source.take_ammo(definition.ammo_type, needed)
+	else:
+		taken = mini(needed, _reserve)
+		_reserve -= taken
 	ammo_in_magazine += taken
-	reserve_ammo -= taken
 	is_reloading = false
 	_reload_left = 0.0
 	reload_finished.emit()
@@ -278,6 +323,9 @@ func _process(delta: float) -> void:
 	_kick = move_toward(_kick, 0.0, delta * 9.0)
 	var offset := Vector3(0.0, 0.0, _kick * 0.045)
 	var tilt := Vector3(_kick * 0.05, 0.0, 0.0)
+	_lower = move_toward(_lower, 1.0 if lowered else 0.0, delta * 4.0)
+	offset += Vector3(0.05, -0.22, 0.05) * _lower
+	tilt += Vector3(-0.6, 0.35, 0.2) * _lower
 	if is_reloading:
 		var dip := sin(get_reload_progress() * PI)
 		offset.y -= dip * 0.08

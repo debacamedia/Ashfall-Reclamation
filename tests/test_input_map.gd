@@ -5,7 +5,7 @@ extends "res://tests/test_case.gd"
 const REQUIRED := {
 	"move_forward": KEY_W, "move_back": KEY_S, "move_left": KEY_A, "move_right": KEY_D,
 	"jump": KEY_SPACE, "sprint": KEY_SHIFT, "crouch": KEY_C, "pause": KEY_ESCAPE,
-	"toggle_debug": KEY_F3, "reload": KEY_R,
+	"toggle_debug": KEY_F3, "reload": KEY_R, "interact": KEY_E, "inventory": KEY_TAB, "use_medkit": KEY_H,
 }
 
 

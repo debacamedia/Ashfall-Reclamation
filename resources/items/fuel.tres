@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="AudioStream" path="res://assets/audio/pickup_fuel.wav" id="1_5bng2"]
+[ext_resource type="Texture2D" path="res://assets/icons/fuel.png" id="1_5vgu2"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_5vgu2"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/fuel_can.tscn" id="3_8mqol"]
 
@@ -9,6 +10,7 @@ script = ExtResource("2_5vgu2")
 id = &"fuel"
 display_name = "Fuel Can"
 description = "Ten litres of diesel. Generators and vehicles run on it."
+icon = ExtResource("1_5vgu2")
 max_stack = 10
 weight = 9.0
 base_value = 12
