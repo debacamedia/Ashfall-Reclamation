@@ -1,0 +1,132 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/target_dummy.gd" id="1_lukh8"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="2_purx5"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="3_o6d6b"]
+[ext_resource type="Material" path="res://assets/materials/target_plate.tres" id="4_isg6f"]
+[ext_resource type="Material" path="res://assets/materials/target_marking.tres" id="5_y4dfl"]
+[ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="6_2cewp"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_xbdpj"]
+size = Vector3(0.8, 0.06, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_s5epw"]
+size = Vector3(0.09, 0.9, 0.09)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3vqc2"]
+size = Vector3(0.55, 0.05, 0.05)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_m4k0o"]
+size = Vector3(0.6, 0.9, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xsatf"]
+size = Vector3(0.5, 0.75, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gtntg"]
+size = Vector3(0.36, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_27duk"]
+size = Vector3(0.1, 0.08, 0.05)
+
+[sub_resource type="SphereMesh" id="SphereMesh_yd7fu"]
+radius = 0.13
+height = 0.26
+
+[sub_resource type="BoxMesh" id="BoxMesh_5r4h5"]
+size = Vector3(0.16, 0.2, 0.01)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kwcuy"]
+size = Vector3(0.08, 0.08, 0.01)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gcvuq"]
+size = Vector3(0.5, 0.86, 0.06)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wi45c"]
+radius = 0.13
+
+[node name="TargetDummy" type="Node3D" unique_id=710151399]
+script = ExtResource("1_lukh8")
+
+[node name="Stand" type="StaticBody3D" parent="." unique_id=839202981]
+collision_layer = 2
+collision_mask = 0
+
+[node name="BasePlate" type="MeshInstance3D" parent="Stand" unique_id=1573924329]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+material_override = ExtResource("2_purx5")
+mesh = SubResource("BoxMesh_xbdpj")
+
+[node name="Post" type="MeshInstance3D" parent="Stand" unique_id=113494971]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+material_override = ExtResource("3_o6d6b")
+mesh = SubResource("BoxMesh_s5epw")
+
+[node name="HingeBar" type="MeshInstance3D" parent="Stand" unique_id=1895135147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+material_override = ExtResource("2_purx5")
+mesh = SubResource("BoxMesh_3vqc2")
+
+[node name="StandShape" type="CollisionShape3D" parent="Stand" unique_id=1790219221]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("BoxShape3D_m4k0o")
+metadata/damage_multiplier = 0.0
+
+[node name="Hinge" type="Node3D" parent="." unique_id=1427109850]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+
+[node name="TargetBody" type="StaticBody3D" parent="Hinge" unique_id=1086611945]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Torso" type="MeshInstance3D" parent="Hinge/TargetBody" unique_id=1376413652]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
+material_override = ExtResource("4_isg6f")
+mesh = SubResource("BoxMesh_xsatf")
+
+[node name="Shoulders" type="MeshInstance3D" parent="Hinge/TargetBody" unique_id=794977785]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.79, 0)
+material_override = ExtResource("4_isg6f")
+mesh = SubResource("BoxMesh_gtntg")
+
+[node name="Neck" type="MeshInstance3D" parent="Hinge/TargetBody" unique_id=1432823461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+material_override = ExtResource("4_isg6f")
+mesh = SubResource("BoxMesh_27duk")
+
+[node name="Head" type="MeshInstance3D" parent="Hinge/TargetBody" unique_id=1631999166]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, 0)
+material_override = ExtResource("4_isg6f")
+mesh = SubResource("SphereMesh_yd7fu")
+
+[node name="ScoringZone" type="MeshInstance3D" parent="Hinge/TargetBody" unique_id=1858798151]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -0.03)
+material_override = ExtResource("5_y4dfl")
+mesh = SubResource("BoxMesh_5r4h5")
+
+[node name="HeadMark" type="MeshInstance3D" parent="Hinge/TargetBody" unique_id=665457476]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, -0.13)
+material_override = ExtResource("5_y4dfl")
+mesh = SubResource("BoxMesh_kwcuy")
+
+[node name="TorsoShape" type="CollisionShape3D" parent="Hinge/TargetBody" unique_id=2080511581]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
+shape = SubResource("BoxShape3D_gcvuq")
+metadata/damage_multiplier = 1.0
+
+[node name="HeadShape" type="CollisionShape3D" parent="Hinge/TargetBody" unique_id=1156900820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, 0)
+shape = SubResource("SphereShape3D_wi45c")
+metadata/damage_multiplier = 2.0
+
+[node name="HealthComponent" type="Node" parent="." unique_id=823515819]
+unique_name_in_owner = true
+script = ExtResource("6_2cewp")
+
+[node name="DamageLabel" type="Label3D" parent="." unique_id=1282654023]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
+pixel_size = 0.004
+billboard = 1
+no_depth_test = true
+font_size = 64

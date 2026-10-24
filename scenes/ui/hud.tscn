@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_0mwgc"]
+[ext_resource type="Script" path="res://scripts/ui/crosshair.gd" id="2_hqnrr"]
 
 [node name="HUD" type="CanvasLayer" unique_id=1842689081]
 script = ExtResource("1_0mwgc")
@@ -10,20 +11,17 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
-[node name="Crosshair" type="ColorRect" parent="Root" unique_id=1015612464]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -2.0
-offset_top = -2.0
-offset_right = 2.0
-offset_bottom = 2.0
+[node name="Crosshair" type="Control" parent="Root" unique_id=681361755]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
 mouse_filter = 2
-color = Color(1, 1, 1, 0.85)
+script = ExtResource("2_hqnrr")
 
 [node name="DebugLabel" type="Label" parent="Root" unique_id=142744441]
 unique_name_in_owner = true
@@ -36,3 +34,37 @@ offset_bottom = 12.0
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
+
+[node name="WeaponLabel" type="Label" parent="Root" unique_id=410414671]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -360.0
+offset_top = -86.0
+offset_right = -28.0
+offset_bottom = -60.0
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 5
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="AmmoLabel" type="Label" parent="Root" unique_id=1952649691]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -360.0
+offset_top = -60.0
+offset_right = -28.0
+offset_bottom = -16.0
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 5
+horizontal_alignment = 2
+vertical_alignment = 2

@@ -75,3 +75,28 @@ func test_culvert_needs_crouch() -> void:
 	check(_player.global_position.z > -3.2, "standing player is stopped at the culvert mouth (z=%.1f)" % _player.global_position.z)
 	await _walk(Vector2(0, -1), 300, true)
 	check(_player.global_position.z < -9.5, "crouching player gets through the culvert (z=%.1f)" % _player.global_position.z)
+
+
+func test_firing_range_targets_take_damage() -> void:
+	await _load_level()
+	var dummy := _level.get_node("FiringRange/Target10mA") as TargetDummy
+	check(dummy != null, "10 m target exists")
+	# Stand at the firing line, aim at the torso of the 10 m target
+	await _teleport(Vector3(13.5, 0.05, 34), -90)
+	var torso := dummy.global_position + Vector3(0, 1.3, 0)
+	var eye := _player.head.global_position
+	var flat := Vector2(torso.x - eye.x, torso.z - eye.z).length()
+	_player.head.rotation.x = atan2(torso.y - eye.y, flat)
+	var f := InputFrame.new()
+	f.fire = true
+	await get_tree().physics_frame
+	_player.simulate(f, DT)
+	f.fire = false
+	await get_tree().physics_frame
+	_player.simulate(f, DT)
+	check(dummy.health.current_health < dummy.health.max_health, "shot from the firing line damaged the 10 m target")
+	var hud := _level.get_node("HUD") as HUD
+	var ammo_label := hud.get_node("%AmmoLabel") as Label
+	var expected := "%d / %d" % [_player.weapon.ammo_in_magazine, _player.weapon.reserve_ammo]
+	check(_player.weapon.ammo_in_magazine == 29, "one round fired (mag=%d)" % _player.weapon.ammo_in_magazine)
+	check(ammo_label.text == expected, "HUD ammo shows '%s' (got '%s')" % [expected, ammo_label.text])

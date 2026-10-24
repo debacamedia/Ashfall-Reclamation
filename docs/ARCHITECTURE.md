@@ -36,10 +36,10 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 
 | System | Milestone 1 scope | Type | Increment |
 |---|---|---|---|
-| **PlayerController** | Look, walk, sprint, crouch, jump, head-clearance check, head bob, signals | `CharacterBody3D` scene + script | **1 (this one)** |
-| PlayerInput | Keyboard and mouse to `InputFrame`, mouse capture, crouch toggle option | Node in player scene | **1** |
-| Combat (weapon) | One hitscan rifle via physics ray queries, ammo, reload | Node + `WeaponDefinition` Resource | 2 |
-| Health | `HealthComponent` node, damage and death signals (player and NPCs) | Node component | 2 |
+| **PlayerController** | Look, walk, sprint, crouch, jump, head-clearance check, head bob, signals | `CharacterBody3D` scene + script | 1 ✅ |
+| PlayerInput | Keyboard and mouse to `InputFrame`, mouse capture, crouch toggle option | Node in player scene | 1 ✅ |
+| Combat (weapon) | One hitscan rifle via physics ray queries, ammo, reload | Node + `WeaponDefinition` Resource | 2 ✅ |
+| Health | `HealthComponent` node, damage and death signals (player and NPCs) | Node component | 2 ✅ |
 | Death and respawn | Player death, respawn at Outpost 17 spawn point | PlayerController + level | 3 |
 | Enemy NPC | `NavigationAgent3D` pathing on a baked `NavigationRegion3D`, chase and melee | `CharacterBody3D` scene | 4 |
 | Interaction | Ray from the camera, `Interactable` component, prompt UI | Node component + RayCast3D | 5 |
@@ -146,8 +146,8 @@ res://
 
 | # | Increment | Playable result |
 |---|---|---|
-| **1** | **Project structure, player controller, Outpost 17** | Walk, sprint, crouch and jump around a 3D military outpost |
-| 2 | Rifle + HealthComponent + target dummies | Shoot targets that take damage |
+| 1 ✅ | Project structure, player controller, Outpost 17 | Walk, sprint, crouch and jump around a 3D military outpost |
+| 2 ✅ | Rifle + HealthComponent + target dummies | Shoot targets that take damage |
 | 3 | Player health, death and respawn | Take damage, die and respawn at the outpost |
 | 4 | Enemy NPC with navigation and melee attack | A raider paths around the outpost and attacks |
 | 5 | Interaction system + collectible resources | Look at a pickup, press E, collect scrap |

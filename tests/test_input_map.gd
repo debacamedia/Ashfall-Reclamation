@@ -5,7 +5,7 @@ extends "res://tests/test_case.gd"
 const REQUIRED := {
 	"move_forward": KEY_W, "move_back": KEY_S, "move_left": KEY_A, "move_right": KEY_D,
 	"jump": KEY_SPACE, "sprint": KEY_SHIFT, "crouch": KEY_C, "pause": KEY_ESCAPE,
-	"toggle_debug": KEY_F3,
+	"toggle_debug": KEY_F3, "reload": KEY_R,
 }
 
 
@@ -27,3 +27,11 @@ func test_ctrl_also_crouches() -> void:
 	press.physical_keycode = KEY_CTRL
 	press.pressed = true
 	check(InputMap.event_is_action(press, "crouch"), "Ctrl should also crouch")
+
+
+func test_left_mouse_fires() -> void:
+	check(InputMap.has_action("fire"), "missing input action: fire")
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	check(InputMap.event_is_action(click, "fire"), "left mouse button should trigger 'fire'")

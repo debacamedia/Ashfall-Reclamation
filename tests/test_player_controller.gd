@@ -23,8 +23,9 @@ func _drive(player: PlayerController, frame: InputFrame, ticks: int) -> void:
 		player.simulate(frame, DT)
 
 
-func _frame(move := Vector2.ZERO, sprint := false, crouch := false, jump := false) -> InputFrame:
+func _frame(move := Vector2.ZERO, sprint := false, crouch := false, jump := false, fire := false) -> InputFrame:
 	var f := InputFrame.new()
+	f.fire = fire
 	f.move = move
 	f.sprint = sprint
 	f.crouch = crouch
@@ -181,3 +182,42 @@ func test_input_frame_from_untrusted_data_is_clamped() -> void:
 	check(f.jump == false, "non-boolean jump must be rejected")
 	var round_trip := InputFrame.from_dict(_frame(Vector2(0.5, -0.5), true, true, true).to_dict())
 	check(round_trip.sprint and round_trip.crouch and round_trip.jump, "round trip keeps flags")
+
+
+# ---------------------------------------------------------------- weapon
+
+func test_player_has_rifle() -> void:
+	var p := _spawn()
+	await wait_physics(2)
+	check(p.weapon != null, "player.weapon is the equipped rifle")
+	check(p.weapon.definition.id == &"service_rifle", "service rifle definition loaded")
+
+
+func test_fire_uses_ammo_and_recoil_raises_aim() -> void:
+	var p := _spawn()
+	await _drive(p, _frame(), 5)
+	var pitch_before := p.head.rotation.x
+	await _drive(p, _frame(Vector2.ZERO, false, false, false, true), 30)
+	check(p.weapon.ammo_in_magazine < 30, "firing used ammo")
+	check(p.head.rotation.x > pitch_before + deg_to_rad(1.0), "recoil pitched the view up")
+
+
+func test_cannot_fire_mid_sprint_but_can_after_slowing() -> void:
+	var p := _spawn()
+	await _drive(p, _frame(), 5)
+	await _drive(p, _frame(Vector2(0, -1), true), 60)
+	check(p.movement_state == PlayerController.MovementState.SPRINTING, "sprinting")
+	await _drive(p, _frame(Vector2(0, -1), true, false, false, true), 1)
+	check(p.weapon.ammo_in_magazine == 30, "no shot on the first tick of firing from a sprint")
+	await _drive(p, _frame(Vector2(0, -1), true, false, false, true), 40)
+	check(p.weapon.ammo_in_magazine < 30, "firing cancels sprint and then shoots")
+	check(p.movement_state != PlayerController.MovementState.SPRINTING, "no longer sprinting while firing")
+
+
+func test_crouching_tightens_spread() -> void:
+	var p := _spawn()
+	await _drive(p, _frame(Vector2.ZERO, false, true), 40)
+	var crouched := p.weapon.get_current_spread_degrees()
+	await _drive(p, _frame(Vector2(0, -1)), 60)
+	var walking := p.weapon.get_current_spread_degrees()
+	check(crouched < walking, "crouched spread %.2f° < walking spread %.2f°" % [crouched, walking])

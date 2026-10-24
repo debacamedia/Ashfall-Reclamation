@@ -1,6 +1,7 @@
 class_name PlayerController
 extends CharacterBody3D
-## First-person character: mouse look, walk, sprint, crouch and jump.
+## First-person character: mouse look, walk, sprint, crouch, jump and an
+## equipped HitscanWeapon (fire, reload, recoil).
 ##
 ## Movement is driven only by InputFrames passed to simulate(). The local
 ## player gathers its own frames from PlayerInput; remote players (co-op,
@@ -43,6 +44,13 @@ enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE }
 ## Metres travelled per full left-right step cycle.
 @export var head_bob_stride := 1.5
 
+@export_group("Weapon handling")
+## Spread multipliers by movement state (1.0 = the weapon's own spread).
+@export var spread_idle := 1.0
+@export var spread_walking := 1.8
+@export var spread_crouching := 0.6
+@export var spread_airborne := 3.0
+
 @export_group("Control")
 ## True for the player at this keyboard. False for remote players and tests,
 ## which drive the character by calling simulate().
@@ -64,6 +72,8 @@ var _spawn_transform := Transform3D.IDENTITY
 @onready var camera: Camera3D = %Camera
 @onready var head_clearance: ShapeCast3D = %HeadClearance
 @onready var player_input: PlayerInput = %PlayerInput
+## The equipped weapon, if any (scene node %Weapon under the camera).
+@onready var weapon: HitscanWeapon = get_node_or_null("%Weapon")
 
 
 func _ready() -> void:
@@ -122,6 +132,14 @@ func simulate(frame: InputFrame, delta: float) -> void:
 	_update_movement_state()
 	_update_head_bob(delta)
 
+	if weapon != null:
+		# Aim from the head (not the bobbing camera). Can't shoot mid-sprint;
+		# pressing fire cancels sprint, so there is a short sprint-to-fire delay.
+		var recoil := weapon.tick(delta, frame.fire, frame.reload, head.global_transform, self,
+			_spread_multiplier(), movement_state != MovementState.SPRINTING)
+		if recoil != Vector2.ZERO:
+			_apply_look(Vector2(recoil.x, -recoil.y))
+
 
 ## Returns to the spawn point with no momentum.
 func respawn() -> void:
@@ -154,9 +172,20 @@ func _target_speed(frame: InputFrame) -> float:
 	if is_crouching:
 		return crouch_speed
 	# Sprint only while moving mostly forward
-	if frame.sprint and frame.move.y < -0.3:
+	if frame.sprint and frame.move.y < -0.3 and not frame.fire:
 		return sprint_speed
 	return walk_speed
+
+
+func _spread_multiplier() -> float:
+	match movement_state:
+		MovementState.CROUCHING:
+			return spread_crouching
+		MovementState.WALKING, MovementState.SPRINTING:
+			return spread_walking
+		MovementState.AIRBORNE:
+			return spread_airborne
+	return spread_idle
 
 
 func _update_stance(wants_crouch: bool, delta: float) -> void:

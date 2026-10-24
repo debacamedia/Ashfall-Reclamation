@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_dovo2"]
 [ext_resource type="Script" path="res://scripts/player/player_input.gd" id="2_gmlin"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/service_rifle.tscn" id="2_p47bc"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lvxji"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gmlin"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
@@ -21,7 +22,7 @@ script = ExtResource("1_dovo2")
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_lvxji")
+shape = SubResource("CapsuleShape3D_gmlin")
 
 [node name="Head" type="Node3D" parent="." unique_id=801003417]
 unique_name_in_owner = true
@@ -30,6 +31,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.68, 0)
 [node name="Camera" type="Camera3D" parent="Head" unique_id=652389468]
 unique_name_in_owner = true
 far = 1500.0
+
+[node name="WeaponMount" type="Node3D" parent="Head/Camera" unique_id=403093288]
+transform = Transform3D(0.71956146, 0, -0.025127638, 0, 0.72, 0, 0.025127638, 0, 0.71956146, 0.13, -0.135, -0.4)
+
+[node name="Weapon" parent="Head/Camera/WeaponMount" unique_id=1313030349 instance=ExtResource("2_p47bc")]
+unique_name_in_owner = true
 
 [node name="HeadClearance" type="ShapeCast3D" parent="." unique_id=545696862]
 unique_name_in_owner = true

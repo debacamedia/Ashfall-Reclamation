@@ -13,6 +13,8 @@ signal mouse_capture_changed(captured: bool)
 
 var _look_accumulator := Vector2.ZERO
 var _crouch_latched := false
+## After a click recaptures the mouse, ignore that click as a trigger pull.
+var _fire_blocked_until_release := false
 
 
 func _ready() -> void:
@@ -30,6 +32,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif event is InputEventMouseButton and event.is_pressed() and not is_mouse_captured():
 		capture_mouse()
+		_fire_blocked_until_release = true
 		get_viewport().set_input_as_handled()
 	elif crouch_toggle and event.is_action_pressed("crouch") and is_mouse_captured():
 		_crouch_latched = not _crouch_latched
@@ -49,6 +52,13 @@ func gather() -> InputFrame:
 	frame.sprint = Input.is_action_pressed("sprint")
 	if not crouch_toggle:
 		frame.crouch = Input.is_action_pressed("crouch")
+	var fire_held := Input.is_action_pressed("fire")
+	if _fire_blocked_until_release:
+		if not fire_held:
+			_fire_blocked_until_release = false
+		fire_held = false
+	frame.fire = fire_held
+	frame.reload = Input.is_action_just_pressed("reload")
 	_look_accumulator = Vector2.ZERO
 	return frame
 

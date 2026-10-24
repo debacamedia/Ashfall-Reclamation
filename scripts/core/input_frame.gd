@@ -12,11 +12,13 @@ var look := Vector2.ZERO   ## Radians this tick: x = yaw, y = pitch (down +).
 var jump := false          ## True only on the tick jump was pressed.
 var sprint := false
 var crouch := false
+var fire := false           ## Trigger held this tick.
+var reload := false         ## True only on the tick reload was pressed.
 
 
 ## Compact form for sending to the host later.
 func to_dict() -> Dictionary:
-	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch}
+	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload}
 
 
 ## Builds a frame from untrusted data (e.g. a network peer). Values are
@@ -30,6 +32,8 @@ static func from_dict(data: Dictionary) -> InputFrame:
 	frame.jump = _strict_bool(data.get("j", false))
 	frame.sprint = _strict_bool(data.get("s", false))
 	frame.crouch = _strict_bool(data.get("c", false))
+	frame.fire = _strict_bool(data.get("f", false))
+	frame.reload = _strict_bool(data.get("r", false))
 	return frame
 
 

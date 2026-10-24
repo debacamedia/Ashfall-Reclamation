@@ -1,0 +1,180 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/hitscan_weapon.gd" id="1_v1wk2"]
+[ext_resource type="Resource" path="res://resources/items/weapons/service_rifle.tres" id="2_ncuwo"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_i7nsr"]
+[ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="4_s6jbf"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_gndac"]
+size = Vector3(0.05, 0.07, 0.28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6pja3"]
+size = Vector3(0.055, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_45602"]
+size = Vector3(0.016, 0.016, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_w6m5a"]
+size = Vector3(0.026, 0.026, 0.045)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pq5so"]
+size = Vector3(0.035, 0.12, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_k1wxs"]
+size = Vector3(0.032, 0.085, 0.045)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v0com"]
+size = Vector3(0.04, 0.07, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1kai7"]
+size = Vector3(0.012, 0.01, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ortpp"]
+size = Vector3(0.036, 0.04, 0.09)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ke06b"]
+albedo_color = Color(0.2, 0.35, 0.3, 1)
+metallic = 0.3
+roughness = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_q6xh2"]
+size = Vector3(0.026, 0.026, 0.004)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tafql"]
+size = Vector3(0.02, 0.03, 0.015)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ecs6q"]
+size = Vector3(0.03, 0.012, 0.03)
+
+[sub_resource type="Gradient" id="Gradient_8x7y0"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6nsml"]
+gradient = SubResource("Gradient_8x7y0")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fauhy"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.75, 0.4, 1)
+albedo_texture = SubResource("GradientTexture2D_6nsml")
+
+[sub_resource type="QuadMesh" id="QuadMesh_uymuk"]
+material = SubResource("StandardMaterial3D_fauhy")
+size = Vector2(0.09, 0.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_tnr1d"]
+material = SubResource("StandardMaterial3D_fauhy")
+size = Vector2(0.09, 0.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_d3byv"]
+material = SubResource("StandardMaterial3D_fauhy")
+size = Vector2(0.11, 0.11)
+
+[node name="ServiceRifle" type="Node3D" unique_id=1313030349]
+script = ExtResource("1_v1wk2")
+definition = ExtResource("2_ncuwo")
+
+[node name="Model" type="Node3D" parent="." unique_id=1942135348]
+unique_name_in_owner = true
+
+[node name="Receiver" type="MeshInstance3D" parent="Model" unique_id=1444380318]
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_gndac")
+
+[node name="Handguard" type="MeshInstance3D" parent="Model" unique_id=549024360]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.003, -0.23)
+material_override = ExtResource("4_s6jbf")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6pja3")
+
+[node name="Barrel" type="MeshInstance3D" parent="Model" unique_id=244474444]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.014, -0.4)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_45602")
+
+[node name="MuzzleDevice" type="MeshInstance3D" parent="Model" unique_id=322244797]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.014, -0.49)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_w6m5a")
+
+[node name="Magazine" type="MeshInstance3D" parent="Model" unique_id=372742242]
+transform = Transform3D(1, 0, 0, 0, 0.9781476, -0.2079117, 0, 0.2079117, 0.9781476, 0, -0.085, -0.05)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_pq5so")
+
+[node name="Grip" type="MeshInstance3D" parent="Model" unique_id=546697113]
+transform = Transform3D(1, 0, 0, 0, 0.95105654, 0.309017, 0, -0.309017, 0.95105654, 0, -0.07, 0.08)
+material_override = ExtResource("4_s6jbf")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_k1wxs")
+
+[node name="Stock" type="MeshInstance3D" parent="Model" unique_id=845426224]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0.2)
+material_override = ExtResource("4_s6jbf")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_v0com")
+
+[node name="TopRail" type="MeshInstance3D" parent="Model" unique_id=2062169771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042, -0.04)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_1kai7")
+
+[node name="Optic" type="MeshInstance3D" parent="Model" unique_id=1034767613]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.068, -0.01)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ortpp")
+
+[node name="OpticLens" type="MeshInstance3D" parent="Model" unique_id=1199417013]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.068, -0.057)
+material_override = SubResource("StandardMaterial3D_ke06b")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_q6xh2")
+
+[node name="FrontPost" type="MeshInstance3D" parent="Model" unique_id=1817205410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -0.31)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_tafql")
+
+[node name="ChargingHandle" type="MeshInstance3D" parent="Model" unique_id=1947823146]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.038, 0.12)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ecs6q")
+
+[node name="Muzzle" type="Marker3D" parent="Model" unique_id=1846146746]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.014, -0.52)
+
+[node name="MuzzleFlash" type="Node3D" parent="Model/Muzzle" unique_id=213973775]
+unique_name_in_owner = true
+
+[node name="FlashLight" type="OmniLight3D" parent="Model/Muzzle/MuzzleFlash" unique_id=1338265442]
+light_color = Color(1, 0.72, 0.38, 1)
+light_energy = 3.0
+omni_range = 7.0
+
+[node name="FlashCard" type="MeshInstance3D" parent="Model/Muzzle/MuzzleFlash" unique_id=1857497791]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.07)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_uymuk")
+
+[node name="FlashCard2" type="MeshInstance3D" parent="Model/Muzzle/MuzzleFlash" unique_id=66324612]
+transform = Transform3D(-4.371139e-08, -1, 0, -4.371139e-08, 1.9106855e-15, -1, 1, -4.371139e-08, -4.371139e-08, 0, 0, -0.07)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_tnr1d")
+
+[node name="FlashStar" type="MeshInstance3D" parent="Model/Muzzle/MuzzleFlash" unique_id=1003668365]
+cast_shadow = 0
+mesh = SubResource("QuadMesh_d3byv")

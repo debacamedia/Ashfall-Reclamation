@@ -1,0 +1,71 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/bullet_impact.gd" id="1_ok1st"]
+
+[sub_resource type="Gradient" id="Gradient_3q4p5"]
+offsets = PackedFloat32Array(0, 0.35, 0.6, 1)
+colors = PackedColorArray(0.02, 0.02, 0.02, 1, 0.05, 0.05, 0.05, 0.95, 0.15, 0.13, 0.11, 0.5, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ms4iy"]
+gradient = SubResource("Gradient_3q4p5")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_h8a0g"]
+colors = PackedColorArray(0.55, 0.5, 0.42, 0.7, 0.55, 0.5, 0.42, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_vf8cj"]
+gradient = SubResource("Gradient_h8a0g")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yjov4"]
+direction = Vector3(0, 1, 0)
+spread = 35.0
+initial_velocity_min = 0.6
+initial_velocity_max = 1.6
+gravity = Vector3(0, -2, 0)
+scale_min = 0.08
+scale_max = 0.18
+color_ramp = SubResource("GradientTexture1D_vf8cj")
+
+[sub_resource type="Gradient" id="Gradient_tkj8s"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_j7ayd"]
+gradient = SubResource("Gradient_tkj8s")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_81dm4"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_j7ayd")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_f1ufs"]
+material = SubResource("StandardMaterial3D_81dm4")
+
+[node name="BulletImpact" type="Node3D" unique_id=2048685626]
+script = ExtResource("1_ok1st")
+
+[node name="Decal" type="Decal" parent="." unique_id=1683259949]
+size = Vector3(0.09, 0.1, 0.09)
+texture_albedo = SubResource("GradientTexture2D_ms4iy")
+cull_mask = 1
+
+[node name="Dust" type="GPUParticles3D" parent="." unique_id=1007401596]
+unique_name_in_owner = true
+emitting = false
+amount = 10
+lifetime = 0.7
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_yjov4")
+draw_pass_1 = SubResource("QuadMesh_f1ufs")
