@@ -46,6 +46,7 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 | Items and resources | `ItemDefinition` Resource, world pickups (scrap, cloth, fuel...) | Resource + scene | 5 ✅ |
 | **InventoryManager** | `InventoryComponent` (slots, stacks, weight cap), transfers, signals | Node component + Resources | 6 ✅ |
 | Inventory UI | Grid UI bound to an `InventoryComponent` | `Control` scene | 6 ✅ |
+| Aiming and ladders | ADS (zoom, spread, recoil, speed) simulated from `InputFrame.aim`; `Ladder` scene found by group, `CLIMBING` state | PlayerController + Resource fields + scene | 6.5 ✅ |
 | Salvage containers | Interactable containers with their own inventory and loot tables | Scene + `LootTable` Resource | 7 |
 | **SaveManager** | Save/load player, inventories and container state to `user://saves/`, versioned JSON | Autoload | 8 |
 
@@ -159,6 +160,7 @@ res://
 | 4 ✅ | Enemy NPC with navigation and melee attack | A raider paths around the outpost and attacks |
 | 5 ✅ | Interaction system + collectible resources (+ sound pass) | Look at a pickup, press E, collect scrap |
 | 6 ✅ | Inventory (data + UI) + stored medkits / quick-heal | Open the inventory, see stacks and weight; heal with H |
+| 6.5 ✅ | Aim down sights + ladders | Aim through a red-dot sight; climb the guard towers |
 | 7 | Salvage containers | Search crates and transfer loot |
 | 8 | SaveManager | Save and load the player, inventory and opened containers |
 

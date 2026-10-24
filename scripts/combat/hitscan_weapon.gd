@@ -52,6 +52,11 @@ var reserve_ammo: int:
 var is_reloading := false
 ## Visual only: lowers the weapon (e.g. while using a medkit).
 var lowered := false
+## 0..1 aim-down-sights amount, set by the owner each tick. Visual only here;
+## the owner applies the gameplay effects (spread, recoil, zoom).
+var aim_amount := 0.0
+## The camera the sights line up with (the owner's camera).
+var aim_camera: Camera3D
 var _reserve := 0
 var _ammo_source: InventoryComponent = null
 var _lower := 0.0
@@ -72,6 +77,8 @@ var _model_rest := Vector3.ZERO
 
 @onready var _model: Node3D = %Model
 @onready var _muzzle_flash: Node3D = %MuzzleFlash
+## Marker on the rear of the sight, on the sight line (optional).
+@onready var _sight: Node3D = get_node_or_null("%SightAnchor")
 # Optional sound players (scene nodes); the weapon works without them.
 @onready var _shot_sound: AudioStreamPlayer3D = get_node_or_null("%ShotSound")
 @onready var _reload_sound: AudioStreamPlayer3D = get_node_or_null("%ReloadSound")
@@ -326,6 +333,11 @@ func _process(delta: float) -> void:
 	_lower = move_toward(_lower, 1.0 if lowered else 0.0, delta * 4.0)
 	offset += Vector3(0.05, -0.22, 0.05) * _lower
 	tilt += Vector3(-0.6, 0.35, 0.2) * _lower
+	var ads := get_ads_offset()
+	if aim_amount > 0.0:
+		var a := aim_amount * aim_amount * (3.0 - 2.0 * aim_amount)
+		offset = offset * lerpf(1.0, 0.4, a) + ads["offset"] * a
+		tilt = tilt * lerpf(1.0, 0.4, a) + Vector3(0.0, ads["yaw"], 0.0) * a
 	if is_reloading:
 		var dip := sin(get_reload_progress() * PI)
 		offset.y -= dip * 0.08
@@ -340,3 +352,17 @@ func _process(delta: float) -> void:
 		_flash_left -= delta
 	else:
 		_muzzle_flash.visible = false
+
+
+## Model offset and yaw (in this node's space) that put the rear of the sight
+## on the camera's centre line, `ads_eye_distance` in front of the eye.
+func get_ads_offset() -> Dictionary:
+	if aim_camera == null or _sight == null or not is_inside_tree():
+		return {"offset": Vector3.ZERO, "yaw": 0.0}
+	var to_local := global_transform.affine_inverse()
+	var eye_point := to_local * (aim_camera.global_transform * Vector3(0.0, 0.0, -definition.ads_eye_distance))
+	# Turn the model so its barrel is parallel to the camera's view
+	var cam_forward := (to_local.basis * -aim_camera.global_basis.z).normalized()
+	var yaw := atan2(-cam_forward.x, -cam_forward.z)
+	var sight_rest := Basis(Vector3.UP, yaw) * _sight.position
+	return {"offset": eye_point - (_model_rest + sight_rest), "yaw": yaw}

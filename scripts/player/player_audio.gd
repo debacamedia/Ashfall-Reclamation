@@ -1,7 +1,8 @@
 class_name PlayerAudio
 extends Node3D
 ## The player's own sounds: footsteps (by distance walked), landing, getting
-## hurt, a heartbeat at low health, the death sting, pickup and item-use sounds.
+## hurt, a heartbeat at low health, the death sting, pickup and item-use
+## sounds, ladder rungs and raising the sights.
 ## Purely presentation: reads the player, never changes game state.
 ##
 ## Child of the Player scene; its sound players are child nodes.
@@ -18,6 +19,8 @@ extends Node3D
 @onready var _heartbeat: AudioStreamPlayer = %Heartbeat
 @onready var _death: AudioStreamPlayer = %Death
 @onready var _pickup: AudioStreamPlayer = %Pickup
+@onready var _ladder_step: AudioStreamPlayer3D = get_node_or_null("%LadderStep")
+@onready var _aim: AudioStreamPlayer = get_node_or_null("%AimSound")
 
 var _distance := 0.0
 ## How many footstep sounds have played (used by tests).
@@ -36,6 +39,13 @@ func _ready() -> void:
 	_player.health.damaged.connect(_on_damaged)
 	if _player.inventory != null:
 		_player.inventory.item_received.connect(_on_item_received)
+	if _ladder_step != null:
+		_player.ladder_step.connect(_ladder_step.play)
+		_player.ladder_grabbed.connect(func(_l: Ladder) -> void: _ladder_step.play())
+	if _aim != null:
+		_player.aim_changed.connect(func(aiming: bool) -> void:
+			if aiming:
+				_aim.play())
 	_player.item_use_finished.connect(func(item: ItemDefinition) -> void:
 		if item.use_sound != null:
 			_pickup.stream = item.use_sound

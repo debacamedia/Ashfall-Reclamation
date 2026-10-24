@@ -2,7 +2,8 @@ class_name PlayerController
 extends CharacterBody3D
 ## First-person character: mouse look, walk, sprint, crouch, jump, an equipped
 ## HitscanWeapon (fire, reload, recoil), health, fall damage, death, an
-## inventory (ammo comes from it) and using items such as medkits.
+## inventory (ammo comes from it), using items such as medkits, aiming down
+## sights and climbing ladders.
 ##
 ## Movement is driven only by InputFrames passed to simulate(). The local
 ## player gathers its own frames from PlayerInput; remote players (co-op,
@@ -30,8 +31,13 @@ signal item_use_finished(item: ItemDefinition)
 signal item_use_cancelled(item: ItemDefinition)
 signal item_use_refused(reason: String)
 signal item_dropped(item: ItemDefinition, quantity: int)
+signal aim_changed(aiming: bool)
+signal ladder_grabbed(ladder: Ladder)
+signal ladder_released
+## Emitted every `ladder_step_distance` metres climbed (for sound).
+signal ladder_step
 
-enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD }
+enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
 
 @export_group("Speeds (m/s)")
 @export var walk_speed := 4.5
@@ -77,6 +83,16 @@ enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD }
 ## Movement speed multiplier while using an item (bandaging, etc.).
 @export var use_move_multiplier := 0.5
 
+@export_group("Ladders")
+@export var climb_speed := 2.6
+## Can't grab a ladder again for this long after letting go (s).
+@export var ladder_regrab_delay := 0.4
+@export var ladder_step_distance := 0.45
+## Looking further down than this while facing the ladder makes W climb down.
+@export var ladder_look_down_degrees := 40.0
+## Push away from the ladder when jumping off (m/s).
+@export var ladder_jump_off_speed := 3.0
+
 @export_group("Control")
 ## True for the player at this keyboard. False for remote players and tests,
 ## which drive the character by calling simulate().
@@ -94,6 +110,15 @@ var _death_tween: Tween
 var _using_item: ItemDefinition = null
 var _use_left := 0.0
 
+## The ladder being climbed, or null.
+var ladder: Ladder = null
+## 0..1, how far the sights are raised (simulated, so the host agrees).
+var aim_amount := 0.0
+var is_aiming := false
+var _base_fov := 75.0
+var _ladder_cooldown := 0.0
+var _climb_distance := 0.0
+
 @onready var collision_shape: CollisionShape3D = %CollisionShape
 @onready var head: Node3D = %Head
 @onready var camera: Camera3D = %Camera
@@ -110,10 +135,13 @@ func _ready() -> void:
 	add_to_group("players")
 	_current_height = stand_height
 	_apply_height(stand_height)
+	_base_fov = camera.fov
 	health.died.connect(_on_health_died)
 	landed.connect(_on_landed)
-	if weapon != null and inventory != null:
-		weapon.set_ammo_source(inventory)
+	if weapon != null:
+		weapon.aim_camera = camera
+		if inventory != null:
+			weapon.set_ammo_source(inventory)
 	if controlled_locally:
 		camera.make_current()
 	else:
@@ -142,39 +170,21 @@ func simulate(frame: InputFrame, delta: float) -> void:
 		_simulate_dead(frame, delta)
 		return
 
-	_apply_look(frame.look)
-	_update_stance(frame.crouch, delta)
+	# Mouse look is slowed while zoomed so aiming feels the same
+	_apply_look(frame.look * lerpf(1.0, 1.0 / _ads_zoom(), aim_amount))
+	_update_stance(frame.crouch and ladder == null, delta)
 	_update_item_use(frame, delta)
+	_update_aim(frame, delta)
 
-	var on_floor := is_on_floor()
-	if not on_floor:
-		velocity.y -= _gravity * delta
-	elif frame.jump and not is_crouching:
-		velocity.y = jump_velocity
-		on_floor = false
-		jumped.emit()
-
-	# Horizontal movement relative to where the body faces
-	var wish := global_basis * Vector3(frame.move.x, 0.0, frame.move.y)
-	wish.y = 0.0
-	wish = wish.limit_length(1.0)
-	var target := wish * _target_speed(frame)
-	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
-	if on_floor:
-		var rate := ground_acceleration if target.length() > 0.01 else ground_deceleration
-		horizontal = horizontal.lerp(target, 1.0 - exp(-rate * delta))
-	elif target.length() > 0.01:
-		horizontal = horizontal.lerp(target, 1.0 - exp(-air_acceleration * delta))
-	velocity.x = horizontal.x
-	velocity.z = horizontal.z
-
-	var was_on_floor := is_on_floor()
-	var impact_speed := -velocity.y
-	move_and_slide()
-	if not was_on_floor and is_on_floor():
-		landed.emit(impact_speed)
-	if is_dead():
-		return  # killed by the landing
+	_ladder_cooldown = maxf(_ladder_cooldown - delta, 0.0)
+	if ladder == null:
+		_try_grab_ladder(frame)
+	if ladder != null:
+		_simulate_ladder(frame, delta)
+	else:
+		_simulate_walking(frame, delta)
+		if is_dead():
+			return  # killed by the landing
 
 	_update_movement_state()
 	_update_head_bob(delta)
@@ -182,10 +192,15 @@ func simulate(frame: InputFrame, delta: float) -> void:
 	if weapon != null:
 		# Aim from the head (not the bobbing camera). Can't shoot mid-sprint;
 		# pressing fire cancels sprint, so there is a short sprint-to-fire delay.
-		weapon.lowered = is_using_item()
-		var recoil := weapon.tick(delta, frame.fire, frame.reload and not is_using_item(), head.global_transform, self,
-			_spread_multiplier(), movement_state != MovementState.SPRINTING and not is_using_item())
+		# Hands are busy on a ladder or while using an item.
+		var hands_busy := is_using_item() or ladder != null
+		weapon.lowered = hands_busy
+		weapon.aim_amount = aim_amount
+		var spread := _spread_multiplier() * lerpf(1.0, weapon.definition.ads_spread_multiplier, aim_amount)
+		var recoil := weapon.tick(delta, frame.fire, frame.reload and not hands_busy, head.global_transform, self,
+			spread, movement_state != MovementState.SPRINTING and not hands_busy)
 		if recoil != Vector2.ZERO:
+			recoil *= lerpf(1.0, weapon.definition.ads_recoil_multiplier, aim_amount)
 			_apply_look(Vector2(recoil.x, -recoil.y))
 
 	if interactor != null:
@@ -202,6 +217,10 @@ func respawn_at(spawn: Transform3D) -> void:
 	velocity = Vector3.ZERO
 	head.rotation = Vector3.ZERO
 	camera.position = Vector3.ZERO
+	camera.fov = _base_fov
+	aim_amount = 0.0
+	is_aiming = false
+	ladder = null
 	is_crouching = false
 	_current_height = stand_height
 	_apply_height(stand_height)
@@ -304,6 +323,8 @@ func _use_refusal_reason(item: ItemDefinition) -> String:
 		return "You don't have that"
 	if is_using_item():
 		return "Already busy"
+	if ladder != null:
+		return "Can't do that now"
 	match item.category:
 		ItemDefinition.Category.MEDICAL:
 			if health.current_health >= health.max_health:
@@ -345,6 +366,141 @@ func _finish_item_use() -> void:
 	item_use_finished.emit(item)
 
 
+# ---------------------------------------------------------------- walking
+
+func _simulate_walking(frame: InputFrame, delta: float) -> void:
+	var on_floor := is_on_floor()
+	if not on_floor:
+		velocity.y -= _gravity * delta
+	elif frame.jump and not is_crouching:
+		velocity.y = jump_velocity
+		on_floor = false
+		jumped.emit()
+
+	# Horizontal movement relative to where the body faces
+	var wish := global_basis * Vector3(frame.move.x, 0.0, frame.move.y)
+	wish.y = 0.0
+	wish = wish.limit_length(1.0)
+	var target := wish * _target_speed(frame)
+	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+	if on_floor:
+		var rate := ground_acceleration if target.length() > 0.01 else ground_deceleration
+		horizontal = horizontal.lerp(target, 1.0 - exp(-rate * delta))
+	elif target.length() > 0.01:
+		horizontal = horizontal.lerp(target, 1.0 - exp(-air_acceleration * delta))
+	velocity.x = horizontal.x
+	velocity.z = horizontal.z
+
+	var was_on_floor := is_on_floor()
+	var impact_speed := -velocity.y
+	move_and_slide()
+	if not was_on_floor and is_on_floor():
+		landed.emit(impact_speed)
+
+
+# ---------------------------------------------------------------- aiming
+
+func _ads_zoom() -> float:
+	return weapon.definition.ads_zoom if weapon != null else 1.0
+
+
+func _update_aim(frame: InputFrame, delta: float) -> void:
+	var can_aim := frame.aim and weapon != null and ladder == null \
+		and not is_using_item() and not weapon.is_reloading
+	var ads_time := weapon.definition.ads_time if weapon != null else 0.2
+	aim_amount = move_toward(aim_amount, 1.0 if can_aim else 0.0, delta / maxf(ads_time, 0.01))
+	if can_aim != is_aiming:
+		is_aiming = can_aim
+		aim_changed.emit(is_aiming)
+	var eased := aim_amount * aim_amount * (3.0 - 2.0 * aim_amount)
+	camera.fov = lerpf(_base_fov, _base_fov / _ads_zoom(), eased)
+
+
+# ---------------------------------------------------------------- ladders
+
+## Attaches to a ladder the player is moving into: towards it from in front,
+## or off the top edge towards it.
+func _try_grab_ladder(frame: InputFrame) -> void:
+	if _ladder_cooldown > 0.0 or frame.move.length() < 0.3:
+		return
+	var wish := global_basis * Vector3(frame.move.x, 0.0, frame.move.y)
+	wish.y = 0.0
+	wish = wish.normalized()
+	for node in get_tree().get_nodes_in_group("ladders"):
+		var l := node as Ladder
+		if l == null or not l.is_in_reach(global_position):
+			continue
+		var out := l.get_outward()
+		var at_top := global_position.y >= l.get_top_y() - 0.3
+		if (at_top and wish.dot(out) > 0.5) or (not at_top and wish.dot(-out) > 0.5):
+			_grab_ladder(l)
+			return
+
+
+func _grab_ladder(l: Ladder) -> void:
+	cancel_item_use()
+	ladder = l
+	velocity = Vector3.ZERO
+	_climb_distance = 0.0
+	ladder_grabbed.emit(l)
+
+
+func _release_ladder() -> void:
+	ladder = null
+	_ladder_cooldown = ladder_regrab_delay
+	ladder_released.emit()
+
+
+func _simulate_ladder(frame: InputFrame, delta: float) -> void:
+	var l := ladder
+	var out := l.get_outward()
+	var top := l.get_top_y()
+
+	if frame.jump:
+		_release_ladder()
+		velocity = out * ladder_jump_off_speed + Vector3.UP * 2.0
+		jumped.emit()
+		move_and_slide()
+		return
+
+	# W climbs up when facing the ladder, down with your back to it (stepping
+	# off the top) or when looking well down. S is the reverse.
+	var facing := -global_basis.z
+	facing.y = 0.0
+	facing = facing.normalized()
+	var direction := 1.0
+	if facing.dot(-out) < -0.2 or head.rotation.x < -deg_to_rad(ladder_look_down_degrees):
+		direction = -1.0
+	var climb := -frame.move.y * direction * climb_speed
+
+	# Keep the body on the climbing line in front of the ladder
+	var error := l.get_climb_point(global_position.y) - global_position
+	error.y = 0.0
+	var horizontal := (error * 10.0).limit_length(4.0)
+	if error.length() > 0.2:
+		climb = 0.0  # still moving onto the ladder (e.g. from the top)
+
+	# Over the top: step forward onto the floor
+	if climb > 0.0 and global_position.y >= top + 0.05:
+		_release_ladder()
+		velocity = -out * 3.0 + Vector3.UP * 1.0
+		move_and_slide()
+		return
+
+	velocity = Vector3(horizontal.x, climb, horizontal.z)
+	move_and_slide()
+
+	# Reached the ground while climbing down
+	if climb < 0.0 and is_on_floor():
+		_release_ladder()
+		return
+
+	_climb_distance += absf(get_real_velocity().y) * delta
+	if _climb_distance >= ladder_step_distance:
+		_climb_distance = 0.0
+		ladder_step.emit()
+
+
 # ---------------------------------------------------------------- internals
 
 func _simulate_dead(frame: InputFrame, delta: float) -> void:
@@ -368,6 +524,11 @@ func _on_landed(impact_speed: float) -> void:
 
 func _on_health_died(info: DamageInfo) -> void:
 	cancel_item_use()
+	if ladder != null:
+		_release_ladder()
+	aim_amount = 0.0
+	is_aiming = false
+	camera.fov = _base_fov
 	movement_state = MovementState.DEAD
 	movement_state_changed.emit(movement_state)
 	if weapon != null:
@@ -390,14 +551,17 @@ func _apply_look(look: Vector2) -> void:
 
 
 func _target_speed(frame: InputFrame) -> float:
-	if is_using_item():
-		return (crouch_speed if is_crouching else walk_speed) * use_move_multiplier
+	var speed := walk_speed
 	if is_crouching:
-		return crouch_speed
-	# Sprint only while moving mostly forward
-	if frame.sprint and frame.move.y < -0.3 and not frame.fire:
+		speed = crouch_speed
+	elif frame.sprint and frame.move.y < -0.3 and not frame.fire and not is_aiming and not is_using_item():
+		# Sprint only while moving mostly forward, not while aiming
 		return sprint_speed
-	return walk_speed
+	if is_using_item():
+		speed *= use_move_multiplier
+	if weapon != null:
+		speed *= lerpf(1.0, weapon.definition.ads_move_multiplier, aim_amount)
+	return speed
 
 
 func _spread_multiplier() -> float:
@@ -441,7 +605,9 @@ func _is_head_blocked() -> bool:
 func _update_movement_state() -> void:
 	var state: MovementState
 	var speed := get_horizontal_speed()
-	if not is_on_floor():
+	if ladder != null:
+		state = MovementState.CLIMBING
+	elif not is_on_floor():
 		state = MovementState.AIRBORNE
 	elif is_crouching:
 		state = MovementState.CROUCHING

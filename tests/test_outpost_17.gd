@@ -322,3 +322,27 @@ func test_no_loot_overlaps_solid_geometry() -> void:
 		var hits := space.intersect_shape(q, 4)
 		var names := hits.map(func(h: Dictionary) -> String: return str((h["collider"] as Node).name))
 		check(hits.is_empty(), "%s is clear of solid geometry (overlaps %s)" % [pk.name, names])
+
+
+func test_every_guard_tower_can_be_climbed() -> void:
+	await _load_level()
+	var towers := _level.get_node("GuardTowers").get_children()
+	check(towers.size() == 4, "4 guard towers")
+	var w := InputFrame.new()
+	w.move = Vector2(0, -1)
+	for tower: Node3D in towers:
+		var ladder := tower.get_node("Ladder") as Ladder
+		var out := ladder.get_outward()
+		check(out.dot(-tower.global_position.normalized()) > 0.5, "%s ladder faces into the compound" % tower.name)
+		# Stand 1.2 m out from the ladder, facing it
+		_player.health.revive(1.0)
+		await _teleport(ladder.global_position + out * 1.2 + Vector3.UP * 0.05, rad_to_deg(atan2(out.x, out.z)))
+		for i in 300:
+			await get_tree().physics_frame
+			_player.simulate(w, DT)
+			if _player.ladder == null and _player.global_position.y > 4.0 and _player.is_on_floor():
+				break
+		var flat := Vector2(_player.global_position.x - tower.global_position.x, _player.global_position.z - tower.global_position.z)
+		check(_player.global_position.y > 4.5 and _player.is_on_floor() and flat.length() < 1.6,
+			"%s: climbed onto the platform (y %.2f, %.2f m from centre)" % [tower.name, _player.global_position.y, flat.length()])
+		check_near(_player.health.current_health, 100.0, 0.01, "%s: unhurt" % tower.name)

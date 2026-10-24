@@ -35,3 +35,11 @@ func test_left_mouse_fires() -> void:
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	check(InputMap.event_is_action(click, "fire"), "left mouse button should trigger 'fire'")
+
+
+func test_right_mouse_aims() -> void:
+	check(InputMap.has_action("aim"), "missing input action: aim")
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_RIGHT
+	press.pressed = true
+	check(InputMap.event_is_action(press, "aim"), "right mouse button should aim")

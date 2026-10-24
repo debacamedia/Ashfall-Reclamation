@@ -11,12 +11,14 @@
 [ext_resource type="AudioStream" path="res://assets/audio/sets/player_hurt.tres" id="10_kvlxm"]
 [ext_resource type="AudioStream" path="res://assets/audio/heartbeat.wav" id="11_uf5tr"]
 [ext_resource type="Script" path="res://scripts/inventory/player_inventory.gd" id="12_fcs02"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/ladder_step.tres" id="12_kvlxm"]
 [ext_resource type="AudioStream" path="res://assets/audio/death_sting.wav" id="12_lgqa7"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="13_myrg7"]
+[ext_resource type="AudioStream" path="res://assets/audio/aim_in.wav" id="13_uf5tr"]
 [ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="14_kvlxm"]
 [ext_resource type="Resource" path="res://resources/items/medkit.tres" id="15_uf5tr"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fcs02"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lgqa7"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
@@ -34,7 +36,7 @@ script = ExtResource("1_dovo2")
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_fcs02")
+shape = SubResource("CapsuleShape3D_lgqa7")
 
 [node name="Head" type="Node3D" parent="." unique_id=801003417]
 unique_name_in_owner = true
@@ -106,6 +108,19 @@ bus = &"SFX"
 
 [node name="Pickup" type="AudioStreamPlayer" parent="Audio" unique_id=211517441]
 unique_name_in_owner = true
+volume_db = -4.0
+bus = &"SFX"
+
+[node name="LadderStep" type="AudioStreamPlayer3D" parent="Audio" unique_id=324871053]
+unique_name_in_owner = true
+stream = ExtResource("12_kvlxm")
+volume_db = -5.0
+unit_size = 4.0
+bus = &"SFX"
+
+[node name="AimSound" type="AudioStreamPlayer" parent="Audio" unique_id=678062963]
+unique_name_in_owner = true
+stream = ExtResource("13_uf5tr")
 volume_db = -4.0
 bus = &"SFX"
 

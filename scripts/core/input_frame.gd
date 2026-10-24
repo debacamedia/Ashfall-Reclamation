@@ -16,11 +16,12 @@ var fire := false           ## Trigger held this tick.
 var reload := false         ## True only on the tick reload was pressed.
 var interact := false       ## Interact key held this tick.
 var use_heal := false       ## True only on the tick the quick-heal key was pressed.
+var aim := false            ## Aim-down-sights held this tick.
 
 
 ## Compact form for sending to the host later.
 func to_dict() -> Dictionary:
-	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload, "i": interact, "h": use_heal}
+	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload, "i": interact, "h": use_heal, "a": aim}
 
 
 ## Builds a frame from untrusted data (e.g. a network peer). Values are
@@ -38,6 +39,7 @@ static func from_dict(data: Dictionary) -> InputFrame:
 	frame.reload = _strict_bool(data.get("r", false))
 	frame.interact = _strict_bool(data.get("i", false))
 	frame.use_heal = _strict_bool(data.get("h", false))
+	frame.aim = _strict_bool(data.get("a", false))
 	return frame
 
 

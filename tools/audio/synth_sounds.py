@@ -431,6 +431,30 @@ def heal() -> np.ndarray:
     return out
 
 
+def ladder_step(seed: int) -> np.ndarray:
+    """Boot on a metal rung: a dull knock plus a short, damped ring."""
+    rng = np.random.default_rng(seed)
+    out = silence(0.4)
+    knock = lp(noise(0.05, rng), 600) * decay(int(0.05 * SR), 0.012)
+    place(out, knock, 0.0, 1.0)
+    base = 420 + seed % 7 * 23
+    ring = metal(0.35, [(base, 0.5, 0.07), (base * 2.31, 0.3, 0.05), (base * 3.9, 0.15, 0.03)], rng)
+    place(out, ring, 0.002, 0.35)
+    place(out, sine_glide(0.08, 140, 80) * decay(int(0.08 * SR), 0.025), 0.0, 0.5)
+    return out
+
+
+def aim_in() -> np.ndarray:
+    """Raising the rifle to the shoulder: cloth rustle and a light stock tap."""
+    rng = np.random.default_rng(91)
+    out = silence(0.3)
+    rustle = bp(noise(0.16, rng), 900, 5000) * decay(int(0.16 * SR), 0.05, attack=0.04)
+    place(out, rustle, 0.0, 0.5)
+    tap = lp(noise(0.03, rng), 900) * decay(int(0.03 * SR), 0.008)
+    place(out, tap, 0.11, 0.8)
+    return out
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
     print("Writing to", os.path.abspath(OUT))
@@ -470,6 +494,9 @@ def main() -> None:
     write("pickup_ammo", pickup_ammo(), -5)
     write("pickup_fuel", pickup_fuel(), -5)
     write("heal", heal(), -5)
+    for i in range(3):
+        write(f"ladder_step_{i + 1}", ladder_step(600 + i), -6)
+    write("aim_in", aim_in(), -12)
 
 
 if __name__ == "__main__":

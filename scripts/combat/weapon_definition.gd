@@ -45,6 +45,19 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 ## ...once this many seconds have passed since the last shot.
 @export var bloom_recovery_delay := 0.2
 
+@export_group("Aiming down sights")
+## Camera zoom while aiming (1.0 = none). FOV is divided by this.
+@export_range(1.0, 8.0, 0.05) var ads_zoom := 1.4
+## Seconds to raise the sights fully.
+@export var ads_time := 0.2
+## Spread and recoil multipliers at full aim.
+@export_range(0.0, 1.0) var ads_spread_multiplier := 0.35
+@export_range(0.0, 1.0) var ads_recoil_multiplier := 0.65
+## Movement speed multiplier at full aim.
+@export_range(0.1, 1.0) var ads_move_multiplier := 0.55
+## How far in front of the eye the rear of the sight sits (m).
+@export var ads_eye_distance := 0.2
+
 @export_group("Recoil (degrees per shot)")
 @export var recoil_pitch := 0.55
 @export var recoil_yaw := 0.2

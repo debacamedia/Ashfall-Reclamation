@@ -19,6 +19,7 @@ const SUITES := [
 	"res://tests/test_raider.gd",
 	"res://tests/test_interaction.gd",
 	"res://tests/test_inventory.gd",
+	"res://tests/test_aim_and_ladders.gd",
 	"res://tests/test_audio.gd",
 	"res://tests/test_outpost_17.gd",
 ]
@@ -50,12 +51,17 @@ func _run() -> void:
 	OS.add_logger(catcher)
 	var passed := 0
 	var failed := 0
+	# Optional filter: godot ... -s res://tests/test_runner.gd -- ladder
+	# runs only suites or tests whose name contains "ladder".
+	var only := " ".join(OS.get_cmdline_user_args())
 	for path in SUITES:
 		var script := load(path) as GDScript
 		print("\n== %s" % path.get_file())
 		for method in script.get_script_method_list():
 			var name: String = method["name"]
 			if not name.begins_with("test_"):
+				continue
+			if only != "" and not (only in name or only in path.get_file()):
 				continue
 			catcher.errors.clear()
 			var suite: Node = script.new()

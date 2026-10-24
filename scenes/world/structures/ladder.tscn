@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/ladder.gd" id="1_rktlg"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="2_hcdjy"]
+
+[node name="Ladder" type="Node3D" unique_id=1496919789]
+script = ExtResource("1_rktlg")
+material = ExtResource("2_hcdjy")

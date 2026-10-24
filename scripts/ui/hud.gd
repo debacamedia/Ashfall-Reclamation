@@ -80,6 +80,7 @@ func _process(delta: float) -> void:
 	if _weapon != null:
 		_crosshair.spread_degrees = _weapon.get_current_spread_degrees()
 		_crosshair.camera_fov = player.camera.fov
+		_crosshair.reticle_alpha = 1.0 - smoothstep(0.15, 0.6, player.aim_amount)
 		if _weapon.is_reloading:
 			_ammo_label.text = "RELOADING  %d%%" % roundi(_weapon.get_reload_progress() * 100.0)
 

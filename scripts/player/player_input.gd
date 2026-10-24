@@ -67,6 +67,7 @@ func gather() -> InputFrame:
 	frame.reload = Input.is_action_just_pressed("reload")
 	frame.interact = Input.is_action_pressed("interact")
 	frame.use_heal = Input.is_action_just_pressed("use_medkit")
+	frame.aim = Input.is_action_pressed("aim")
 	_look_accumulator = Vector2.ZERO
 	return frame
 

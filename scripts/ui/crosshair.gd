@@ -18,6 +18,13 @@ var spread_degrees := 0.0:
 			spread_degrees = value
 			queue_redraw()
 var camera_fov := 75.0
+## 0..1 visibility of the reticle lines (fades out while aiming down sights).
+## Hit markers still show.
+var reticle_alpha := 1.0:
+	set(value):
+		if not is_equal_approx(value, reticle_alpha):
+			reticle_alpha = value
+			queue_redraw()
 
 var _hit_left := 0.0
 var _hit_color := Color.WHITE
@@ -40,9 +47,11 @@ func _draw() -> void:
 	# Pixels per unit of tan(angle) at the screen centre
 	var focal := (size.y / 2.0) / tan(deg_to_rad(camera_fov / 2.0))
 	var gap := maxf(min_gap, tan(deg_to_rad(spread_degrees)) * focal)
-	for dir: Vector2 in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
-		draw_line(centre + dir * gap, centre + dir * (gap + line_length), color, thickness, true)
-	draw_circle(centre, 1.0, color)
+	if reticle_alpha > 0.01:
+		var line_color := Color(color, color.a * reticle_alpha)
+		for dir: Vector2 in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
+			draw_line(centre + dir * gap, centre + dir * (gap + line_length), line_color, thickness, true)
+		draw_circle(centre, 1.0, line_color)
 
 	if _hit_left > 0.0:
 		var c := Color(_hit_color, clampf(_hit_left / hit_marker_time, 0.0, 1.0))
