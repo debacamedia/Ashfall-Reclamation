@@ -167,14 +167,6 @@ func test_yaw_turns_body() -> void:
 	check(p.global_position.x > 2.0, "after turning right 90°, forward should move toward +X")
 
 
-func test_kill_plane_respawns() -> void:
-	var p := _spawn(Vector3(5, 0.05, 5))
-	await wait_physics(2)
-	p.global_position = Vector3(0, -40, 0)
-	await wait_physics(2)
-	check(p.global_position.distance_to(Vector3(5, 0.05, 5)) < 0.5, "should return to spawn")
-
-
 func test_input_frame_from_untrusted_data_is_clamped() -> void:
 	var f := InputFrame.from_dict({"m": Vector2(5, 5), "l": Vector2(100, -100), "j": "yes"})
 	check(f.move.length() <= 1.0001, "move must be clamped to length 1")

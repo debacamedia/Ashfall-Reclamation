@@ -40,7 +40,7 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 | PlayerInput | Keyboard and mouse to `InputFrame`, mouse capture, crouch toggle option | Node in player scene | 1 ✅ |
 | Combat (weapon) | One hitscan rifle via physics ray queries, ammo, reload | Node + `WeaponDefinition` Resource | 2 ✅ |
 | Health | `HealthComponent` node, damage and death signals (player and NPCs) | Node component | 2 ✅ |
-| Death and respawn | Player death, respawn at Outpost 17 spawn point | PlayerController + level | 3 |
+| Death and respawn | Player death, respawn at Outpost 17 spawn point | PlayerController + `GameMode` node in the level | 3 ✅ |
 | Enemy NPC | `NavigationAgent3D` pathing on a baked `NavigationRegion3D`, chase and melee | `CharacterBody3D` scene | 4 |
 | Interaction | Ray from the camera, `Interactable` component, prompt UI | Node component + RayCast3D | 5 |
 | Items and resources | `ItemDefinition` Resource, world pickups (scrap, cloth, fuel...) | Resource + scene | 5 |
@@ -58,6 +58,8 @@ Only systems that genuinely need global access:
 - `WorldManager` (Milestone 2). Day and night clock and the world tick signal.
 
 Managers that belong to a place, such as a settlement's resources or buildings, are **nodes in the level**, not autoloads. That allows several settlements and regions later.
+
+**GameMode** (Increment 3) follows the same rule. It is a node in each level that owns player death and respawn rules. Players *request* a respawn; GameMode (host-side in co-op) decides.
 
 ---
 
@@ -97,7 +99,7 @@ res://
 │   │   └── props/             containers, sandbags, barriers, crates, drums, fence
 │   └── ui/                    hud.tscn
 ├── scripts/
-│   ├── core/                  input_frame.gd, physics_layers.gd
+│   ├── core/                  input_frame.gd, physics_layers.gd, game_mode.gd
 │   ├── player/                player_controller.gd, player_input.gd
 │   ├── world/                 scripts for world props (shipping_container.gd)
 │   ├── ui/                    hud.gd
@@ -148,7 +150,7 @@ res://
 |---|---|---|
 | 1 ✅ | Project structure, player controller, Outpost 17 | Walk, sprint, crouch and jump around a 3D military outpost |
 | 2 ✅ | Rifle + HealthComponent + target dummies | Shoot targets that take damage |
-| 3 | Player health, death and respawn | Take damage, die and respawn at the outpost |
+| 3 ✅ | Player health, death and respawn | Take damage, die and respawn at the outpost |
 | 4 | Enemy NPC with navigation and melee attack | A raider paths around the outpost and attacks |
 | 5 | Interaction system + collectible resources | Look at a pickup, press E, collect scrap |
 | 6 | Inventory (data + UI) | Open the inventory, see stacks and weight |

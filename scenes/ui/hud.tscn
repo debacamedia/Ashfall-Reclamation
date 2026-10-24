@@ -2,6 +2,17 @@
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_0mwgc"]
 [ext_resource type="Script" path="res://scripts/ui/crosshair.gd" id="2_hqnrr"]
+[ext_resource type="Script" path="res://scripts/ui/damage_indicator.gd" id="3_bo48s"]
+
+[sub_resource type="Gradient" id="Gradient_8qguk"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(0.6, 0, 0, 0, 0.6, 0, 0, 0.05, 0.7, 0.02, 0, 0.9)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_136eg"]
+gradient = SubResource("Gradient_8qguk")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="HUD" type="CanvasLayer" unique_id=1842689081]
 script = ExtResource("1_0mwgc")
@@ -14,6 +25,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="DamageVignette" type="TextureRect" parent="Root" unique_id=52903453]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_136eg")
+expand_mode = 1
 
 [node name="Crosshair" type="Control" parent="Root" unique_id=681361755]
 unique_name_in_owner = true
@@ -68,3 +88,129 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
 theme_override_constants/outline_size = 5
 horizontal_alignment = 2
 vertical_alignment = 2
+
+[node name="DamageIndicator" type="Control" parent="Root" unique_id=1863841920]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("3_bo48s")
+
+[node name="HealthPanel" type="Control" parent="Root" unique_id=1997938725]
+anchors_preset = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -78.0
+offset_right = 360.0
+offset_bottom = -20.0
+mouse_filter = 2
+
+[node name="HealthTitle" type="Label" parent="Root/HealthPanel" unique_id=219700652]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+text = "HEALTH"
+
+[node name="HealthLabel" type="Label" parent="Root/HealthPanel" unique_id=1099592519]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 18.0
+offset_right = 70.0
+offset_bottom = 58.0
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+text = "100"
+
+[node name="HealthBarBg" type="ColorRect" parent="Root/HealthPanel" unique_id=386937975]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 30.0
+offset_right = 334.0
+offset_bottom = 48.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="HealthTrail" type="ColorRect" parent="Root/HealthPanel" unique_id=112954431]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 72.0
+offset_top = 32.0
+offset_right = 332.0
+offset_bottom = 46.0
+mouse_filter = 2
+color = Color(0.9, 0.75, 0.6, 0.6)
+
+[node name="HealthFill" type="ColorRect" parent="Root/HealthPanel" unique_id=1217464094]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 72.0
+offset_top = 32.0
+offset_right = 332.0
+offset_bottom = 46.0
+mouse_filter = 2
+color = Color(0.85, 0.85, 0.8, 1)
+
+[node name="DeathScreen" type="Control" parent="Root" unique_id=1262251006]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="Root/DeathScreen" unique_id=2052034840]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0, 0, 0.55)
+
+[node name="DeathTitle" type="Label" parent="Root/DeathScreen" unique_id=1892230465]
+layout_mode = 0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -110.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 64
+theme_override_colors/font_color = Color(0.9, 0.2, 0.15, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+text = "YOU DIED"
+horizontal_alignment = 1
+
+[node name="DeathCause" type="Label" parent="Root/DeathScreen" unique_id=1538755854]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -30.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.9, 0.85, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+horizontal_alignment = 1
+
+[node name="RespawnPrompt" type="Label" parent="Root/DeathScreen" unique_id=850025194]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 20.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+horizontal_alignment = 1

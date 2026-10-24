@@ -100,3 +100,62 @@ func test_firing_range_targets_take_damage() -> void:
 	var expected := "%d / %d" % [_player.weapon.ammo_in_magazine, _player.weapon.reserve_ammo]
 	check(_player.weapon.ammo_in_magazine == 29, "one round fired (mag=%d)" % _player.weapon.ammo_in_magazine)
 	check(ammo_label.text == expected, "HUD ammo shows '%s' (got '%s')" % [expected, ammo_label.text])
+
+
+# ---------------------------------------------------------------- Increment 3
+
+func test_climb_range_tower_and_jump_off_takes_fall_damage() -> void:
+	await _load_level()
+	# Bottom of the ramp is at x = 26, z = 47; walk up toward -X
+	await _teleport(Vector3(27.5, 0.05, 47), 90)
+	await _walk(Vector2(0, -1), 300)
+	check(_player.global_position.y > 5.8, "reached the 6 m platform (y=%.2f)" % _player.global_position.y)
+	check_near(_player.health.current_health, 100.0, 0.01, "climbing the stairs does no damage")
+	# Turn to face +Z (the open back edge) and walk off
+	_player.rotation_degrees.y = 180
+	await _walk(Vector2(0, -1), 150)
+	check(_player.global_position.y < 0.2, "fell to the ground")
+	var taken := 100.0 - _player.health.current_health
+	check_between(taken, 15.0, 45.0, "a 6 m fall hurts but doesn't kill")
+
+
+func test_burning_barrel_hurts_when_touched() -> void:
+	await _load_level()
+	var barrel := _level.get_node("Props/BurningBarrelYard") as Node3D
+	await _teleport(barrel.global_position + Vector3(0.7, 0.05, 0), 0)
+	await _walk(Vector2.ZERO, 60)
+	check(_player.health.current_health < 100.0, "standing in the flames hurts")
+	await _teleport(barrel.global_position + Vector3(4, 0.05, 0), 0)
+	var hp := _player.health.current_health
+	await _walk(Vector2.ZERO, 60)
+	check_near(_player.health.current_health, hp, 0.01, "safe away from the fire")
+
+
+func test_death_screen_and_respawn_loop() -> void:
+	await _load_level()
+	var gm := _level.get_node("GameMode") as GameMode
+	var hud := _level.get_node("HUD") as HUD
+	gm.respawn_delay = 0.3
+	await _teleport(Vector3(10, 0.05, 0), 0)
+	_player.health.apply_damage(DamageInfo.create(35.0, DamageInfo.Type.BALLISTIC))
+	await wait_physics(2)
+	check((hud.get_node("%HealthLabel") as Label).text == "65", "HUD shows 65 health")
+	_player.health.apply_damage(DamageInfo.create(100.0, DamageInfo.Type.FALL))
+	await wait_physics(2)
+	var death_screen := hud.get_node("%DeathScreen") as Control
+	check(death_screen.visible, "death screen shown")
+	check((hud.get_node("%DeathCause") as Label).text == "You fell to your death", "cause shown")
+	check((hud.get_node("%RespawnPrompt") as Label).text.begins_with("Respawn in"), "countdown shown")
+	await get_tree().create_timer(0.35).timeout
+	await wait_physics(2)
+	check((hud.get_node("%RespawnPrompt") as Label).text == "Press SPACE to respawn", "prompt after the delay")
+	var f := InputFrame.new()
+	f.jump = true
+	await get_tree().physics_frame
+	_player.simulate(f, DT)
+	await wait_physics(2)
+	check(not _player.is_dead(), "respawned")
+	var spawn := _level.get_node("PlayerSpawn") as Marker3D
+	check(_player.global_position.distance_to(spawn.global_position) < 0.5, "back at PlayerSpawn")
+	check(not death_screen.visible, "death screen hidden")
+	check((hud.get_node("%HealthLabel") as Label).text == "100", "HUD back to 100")

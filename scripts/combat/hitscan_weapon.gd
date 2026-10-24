@@ -115,6 +115,22 @@ func start_reload() -> bool:
 	return true
 
 
+## Stops a reload in progress without loading any rounds.
+func cancel_reload() -> void:
+	is_reloading = false
+	_reload_left = 0.0
+
+
+## Refills magazine and reserve to the definition's starting amounts.
+## Used on respawn until ammo lives in the inventory (Increment 6).
+func restock() -> void:
+	cancel_reload()
+	ammo_in_magazine = definition.magazine_size
+	reserve_ammo = definition.starting_reserve
+	_bloom = 0.0
+	ammo_changed.emit(ammo_in_magazine, reserve_ammo)
+
+
 ## Current cone half-angle in degrees, including bloom and movement.
 func get_current_spread_degrees() -> float:
 	return (definition.base_spread + _bloom) * _spread_multiplier

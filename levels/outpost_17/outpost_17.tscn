@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/props/wood_crate.tscn" id="16_uf8n3"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/fuel_drums.tscn" id="17_ixxyf"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/flag_pole.tscn" id="18_wpo68"]
+[ext_resource type="PackedScene" path="res://scenes/world/props/burning_barrel.tscn" id="19_c0itq"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/chain_link_fence.tscn" id="19_so4bl"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/military_truck.tscn" id="20_78cal"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/drainage_culvert.tscn" id="21_xntxo"]
@@ -24,8 +25,9 @@
 [ext_resource type="Material" path="res://assets/materials/wood.tres" id="23_6fgd1"]
 [ext_resource type="PackedScene" path="res://scenes/world/range/target_dummy.tscn" id="24_a2oq6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="24_ck1o8"]
-[ext_resource type="Script" path="res://scripts/world/target_dummy.gd" id="25_c0itq"]
 [ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="26_wmgfa"]
+[ext_resource type="PackedScene" path="res://scenes/world/structures/range_tower.tscn" id="27_wmgfa"]
+[ext_resource type="Script" path="res://scripts/core/game_mode.gd" id="28_ouv22"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -577,6 +579,16 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13, 
 [node name="MotorPoolFence11" parent="Props" unique_id=378812763 instance=ExtResource("19_so4bl")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13, 0, 18.5)
 
+[node name="BurningBarrelYard" type="StaticBody3D" parent="Props" unique_id=1904776390 instance=ExtResource("19_c0itq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -3)
+collision_layer = 2
+collision_mask = 0
+
+[node name="BurningBarrelMotorPool" type="StaticBody3D" parent="Props" unique_id=2060302660 instance=ExtResource("19_c0itq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 5)
+collision_layer = 2
+collision_mask = 0
+
 [node name="Vehicles" type="Node3D" parent="." unique_id=92360141]
 
 [node name="TruckA" parent="Vehicles" unique_id=660792814 instance=ExtResource("20_78cal")]
@@ -594,8 +606,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 14)
 [node name="Player" parent="." unique_id=1105365724 instance=ExtResource("22_0486g")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 14)
 
-[node name="HUD" parent="." unique_id=1842689081 node_paths=PackedStringArray("player") instance=ExtResource("24_ck1o8")]
+[node name="HUD" parent="." unique_id=1842689081 node_paths=PackedStringArray("player", "game_mode") instance=ExtResource("24_ck1o8")]
 player = NodePath("../Player")
+game_mode = NodePath("../GameMode")
 
 [node name="FiringRange" type="Node3D" parent="." unique_id=649963290]
 
@@ -604,15 +617,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0.012, 36)
 material_override = ExtResource("5_wmgfa")
 mesh = SubResource("BoxMesh_ouv22")
 
-[node name="FiringLineN" type="StaticBody3D" parent="FiringRange" unique_id=205815133 instance=ExtResource("14_0yja2")]
+[node name="FiringLineN" parent="FiringRange" unique_id=205815133 instance=ExtResource("14_0yja2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 15, 0, 32.5)
-collision_layer = 2
-collision_mask = 0
 
-[node name="FiringLineS" type="StaticBody3D" parent="FiringRange" unique_id=31457929 instance=ExtResource("14_0yja2")]
+[node name="FiringLineS" parent="FiringRange" unique_id=31457929 instance=ExtResource("14_0yja2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 15, 0, 39.5)
-collision_layer = 2
-collision_mask = 0
 
 [node name="ShootingBench" type="StaticBody3D" parent="FiringRange" unique_id=2119664278]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, 36)
@@ -648,30 +657,23 @@ mesh = SubResource("BoxMesh_e0ma5")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, 0)
 shape = SubResource("BoxShape3D_b53bt")
 
-[node name="AmmoCrate" type="StaticBody3D" parent="FiringRange" unique_id=1559481839 instance=ExtResource("16_uf8n3")]
+[node name="AmmoCrate" parent="FiringRange" unique_id=1559481839 instance=ExtResource("16_uf8n3")]
 transform = Transform3D(0.99026805, 0, 0.1391731, 0, 1, 0, -0.1391731, 0, 0.99026805, 11.5, 0, 38.6)
-collision_layer = 2
-collision_mask = 0
 
-[node name="Target10mA" type="Node3D" parent="FiringRange" unique_id=710151399 instance=ExtResource("24_a2oq6")]
+[node name="Target10mA" parent="FiringRange" unique_id=710151399 instance=ExtResource("24_a2oq6")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 24, 0, 34)
-script = ExtResource("25_c0itq")
 
-[node name="Target10mB" type="Node3D" parent="FiringRange" unique_id=1253439955 instance=ExtResource("24_a2oq6")]
+[node name="Target10mB" parent="FiringRange" unique_id=1253439955 instance=ExtResource("24_a2oq6")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 24, 0, 38)
-script = ExtResource("25_c0itq")
 
-[node name="Target20m" type="Node3D" parent="FiringRange" unique_id=1548870643 instance=ExtResource("24_a2oq6")]
+[node name="Target20m" parent="FiringRange" unique_id=1548870643 instance=ExtResource("24_a2oq6")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 34, 0, 36)
-script = ExtResource("25_c0itq")
 
-[node name="Target35m" type="Node3D" parent="FiringRange" unique_id=29009414 instance=ExtResource("24_a2oq6")]
+[node name="Target35m" parent="FiringRange" unique_id=29009414 instance=ExtResource("24_a2oq6")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 49, 0, 36)
-script = ExtResource("25_c0itq")
 
-[node name="Target50m" type="Node3D" parent="FiringRange" unique_id=1126745866 instance=ExtResource("24_a2oq6")]
+[node name="Target50m" parent="FiringRange" unique_id=1126745866 instance=ExtResource("24_a2oq6")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 64, 0, 36)
-script = ExtResource("25_c0itq")
 
 [node name="Distance10m" type="Label3D" parent="FiringRange" unique_id=214419506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.5, 30.6)
@@ -732,3 +734,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0.03)
 pixel_size = 0.004
 text = "←  FIRING RANGE"
 font_size = 48
+
+[node name="RangeTower" type="StaticBody3D" parent="FiringRange" unique_id=1758733183 instance=ExtResource("27_wmgfa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 47)
+collision_layer = 2
+collision_mask = 0
+
+[node name="GameMode" type="Node" parent="." unique_id=1547692427 node_paths=PackedStringArray("spawn_point", "players")]
+script = ExtResource("28_ouv22")
+spawn_point = NodePath("../PlayerSpawn")
+players = [NodePath("../Player")]
