@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_r1plv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ole03"]
+albedo_color = Color(0.42, 0.24, 0.13, 1)
+metallic = 0.4
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_x6q30"]
+size = Vector3(0.42, 0.03, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_82qar"]
+size = Vector3(0.3, 0.025, 0.18)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_0lgee"]
+top_radius = 0.035
+bottom_radius = 0.035
+height = 0.5
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_qo46g"]
+size = Vector3(0.12, 0.08, 0.03)
+
+[node name="ScrapMetal" type="Node3D" unique_id=1677717603]
+
+[node name="Plate" type="MeshInstance3D" parent="." unique_id=1873164527]
+transform = Transform3D(0.9370388, -0.07449721, 0.341187, 0.10427384, 0.99209934, -0.06975647, -0.33329472, 0.10094139, 0.9374036, 0, 0.03, 0)
+material_override = SubResource("StandardMaterial3D_ole03")
+mesh = SubResource("BoxMesh_x6q30")
+
+[node name="Bent" type="MeshInstance3D" parent="." unique_id=803731406]
+transform = Transform3D(0.8539788, 0.02213201, -0.5198368, 0.23456971, 0.87542605, 0.42261827, 0.46443212, -0.48284507, 0.74240386, 0.05, 0.1, 0.04)
+material_override = ExtResource("1_r1plv")
+mesh = SubResource("BoxMesh_82qar")
+
+[node name="Pipe" type="MeshInstance3D" parent="." unique_id=161819614]
+transform = Transform3D(0.030223848, -0.8654978, 0.5, 0.99939084, 0.034899496, 0, -0.017449748, 0.49969542, 0.8660254, -0.05, 0.06, -0.02)
+material_override = SubResource("StandardMaterial3D_ole03")
+mesh = SubResource("CylinderMesh_0lgee")
+
+[node name="Bracket" type="MeshInstance3D" parent="." unique_id=1681273294]
+transform = Transform3D(0.46984628, -0.17101005, 0.86602545, 0.34202012, 0.9396926, 0, -0.8137977, 0.29619813, 0.49999997, -0.15, 0.08, 0.1)
+material_override = ExtResource("1_r1plv")
+mesh = SubResource("BoxMesh_qo46g")

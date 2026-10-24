@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_itnyy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tc3me"]
+albedo_color = Color(0.88, 0.86, 0.82, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_p6c44"]
+size = Vector3(0.3, 0.12, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k38ah"]
+albedo_color = Color(0.8, 0.1, 0.08, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_4d28x"]
+size = Vector3(0.04, 0.003, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1hdkl"]
+size = Vector3(0.12, 0.003, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3sc4h"]
+size = Vector3(0.05, 0.03, 0.01)
+
+[node name="Medkit" type="Node3D" unique_id=1437206537]
+
+[node name="Box" type="MeshInstance3D" parent="." unique_id=187667904]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+material_override = SubResource("StandardMaterial3D_tc3me")
+mesh = SubResource("BoxMesh_p6c44")
+
+[node name="CrossV" type="MeshInstance3D" parent="." unique_id=600806209]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.122, 0)
+material_override = SubResource("StandardMaterial3D_k38ah")
+mesh = SubResource("BoxMesh_4d28x")
+
+[node name="CrossH" type="MeshInstance3D" parent="." unique_id=405526270]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.122, 0)
+material_override = SubResource("StandardMaterial3D_k38ah")
+mesh = SubResource("BoxMesh_1hdkl")
+
+[node name="Latch" type="MeshInstance3D" parent="." unique_id=1047148774]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, -0.103)
+material_override = ExtResource("1_itnyy")
+mesh = SubResource("BoxMesh_3sc4h")

@@ -89,6 +89,8 @@ var _death_tween: Tween
 @onready var health: HealthComponent = %HealthComponent
 ## The equipped weapon, if any (scene node %Weapon under the camera).
 @onready var weapon: HitscanWeapon = get_node_or_null("%Weapon")
+@onready var interactor: PlayerInteractor = get_node_or_null("%Interactor")
+@onready var resources: PlayerResources = get_node_or_null("%Resources")
 
 
 func _ready() -> void:
@@ -120,6 +122,8 @@ func is_dead() -> bool:
 ## the same result, so the host can re-run a guest's movement.
 func simulate(frame: InputFrame, delta: float) -> void:
 	if is_dead():
+		if interactor != null:
+			interactor.tick(delta, false, null)
 		_simulate_dead(frame, delta)
 		return
 
@@ -166,6 +170,9 @@ func simulate(frame: InputFrame, delta: float) -> void:
 			_spread_multiplier(), movement_state != MovementState.SPRINTING)
 		if recoil != Vector2.ZERO:
 			_apply_look(Vector2(recoil.x, -recoil.y))
+
+	if interactor != null:
+		interactor.tick(delta, frame.interact, self)
 
 
 ## Brings the player back to life at `spawn` with full health. Called by

@@ -59,6 +59,7 @@ func gather() -> InputFrame:
 		fire_held = false
 	frame.fire = fire_held
 	frame.reload = Input.is_action_just_pressed("reload")
+	frame.interact = Input.is_action_pressed("interact")
 	_look_accumulator = Vector2.ZERO
 	return frame
 

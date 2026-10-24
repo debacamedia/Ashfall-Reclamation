@@ -1,0 +1,13 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/rifle_shot_1.wav" id="1_b2gci"]
+[ext_resource type="AudioStream" path="res://assets/audio/rifle_shot_2.wav" id="2_53a0u"]
+[ext_resource type="AudioStream" path="res://assets/audio/rifle_shot_3.wav" id="3_hf1qf"]
+
+[resource]
+random_pitch = 1.07
+random_volume_offset_db = 1.5
+streams_count = 3
+stream_0/stream = ExtResource("1_b2gci")
+stream_1/stream = ExtResource("2_53a0u")
+stream_2/stream = ExtResource("3_hf1qf")

@@ -2,7 +2,8 @@ class_name HUD
 extends CanvasLayer
 ## In-game overlay: health bar, damage feedback (red flash, low-health pulse,
 ## direction arcs), death screen with respawn countdown, dynamic crosshair
-## with hit markers, weapon and ammo readout, and a debug readout (F3).
+## with hit markers, weapon and ammo readout, interaction prompt with hold
+## progress, pickup notices, carried resources, UI sounds, debug readout (F3).
 ##
 ## Scene: res://scenes/ui/hud.tscn
 
@@ -25,9 +26,21 @@ extends CanvasLayer
 @onready var _death_screen: Control = %DeathScreen
 @onready var _death_cause: Label = %DeathCause
 @onready var _respawn_prompt: Label = %RespawnPrompt
+@onready var _prompt_label: Label = %PromptLabel
+@onready var _prompt_reason: Label = %PromptReason
+@onready var _hold_bar: ProgressBar = %HoldBar
+@onready var _notices: VBoxContainer = %Notices
+@onready var _resources_label: Label = %ResourcesLabel
+@onready var _ui_sound: AudioStreamPlayer = %UISound
+
+const SOUND_HIT := preload("res://assets/audio/ui_hit.wav")
+const SOUND_KILL := preload("res://assets/audio/ui_kill.wav")
+const SOUND_DENIED := preload("res://assets/audio/ui_denied.wav")
 
 var _weapon: HitscanWeapon
 var _health: HealthComponent
+var _interactor: PlayerInteractor
+var _resources: PlayerResources
 var _flash := 0.0
 var _pulse_time := 0.0
 var _trail_fraction := 1.0
@@ -48,6 +61,12 @@ func _process(delta: float) -> void:
 	if player.health != _health:
 		_bind_health(player.health)
 		_damage_indicator.player = player
+	if player.interactor != _interactor:
+		_bind_interactor(player.interactor)
+	if player.resources != _resources:
+		_bind_resources(player.resources)
+	_update_prompt()
+	_update_notices(delta)
 
 	if _weapon != null:
 		_crosshair.spread_degrees = _weapon.get_current_spread_degrees()
@@ -156,3 +175,93 @@ func _on_ammo_changed(in_magazine: int, reserve: int) -> void:
 
 func _on_hit_confirmed(_target: Node, _damage: float, killed: bool, zone_multiplier: float) -> void:
 	_crosshair.show_hit_marker(killed, zone_multiplier > 1.0)
+	_play_ui(SOUND_KILL if killed else SOUND_HIT)
+
+
+# ---------------------------------------------------------------- interaction
+
+func _bind_interactor(interactor: PlayerInteractor) -> void:
+	if _interactor != null:
+		_interactor.interaction_refused.disconnect(_on_interaction_refused)
+	_interactor = interactor
+	if interactor != null:
+		interactor.interaction_refused.connect(_on_interaction_refused)
+
+
+func _update_prompt() -> void:
+	var target := _interactor.focused if _interactor != null else null
+	if target == null or not is_instance_valid(target) or player.is_dead():
+		_prompt_label.visible = false
+		_prompt_reason.visible = false
+		_hold_bar.visible = false
+		return
+	_prompt_label.visible = true
+	var key := "Hold E" if target.hold_time > 0.0 else "E"
+	_prompt_label.text = "[%s]  %s" % [key, target.get_prompt(player)]
+	var reason := target.get_block_reason(player)
+	_prompt_reason.visible = reason != ""
+	_prompt_reason.text = reason
+	_prompt_label.modulate = Color(1, 1, 1, 0.5) if reason != "" else Color.WHITE
+	_hold_bar.visible = _interactor.hold_progress >= 0.0
+	_hold_bar.value = maxf(_interactor.hold_progress, 0.0) * 100.0
+
+
+func _on_interaction_refused(_target: Interactable, _reason: String) -> void:
+	_play_ui(SOUND_DENIED)
+
+
+# ---------------------------------------------------------------- resources
+
+func _bind_resources(resources: PlayerResources) -> void:
+	if _resources != null:
+		_resources.item_received.disconnect(_on_item_received)
+		_resources.counts_changed.disconnect(_refresh_resources)
+	_resources = resources
+	if resources != null:
+		resources.item_received.connect(_on_item_received)
+		resources.counts_changed.connect(_refresh_resources)
+	_refresh_resources()
+
+
+func _on_item_received(item: ItemDefinition, quantity: int) -> void:
+	var text := "+%d %s" % [quantity, item.display_name]
+	if item.category == ItemDefinition.Category.MEDICAL:
+		text = "+%d health  (%s)" % [roundi(item.heal_amount), item.display_name]
+	var notice := Label.new()
+	notice.text = text
+	notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	notice.add_theme_font_size_override("font_size", 20)
+	notice.add_theme_constant_override("outline_size", 5)
+	notice.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+	notice.add_theme_color_override("font_color", Color(0.95, 0.85, 0.55))
+	notice.set_meta("time_left", 2.5)
+	_notices.add_child(notice)
+	while _notices.get_child_count() > 5:
+		_notices.get_child(0).free()
+
+
+func _update_notices(delta: float) -> void:
+	for notice in _notices.get_children():
+		var left: float = notice.get_meta("time_left") - delta
+		notice.set_meta("time_left", left)
+		notice.modulate.a = clampf(left / 0.6, 0.0, 1.0)
+		if left <= 0.0:
+			notice.queue_free()
+
+
+func _refresh_resources() -> void:
+	if _resources == null or _resources.counts.is_empty():
+		_resources_label.text = ""
+		return
+	var lines: PackedStringArray = []
+	var ids := _resources.counts.keys()
+	ids.sort()
+	for id in ids:
+		var def: ItemDefinition = _resources.definitions[id]
+		lines.append("%s  %d" % [def.display_name.to_upper(), _resources.counts[id]])
+	_resources_label.text = "\n".join(lines)
+
+
+func _play_ui(stream: AudioStream) -> void:
+	_ui_sound.stream = stream
+	_ui_sound.play()

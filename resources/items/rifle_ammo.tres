@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_ammo.wav" id="1_nxav2"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_ownwl"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/ammo_box.tscn" id="3_47d1i"]
+
+[resource]
+script = ExtResource("2_ownwl")
+id = &"rifle_ammo"
+display_name = "Rifle Ammo"
+description = "5.56 mm rounds for the service rifle."
+category = 1
+max_stack = 120
+weight = 0.012
+world_model = ExtResource("3_47d1i")
+pickup_sound = ExtResource("1_nxav2")
+ammo_type = &"rifle_556"

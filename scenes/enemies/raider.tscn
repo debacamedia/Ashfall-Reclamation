@@ -1,14 +1,26 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/npcs/raider.gd" id="1_uwhn6"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_dc808"]
 [ext_resource type="Material" path="res://assets/materials/raider_cloth.tres" id="2_dcynr"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_71ugl"]
 [ext_resource type="Material" path="res://assets/materials/raider_gear.tres" id="3_bku8t"]
 [ext_resource type="Material" path="res://assets/materials/raider_leather.tres" id="4_ipk3o"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="4_w64xd"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="5_3fitl"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="5_jqa7p"]
 [ext_resource type="Material" path="res://assets/materials/raider_skin.tres" id="6_fd4na"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="6_st5r7"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="7_1a5in"]
 [ext_resource type="Material" path="res://assets/materials/raider_bandana.tres" id="7_ix6vl"]
 [ext_resource type="Material" path="res://assets/materials/raider_lens.tres" id="8_hyeps"]
 [ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="9_clo11"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/raider_alert.tres" id="16_ji6yc"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/raider_pain.tres" id="17_x3ecq"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/raider_death.tres" id="18_jd5go"]
+[ext_resource type="AudioStream" path="res://assets/audio/melee_swing.wav" id="19_rqjxy"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/impact_flesh.tres" id="20_iunrb"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/footstep_gravel.tres" id="21_ipnhw"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cbrhk"]
 radius = 0.35
@@ -95,6 +107,7 @@ collision_layer = 8
 collision_mask = 15
 floor_max_angle = 0.80285144
 script = ExtResource("1_uwhn6")
+drop_items = Array[ExtResource("2_dc808")]([ExtResource("3_71ugl"), ExtResource("3_71ugl"), ExtResource("4_w64xd"), ExtResource("5_jqa7p"), ExtResource("5_jqa7p"), ExtResource("6_st5r7"), ExtResource("7_1a5in")])
 
 [node name="BodyShape" type="CollisionShape3D" parent="." unique_id=1809975729]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
@@ -265,3 +278,48 @@ modulate = Color(1, 0.35, 0.1, 1)
 text = "!"
 font_size = 120
 outline_size = 18
+
+[node name="AlertSound" type="AudioStreamPlayer3D" parent="." unique_id=1669053507]
+unique_name_in_owner = true
+stream = ExtResource("16_ji6yc")
+unit_size = 8.0
+max_distance = 80.0
+bus = &"SFX"
+
+[node name="PainSound" type="AudioStreamPlayer3D" parent="." unique_id=89108050]
+unique_name_in_owner = true
+stream = ExtResource("17_x3ecq")
+volume_db = -2.0
+unit_size = 5.0
+max_distance = 50.0
+bus = &"SFX"
+
+[node name="DeathSound" type="AudioStreamPlayer3D" parent="." unique_id=33402057]
+unique_name_in_owner = true
+stream = ExtResource("18_jd5go")
+unit_size = 6.0
+max_distance = 60.0
+bus = &"SFX"
+
+[node name="SwingSound" type="AudioStreamPlayer3D" parent="." unique_id=1151035604]
+unique_name_in_owner = true
+stream = ExtResource("19_rqjxy")
+unit_size = 4.0
+max_distance = 30.0
+bus = &"SFX"
+
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=614568941]
+unique_name_in_owner = true
+stream = ExtResource("20_iunrb")
+unit_size = 5.0
+max_distance = 60.0
+max_polyphony = 3
+bus = &"SFX"
+
+[node name="FootstepSound" type="AudioStreamPlayer3D" parent="." unique_id=1326446142]
+unique_name_in_owner = true
+stream = ExtResource("21_ipnhw")
+volume_db = -6.0
+unit_size = 2.5
+max_distance = 30.0
+bus = &"SFX"

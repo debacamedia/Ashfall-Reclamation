@@ -3,6 +3,7 @@
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_yxw30"]
 [ext_resource type="Script" path="res://scripts/world/flicker_light.gd" id="2_j5r5i"]
 [ext_resource type="Script" path="res://scripts/combat/damage_zone.gd" id="3_34ec5"]
+[ext_resource type="AudioStream" path="res://assets/audio/fire_loop.wav" id="4_j5r5i"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_7f6su"]
 top_radius = 0.29
@@ -97,3 +98,13 @@ death_message = "You burned to death"
 [node name="ZoneShape" type="CollisionShape3D" parent="FireZone" unique_id=2073355032]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CylinderShape3D_73xs8")
+
+[node name="FireSound" type="AudioStreamPlayer3D" parent="." unique_id=1072601748]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+stream = ExtResource("4_j5r5i")
+volume_db = -2.0
+unit_size = 2.0
+autoplay = true
+max_distance = 25.0
+bus = &"SFX"

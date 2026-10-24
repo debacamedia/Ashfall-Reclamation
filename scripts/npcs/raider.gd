@@ -57,6 +57,16 @@ enum State { IDLE, WANDER, CHASE, ATTACK, SEARCH, DEAD }
 
 @export_group("Death")
 @export var despawn_time := 30.0
+## Items this raider may drop when killed (one is chosen at random).
+@export var drop_items: Array[ItemDefinition] = []
+@export_range(0.0, 1.0) var drop_chance := 0.6
+## Quantity range for non-ammo drops; ammo drops 10-20 rounds.
+@export var drop_min := 1
+@export var drop_max := 3
+
+@export_group("Audio")
+## Metres between footstep sounds while moving.
+@export var step_length := 0.8
 
 var state: State = State.IDLE
 ## Wander area centre. Set by the spawner; defaults to the starting position.
@@ -83,6 +93,15 @@ var _arm_tween: Tween
 @onready var visual: Node3D = %Visual
 @onready var right_arm: Node3D = %RightArm
 @onready var alert_label: Label3D = %AlertLabel
+# Optional sound players
+@onready var _alert_sound: AudioStreamPlayer3D = get_node_or_null("%AlertSound")
+@onready var _pain_sound: AudioStreamPlayer3D = get_node_or_null("%PainSound")
+@onready var _death_sound: AudioStreamPlayer3D = get_node_or_null("%DeathSound")
+@onready var _swing_sound: AudioStreamPlayer3D = get_node_or_null("%SwingSound")
+@onready var _hit_sound: AudioStreamPlayer3D = get_node_or_null("%HitSound")
+@onready var _footstep_sound: AudioStreamPlayer3D = get_node_or_null("%FootstepSound")
+
+var _step_distance := 0.0
 
 
 func _ready() -> void:
@@ -131,6 +150,7 @@ func _physics_process(delta: float) -> void:
 			_process_search(delta)
 
 	move_and_slide()
+	_update_footsteps(delta)
 
 
 # ---------------------------------------------------------------- public
@@ -267,6 +287,7 @@ func _strike() -> void:
 			target.health.apply_damage(info)
 			hit = true
 	_play_strike()
+	_play(_swing_sound)
 	attacked.emit(target, hit)
 
 
@@ -353,6 +374,9 @@ func _pick_wander_point() -> Vector3:
 func _on_damaged(_amount: float, info: DamageInfo) -> void:
 	if is_dead():
 		return
+	_play(_hit_sound)
+	if health.current_health > 0.0 and (_pain_sound == null or not _pain_sound.playing):
+		_play(_pain_sound)
 	# Flinch
 	var tween := create_tween()
 	tween.tween_property(visual, "rotation:x", deg_to_rad(10.0), 0.05)
@@ -375,11 +399,15 @@ func _on_died(_info: DamageInfo) -> void:
 	var tween := create_tween().set_parallel()
 	tween.tween_property(visual, "rotation:x", deg_to_rad(84.0), 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tween.tween_property(right_arm, "rotation:x", deg_to_rad(-30.0), 0.5)
+	_play(_death_sound)
+	_drop_loot()
 	killed.emit(self)
 	get_tree().create_timer(despawn_time).timeout.connect(queue_free)
 
 
 func _show_alert() -> void:
+	if not alert_label.visible:
+		_play(_alert_sound)
 	alert_label.visible = true
 	get_tree().create_timer(1.5).timeout.connect(func() -> void:
 		if is_instance_valid(alert_label):
@@ -399,3 +427,36 @@ func _play_strike() -> void:
 	_arm_tween = create_tween()
 	_arm_tween.tween_property(right_arm, "rotation:x", deg_to_rad(40.0), 0.1)
 	_arm_tween.tween_property(right_arm, "rotation:x", deg_to_rad(15.0), 0.4)
+
+
+func _play(player: AudioStreamPlayer3D) -> void:
+	if player != null and player.is_inside_tree():
+		player.play()
+
+
+func _update_footsteps(delta: float) -> void:
+	var speed := Vector2(velocity.x, velocity.z).length()
+	if not is_on_floor() or speed < 0.5:
+		return
+	_step_distance += speed * delta
+	if _step_distance >= step_length:
+		_step_distance = 0.0
+		_play(_footstep_sound)
+
+
+func _drop_loot() -> void:
+	if drop_items.is_empty() or _rng.randf() > drop_chance:
+		return
+	var item: ItemDefinition = drop_items[_rng.randi() % drop_items.size()]
+	if item == null:
+		return
+	var amount := _rng.randi_range(10, 20) if item.category == ItemDefinition.Category.AMMO \
+		else _rng.randi_range(drop_min, drop_max)
+	# Drop at the feet, on the ground
+	var origin := global_position + Vector3(0, 0.5, 0)
+	var query := PhysicsRayQueryParameters3D.create(origin, origin + Vector3.DOWN * 3.0, PhysicsLayers.WORLD_SOLID)
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	var at: Vector3 = hit["position"] if not hit.is_empty() else global_position
+	var parent := get_parent() if get_parent() != null else get_tree().current_scene
+	var pickup := Pickup.spawn(parent, item, amount, at)
+	pickup.animate = true

@@ -7,6 +7,8 @@ extends Node3D
 ## Scene: res://scenes/weapons/effects/bullet_impact.tscn
 
 @export var lifetime := 12.0
+## Set by the weapon before the impact enters the tree.
+var hard_surface := false
 
 
 func _ready() -> void:
@@ -14,4 +16,7 @@ func _ready() -> void:
 	var dust := get_node_or_null("%Dust") as GPUParticles3D
 	if dust != null:
 		dust.restart()
+	var sound := get_node_or_null("%HardSound" if hard_surface else "%DirtSound") as AudioStreamPlayer3D
+	if sound != null:
+		sound.play()
 	get_tree().create_timer(lifetime).timeout.connect(queue_free)

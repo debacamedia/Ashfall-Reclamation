@@ -4,6 +4,6 @@
 *.gltf filter=lfs diff=lfs merge=lfs -text
 *.blend filter=lfs diff=lfs merge=lfs -text
 *.fbx filter=lfs diff=lfs merge=lfs -text
-*.wav filter=lfs diff=lfs merge=lfs -text
-*.ogg filter=lfs diff=lfs merge=lfs -text
 assets/textures/** filter=lfs diff=lfs merge=lfs -text
+# Audio is small placeholder WAVs for now and lives in plain git.
+# Move large recorded audio to LFS later (add *.wav / *.ogg lines here).

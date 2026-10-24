@@ -3,9 +3,17 @@
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_dovo2"]
 [ext_resource type="Script" path="res://scripts/player/player_input.gd" id="2_gmlin"]
 [ext_resource type="PackedScene" path="res://scenes/weapons/service_rifle.tscn" id="2_p47bc"]
+[ext_resource type="Script" path="res://scripts/interaction/player_interactor.gd" id="3_fm80t"]
 [ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="4_lvxji"]
+[ext_resource type="Script" path="res://scripts/inventory/player_resources.gd" id="6_gx1jg"]
+[ext_resource type="Script" path="res://scripts/player/player_audio.gd" id="7_ugbui"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/footstep_gravel.tres" id="8_fcs02"]
+[ext_resource type="AudioStream" path="res://assets/audio/land.wav" id="9_myrg7"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/player_hurt.tres" id="10_kvlxm"]
+[ext_resource type="AudioStream" path="res://assets/audio/heartbeat.wav" id="11_uf5tr"]
+[ext_resource type="AudioStream" path="res://assets/audio/death_sting.wav" id="12_lgqa7"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p47bc"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8ydkj"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
@@ -23,7 +31,7 @@ script = ExtResource("1_dovo2")
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_p47bc")
+shape = SubResource("CapsuleShape3D_8ydkj")
 
 [node name="Head" type="Node3D" parent="." unique_id=801003417]
 unique_name_in_owner = true
@@ -38,6 +46,10 @@ transform = Transform3D(0.71956146, 0, -0.025127638, 0, 0.72, 0, 0.025127638, 0,
 
 [node name="Weapon" parent="Head/Camera/WeaponMount" unique_id=1313030349 instance=ExtResource("2_p47bc")]
 unique_name_in_owner = true
+
+[node name="Interactor" type="RayCast3D" parent="Head" unique_id=919620665]
+unique_name_in_owner = true
+script = ExtResource("3_fm80t")
 
 [node name="HeadClearance" type="ShapeCast3D" parent="." unique_id=545696862]
 unique_name_in_owner = true
@@ -54,3 +66,46 @@ script = ExtResource("2_gmlin")
 [node name="HealthComponent" type="Node" parent="." unique_id=1371505208]
 unique_name_in_owner = true
 script = ExtResource("4_lvxji")
+
+[node name="Resources" type="Node" parent="." unique_id=1887040850]
+unique_name_in_owner = true
+script = ExtResource("6_gx1jg")
+
+[node name="Audio" type="Node3D" parent="." unique_id=1547060927]
+script = ExtResource("7_ugbui")
+
+[node name="Footsteps" type="AudioStreamPlayer3D" parent="Audio" unique_id=1919865044]
+unique_name_in_owner = true
+stream = ExtResource("8_fcs02")
+volume_db = -4.0
+unit_size = 3.0
+bus = &"SFX"
+
+[node name="Land" type="AudioStreamPlayer3D" parent="Audio" unique_id=1189705300]
+unique_name_in_owner = true
+stream = ExtResource("9_myrg7")
+unit_size = 4.0
+bus = &"SFX"
+
+[node name="Hurt" type="AudioStreamPlayer" parent="Audio" unique_id=28345126]
+unique_name_in_owner = true
+stream = ExtResource("10_kvlxm")
+volume_db = -3.0
+bus = &"SFX"
+
+[node name="Heartbeat" type="AudioStreamPlayer" parent="Audio" unique_id=2141886949]
+unique_name_in_owner = true
+stream = ExtResource("11_uf5tr")
+volume_db = -4.0
+bus = &"SFX"
+
+[node name="Death" type="AudioStreamPlayer" parent="Audio" unique_id=1314906140]
+unique_name_in_owner = true
+stream = ExtResource("12_lgqa7")
+volume_db = -2.0
+bus = &"SFX"
+
+[node name="Pickup" type="AudioStreamPlayer" parent="Audio" unique_id=211517441]
+unique_name_in_owner = true
+volume_db = -4.0
+bus = &"SFX"

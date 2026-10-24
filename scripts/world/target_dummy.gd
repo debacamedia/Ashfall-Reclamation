@@ -15,6 +15,7 @@ signal reset_finished
 @onready var health: HealthComponent = %HealthComponent
 @onready var hinge: Node3D = %Hinge
 @onready var damage_label: Label3D = %DamageLabel
+@onready var _ping_sound: AudioStreamPlayer3D = get_node_or_null("%PingSound")
 
 var _label_timer := 0.0
 var _hit_tween: Tween
@@ -36,6 +37,8 @@ func _process(delta: float) -> void:
 
 
 func _on_damaged(amount: float, info: DamageInfo) -> void:
+	if _ping_sound != null:
+		_ping_sound.play()
 	if show_damage_numbers:
 		damage_label.text = ("%d!" if info.zone_multiplier > 1.0 else "%d") % roundi(amount)
 		damage_label.modulate = Color(1.0, 0.85, 0.2) if info.zone_multiplier > 1.0 else Color.WHITE

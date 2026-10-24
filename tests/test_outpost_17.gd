@@ -245,3 +245,55 @@ func test_spawner_replaces_killed_raider() -> void:
 	await wait_physics(2)
 	var alive := spawner.get_alive()
 	check(alive.size() == 1 and alive[0] != first, "a new raider spawned after the delay")
+
+
+# ---------------------------------------------------------------- Increment 5
+
+func test_loot_placed_on_surfaces() -> void:
+	await _load_level()
+	var loot := _level.get_node("Loot").get_children()
+	check(loot.size() >= 20, "at least 20 loot pickups (%d)" % loot.size())
+	var space := _level.get_world_3d().direct_space_state
+	for pk: Node3D in loot:
+		var from := pk.global_position + Vector3(0, 0.3, 0)
+		var q := PhysicsRayQueryParameters3D.create(from, from + Vector3.DOWN * 1.0, PhysicsLayers.WORLD_SOLID)
+		var hit := space.intersect_ray(q)
+		check(not hit.is_empty() and from.y - (hit["position"] as Vector3).y < 0.45, "%s rests on a surface" % pk.name)
+
+
+func test_hud_prompt_and_notice_for_range_ammo() -> void:
+	await _load_level()
+	var hud := _level.get_node("HUD") as HUD
+	var ammo := _level.get_node("Loot/RangeAmmoA") as Pickup
+	await _teleport(Vector3(10.2, 0.05, 35.4), 0)
+	var eye := _player.head.global_position
+	var target := ammo.global_position + Vector3(0, 0.1, 0)
+	var flat := Vector3(target.x - eye.x, 0, target.z - eye.z)
+	_player.rotation.y = atan2(-flat.x, -flat.z)
+	_player.head.rotation.x = atan2(target.y - eye.y, flat.length())
+	await _walk(Vector2.ZERO, 3)
+	var prompt := hud.get_node("%PromptLabel") as Label
+	check(prompt.visible and prompt.text == "[E]  Pick up Rifle Ammo ×30", "prompt: '%s'" % prompt.text)
+	var reserve := _player.weapon.reserve_ammo
+	var f := InputFrame.new()
+	f.interact = true
+	await get_tree().physics_frame
+	_player.simulate(f, DT)
+	await wait_physics(3)
+	check(_player.weapon.reserve_ammo == reserve + 30, "reserve +30")
+	var notices := hud.get_node("%Notices") as VBoxContainer
+	check(notices.get_child_count() >= 1 and (notices.get_child(0) as Label).text == "+30 Rifle Ammo", "pickup notice shown")
+
+
+func test_can_pick_loot_off_warehouse_shelves() -> void:
+	await _load_level()
+	for spec in [["WarehouseShelfScrap", Vector3(-22.8, 0.05, 13.0)], ["WarehouseShelfCloth", Vector3(-22.8, 0.05, 3.0)]]:
+		var pk := _level.get_node("Loot/" + spec[0]) as Pickup
+		await _teleport(spec[1], 90)
+		var eye := _player.head.global_position
+		var target := pk.global_position + Vector3(0, 0.1, 0)
+		var flat := Vector3(target.x - eye.x, 0, target.z - eye.z)
+		_player.rotation.y = atan2(-flat.x, -flat.z)
+		_player.head.rotation.x = atan2(target.y - eye.y, flat.length())
+		await _walk(Vector2.ZERO, 3)
+		check(_player.interactor.focused == pk, "%s on the rack can be targeted" % spec[0])

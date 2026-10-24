@@ -1,0 +1,103 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="1_70cij"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_3jd6o"]
+size = Vector3(0.28, 0.1, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_arxob"]
+albedo_color = Color(0.1, 0.38, 0.17, 1)
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_8mfl8"]
+size = Vector3(0.24, 0.012, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xqvxu"]
+albedo_color = Color(0.05, 0.05, 0.05, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_i4oj2"]
+size = Vector3(0.035, 0.012, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ud3ut"]
+albedo_color = Color(0.05, 0.05, 0.05, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_ppodu"]
+size = Vector3(0.035, 0.012, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yh0lx"]
+albedo_color = Color(0.05, 0.05, 0.05, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_ajxhp"]
+size = Vector3(0.035, 0.012, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hf30f"]
+albedo_color = Color(0.05, 0.05, 0.05, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_0oplr"]
+size = Vector3(0.035, 0.012, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6vvpw"]
+albedo_color = Color(0.7, 0.15, 0.1, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_h737e"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 0.3
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8xu5u"]
+albedo_color = Color(0.15, 0.3, 0.7, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hd20e"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 0.28
+radial_segments = 12
+
+[node name="Electronics" type="Node3D" unique_id=805715853]
+
+[node name="Case" type="MeshInstance3D" parent="." unique_id=969320703]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+material_override = ExtResource("1_70cij")
+mesh = SubResource("BoxMesh_3jd6o")
+
+[node name="Board" type="MeshInstance3D" parent="." unique_id=395952572]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.106, 0)
+material_override = SubResource("StandardMaterial3D_arxob")
+mesh = SubResource("BoxMesh_8mfl8")
+
+[node name="Chip" type="MeshInstance3D" parent="." unique_id=754018233]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.118, -0.03)
+material_override = SubResource("StandardMaterial3D_xqvxu")
+mesh = SubResource("BoxMesh_i4oj2")
+
+[node name="Chip2" type="MeshInstance3D" parent="." unique_id=1715013811]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 0.118, 0.02)
+material_override = SubResource("StandardMaterial3D_ud3ut")
+mesh = SubResource("BoxMesh_ppodu")
+
+[node name="Chip3" type="MeshInstance3D" parent="." unique_id=194345946]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.118, -0.03)
+material_override = SubResource("StandardMaterial3D_yh0lx")
+mesh = SubResource("BoxMesh_ajxhp")
+
+[node name="Chip4" type="MeshInstance3D" parent="." unique_id=1664532294]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.118, 0.02)
+material_override = SubResource("StandardMaterial3D_hf30f")
+mesh = SubResource("BoxMesh_0oplr")
+
+[node name="Wire" type="MeshInstance3D" parent="." unique_id=568100931]
+transform = Transform3D(0.17364822, -0.9848077, 0, 0.9848077, 0.17364822, 0, 0, 0, 1, 0.14, 0.06, 0.02)
+material_override = SubResource("StandardMaterial3D_6vvpw")
+mesh = SubResource("CylinderMesh_h737e")
+
+[node name="Wire2" type="MeshInstance3D" parent="." unique_id=1767852849]
+transform = Transform3D(0.25881907, -0.9659258, 0, 0.9512512, 0.254887, -0.17364818, 0.16773126, 0.04494346, 0.9848077, 0.14, 0.07, -0.03)
+material_override = SubResource("StandardMaterial3D_8xu5u")
+mesh = SubResource("CylinderMesh_hd20e")

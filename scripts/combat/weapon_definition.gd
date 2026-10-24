@@ -24,6 +24,10 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 @export var magazine_size := 30
 ## Spare rounds carried at the start. Becomes inventory ammo in Increment 6.
 @export var starting_reserve := 90
+## Most spare rounds that can be carried.
+@export var max_reserve := 240
+## Which ammo items refill this weapon (ItemDefinition.ammo_type).
+@export var ammo_type: StringName = &"rifle_556"
 @export var reload_time := 2.3
 
 ## Enemies within this distance hear each shot (m). 0 = silent.

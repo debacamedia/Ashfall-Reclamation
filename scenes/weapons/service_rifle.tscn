@@ -4,6 +4,9 @@
 [ext_resource type="Resource" path="res://resources/items/weapons/service_rifle.tres" id="2_ncuwo"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_i7nsr"]
 [ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="4_s6jbf"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/rifle_shot.tres" id="5_s6jbf"]
+[ext_resource type="AudioStream" path="res://assets/audio/rifle_reload.wav" id="6_gndac"]
+[ext_resource type="AudioStream" path="res://assets/audio/rifle_dry_fire.wav" id="7_6pja3"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gndac"]
 size = Vector3(0.05, 0.07, 0.28)
@@ -178,3 +181,24 @@ mesh = SubResource("QuadMesh_tnr1d")
 [node name="FlashStar" type="MeshInstance3D" parent="Model/Muzzle/MuzzleFlash" unique_id=1003668365]
 cast_shadow = 0
 mesh = SubResource("QuadMesh_d3byv")
+
+[node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=994840292]
+unique_name_in_owner = true
+stream = ExtResource("5_s6jbf")
+unit_size = 14.0
+max_polyphony = 6
+bus = &"SFX"
+
+[node name="ReloadSound" type="AudioStreamPlayer3D" parent="." unique_id=1940694398]
+unique_name_in_owner = true
+stream = ExtResource("6_gndac")
+volume_db = -2.0
+unit_size = 3.0
+bus = &"SFX"
+
+[node name="DryFireSound" type="AudioStreamPlayer3D" parent="." unique_id=1772050682]
+unique_name_in_owner = true
+stream = ExtResource("7_6pja3")
+volume_db = -4.0
+unit_size = 3.0
+bus = &"SFX"

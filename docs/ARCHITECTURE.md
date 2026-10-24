@@ -42,8 +42,8 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 | Health | `HealthComponent` node, damage and death signals (player and NPCs) | Node component | 2 ✅ |
 | Death and respawn | Player death, respawn at Outpost 17 spawn point | PlayerController + `GameMode` node in the level | 3 ✅ |
 | Enemy NPC | `NavigationAgent3D` pathing on a baked `NavigationRegion3D`, sight + hearing, chase and melee, `EnemySpawner` | `CharacterBody3D` scene | 4 ✅ |
-| Interaction | Ray from the camera, `Interactable` component, prompt UI | Node component + RayCast3D | 5 |
-| Items and resources | `ItemDefinition` Resource, world pickups (scrap, cloth, fuel...) | Resource + scene | 5 |
+| Interaction | Ray from the camera, `Interactable` (Area3D), prompt UI, hold-to-interact | Area3D + RayCast3D | 5 ✅ |
+| Items and resources | `ItemDefinition` Resource, world pickups (scrap, cloth, fuel...) | Resource + scene | 5 ✅ |
 | **InventoryManager** | `InventoryComponent` (slots, stacks, weight cap), transfers, signals | Node component + Resources | 6 |
 | Inventory UI | Grid UI bound to an `InventoryComponent` | `Control` scene | 6 |
 | Salvage containers | Interactable containers with their own inventory and loot tables | Scene + `LootTable` Resource | 7 |
@@ -103,6 +103,7 @@ res://
 │   ├── player/                player_controller.gd, player_input.gd
 │   ├── npcs/                  raider.gd, enemy_spawner.gd (NPC behaviour)
 │   ├── world/                 scripts for world props (shipping_container.gd)
+│   ├── interaction/           interactable.gd, pickup.gd, player_interactor.gd
 │   ├── ui/                    hud.gd
 │   ├── combat/ inventory/ construction/ settlement/ economy/
 │   ├── military/ factions/ networking/ persistence/   (filled in later increments)
@@ -117,6 +118,8 @@ res://
 ```
 
 **Changes from the proposed structure, and why:**
+- **`scripts/interaction/` added** (Increment 5). Anything the player presses E on.
+- **`tools/` added** (Increment 5). Offline tools, such as the sound synthesizer. Godot ignores it.
 - **`scripts/npcs/` added** (Increment 4). NPC behaviour (raiders, later settlers and soldiers) mirrors `scripts/player/`.
 - **`scripts/player/` added.** The player controller and input don't fit under `core/` or `combat/`, and they'll grow (stamina, interaction, equipment).
 - **`scenes/world/` split into `structures/` and `props/`.** Outposts reuse dozens of pieces, and the split keeps both lists scannable. `scenes/buildings/` is reserved for *player-built* structures, which carry BuildingManager data such as cost, health and upgrades. World set dressing does not.
@@ -154,7 +157,7 @@ res://
 | 2 ✅ | Rifle + HealthComponent + target dummies | Shoot targets that take damage |
 | 3 ✅ | Player health, death and respawn | Take damage, die and respawn at the outpost |
 | 4 ✅ | Enemy NPC with navigation and melee attack | A raider paths around the outpost and attacks |
-| 5 | Interaction system + collectible resources | Look at a pickup, press E, collect scrap |
+| 5 ✅ | Interaction system + collectible resources (+ sound pass) | Look at a pickup, press E, collect scrap |
 | 6 | Inventory (data + UI) | Open the inventory, see stacks and weight |
 | 7 | Salvage containers | Search crates and transfer loot |
 | 8 | SaveManager | Save and load the player, inventory and opened containers |

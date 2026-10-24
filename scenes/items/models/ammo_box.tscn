@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="1_gfnyi"]
+[ext_resource type="Material" path="res://assets/materials/hazard_yellow.tres" id="2_873el"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_ndy5y"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_d8ckj"]
+size = Vector3(0.28, 0.18, 0.14)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c68vj"]
+albedo_color = Color(0.25, 0.27, 0.17, 1)
+metallic = 0.3
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_5t07a"]
+size = Vector3(0.29, 0.03, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qlxor"]
+size = Vector3(0.2, 0.03, 0.002)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tr1tj"]
+size = Vector3(0.12, 0.02, 0.03)
+
+[node name="AmmoBox" type="Node3D" unique_id=1608814890]
+
+[node name="Can" type="MeshInstance3D" parent="." unique_id=2108634807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0)
+material_override = ExtResource("1_gfnyi")
+mesh = SubResource("BoxMesh_d8ckj")
+
+[node name="Lid" type="MeshInstance3D" parent="." unique_id=674521498]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.195, 0)
+material_override = SubResource("StandardMaterial3D_c68vj")
+mesh = SubResource("BoxMesh_5t07a")
+
+[node name="Stencil" type="MeshInstance3D" parent="." unique_id=449334566]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -0.071)
+material_override = ExtResource("2_873el")
+mesh = SubResource("BoxMesh_qlxor")
+
+[node name="Handle" type="MeshInstance3D" parent="." unique_id=1966701317]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+material_override = ExtResource("3_ndy5y")
+mesh = SubResource("BoxMesh_tr1tj")

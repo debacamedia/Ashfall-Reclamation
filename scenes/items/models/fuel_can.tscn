@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_kms87"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e5pk4"]
+albedo_color = Color(0.55, 0.12, 0.08, 1)
+metallic = 0.4
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_6n7d0"]
+size = Vector3(0.17, 0.45, 0.34)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j5xr0"]
+albedo_color = Color(0.45, 0.1, 0.07, 1)
+metallic = 0.4
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_g6jth"]
+size = Vector3(0.18, 0.28, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4njd2"]
+size = Vector3(0.04, 0.05, 0.2)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_xincn"]
+top_radius = 0.025
+bottom_radius = 0.025
+height = 0.08
+radial_segments = 12
+
+[node name="FuelCan" type="Node3D" unique_id=2045959547]
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=1812665305]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
+material_override = SubResource("StandardMaterial3D_e5pk4")
+mesh = SubResource("BoxMesh_6n7d0")
+
+[node name="Rib" type="MeshInstance3D" parent="." unique_id=1963088798]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+material_override = SubResource("StandardMaterial3D_j5xr0")
+mesh = SubResource("BoxMesh_g6jth")
+
+[node name="Handle" type="MeshInstance3D" parent="." unique_id=903023192]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0.03)
+material_override = ExtResource("1_kms87")
+mesh = SubResource("BoxMesh_4njd2")
+
+[node name="Spout" type="MeshInstance3D" parent="." unique_id=700108652]
+transform = Transform3D(1, 0, 0, 0, 0.90630776, -0.42261827, 0, 0.42261827, 0.90630776, 0, 0.47, -0.13)
+material_override = ExtResource("1_kms87")
+mesh = SubResource("CylinderMesh_xincn")

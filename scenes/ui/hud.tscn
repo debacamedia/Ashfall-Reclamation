@@ -51,9 +51,9 @@ offset_left = 16.0
 offset_top = 12.0
 offset_right = 16.0
 offset_bottom = 12.0
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
 
 [node name="WeaponLabel" type="Label" parent="Root" unique_id=410414671]
 unique_name_in_owner = true
@@ -66,9 +66,9 @@ offset_left = -360.0
 offset_top = -86.0
 offset_right = -28.0
 offset_bottom = -60.0
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
 theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 2
 vertical_alignment = 2
 
@@ -83,9 +83,9 @@ offset_left = -360.0
 offset_top = -60.0
 offset_right = -28.0
 offset_bottom = -16.0
-theme_override_font_sizes/font_size = 30
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
 theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 30
 horizontal_alignment = 2
 vertical_alignment = 2
 
@@ -111,10 +111,10 @@ mouse_filter = 2
 layout_mode = 0
 offset_right = 120.0
 offset_bottom = 23.0
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 16
 text = "HEALTH"
 
 [node name="HealthLabel" type="Label" parent="Root/HealthPanel" unique_id=1099592519]
@@ -123,10 +123,10 @@ layout_mode = 0
 offset_top = 18.0
 offset_right = 70.0
 offset_bottom = 58.0
-theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 30
 text = "100"
 
 [node name="HealthBarBg" type="ColorRect" parent="Root/HealthPanel" unique_id=386937975]
@@ -180,10 +180,10 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 offset_top = -110.0
 offset_bottom = -30.0
-theme_override_font_sizes/font_size = 64
 theme_override_colors/font_color = Color(0.9, 0.2, 0.15, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 64
 text = "YOU DIED"
 horizontal_alignment = 1
 
@@ -195,10 +195,10 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 offset_top = -30.0
 offset_bottom = 50.0
-theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.9, 0.85, 0.8, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
 
 [node name="RespawnPrompt" type="Label" parent="Root/DeathScreen" unique_id=850025194]
@@ -209,8 +209,86 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 offset_top = 20.0
 offset_bottom = 100.0
-theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="Root" unique_id=1886940405]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 40.0
+offset_bottom = 72.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+
+[node name="PromptReason" type="Label" parent="Root" unique_id=748596740]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 72.0
+offset_bottom = 98.0
+theme_override_colors/font_color = Color(1, 0.55, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+
+[node name="HoldBar" type="ProgressBar" parent="Root" unique_id=1862442007]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = 100.0
+offset_right = 90.0
+offset_bottom = 108.0
+mouse_filter = 2
+show_percentage = false
+
+[node name="Notices" type="VBoxContainer" parent="Root" unique_id=901228096]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -290.0
+offset_right = -28.0
+offset_bottom = -100.0
+mouse_filter = 2
+alignment = 2
+
+[node name="ResourcesLabel" type="Label" parent="Root" unique_id=984099544]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 160.0
+theme_override_colors/font_color = Color(0.9, 0.88, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 2
+
+[node name="UISound" type="AudioStreamPlayer" parent="." unique_id=1091512968]
+unique_name_in_owner = true
+bus = &"UI"

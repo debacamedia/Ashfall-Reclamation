@@ -14,11 +14,12 @@ var sprint := false
 var crouch := false
 var fire := false           ## Trigger held this tick.
 var reload := false         ## True only on the tick reload was pressed.
+var interact := false       ## Interact key held this tick.
 
 
 ## Compact form for sending to the host later.
 func to_dict() -> Dictionary:
-	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload}
+	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload, "i": interact}
 
 
 ## Builds a frame from untrusted data (e.g. a network peer). Values are
@@ -34,6 +35,7 @@ static func from_dict(data: Dictionary) -> InputFrame:
 	frame.crouch = _strict_bool(data.get("c", false))
 	frame.fire = _strict_bool(data.get("f", false))
 	frame.reload = _strict_bool(data.get("r", false))
+	frame.interact = _strict_bool(data.get("i", false))
 	return frame
 
 

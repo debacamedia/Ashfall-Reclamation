@@ -49,6 +49,10 @@ var _model_rest := Vector3.ZERO
 
 @onready var _model: Node3D = %Model
 @onready var _muzzle_flash: Node3D = %MuzzleFlash
+# Optional sound players (scene nodes); the weapon works without them.
+@onready var _shot_sound: AudioStreamPlayer3D = get_node_or_null("%ShotSound")
+@onready var _reload_sound: AudioStreamPlayer3D = get_node_or_null("%ReloadSound")
+@onready var _dry_fire_sound: AudioStreamPlayer3D = get_node_or_null("%DryFireSound")
 
 
 func _ready() -> void:
@@ -87,18 +91,21 @@ func tick(delta: float, trigger_held: bool, reload_pressed: bool, aim: Transform
 		start_reload()
 		return Vector2.ZERO
 
+	# Empty: a fresh trigger pull clicks (even during the fire-rate cooldown)
+	if ammo_in_magazine <= 0 and can_fire:
+		if trigger_pulled:
+			dry_fired.emit()
+			if _dry_fire_sound != null:
+				_dry_fire_sound.play()
+			start_reload()
+		_cooldown = maxf(_cooldown, 0.0)
+		return Vector2.ZERO
+
 	var wants_to_fire := trigger_held if definition.fire_mode == WeaponDefinition.FireMode.FULL_AUTO else trigger_pulled
 	if not wants_to_fire or not can_fire:
 		_cooldown = maxf(_cooldown, 0.0)
 		return Vector2.ZERO
 	if _cooldown > 0.0:
-		return Vector2.ZERO
-
-	if ammo_in_magazine <= 0:
-		if trigger_pulled:
-			dry_fired.emit()
-			start_reload()
-		_cooldown = 0.0
 		return Vector2.ZERO
 
 	_cooldown += definition.get_shot_interval()
@@ -112,6 +119,8 @@ func start_reload() -> bool:
 	is_reloading = true
 	_reload_left = definition.reload_time
 	reload_started.emit(definition.reload_time)
+	if _reload_sound != null:
+		_reload_sound.play()
 	return true
 
 
@@ -119,6 +128,17 @@ func start_reload() -> bool:
 func cancel_reload() -> void:
 	is_reloading = false
 	_reload_left = 0.0
+	if _reload_sound != null:
+		_reload_sound.stop()
+
+
+## Adds spare rounds (from ammo pickups), up to max_reserve. Returns how many fit.
+func add_reserve_ammo(amount: int) -> int:
+	var added := clampi(amount, 0, definition.max_reserve - reserve_ammo)
+	if added > 0:
+		reserve_ammo += added
+		ammo_changed.emit(ammo_in_magazine, reserve_ammo)
+	return added
 
 
 ## Refills magazine and reserve to the definition's starting amounts.
@@ -162,6 +182,8 @@ func _fire(aim: Transform3D, shooter: CollisionObject3D) -> Vector2:
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 
 	fired.emit(origin, direction)
+	if _shot_sound != null:
+		_shot_sound.play()
 	if definition.noise_radius > 0.0:
 		get_tree().call_group("noise_listeners", "hear_noise", origin, definition.noise_radius, shooter)
 	if not result.is_empty():
@@ -191,11 +213,13 @@ func _resolve_hit(result: Dictionary, origin: Vector3, direction: Vector3, shoot
 	var position: Vector3 = result["position"]
 	var normal: Vector3 = result["normal"]
 	surface_hit.emit(position, normal, collider)
-	if spawn_impact_effects and _impact_scene != null:
-		_spawn_impact(position, normal)
+	var health := HealthComponent.find_on(collider)
+	# Characters and targets make their own hit sounds; no decal on them
+	if spawn_impact_effects and _impact_scene != null and health == null:
+		var hard := collider is CollisionObject3D and (collider as CollisionObject3D).collision_layer & PhysicsLayers.STRUCTURES != 0
+		_spawn_impact(position, normal, hard)
 
 	var zone_multiplier := _zone_multiplier(collider, result["shape"])
-	var health := HealthComponent.find_on(collider)
 	if health == null or zone_multiplier <= 0.0:
 		return
 	var info := DamageInfo.create(
@@ -233,11 +257,12 @@ func _finish_reload() -> void:
 	ammo_changed.emit(ammo_in_magazine, reserve_ammo)
 
 
-func _spawn_impact(position: Vector3, normal: Vector3) -> void:
+func _spawn_impact(position: Vector3, normal: Vector3, hard_surface: bool) -> void:
 	var impacts := get_tree().get_nodes_in_group("bullet_impacts")
 	if impacts.size() >= MAX_IMPACT_EFFECTS:
 		impacts[0].queue_free()
 	var impact := _impact_scene.instantiate() as Node3D
+	impact.set("hard_surface", hard_surface)
 	var parent := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
 	parent.add_child(impact)
 	impact.global_position = position + normal * 0.005

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_x881v"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_gomwf"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/scrap_metal.tscn" id="3_ov7nj"]
+
+[resource]
+script = ExtResource("2_gomwf")
+id = &"scrap_metal"
+display_name = "Scrap Metal"
+description = "Bent plates, pipe and brackets. The backbone of every build."
+max_stack = 100
+base_value = 2
+world_model = ExtResource("3_ov7nj")
+pickup_sound = ExtResource("1_x881v")
