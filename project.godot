@@ -17,6 +17,7 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
+WorldManager="*res://scripts/core/world_manager.gd"
 SaveManager="*res://scripts/persistence/save_manager.gd"
 
 [display]

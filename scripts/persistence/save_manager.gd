@@ -20,11 +20,14 @@ extends Node
 ## parent, so a node that's missing on load (a pickup taken after saving, an
 ## item dropped before saving) is re-created.
 ##
-## FORMAT (version 1):
-##   {"format": "ashfall_save", "version": 1, "saved_at": "...",
+## FORMAT (version 2):
+##   {"format": "ashfall_save", "version": 2, "saved_at": "...",
 ##    "level": "res://levels/outpost_17/outpost_17.tscn",
 ##    "nodes": [{"path": "Player", "scene": "res://...", "parent": ".",
-##               "data": {...}}, ...]}
+##               "data": {...}}, ...],
+##    "regions": {"res://levels/…/other.tscn": {"nodes": [...]}, ...}}
+## "regions" is the remembered state of the regions you're not in
+## (WorldManager, Increment 12); same node entries, no players.
 ## Older versions are upgraded in _migrate(); newer ones are refused.
 ##
 ## AUTHORITY: in co-op only the host saves and loads (the world state lives
@@ -36,7 +39,7 @@ signal loaded(path: String)
 signal failed(reason: String)
 
 const FORMAT := "ashfall_save"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 const QUICK_SLOT := "quicksave"
 
 ## Where saves go. Tests point this somewhere else.
@@ -115,6 +118,7 @@ func build_save_data(root: Node) -> Dictionary:
 		"saved_at": Time.get_datetime_string_from_system(false, true),
 		"level": root.scene_file_path,
 		"nodes": nodes,
+		"regions": _world().get_saved_regions(root.scene_file_path) if _world() != null else {},
 	}
 
 
@@ -145,6 +149,8 @@ func load_game(slot := QUICK_SLOT, world_root: Node = null) -> Error:
 	if root == null:
 		return _fail("Nothing to load into", ERR_UNCONFIGURED)
 	apply_save_data(data, root)
+	if _world() != null:
+		_world().set_saved_regions(data.get("regions"), root.scene_file_path)
 	loaded.emit(path)
 	return OK
 
@@ -223,12 +229,23 @@ func _apply_after_scene_change(data: Dictionary, path: String) -> void:
 		_fail("Couldn't open the saved level", ERR_CANT_OPEN)
 		return
 	apply_save_data(data, root)
+	if _world() != null:
+		_world().set_saved_regions(data.get("regions"), root.scene_file_path)
 	loaded.emit(path)
 
 
-## Upgrades older save versions. Version 1 is the first, so nothing yet.
+## Upgrades older save versions.
+##   1 → 2: no other regions remembered yet.
 func _migrate(data: Dictionary) -> Dictionary:
+	if int(data.get("version", 1)) < 2:
+		data["regions"] = {}
+		data["version"] = 2
 	return data
+
+
+## The WorldManager autoload (other regions' state), if present.
+func _world() -> Node:
+	return get_node_or_null("/root/WorldManager")
 
 
 func _fail(reason: String, err: Error) -> Error:

@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_tkvyf"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_xctff"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_p6b7i"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="4_uem6n"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="5_lwvbg"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="6_oqj20"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="7_2fju8"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="8_yu6s4"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_crnc8"]
+
+[sub_resource type="Resource" id="Resource_1t0eu"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("2_xctff")
+weight = 3.0
+min_quantity = 2
+max_quantity = 5
+
+[sub_resource type="Resource" id="Resource_e6nc4"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("3_p6b7i")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_8n0ol"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("4_uem6n")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_cg7ib"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("5_lwvbg")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_7fafp"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("6_oqj20")
+weight = 2.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_lr0db"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("7_2fju8")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_q3shb"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("8_yu6s4")
+min_quantity = 4
+max_quantity = 8
+
+[resource]
+script = ExtResource("9_crnc8")
+entries = Array[ExtResource("1_tkvyf")]([SubResource("Resource_1t0eu"), SubResource("Resource_e6nc4"), SubResource("Resource_8n0ol"), SubResource("Resource_cg7ib"), SubResource("Resource_7fafp"), SubResource("Resource_lr0db"), SubResource("Resource_q3shb")])
+min_rolls = 2
+max_rolls = 4

@@ -25,6 +25,7 @@ const SUITES := [
 	"res://tests/test_weapons.gd",
 	"res://tests/test_crafting.gd",
 	"res://tests/test_gun_crafting.gd",
+	"res://tests/test_regions.gd",
 	"res://tests/test_audio.gd",
 	"res://tests/test_outpost_17.gd",
 ]
@@ -62,6 +63,10 @@ func _run() -> void:
 	for path in SUITES:
 		var script := load(path) as GDScript
 		print("\n== %s" % path.get_file())
+		if script == null or not script.can_instantiate():
+			failed += 1
+			print("  FAIL  (suite didn't load: parse error?)")
+			continue
 		for method in script.get_script_method_list():
 			var name: String = method["name"]
 			if not name.begins_with("test_"):

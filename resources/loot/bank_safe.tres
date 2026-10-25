@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_turcm"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="2_yrahg"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="3_jnvuw"]
+[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="4_0okm8"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="5_um4io"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="6_hp5wx"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_2i88u"]
+
+[sub_resource type="Resource" id="Resource_t102i"]
+script = ExtResource("1_turcm")
+item = ExtResource("2_yrahg")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_x1ta4"]
+script = ExtResource("1_turcm")
+item = ExtResource("3_jnvuw")
+
+[sub_resource type="Resource" id="Resource_3u4qu"]
+script = ExtResource("1_turcm")
+item = ExtResource("4_0okm8")
+
+[sub_resource type="Resource" id="Resource_a0afx"]
+script = ExtResource("1_turcm")
+item = ExtResource("5_um4io")
+min_quantity = 12
+max_quantity = 24
+
+[sub_resource type="Resource" id="Resource_sl0as"]
+script = ExtResource("1_turcm")
+item = ExtResource("2_yrahg")
+min_quantity = 3
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_c5uvq"]
+script = ExtResource("1_turcm")
+item = ExtResource("6_hp5wx")
+
+[resource]
+script = ExtResource("7_2i88u")
+guaranteed = Array[ExtResource("1_turcm")]([SubResource("Resource_sl0as"), SubResource("Resource_c5uvq")])
+entries = Array[ExtResource("1_turcm")]([SubResource("Resource_t102i"), SubResource("Resource_x1ta4"), SubResource("Resource_3u4qu"), SubResource("Resource_a0afx")])
+min_rolls = 2

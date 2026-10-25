@@ -55,8 +55,8 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 ### Autoloads (planned)
 Only systems that genuinely need global access:
 - `SaveManager` (Increment 8 ✅). Collects state from nodes in the `persist` group, which implement `save_state()` and `load_state()` (and `is_save_removable()` for things that can disappear).
-- `NetworkManager` (Milestone 2). Owns `ENetMultiplayerPeer`, peers, permissions and `is_authority()`.
-- `WorldManager` (Milestone 2). Day and night clock and the world tick signal.
+- `WorldManager` (Increment 12 ✅). Regions and travel: carries the player between level scenes, remembers each region's `persist` state, and adds it to saves. The day and night clock and the world tick signal will live here too.
+- `NetworkManager` (Milestone 3). Owns `ENetMultiplayerPeer`, peers, permissions and `is_authority()`.
 
 Managers that belong to a place, such as a settlement's resources or buildings, are **nodes in the level**, not autoloads. That allows several settlements and regions later.
 
@@ -114,6 +114,7 @@ res://
 │   ├── models/ textures/ animations/ audio/                (imported art, later)
 ├── levels/
 │   ├── outpost_17/            outpost_17.tscn, outpost_17_environment.tres
+│   ├── haldens_crossing/      haldens_crossing.tscn (+ environment, navmesh)
 │   └── regions/               (later)
 └── tests/                     headless test runner + test suites
 ```
@@ -172,6 +173,6 @@ Each increment adds a guide in `docs/increments/` and tests in `tests/`.
 | Weapon slots + new guns ✅ (Inc 9) | Carry a pistol, shotgun and scoped rifle in numbered slots (1–3, mouse wheel); each draws its own ammo item from the inventory |
 | Crafting ✅ (Inc 10: materials, recipes, benches) | Use a workbench at Outpost 17 to turn scrap, cloth, electronics and fuel into ammo, medkits and weapon parts via `RecipeDefinition` Resources |
 | Gun crafting + attachments ✅ (Inc 11) | Start with a machete and craft a pipe pistol; build gun parts and assemble guns at the weapons bench; fit attachments (red dot, 4× scope, suppressor, extended magazine, foregrip) |
-| First new region | Travel by road to a ruined town with a raider camp, close-quarters buildings and long sightlines; region state saved per level |
+| First new region ✅ (Inc 12: Halden's Crossing) | Travel by road to a ruined town with a raider camp, close-quarters buildings and long sightlines; region state saved per level |
 
 Then co-op networking (`NetworkManager`, Milestone 3), settlements, building and the economy, with more regions added along the way.

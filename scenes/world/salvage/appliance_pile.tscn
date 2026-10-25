@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/salvage_pile.gd" id="1_aru2y"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_tdr8v"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="3_1isbi"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_orhhx"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="5_ud0rc"]
+[ext_resource type="Material" path="res://assets/materials/plaster.tres" id="6_p3iqf"]
+[ext_resource type="Material" path="res://assets/materials/metal_painted.tres" id="7_r8l5u"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="8_pcvya"]
+[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="9_ogic5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_m0pab"]
+size = Vector3(1.3, 1.3, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_btq4x"]
+size = Vector3(0.6, 1.3, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qgvwi"]
+size = Vector3(0.5, 0.3, 0.38)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mylof"]
+size = Vector3(0.35, 0.22, 0.15)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vlwq1"]
+top_radius = 0.015
+bottom_radius = 0.015
+height = 0.6
+radial_segments = 12
+
+[node name="BustedAppliances" type="Area3D" unique_id=1708227069]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_aru2y")
+yields = Dictionary[ExtResource("2_tdr8v"), int]({
+ExtResource("3_1isbi"): 2,
+ExtResource("4_orhhx"): 2,
+ExtResource("5_ud0rc"): 1
+})
+pile_name = "Busted Appliances"
+salvage_time = 2.0
+focus_offset = Vector3(0, 0.78, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1462314162]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
+shape = SubResource("BoxShape3D_m0pab")
+
+[node name="Model" type="Node3D" parent="." unique_id=257542156]
+
+[node name="Fridge" type="MeshInstance3D" parent="Model" unique_id=1131535153]
+transform = Transform3D(0.9975641, -0.06975647, 0, 0.06975647, 0.9975641, 0, 0, 0, 1, -0.3, 0.65, 0)
+material_override = ExtResource("6_p3iqf")
+mesh = SubResource("BoxMesh_btq4x")
+
+[node name="Microwave" type="MeshInstance3D" parent="Model" unique_id=130053333]
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 0.35, 0.15, 0.1)
+material_override = ExtResource("7_r8l5u")
+mesh = SubResource("BoxMesh_qgvwi")
+
+[node name="Radio" type="MeshInstance3D" parent="Model" unique_id=632993320]
+transform = Transform3D(0.9848077, 0, -0.17364818, 0, 1, 0, 0.17364818, 0, 0.9848077, 0.35, 0.41, 0.05)
+material_override = ExtResource("8_pcvya")
+mesh = SubResource("BoxMesh_mylof")
+
+[node name="Wires" type="MeshInstance3D" parent="Model" unique_id=475662986]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0.2, 0.05, -0.2)
+material_override = ExtResource("9_ogic5")
+mesh = SubResource("CylinderMesh_vlwq1")

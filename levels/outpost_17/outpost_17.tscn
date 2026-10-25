@@ -44,7 +44,6 @@
 [ext_resource type="Resource" path="res://resources/items/weapons/scoped_rifle_item.tres" id="43_dcipq"]
 [ext_resource type="Resource" path="res://resources/loot/ammo_crate.tres" id="43_flnt2"]
 [ext_resource type="PackedScene" path="res://scenes/world/containers/footlocker.tscn" id="44_3ehoi"]
-[ext_resource type="Script" path="res://scripts/interaction/pickup.gd" id="44_bkh55"]
 [ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="44_tscnw"]
 [ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="45_cwwbh"]
 [ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="45_ssps7"]
@@ -57,7 +56,9 @@
 [ext_resource type="PackedScene" path="res://scenes/world/stations/workbench.tscn" id="51_bkh55"]
 [ext_resource type="PackedScene" path="res://scenes/world/stations/weapons_bench.tscn" id="53_88d5v"]
 [ext_resource type="PackedScene" path="res://scenes/world/salvage/wood_pallet.tscn" id="54_ytx8q"]
+[ext_resource type="PackedScene" path="res://scenes/world/region_exit.tscn" id="58_cwwbh"]
 [ext_resource type="PackedScene" path="res://scenes/world/salvage/broken_furniture.tscn" id="58_k06fk"]
+[ext_resource type="Script" path="res://scripts/interaction/region_exit.gd" id="59_88d5v"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -135,6 +136,7 @@ size = Vector3(0.1, 2, 0.1)
 size = Vector3(1.6, 0.5, 0.05)
 
 [node name="Outpost17" type="Node3D" unique_id=1417219746]
+metadata/region_name = "Outpost 17"
 
 [node name="Lighting" type="Node3D" parent="." unique_id=1817001427]
 
@@ -976,36 +978,20 @@ quantity = 24
 action_name = "Pick up"
 object_name = "Pistol Ammo ×24"
 
-[node name="CommandPostBarrel" type="Area3D" parent="Loot" unique_id=1074021943 instance=ExtResource("33_ixxyf")]
+[node name="CommandPostBarrel" parent="Loot" unique_id=1074021943 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.25881907, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, 0.25881907, -11, 0, -18.2)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("44_bkh55")
 item = ExtResource("45_cwwbh")
 
-[node name="CommandPostTrigger" type="Area3D" parent="Loot" unique_id=1165770525 instance=ExtResource("33_ixxyf")]
+[node name="CommandPostTrigger" parent="Loot" unique_id=1165770525 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.9396926, 0, 0.34202012, 0, 1, 0, -0.34202012, 0, 0.9396926, -11.8, 0, -18.3)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("44_bkh55")
 item = ExtResource("46_88d5v")
 
-[node name="TowerScope" type="Area3D" parent="Loot" unique_id=1362709168 instance=ExtResource("33_ixxyf")]
+[node name="TowerScope" parent="Loot" unique_id=1362709168 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.8660254, 0, -0.5, 0, 1, 0, 0.5, 0, 0.8660254, -29.1, 4.6, -21.9)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("44_bkh55")
 item = ExtResource("47_ytx8q")
 
-[node name="WastelandServiceRifle" type="Area3D" parent="Loot" unique_id=1625042225 instance=ExtResource("33_ixxyf")]
+[node name="WastelandServiceRifle" parent="Loot" unique_id=1625042225 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.49999997, 0, 0.86602545, 0, 1, 0, -0.86602545, 0, 0.49999997, 36, 0, 45)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("44_bkh55")
 item = ExtResource("48_qovcg")
 
 [node name="SalvageContainers" type="Node3D" parent="." unique_id=964546882 groups=["navigation_geometry"]]
@@ -1157,3 +1143,23 @@ transform = Transform3D(0.49999997, 0, 0.86602545, 0, 1, 0, -0.86602545, 0, 0.49
 action_name = "Break down"
 object_name = "Broken Furniture"
 hold_time = 1.5
+
+[node name="Arrivals" type="Node3D" parent="." unique_id=40085770]
+
+[node name="FromHaldens" type="Marker3D" parent="Arrivals" unique_id=630674551]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 64)
+
+[node name="Exits" type="Node3D" parent="." unique_id=1562726423]
+
+[node name="RoadToHaldens" type="Area3D" parent="Exits" unique_id=1471285466 instance=ExtResource("58_cwwbh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0, 69.5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("59_88d5v")
+target_level = "res://levels/haldens_crossing/haldens_crossing.tscn"
+arrival_id = &"FromOutpost"
+destination_name = "Halden's Crossing"
+hold_time = 1.0
+max_distance = 3.5
+focus_offset = Vector3(0, 1.4, 0)

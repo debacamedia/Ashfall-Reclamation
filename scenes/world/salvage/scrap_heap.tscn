@@ -1,0 +1,89 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/salvage_pile.gd" id="1_h2x7x"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_5wa88"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_64en8"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="4_c1mq5"]
+[ext_resource type="Material" path="res://assets/materials/rust.tres" id="5_rp40i"]
+[ext_resource type="Material" path="res://assets/materials/corrugated_metal.tres" id="6_56ia1"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="7_1mb2t"]
+[ext_resource type="Material" path="res://assets/materials/metal_painted.tres" id="8_1vtdl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_si7xg"]
+size = Vector3(1.4, 0.6, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jatrt"]
+size = Vector3(1.1, 0.04, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4f8eu"]
+size = Vector3(0.9, 0.04, 0.7)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_h86et"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 1.2
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6q452"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 0.9
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_0einn"]
+top_radius = 0.25
+bottom_radius = 0.25
+height = 0.7
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_3kbck"]
+size = Vector3(0.4, 0.3, 0.35)
+
+[node name="ScrapHeap" type="Area3D" unique_id=1195905568]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_h2x7x")
+yields = Dictionary[ExtResource("2_5wa88"), int]({
+ExtResource("3_64en8"): 6,
+ExtResource("4_c1mq5"): 1
+})
+pile_name = "Scrap Heap"
+salvage_time = 2.0
+focus_offset = Vector3(0, 0.36, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=365457446]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("BoxShape3D_si7xg")
+
+[node name="Model" type="Node3D" parent="." unique_id=810341898]
+
+[node name="Sheet1" type="MeshInstance3D" parent="Model" unique_id=183543143]
+transform = Transform3D(0.9402654, -0.034480736, 0.3386916, 0.08630754, 0.9864998, -0.1391731, -0.32932043, 0.1600913, 0.9305476, 0, 0.1, 0)
+material_override = ExtResource("5_rp40i")
+mesh = SubResource("BoxMesh_jatrt")
+
+[node name="Sheet2" type="MeshInstance3D" parent="Model" unique_id=707734176]
+transform = Transform3D(0.87092024, -0.048007198, -0.4890738, 0.16985355, 0.96328735, 0.2079117, 0.46113732, -0.26414543, 0.8471007, 0.1, 0.22, 0.05)
+material_override = ExtResource("6_56ia1")
+mesh = SubResource("BoxMesh_4f8eu")
+
+[node name="Pipe1" type="MeshInstance3D" parent="Model" unique_id=386857628]
+transform = Transform3D(0.76604444, 0.6330222, 0.11161892, 0, 0.17364822, -0.9848077, -0.6427876, 0.7544065, 0.13302225, -0.2, 0.3, 0)
+material_override = ExtResource("7_1mb2t")
+mesh = SubResource("CylinderMesh_h86et")
+
+[node name="Pipe2" type="MeshInstance3D" parent="Model" unique_id=1337163600]
+transform = Transform3D(0.49999997, -0.86272997, -0.07547914, 0, 0.087155804, -0.9961947, 0.86602545, 0.49809733, 0.0435779, 0.25, 0.15, 0.2)
+material_override = ExtResource("5_rp40i")
+mesh = SubResource("CylinderMesh_6q452")
+
+[node name="Drum" type="MeshInstance3D" parent="Model" unique_id=1333326714]
+transform = Transform3D(0.9848077, 0.17364818, -7.590403e-09, 0, -4.371139e-08, -1, -0.17364818, 0.9848077, -4.304731e-08, 0.35, 0.25, -0.25)
+material_override = ExtResource("5_rp40i")
+mesh = SubResource("CylinderMesh_0einn")
+
+[node name="Box" type="MeshInstance3D" parent="Model" unique_id=475192772]
+transform = Transform3D(0.90630776, 0, 0.42261827, 0, 1, 0, -0.42261827, 0, 0.90630776, -0.35, 0.15, 0.25)
+material_override = ExtResource("8_1vtdl")
+mesh = SubResource("BoxMesh_3kbck")

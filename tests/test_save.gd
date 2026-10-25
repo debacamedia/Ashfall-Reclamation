@@ -68,7 +68,7 @@ func _pickup(item: ItemDefinition, qty: int, at: Vector3, node_name: String) -> 
 
 func test_save_manager_autoload() -> void:
 	check(saves != null, "SaveManager autoload exists")
-	check(saves.SAVE_VERSION == 1, "save version 1")
+	check(saves.SAVE_VERSION == 2, "save version 2 (regions, Increment 12)")
 	check(saves.slot_path("quicksave") == TEST_DIR + "/quicksave.json", "slot path: %s" % saves.slot_path("quicksave"))
 	check(InputMap.has_action("quick_save") and InputMap.has_action("quick_load"), "quick save / load actions")
 	var f5 := InputEventKey.new()
@@ -122,7 +122,7 @@ func test_file_format_and_version() -> void:
 	saves.save_game("fmt", self)
 	var data: Dictionary = saves.read_save_file(TEST_DIR + "/fmt.json")
 	check(data.get("format") == "ashfall_save", "format tag")
-	check(int(data.get("version", 0)) == 1, "version field = 1")
+	check(int(data.get("version", 0)) == 2 and data.get("regions") is Dictionary, "version field = 2, with regions")
 	check(data.get("saved_at") is String and str(data["saved_at"]).length() >= 19, "timestamp: %s" % data.get("saved_at"))
 	check(data.has("level"), "level field")
 	var player_entry: Array = (data["nodes"] as Array).filter(func(e: Dictionary) -> bool: return e["path"] == "Player")

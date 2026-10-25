@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_y34de"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="2_6o07l"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="3_n7cdf"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="4_rfbfv"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_n60b7"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="6_0imyi"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="7_odwk6"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="8_61yhu"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_k4d8d"]
+
+[sub_resource type="Resource" id="Resource_81nmf"]
+script = ExtResource("1_y34de")
+item = ExtResource("2_6o07l")
+weight = 3.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_oa1np"]
+script = ExtResource("1_y34de")
+item = ExtResource("3_n7cdf")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_nhh7g"]
+script = ExtResource("1_y34de")
+item = ExtResource("4_rfbfv")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_a5ocy"]
+script = ExtResource("1_y34de")
+item = ExtResource("5_n60b7")
+weight = 2.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_stt0q"]
+script = ExtResource("1_y34de")
+item = ExtResource("6_0imyi")
+
+[sub_resource type="Resource" id="Resource_l0mrc"]
+script = ExtResource("1_y34de")
+item = ExtResource("7_odwk6")
+min_quantity = 4
+max_quantity = 10
+
+[sub_resource type="Resource" id="Resource_1a8nj"]
+script = ExtResource("1_y34de")
+item = ExtResource("8_61yhu")
+max_quantity = 2
+
+[resource]
+script = ExtResource("9_k4d8d")
+entries = Array[ExtResource("1_y34de")]([SubResource("Resource_81nmf"), SubResource("Resource_oa1np"), SubResource("Resource_nhh7g"), SubResource("Resource_a5ocy"), SubResource("Resource_stt0q"), SubResource("Resource_l0mrc"), SubResource("Resource_1a8nj")])
+empty_chance = 0.15

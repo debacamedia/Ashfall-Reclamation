@@ -1,0 +1,94 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_trijk"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="2_rxe3s"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="3_8mgas"]
+[ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="4_x6fyr"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="5_icruj"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="6_7rt4g"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="7_svdsg"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="8_ehb62"]
+[ext_resource type="Resource" path="res://resources/items/suppressor.tres" id="9_opo46"]
+[ext_resource type="Resource" path="res://resources/items/foregrip.tres" id="10_og8tr"]
+[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="11_3v6jy"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="12_qcu04"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="13_23kc2"]
+[ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="14_0aob2"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="15_m2mxm"]
+
+[sub_resource type="Resource" id="Resource_crhs1"]
+script = ExtResource("1_trijk")
+item = ExtResource("2_rxe3s")
+weight = 2.0
+min_quantity = 20
+max_quantity = 40
+
+[sub_resource type="Resource" id="Resource_shb7s"]
+script = ExtResource("1_trijk")
+item = ExtResource("3_8mgas")
+weight = 2.0
+min_quantity = 8
+max_quantity = 14
+
+[sub_resource type="Resource" id="Resource_bbkg2"]
+script = ExtResource("1_trijk")
+item = ExtResource("4_x6fyr")
+min_quantity = 6
+max_quantity = 12
+
+[sub_resource type="Resource" id="Resource_oyb2b"]
+script = ExtResource("1_trijk")
+item = ExtResource("5_icruj")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_g226u"]
+script = ExtResource("1_trijk")
+item = ExtResource("6_7rt4g")
+
+[sub_resource type="Resource" id="Resource_r7ioy"]
+script = ExtResource("1_trijk")
+item = ExtResource("7_svdsg")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_7tqg8"]
+script = ExtResource("1_trijk")
+item = ExtResource("8_ehb62")
+weight = 0.6
+
+[sub_resource type="Resource" id="Resource_4wnrf"]
+script = ExtResource("1_trijk")
+item = ExtResource("9_opo46")
+weight = 0.5
+
+[sub_resource type="Resource" id="Resource_bvpl8"]
+script = ExtResource("1_trijk")
+item = ExtResource("10_og8tr")
+weight = 0.5
+
+[sub_resource type="Resource" id="Resource_t3niy"]
+script = ExtResource("1_trijk")
+item = ExtResource("11_3v6jy")
+weight = 0.4
+
+[sub_resource type="Resource" id="Resource_xcm6g"]
+script = ExtResource("1_trijk")
+item = ExtResource("12_qcu04")
+min_quantity = 3
+max_quantity = 6
+
+[sub_resource type="Resource" id="Resource_7i1wu"]
+script = ExtResource("1_trijk")
+item = ExtResource("13_23kc2")
+
+[sub_resource type="Resource" id="Resource_f5ki0"]
+script = ExtResource("1_trijk")
+item = ExtResource("14_0aob2")
+
+[resource]
+script = ExtResource("15_m2mxm")
+guaranteed = Array[ExtResource("1_trijk")]([SubResource("Resource_7i1wu"), SubResource("Resource_f5ki0")])
+entries = Array[ExtResource("1_trijk")]([SubResource("Resource_crhs1"), SubResource("Resource_shb7s"), SubResource("Resource_bbkg2"), SubResource("Resource_oyb2b"), SubResource("Resource_g226u"), SubResource("Resource_r7ioy"), SubResource("Resource_7tqg8"), SubResource("Resource_4wnrf"), SubResource("Resource_bvpl8"), SubResource("Resource_t3niy"), SubResource("Resource_xcm6g")])
+min_rolls = 3
+max_rolls = 5

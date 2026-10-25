@@ -67,6 +67,12 @@ func _ready() -> void:
 		saves.failed.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED))
+	var world := get_node_or_null("/root/WorldManager")
+	if world != null:
+		world.arrived.connect(func(region: String) -> void: show_notice("Arrived at " + region, Color(0.95, 0.85, 0.6)))
+		world.travel_refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
 
 
 func _process(delta: float) -> void:
