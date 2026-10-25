@@ -201,3 +201,30 @@ func test_kill_message_names_raider() -> void:
 	var info := DamageInfo.create(20.0, DamageInfo.Type.MELEE, r)
 	check(GameMode.describe_cause(info) == "Killed by Raider", "cause: '%s'" % GameMode.describe_cause(info))
 	r.free()
+
+
+func test_spawner_survives_corpses_freed_before_respawn() -> void:
+	# Halden's Crossing: corpses despawn after 30 s but replacements come after
+	# 45 s (camp: 120 s), so the spawner can still be holding a freed raider.
+	await make_nav_floor()
+	var spawner := EnemySpawner.new()
+	spawner.enemy_scene = RAIDER
+	spawner.max_alive = 3
+	spawner.enabled = false  # spawn by hand
+	add_child(spawner)
+	for at in [Vector3(-6, 0.1, -6), Vector3(6, 0.1, -6), Vector3(0, 0.1, 6)]:
+		var m := Marker3D.new()
+		m.position = at
+		spawner.add_child(m)
+	for i in 3:
+		spawner.spawn_one()
+	check(spawner.get_alive().size() == 3, "3 raiders up")
+	var alive := spawner.get_alive()
+	var dead := alive[0] as Raider
+	dead.health.apply_damage(DamageInfo.create(500.0, DamageInfo.Type.BALLISTIC))
+	var gone := alive[1]
+	gone.free()  # freed without ever being seen dead (as a despawned corpse)
+	await wait_physics(2)
+	check(spawner.get_alive().size() == 1, "only the living raider counts (%d)" % spawner.get_alive().size())
+	check(spawner.spawn_one() != null, "a replacement spawns")
+	check(spawner.spawn_one() != null and spawner.get_alive().size() == 3, "back to 3")

@@ -31,7 +31,15 @@ func _ready() -> void:
 
 
 func get_alive() -> Array[Node3D]:
-	_alive = _alive.filter(func(e: Node3D) -> bool: return is_instance_valid(e) and not e.call("is_dead"))
+	# Enemies can be freed while still listed here (corpses despawn after
+	# 30 s, sooner than a long respawn_delay). Read each entry as a Variant:
+	# a freed object can't be passed to anything typed Node3D.
+	var still: Array[Node3D] = []
+	for i in _alive.size():
+		var e: Variant = _alive[i]
+		if is_instance_valid(e) and not (e as Node3D).call("is_dead"):
+			still.append(e)
+	_alive = still
 	return _alive
 
 
@@ -92,7 +100,8 @@ func _crowding(point: Node3D) -> int:
 	return n
 
 
-func _on_enemy_killed(_enemy: Node3D) -> void:
+func _on_enemy_killed(enemy: Node3D) -> void:
+	_alive.erase(enemy)  # stop tracking the corpse right away
 	if not enabled:
 		return
 	get_tree().create_timer(respawn_delay).timeout.connect(func() -> void:
