@@ -1965,7 +1965,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -3)
 material_override = ExtResource("22_hlbef")
 
 [node name="FireLight" parent="Props/BurningBarrelYard" index="3" unique_id=1817345526]
-light_energy = 1.817611
+light_energy = 1.8573554
 
 [node name="FireSound" parent="Props/BurningBarrelYard" index="5" unique_id=1072601748]
 stream_paused = true
@@ -1977,7 +1977,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 5)
 material_override = ExtResource("22_hlbef")
 
 [node name="FireLight" parent="Props/BurningBarrelMotorPool" index="3" unique_id=1817345526]
-light_energy = 1.7278832
+light_energy = 1.6004484
 
 [node name="FireSound" parent="Props/BurningBarrelMotorPool" index="5" unique_id=1072601748]
 stream_paused = true

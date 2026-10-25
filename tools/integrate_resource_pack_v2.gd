@@ -126,6 +126,15 @@ func _run() -> void:
 
 	root.remove_child(_level)
 	(_level.get_node("RaiderSpawner") as EnemySpawner).enabled = true
+	# The fire barrels' FlickerLight changes light_energy every frame while the
+	# level runs; put the saved values back so they don't show up as changes.
+	for barrel in ["Props/BurningBarrelYard", "Props/BurningBarrelMotorPool"]:
+		var light := _level.get_node_or_null(barrel + "/FireLight") as Light3D
+		var original := (load(LEVEL) as PackedScene).instantiate()
+		var saved := original.get_node_or_null(barrel + "/FireLight") as Light3D
+		if light != null and saved != null:
+			light.light_energy = saved.light_energy
+		original.free()
 	var ps := PackedScene.new()
 	assert(ps.pack(_level) == OK)
 	assert(ResourceSaver.save(ps, LEVEL) == OK)
