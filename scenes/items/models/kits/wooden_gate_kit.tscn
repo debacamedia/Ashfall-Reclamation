@@ -1,0 +1,113 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="1_fjb62"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/rusted_steel.tres" id="2_0bf23"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_d57ft"]
+size = Vector3(0.2, 2.6, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_343gx"]
+size = Vector3(0.2, 2.6, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7w0ka"]
+size = Vector3(2.4, 0.18, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ty6bx"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wc8sb"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tgeki"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_j25bg"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pmp6y"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d0mmo"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t10sd"]
+size = Vector3(1.9, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_feyl8"]
+size = Vector3(1.9, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hrihn"]
+size = Vector3(2.2, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_thqi3"]
+size = Vector3(0.18, 0.05, 0.08)
+
+[node name="WoodenGateKit" type="Node3D" unique_id=1750235361]
+
+[node name="Model" type="Node3D" parent="." unique_id=790111109]
+transform = Transform3D(0.21153846, 0, 0, 0, 0.21153846, 0, 0, 0, 0.21153846, 0, 0, 0)
+
+[node name="Post-11_0" type="MeshInstance3D" parent="Model" unique_id=1192713994]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.3, 0)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_d57ft")
+
+[node name="Post11_1" type="MeshInstance3D" parent="Model" unique_id=1545417201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.3, 0)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_343gx")
+
+[node name="Beam_2" type="MeshInstance3D" parent="Model" unique_id=1163743472]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.51, 0)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_7w0ka")
+
+[node name="DoorBoard0_3" type="MeshInstance3D" parent="Model" unique_id=1169405736]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.15, 0.02)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_ty6bx")
+
+[node name="DoorBoard1_4" type="MeshInstance3D" parent="Model" unique_id=465555322]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48000002, 1.15, 0.02)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_wc8sb")
+
+[node name="DoorBoard2_5" type="MeshInstance3D" parent="Model" unique_id=2111850907]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16000003, 1.15, 0.02)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_tgeki")
+
+[node name="DoorBoard3_6" type="MeshInstance3D" parent="Model" unique_id=1963473889]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15999997, 1.15, 0.02)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_j25bg")
+
+[node name="DoorBoard4_7" type="MeshInstance3D" parent="Model" unique_id=1261691394]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48000002, 1.15, 0.02)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_pmp6y")
+
+[node name="DoorBoard5_8" type="MeshInstance3D" parent="Model" unique_id=1862983115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.79999995, 1.15, 0.02)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_d0mmo")
+
+[node name="DoorRail4_9" type="MeshInstance3D" parent="Model" unique_id=2012636375]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -0.04)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_t10sd")
+
+[node name="DoorRail19_10" type="MeshInstance3D" parent="Model" unique_id=325559149]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, -0.04)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_feyl8")
+
+[node name="DoorBrace_11" type="MeshInstance3D" parent="Model" unique_id=417218145]
+transform = Transform3D(0.7880108, -0.6156615, 0, 0.6156615, 0.7880108, 0, 0, 0, 1, 0, 1.15, -0.04)
+material_override = ExtResource("1_fjb62")
+mesh = SubResource("BoxMesh_hrihn")
+
+[node name="Latch_12" type="MeshInstance3D" parent="Model" unique_id=1968555311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.77, 1.1, 0.07)
+material_override = ExtResource("2_0bf23")
+mesh = SubResource("BoxMesh_thqi3")

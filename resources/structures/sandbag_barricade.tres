@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_o2n6h"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="2_rcbfy"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_d3s1f"]
+
+[resource]
+script = ExtResource("3_d3s1f")
+id = &"sandbag_barricade"
+display_name = "Sandbag Barricade"
+scene_path = "res://scenes/structures/sandbag_barricade.tscn"
+footprint = Vector3(2.4, 1, 0.8)
+repair_cost = Dictionary[ExtResource("1_o2n6h"), int]({
+ExtResource("2_rcbfy"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_o2n6h"), int]({
+ExtResource("2_rcbfy"): 2
+})

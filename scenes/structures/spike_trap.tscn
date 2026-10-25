@@ -1,0 +1,217 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/construction/spike_trap.gd" id="1_enjay"]
+[ext_resource type="Resource" path="res://resources/structures/spike_trap.tres" id="2_3m5qv"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="3_ryxyw"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/impact_flesh.tres" id="4_etx3f"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_qv47g"]
+size = Vector3(0.1, 0.1, 1.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dtpyl"]
+size = Vector3(0.1, 0.1, 1.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jjhch"]
+size = Vector3(1.6, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6wg5n"]
+size = Vector3(1.6, 0.1, 0.1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ps74g"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bw04h"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_abglk"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tosi5"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_othi3"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cm570"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_iv403"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_y2ioo"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7x2vv"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gk42g"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qqn3p"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_oywsj"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qyw7h"]
+top_radius = 0.004
+bottom_radius = 0.035
+height = 0.42
+radial_segments = 8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l26f5"]
+size = Vector3(1.5, 0.7, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_select"]
+size = Vector3(1.6, 0.45, 1.6)
+
+[node name="SpikeTrap" type="Node3D" unique_id=1407812851]
+script = ExtResource("1_enjay")
+definition = ExtResource("2_3m5qv")
+
+[node name="Frame0" type="MeshInstance3D" parent="." unique_id=2019168466]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0.05, 0)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("BoxMesh_qv47g")
+
+[node name="Frame1" type="MeshInstance3D" parent="." unique_id=635703968]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, -0.05, 0)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("BoxMesh_dtpyl")
+
+[node name="Frame2" type="MeshInstance3D" parent="." unique_id=698985361]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0.75)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("BoxMesh_jjhch")
+
+[node name="Frame3" type="MeshInstance3D" parent="." unique_id=1260795264]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -0.75)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("BoxMesh_6wg5n")
+
+[node name="Stake00" type="MeshInstance3D" parent="." unique_id=1005334158]
+transform = Transform3D(0.9781476, -0.2079117, 0, 0.20336834, 0.9567728, 0.2079117, -0.043227274, -0.20336834, 0.9781476, -0.6, 0.2, -0.6)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_ps74g")
+
+[node name="Stake02" type="MeshInstance3D" parent="." unique_id=306459629]
+transform = Transform3D(0.9781476, -0.2079117, 0, 0.2079117, 0.9781476, 0, 0, 0, 1, -0.6, 0.2, 0)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_bw04h")
+
+[node name="Stake04" type="MeshInstance3D" parent="." unique_id=1865276293]
+transform = Transform3D(0.9781476, -0.2079117, 0, 0.20336834, 0.9567728, -0.2079117, 0.043227274, 0.20336834, 0.9781476, -0.6, 0.2, 0.6)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_abglk")
+
+[node name="Stake11" type="MeshInstance3D" parent="." unique_id=1413282614]
+transform = Transform3D(0.9945219, -0.104528464, 0, 0.10395585, 0.9890738, 0.104528464, -0.0109262, -0.10395585, 0.9945219, -0.3, 0.2, -0.3)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_tosi5")
+
+[node name="Stake13" type="MeshInstance3D" parent="." unique_id=643622729]
+transform = Transform3D(0.9945219, -0.104528464, 0, 0.10395585, 0.9890738, -0.104528464, 0.0109262, 0.10395585, 0.9945219, -0.3, 0.2, 0.3)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_othi3")
+
+[node name="Stake20" type="MeshInstance3D" parent="." unique_id=489222190]
+transform = Transform3D(1, 0, 0, 0, 0.9781476, 0.2079117, 0, -0.2079117, 0.9781476, 0, 0.2, -0.6)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_cm570")
+
+[node name="Stake22" type="MeshInstance3D" parent="." unique_id=1237399031]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_iv403")
+
+[node name="Stake24" type="MeshInstance3D" parent="." unique_id=1699804784]
+transform = Transform3D(1, 0, 0, 0, 0.9781476, -0.2079117, 0, 0.2079117, 0.9781476, 0, 0.2, 0.6)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_y2ioo")
+
+[node name="Stake31" type="MeshInstance3D" parent="." unique_id=1066062930]
+transform = Transform3D(0.9945219, 0.104528464, 0, -0.10395585, 0.9890738, 0.104528464, 0.0109262, -0.10395585, 0.9945219, 0.3, 0.2, -0.3)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_7x2vv")
+
+[node name="Stake33" type="MeshInstance3D" parent="." unique_id=908472585]
+transform = Transform3D(0.9945219, 0.104528464, 0, -0.10395585, 0.9890738, -0.104528464, -0.0109262, 0.10395585, 0.9945219, 0.3, 0.2, 0.3)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_gk42g")
+
+[node name="Stake40" type="MeshInstance3D" parent="." unique_id=1667136203]
+transform = Transform3D(0.9781476, 0.2079117, 0, -0.20336834, 0.9567728, 0.2079117, 0.043227274, -0.20336834, 0.9781476, 0.6, 0.2, -0.6)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_qqn3p")
+
+[node name="Stake42" type="MeshInstance3D" parent="." unique_id=987379149]
+transform = Transform3D(0.9781476, 0.2079117, 0, -0.2079117, 0.9781476, 0, 0, 0, 1, 0.6, 0.2, 0)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_oywsj")
+
+[node name="Stake44" type="MeshInstance3D" parent="." unique_id=866824372]
+transform = Transform3D(0.9781476, 0.2079117, 0, -0.20336834, 0.9567728, -0.2079117, -0.043227274, 0.20336834, 0.9781476, 0.6, 0.2, 0.6)
+material_override = ExtResource("3_ryxyw")
+mesh = SubResource("CylinderMesh_qyw7h")
+
+[node name="Body" type="StaticBody3D" parent="."]
+collision_layer = 16
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
+shape = SubResource("BoxShape3D_select")
+
+[node name="Spikes" type="Area3D" parent="." unique_id=905459608]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="Shape" type="CollisionShape3D" parent="Spikes" unique_id=1105654529]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+shape = SubResource("BoxShape3D_l26f5")
+
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=2103791391]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("4_etx3f")
+volume_db = -2.0
+unit_size = 4.0
+bus = &"SFX"

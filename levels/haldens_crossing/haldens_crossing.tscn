@@ -13148,3 +13148,5 @@ stream = ExtResource("83_ii8w6")
 autoplay = true
 stream_paused = true
 bus = &"Ambience"
+
+[node name="Structures" type="Node3D" parent="." unique_id=1217411422 groups=["navigation_geometry"]]

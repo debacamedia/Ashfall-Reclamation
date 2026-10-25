@@ -53,6 +53,11 @@ signal station_opened(station: CraftingStation)
 signal station_closed(station: CraftingStation)
 ## Fitting or removing an attachment was refused.
 signal attachment_refused(reason: String)
+## Construction (Increment 13)
+signal structure_placed(structure: Structure)
+signal structure_repaired(structure: Structure)
+signal structure_dismantled(definition: StructureDefinition)
+signal build_refused(reason: String)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
 
@@ -139,6 +144,8 @@ var _climb_distance := 0.0
 var current_container: SalvageContainer = null
 ## The crafting bench in use, or null (hand crafting).
 var current_station: CraftingStation = null
+## In build mode (B): weapon lowered, no firing. Set by BuildMode.
+var building := false
 var _craft_recipe: RecipeDefinition = null
 var _craft_left := 0.0
 var _craft_count := 0
@@ -228,7 +235,7 @@ func simulate(frame: InputFrame, delta: float) -> void:
 		# pressing fire cancels sprint, so there is a short sprint-to-fire delay.
 		# Hands are busy on a ladder, while using an item or switching guns.
 		var switching := is_switching_weapon()
-		var hands_busy := is_using_item() or ladder != null or switching
+		var hands_busy := is_using_item() or ladder != null or switching or building
 		if not switching:
 			weapon.lowered = hands_busy  # WeaponSlots animates switches itself
 		weapon.aim_amount = aim_amount
@@ -583,6 +590,93 @@ func weapon_refusal_reason(def: WeaponDefinition) -> String:
 	if existing.base_definition.tier > def.tier:
 		return "Your %s is better" % existing.base_definition.display_name
 	return ""
+
+
+# ---------------------------------------------------------------- construction
+
+## "" if `kit` can be placed at `xform`, otherwise why not.
+func place_refusal_reason(kit: ItemDefinition, xform: Transform3D) -> String:
+	if kit == null or kit.structure == null:
+		return "That can't be built"
+	if inventory == null or inventory.count_of(kit.id) <= 0:
+		return "You don't have a " + kit.display_name
+	return ConstructionRules.refusal_reason(self, kit.structure, xform)
+
+
+## Uses one kit from the inventory and builds its structure (validated).
+func request_place_structure(kit: ItemDefinition, xform: Transform3D) -> Structure:
+	var reason := place_refusal_reason(kit, xform)
+	if reason != "":
+		build_refused.emit(reason)
+		return null
+	var root := ConstructionRules.structures_root(get_parent())
+	inventory.remove_item(kit.id, 1)
+	var s := (load(kit.structure.scene_path) as PackedScene).instantiate() as Structure
+	s.name = "%s_%d" % [kit.structure.id, Time.get_ticks_usec() % 100000000]
+	s.transform = root.global_transform.affine_inverse() * xform
+	root.add_child(s)
+	s._one_shot(load("res://assets/audio/build_place.wav"))
+	structure_placed.emit(s)
+	return s
+
+
+## "" if `s` can be repaired now, otherwise why not.
+func repair_refusal_reason(s: Structure) -> String:
+	if is_dead() or inventory == null or s == null or not is_instance_valid(s) or s.is_queued_for_deletion():
+		return "Can't do that now"
+	if head.global_position.distance_to(s.global_position + Vector3.UP) > ConstructionRules.REACH:
+		return "Too far away"
+	if not s.is_damaged():
+		return "Not damaged"
+	for item: ItemDefinition in s.definition.repair_cost:
+		var have := inventory.count_of(item.id)
+		if have < s.definition.repair_cost[item]:
+			return "Need %d %s" % [s.definition.repair_cost[item] - have, item.display_name]
+	return ""
+
+
+## Repairs `s` to full, using its repair cost (validated).
+func request_repair_structure(s: Structure) -> bool:
+	var reason := repair_refusal_reason(s)
+	if reason != "":
+		build_refused.emit(reason)
+		return false
+	for item: ItemDefinition in s.definition.repair_cost:
+		inventory.remove_item(item.id, s.definition.repair_cost[item])
+	s.repair_full()
+	s._one_shot(load("res://assets/audio/build_place.wav"))
+	structure_repaired.emit(s)
+	return true
+
+
+## "" if `s` can be dismantled now, otherwise why not.
+func dismantle_refusal_reason(s: Structure) -> String:
+	if is_dead() or inventory == null or s == null or not is_instance_valid(s) or s.is_queued_for_deletion():
+		return "Can't do that now"
+	if head.global_position.distance_to(s.global_position + Vector3.UP) > ConstructionRules.REACH:
+		return "Too far away"
+	var blocked := s.dismantle_block_reason()
+	if blocked != "":
+		return blocked
+	for item: ItemDefinition in s.definition.dismantle_return:
+		if inventory.can_add(item, s.definition.dismantle_return[item]) < s.definition.dismantle_return[item]:
+			return "No room for " + item.display_name
+	return ""
+
+
+## Takes `s` apart and gives back its dismantle return (validated).
+func request_dismantle_structure(s: Structure) -> bool:
+	var reason := dismantle_refusal_reason(s)
+	if reason != "":
+		build_refused.emit(reason)
+		return false
+	var def := s.definition
+	for item: ItemDefinition in def.dismantle_return:
+		inventory.receive(item, def.dismantle_return[item])
+	s._one_shot(load("res://assets/audio/build_place.wav"))
+	s.queue_free()
+	structure_dismantled.emit(def)
+	return true
 
 
 # ---------------------------------------------------------------- attachments

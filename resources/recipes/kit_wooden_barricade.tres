@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_mmyc2"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_rgc3w"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_dkhys"]
+[ext_resource type="Resource" path="res://resources/items/kits/wooden_barricade_kit.tres" id="4_n7qb4"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_sp1si"]
+
+[resource]
+script = ExtResource("5_sp1si")
+id = &"kit_wooden_barricade"
+category = 6
+inputs = Dictionary[ExtResource("1_mmyc2"), int]({
+ExtResource("2_rgc3w"): 3,
+ExtResource("3_dkhys"): 1
+})
+output = ExtResource("4_n7qb4")
+craft_time = 4.0

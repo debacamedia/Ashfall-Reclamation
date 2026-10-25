@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/field_workbench_kit.png" id="1_jxfjh"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_l8oad"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_jxfjh"]
+[ext_resource type="Resource" path="res://resources/structures/field_workbench.tres" id="3_temqv"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/field_workbench_kit.tscn" id="4_a00rf"]
+
+[resource]
+script = ExtResource("2_jxfjh")
+id = &"field_workbench_kit"
+display_name = "Field Workbench Kit"
+description = "A workbench you can set up anywhere. Build it with B."
+category = 8
+icon = ExtResource("1_jxfjh")
+max_stack = 5
+weight = 6.5
+base_value = 72
+world_model = ExtResource("4_a00rf")
+pickup_sound = ExtResource("1_l8oad")
+structure = ExtResource("3_temqv")

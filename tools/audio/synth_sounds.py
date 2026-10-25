@@ -642,6 +642,47 @@ def pickup_weapon() -> np.ndarray:
     return out
 
 
+# --------------------------------------------------------------------- construction (Increment 13)
+def build_place() -> np.ndarray:
+    """Setting a structure down and hammering it in: three knocks."""
+    rng = np.random.default_rng(1300)
+    out = silence(0.9)
+    place(out, lp(noise(0.12, rng), 350) * decay(int(0.12 * SR), 0.04), 0.0, 1.0)
+    place(out, sine_glide(0.15, 110, 70) * decay(int(0.15 * SR), 0.05), 0.0, 0.8)
+    for k, at in enumerate((0.28, 0.48, 0.66)):
+        place(out, bp(noise(0.03, rng), 900, 3500) * decay(int(0.03 * SR), 0.006), at, 0.55 - k * 0.08)
+        place(out, sine_glide(0.06, 420, 300) * decay(int(0.06 * SR), 0.015), at, 0.35 - k * 0.05)
+    return out
+
+
+def structure_hit(seed: int) -> np.ndarray:
+    """A machete or club biting into a barricade: thud and splinter."""
+    rng = np.random.default_rng(seed)
+    out = silence(0.5)
+    place(out, lp(noise(0.1, rng), 600) * decay(int(0.1 * SR), 0.03), 0.0, 1.0)
+    place(out, sine_glide(0.12, 160 + seed % 3 * 15, 90) * decay(int(0.12 * SR), 0.04), 0.0, 0.6)
+    chips = np.zeros(int(0.2 * SR))
+    for _ in range(10):
+        i = rng.integers(0, len(chips) - 300)
+        chips[i:i + 200] += bp(noise(0.005, rng), 1200, 4500)[:200] * rng.uniform(0.2, 0.7)
+    place(out, chips * decay(len(chips), 0.05), 0.01, 0.45)
+    return out
+
+
+def structure_break() -> np.ndarray:
+    """A structure giving way: crack, crash and tumbling debris."""
+    rng = np.random.default_rng(1310)
+    out = silence(1.6)
+    place(out, hp(noise(0.05, rng), 1500) * decay(int(0.05 * SR), 0.01), 0.0, 0.8)
+    place(out, lp(brown(0.6, rng), 400) * decay(int(0.6 * SR), 0.2), 0.03, 1.0)
+    for _ in range(18):
+        at = rng.uniform(0.1, 1.2)
+        n = rng.uniform(0.02, 0.08)
+        place(out, bp(noise(n, rng), rng.uniform(300, 900), rng.uniform(1500, 4000)) * decay(int(n * SR), n / 3),
+              at, rng.uniform(0.15, 0.5) * (1.3 - at))
+    return out
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
     print("Writing to", os.path.abspath(OUT))
@@ -700,6 +741,10 @@ def main() -> None:
     write("sniper_reload", sniper_reload(), -3)
     write("weapon_draw", weapon_draw(), -8)
     write("pickup_weapon", pickup_weapon(), -4)
+    write("build_place", build_place(), -3)
+    for i in range(3):
+        write(f"structure_hit_{i + 1}", structure_hit(1301 + i), -3)
+    write("structure_break", structure_break(), -2)
 
 
 if __name__ == "__main__":

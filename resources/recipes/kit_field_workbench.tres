@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_hiw5d"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_yvjiw"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="3_ctpy6"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="4_0gtbk"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_3i5a5"]
+[ext_resource type="Resource" path="res://resources/items/kits/field_workbench_kit.tres" id="6_whv3e"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="7_mpf2t"]
+
+[resource]
+script = ExtResource("7_mpf2t")
+id = &"kit_field_workbench"
+category = 6
+inputs = Dictionary[ExtResource("1_hiw5d"), int]({
+ExtResource("2_yvjiw"): 6,
+ExtResource("3_ctpy6"): 2,
+ExtResource("4_0gtbk"): 2,
+ExtResource("5_3i5a5"): 4
+})
+output = ExtResource("6_whv3e")
+craft_time = 12.0

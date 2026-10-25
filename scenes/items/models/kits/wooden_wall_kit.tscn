@@ -1,0 +1,96 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="1_4q1i4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6h4mg"]
+size = Vector3(0.29, 2.5, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x1oy7"]
+size = Vector3(0.29, 2.56, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8vkc5"]
+size = Vector3(0.29, 2.62, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h03f5"]
+size = Vector3(0.29, 2.5, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3phn7"]
+size = Vector3(0.29, 2.56, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5ofw4"]
+size = Vector3(0.29, 2.62, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ka7ye"]
+size = Vector3(0.29, 2.5, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wgxo3"]
+size = Vector3(0.29, 2.56, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_22evn"]
+size = Vector3(2.4, 0.14, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ro3d1"]
+size = Vector3(2.4, 0.14, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ysehe"]
+size = Vector3(2.6, 0.14, 0.06)
+
+[node name="WoodenWallKit" type="Node3D" unique_id=904865307]
+
+[node name="Model" type="Node3D" parent="." unique_id=2042209493]
+transform = Transform3D(0.21153846, 0, 0, 0, 0.21153846, 0, 0, 0, 0.21153846, 0, 0, 0)
+
+[node name="Board0_0" type="MeshInstance3D" parent="Model" unique_id=1401170791]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 1.25, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_6h4mg")
+
+[node name="Board1_1" type="MeshInstance3D" parent="Model" unique_id=1363373402]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 1.28, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_x1oy7")
+
+[node name="Board2_2" type="MeshInstance3D" parent="Model" unique_id=952160405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 1.31, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_8vkc5")
+
+[node name="Board3_3" type="MeshInstance3D" parent="Model" unique_id=371271676]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 1.25, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_h03f5")
+
+[node name="Board4_4" type="MeshInstance3D" parent="Model" unique_id=748382523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 1.28, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_3phn7")
+
+[node name="Board5_5" type="MeshInstance3D" parent="Model" unique_id=1320373679]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 1.31, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_5ofw4")
+
+[node name="Board6_6" type="MeshInstance3D" parent="Model" unique_id=600485599]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.25, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_ka7ye")
+
+[node name="Board7_7" type="MeshInstance3D" parent="Model" unique_id=400144082]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.05, 1.28, 0.04)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_wgxo3")
+
+[node name="Rail4_8" type="MeshInstance3D" parent="Model" unique_id=353369522]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -0.06)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_22evn")
+
+[node name="Rail20_9" type="MeshInstance3D" parent="Model" unique_id=2970025]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.05, -0.06)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_ro3d1")
+
+[node name="Brace_10" type="MeshInstance3D" parent="Model" unique_id=1677715363]
+transform = Transform3D(0.809017, -0.58778524, 0, 0.58778524, 0.809017, 0, 0, 0, 1, 0, 1.25, -0.11)
+material_override = ExtResource("1_4q1i4")
+mesh = SubResource("BoxMesh_ysehe")

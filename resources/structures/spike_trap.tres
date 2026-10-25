@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_jp1db"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_w4wek"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_sqyr2"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_3881m"]
+
+[resource]
+script = ExtResource("4_3881m")
+id = &"spike_trap"
+display_name = "Spike Trap"
+scene_path = "res://scenes/structures/spike_trap.tscn"
+max_health = 100.0
+footprint = Vector3(1.6, 0.45, 1.6)
+blocks_navigation = false
+breakable = false
+repair_cost = Dictionary[ExtResource("1_jp1db"), int]({
+ExtResource("2_w4wek"): 1,
+ExtResource("3_sqyr2"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_jp1db"), int]({
+ExtResource("2_w4wek"): 1
+})

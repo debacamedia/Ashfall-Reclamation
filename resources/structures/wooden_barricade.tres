@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_yqkjb"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_fo2bi"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_scct6"]
+
+[resource]
+script = ExtResource("3_scct6")
+id = &"wooden_barricade"
+display_name = "Wooden Barricade"
+scene_path = "res://scenes/structures/wooden_barricade.tscn"
+max_health = 200.0
+footprint = Vector3(2.4, 1.2, 0.5)
+repair_cost = Dictionary[ExtResource("1_yqkjb"), int]({
+ExtResource("2_fo2bi"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_yqkjb"), int]({
+ExtResource("2_fo2bi"): 1
+})

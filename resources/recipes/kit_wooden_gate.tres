@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_kfxlv"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_6j82c"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_es7ec"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_0skwd"]
+[ext_resource type="Resource" path="res://resources/items/kits/wooden_gate_kit.tres" id="5_g5deu"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_oy3c6"]
+
+[resource]
+script = ExtResource("6_oy3c6")
+id = &"kit_wooden_gate"
+category = 6
+station = 1
+inputs = Dictionary[ExtResource("1_kfxlv"), int]({
+ExtResource("2_6j82c"): 6,
+ExtResource("3_es7ec"): 1,
+ExtResource("4_0skwd"): 2
+})
+output = ExtResource("5_g5deu")
+craft_time = 8.0

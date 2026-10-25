@@ -4,7 +4,7 @@ extends Resource
 ## Items are identified by `id` everywhere (saves, trading, recipes), so never
 ## change an id once it ships.
 
-enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT }
+enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, STRUCTURE }
 
 @export var id: StringName = &"item"
 @export var display_name := "Item"
@@ -43,6 +43,8 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT }
 @export var weapon: WeaponDefinition
 ## For attachment items: what fitting it does.
 @export var attachment: AttachmentDefinition
+## Structure kits (Increment 13): what this kit builds in build mode (B).
+@export var structure: StructureDefinition
 
 
 func get_label(quantity: int) -> String:

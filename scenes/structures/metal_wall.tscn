@@ -1,0 +1,78 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/construction/structure.gd" id="1_yhhmm"]
+[ext_resource type="Resource" path="res://resources/structures/metal_wall.tres" id="2_t0x4n"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/corrugated_metal.tres" id="3_2xxca"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/rusted_steel.tres" id="4_8oefi"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/impact_hard.tres" id="5_o7ror"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h3b0v"]
+size = Vector3(2.4, 2.6, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_egj8b"]
+size = Vector3(2.3, 2.45, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8ebb6"]
+size = Vector3(0.12, 2.6, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ibxua"]
+size = Vector3(0.12, 2.6, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ngogv"]
+size = Vector3(2.4, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_p0ldq"]
+size = Vector3(2.4, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lv428"]
+size = Vector3(2.4, 0.1, 0.1)
+
+[node name="MetalWall" type="Node3D" unique_id=1022702264]
+script = ExtResource("1_yhhmm")
+definition = ExtResource("2_t0x4n")
+
+[node name="Body" type="StaticBody3D" parent="." unique_id=1368731181]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Body" unique_id=1765534340]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+shape = SubResource("BoxShape3D_h3b0v")
+
+[node name="Sheet" type="MeshInstance3D" parent="." unique_id=1838371020]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28, 0.03)
+material_override = ExtResource("3_2xxca")
+mesh = SubResource("BoxMesh_egj8b")
+
+[node name="Post-11" type="MeshInstance3D" parent="." unique_id=188020804]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, 1.3, -0.04)
+material_override = ExtResource("4_8oefi")
+mesh = SubResource("BoxMesh_8ebb6")
+
+[node name="Post11" type="MeshInstance3D" parent="." unique_id=1903218837]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 1.3, -0.04)
+material_override = ExtResource("4_8oefi")
+mesh = SubResource("BoxMesh_ibxua")
+
+[node name="Bar0" type="MeshInstance3D" parent="." unique_id=216839621]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, -0.06)
+material_override = ExtResource("4_8oefi")
+mesh = SubResource("BoxMesh_ngogv")
+
+[node name="Bar13" type="MeshInstance3D" parent="." unique_id=2108970586]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, -0.06)
+material_override = ExtResource("4_8oefi")
+mesh = SubResource("BoxMesh_p0ldq")
+
+[node name="Bar25" type="MeshInstance3D" parent="." unique_id=157316538]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.52, -0.06)
+material_override = ExtResource("4_8oefi")
+mesh = SubResource("BoxMesh_lv428")
+
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=885672367]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("5_o7ror")
+volume_db = -2.0
+unit_size = 4.0
+bus = &"SFX"

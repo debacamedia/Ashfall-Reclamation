@@ -2936,3 +2936,5 @@ bus = &"Ambience"
 [editable path="Props/BurningBarrelMotorPool"]
 [editable path="FiringRange/FiringLineN"]
 [editable path="FiringRange/FiringLineS"]
+
+[node name="Structures" type="Node3D" parent="." unique_id=22512389 groups=["navigation_geometry"]]

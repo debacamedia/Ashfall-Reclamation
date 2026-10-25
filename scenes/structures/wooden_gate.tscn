@@ -1,0 +1,187 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/construction/gate_structure.gd" id="1_hfqbs"]
+[ext_resource type="Resource" path="res://resources/structures/wooden_gate.tres" id="2_bi2bi"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="3_wsql1"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/rusted_steel.tres" id="4_hwbjw"]
+[ext_resource type="Script" path="res://scripts/construction/gate_handle.gd" id="5_yhnx2"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/structure_hit.tres" id="6_5irea"]
+[ext_resource type="AudioStream" path="res://assets/audio/crate_open.wav" id="7_h2ojs"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ieum4"]
+size = Vector3(0.2, 2.6, 0.25)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tlctp"]
+size = Vector3(0.2, 2.6, 0.25)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_loh6l"]
+size = Vector3(2.4, 0.18, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d57ft"]
+size = Vector3(0.2, 2.6, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_343gx"]
+size = Vector3(0.2, 2.6, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7w0ka"]
+size = Vector3(2.4, 0.18, 0.25)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fn1ry"]
+size = Vector3(1.94, 2.2, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ty6bx"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wc8sb"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tgeki"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_j25bg"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pmp6y"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d0mmo"]
+size = Vector3(0.31, 2.2, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t10sd"]
+size = Vector3(1.9, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_feyl8"]
+size = Vector3(1.9, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hrihn"]
+size = Vector3(2.2, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_thqi3"]
+size = Vector3(0.18, 0.05, 0.08)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1gl1v"]
+size = Vector3(0.6, 0.6, 0.5)
+
+[node name="WoodenGate" type="Node3D" unique_id=345095601]
+script = ExtResource("1_hfqbs")
+definition = ExtResource("2_bi2bi")
+
+[node name="Posts" type="StaticBody3D" parent="." unique_id=1913679174]
+collision_layer = 2
+collision_mask = 0
+
+[node name="PostCol-11" type="CollisionShape3D" parent="Posts" unique_id=1227471997]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.3, 0)
+shape = SubResource("BoxShape3D_ieum4")
+
+[node name="PostCol11" type="CollisionShape3D" parent="Posts" unique_id=891564688]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.3, 0)
+shape = SubResource("BoxShape3D_tlctp")
+
+[node name="BeamCol" type="CollisionShape3D" parent="Posts" unique_id=170809097]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.51, 0)
+shape = SubResource("BoxShape3D_loh6l")
+
+[node name="Post-11" type="MeshInstance3D" parent="." unique_id=550983850]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.3, 0)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_d57ft")
+
+[node name="Post11" type="MeshInstance3D" parent="." unique_id=1722162255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.3, 0)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_343gx")
+
+[node name="Beam" type="MeshInstance3D" parent="." unique_id=340996658]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.51, 0)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_7w0ka")
+
+[node name="Door" type="Node3D" parent="." unique_id=1688697350]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98, 0, 0)
+
+[node name="DoorBody" type="StaticBody3D" parent="Door" unique_id=1697112348]
+collision_layer = 2
+collision_mask = 0
+
+[node name="DoorCol" type="CollisionShape3D" parent="Door/DoorBody" unique_id=468338455]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, 1.15, 0)
+shape = SubResource("BoxShape3D_fn1ry")
+
+[node name="DoorBoard0" type="MeshInstance3D" parent="Door" unique_id=765114375]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 1.15, 0.02)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_ty6bx")
+
+[node name="DoorBoard1" type="MeshInstance3D" parent="Door" unique_id=1721147196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.15, 0.02)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_wc8sb")
+
+[node name="DoorBoard2" type="MeshInstance3D" parent="Door" unique_id=1995384406]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.82, 1.15, 0.02)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_tgeki")
+
+[node name="DoorBoard3" type="MeshInstance3D" parent="Door" unique_id=1031783965]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.14, 1.15, 0.02)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_j25bg")
+
+[node name="DoorBoard4" type="MeshInstance3D" parent="Door" unique_id=1821071588]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.46, 1.15, 0.02)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_pmp6y")
+
+[node name="DoorBoard5" type="MeshInstance3D" parent="Door" unique_id=673816560]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.78, 1.15, 0.02)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_d0mmo")
+
+[node name="DoorRail4" type="MeshInstance3D" parent="Door" unique_id=1053074645]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, 0.4, -0.04)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_t10sd")
+
+[node name="DoorRail19" type="MeshInstance3D" parent="Door" unique_id=1646954324]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, 1.9, -0.04)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_feyl8")
+
+[node name="DoorBrace" type="MeshInstance3D" parent="Door" unique_id=121627944]
+transform = Transform3D(0.7880108, -0.6156615, 0, 0.6156615, 0.7880108, 0, 0, 0, 1, 0.98, 1.15, -0.04)
+material_override = ExtResource("3_wsql1")
+mesh = SubResource("BoxMesh_hrihn")
+
+[node name="Latch" type="MeshInstance3D" parent="Door" unique_id=891807015]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 1.1, 0.07)
+material_override = ExtResource("4_hwbjw")
+mesh = SubResource("BoxMesh_thqi3")
+
+[node name="Handle" type="Area3D" parent="Door" unique_id=1688833803]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1.1, 0)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("5_yhnx2")
+
+[node name="Shape" type="CollisionShape3D" parent="Door/Handle" unique_id=1507293986]
+shape = SubResource("BoxShape3D_1gl1v")
+
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=285642319]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("6_5irea")
+volume_db = -2.0
+unit_size = 4.0
+bus = &"SFX"
+
+[node name="SwingSound" type="AudioStreamPlayer3D" parent="." unique_id=1231318892]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("7_h2ojs")
+volume_db = -4.0
+unit_size = 4.0
+bus = &"SFX"

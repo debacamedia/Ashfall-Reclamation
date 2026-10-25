@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/wooden_gate_kit.png" id="1_aeqxx"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_k21q4"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_aeqxx"]
+[ext_resource type="Resource" path="res://resources/structures/wooden_gate.tres" id="3_x68aw"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/wooden_gate_kit.tscn" id="4_hvtx5"]
+
+[resource]
+script = ExtResource("2_aeqxx")
+id = &"wooden_gate_kit"
+display_name = "Wooden Gate Kit"
+description = "A gate in a wall: E to open and close. Raiders have to break it. Build it with B."
+category = 8
+icon = ExtResource("1_aeqxx")
+max_stack = 5
+weight = 4.0
+base_value = 56
+world_model = ExtResource("4_hvtx5")
+pickup_sound = ExtResource("1_k21q4")
+structure = ExtResource("3_x68aw")

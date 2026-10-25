@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="1_1tt2b"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="2_ua35x"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_t7a6m"]
+size = Vector3(1, 0.53000003, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x3fva"]
+size = Vector3(0.05, 0.535, 0.61)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jg806"]
+size = Vector3(0.05, 0.535, 0.61)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1lyyv"]
+size = Vector3(0.03, 0.04, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4wata"]
+size = Vector3(0.03, 0.04, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h4flq"]
+size = Vector3(1.02, 0.07, 0.62)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5v71l"]
+size = Vector3(0.08, 0.06, 0.02)
+
+[node name="StorageCrateKit" type="Node3D" unique_id=468961976]
+
+[node name="Model" type="Node3D" parent="." unique_id=953093351]
+transform = Transform3D(0.47826087, 0, 0, 0, 0.47826087, 0, 0, 0, 0.47826087, 0, 0, 0)
+
+[node name="Box_0" type="MeshInstance3D" parent="Model" unique_id=1375792969]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26500002, 0)
+material_override = ExtResource("1_1tt2b")
+mesh = SubResource("BoxMesh_t7a6m")
+
+[node name="BandL_1" type="MeshInstance3D" parent="Model" unique_id=1102297446]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32, 0.26500002, 0)
+material_override = ExtResource("2_ua35x")
+mesh = SubResource("BoxMesh_x3fva")
+
+[node name="BandR_2" type="MeshInstance3D" parent="Model" unique_id=1958783873]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.32, 0.26500002, 0)
+material_override = ExtResource("2_ua35x")
+mesh = SubResource("BoxMesh_jg806")
+
+[node name="HandleL_3" type="MeshInstance3D" parent="Model" unique_id=368342908]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.515, 0.37100002, 0)
+material_override = ExtResource("2_ua35x")
+mesh = SubResource("BoxMesh_1lyyv")
+
+[node name="HandleR_4" type="MeshInstance3D" parent="Model" unique_id=1846727098]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.515, 0.37100002, 0)
+material_override = ExtResource("2_ua35x")
+mesh = SubResource("BoxMesh_4wata")
+
+[node name="LidTop_5" type="MeshInstance3D" parent="Model" unique_id=894337905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.56500006, 0)
+material_override = ExtResource("1_1tt2b")
+mesh = SubResource("BoxMesh_h4flq")
+
+[node name="Latch_6" type="MeshInstance3D" parent="Model" unique_id=1138284489]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53000003, 0.315)
+material_override = ExtResource("2_ua35x")
+mesh = SubResource("BoxMesh_5v71l")

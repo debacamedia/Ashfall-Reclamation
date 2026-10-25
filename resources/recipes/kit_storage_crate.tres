@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_l6a5v"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_r8ey2"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_qoyp5"]
+[ext_resource type="Resource" path="res://resources/items/kits/storage_crate_kit.tres" id="4_dw23d"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_623wo"]
+
+[resource]
+script = ExtResource("5_623wo")
+id = &"kit_storage_crate"
+category = 6
+station = 1
+inputs = Dictionary[ExtResource("1_l6a5v"), int]({
+ExtResource("2_r8ey2"): 4,
+ExtResource("3_qoyp5"): 2
+})
+output = ExtResource("4_dw23d")
+craft_time = 5.0

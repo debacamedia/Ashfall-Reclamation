@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Milestone 2 complete (Increment 12)
+## Current state: Increment 13 (construction)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -16,13 +16,14 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 10:** **crafting**: K to craft by hand anywhere; a workbench (warehouse) and weapons bench (command post); 13 recipes for components, ammo, bandages and medkits; break down pallets and furniture for wood.
 - **Increment 11:** **gun crafting and attachments**: you now start with only a **machete** (slot 5) and craft a **pipe pistol** by hand. Gun parts (barrel, receiver, stock, trigger group, magazine) are made at the weapons bench and assembled into the pistol, shotgun, service rifle and marksman rifle. **Attachments** (red dot, 4× scope, suppressor, extended magazine, foregrip) are fitted on the bench's **Modify Weapons** tab and show on the gun. Every gun has iron sights.
 - **Increment 12:** **a second region, Halden's Crossing**: follow the road south out of Outpost 17 and hold E at the road sign. A ruined town with enterable shops, a two-storey hotel and a burned church, rooftop and water-tower sightlines, and a walled raider camp held by tougher **Raider Veterans**. 21 containers, scrap heaps and appliance piles for crafting materials in bulk. You carry your gear between regions, each region remembers what you looted, and saves include every region.
+- **Increment 13:** **construction**: craft structure kits (K → Structures), press **B** for build mode and place them with a green/red ghost: sandbag and wooden barricades, wooden and metal walls, a gate you open with E, spike traps, storage crates and a field workbench. Rotate with R, choose with the mouse wheel, repair with E and dismantle with X. Raiders path around what you build and **hack through** walls when you've shut them out. Everything you build is saved, per region.
 
 ## Run it
 1. Install Godot 4.7 (standard, not .NET).
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
 3. Press **F5**.
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, R rotate, E repair, X dismantle) · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
 
 ## After pulling an update — important
 Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.

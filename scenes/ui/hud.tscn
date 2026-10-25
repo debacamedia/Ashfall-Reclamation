@@ -1022,6 +1022,49 @@ theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 
+[node name="BuildPanel" type="VBoxContainer" parent="Root" unique_id=317964077]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_top = -205.0
+offset_right = 480.0
+offset_bottom = -120.0
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="BuildTitle" type="Label" parent="Root/BuildPanel" unique_id=1747807660]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.6, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+
+[node name="BuildStatus" type="Label" parent="Root/BuildPanel" unique_id=2010398903]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.95, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+
+[node name="BuildKeys" type="Label" parent="Root/BuildPanel" unique_id=1802923013]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.73, 0.66, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 14
+text = "BUILD MODE   [Click] Place   [Wheel] Kit   [R] Rotate   [E] Repair   [X] Dismantle   [B] Exit"
+horizontal_alignment = 1
+
 [node name="UISound" type="AudioStreamPlayer" parent="." unique_id=1091512968]
 unique_name_in_owner = true
 bus = &"UI"

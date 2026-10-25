@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/metal_wall_kit.png" id="1_7i30h"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_hcojv"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_7i30h"]
+[ext_resource type="Resource" path="res://resources/structures/metal_wall.tres" id="3_02dnu"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/metal_wall_kit.tscn" id="4_xhxuh"]
+
+[resource]
+script = ExtResource("2_7i30h")
+id = &"metal_wall_kit"
+display_name = "Metal Wall Kit"
+description = "A 2.4 m section of sheet-metal wall. More than twice as tough as wood. Build it with B."
+category = 8
+icon = ExtResource("1_7i30h")
+max_stack = 5
+weight = 5.0
+base_value = 72
+world_model = ExtResource("4_xhxuh")
+pickup_sound = ExtResource("1_hcojv")
+structure = ExtResource("3_02dnu")

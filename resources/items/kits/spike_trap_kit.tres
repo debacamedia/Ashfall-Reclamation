@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_fmowp"]
+[ext_resource type="Texture2D" path="res://assets/icons/spike_trap_kit.png" id="1_jqfse"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_jqfse"]
+[ext_resource type="Resource" path="res://resources/structures/spike_trap.tres" id="3_7kt6l"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/spike_trap_kit.tscn" id="4_yksoa"]
+
+[resource]
+script = ExtResource("2_jqfse")
+id = &"spike_trap_kit"
+display_name = "Spike Trap Kit"
+description = "Stakes that hurt raiders who walk into them (not you). Wears out after about ten hits. Build it with B."
+category = 8
+icon = ExtResource("1_jqfse")
+max_stack = 5
+weight = 2.5
+base_value = 24
+world_model = ExtResource("4_yksoa")
+pickup_sound = ExtResource("1_fmowp")
+structure = ExtResource("3_7kt6l")

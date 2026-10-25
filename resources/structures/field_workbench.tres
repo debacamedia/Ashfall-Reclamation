@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_3mpea"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_pydax"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="3_h7rcp"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_net5v"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="5_h2e6n"]
+
+[resource]
+script = ExtResource("5_h2e6n")
+id = &"field_workbench"
+display_name = "Field Workbench"
+scene_path = "res://scenes/structures/field_workbench.tscn"
+footprint = Vector3(2.2, 1.35, 1)
+repair_cost = Dictionary[ExtResource("1_3mpea"), int]({
+ExtResource("2_pydax"): 1,
+ExtResource("4_net5v"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_3mpea"), int]({
+ExtResource("2_pydax"): 3,
+ExtResource("3_h7rcp"): 1
+})

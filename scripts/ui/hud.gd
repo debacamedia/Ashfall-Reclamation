@@ -27,6 +27,9 @@ extends CanvasLayer
 @onready var _death_cause: Label = %DeathCause
 @onready var _respawn_prompt: Label = %RespawnPrompt
 @onready var _prompt_label: Label = %PromptLabel
+@onready var _build_panel: Control = get_node_or_null("%BuildPanel")
+@onready var _build_title: Label = get_node_or_null("%BuildTitle")
+@onready var _build_status: Label = get_node_or_null("%BuildStatus")
 @onready var _prompt_reason: Label = %PromptReason
 @onready var _hold_bar: ProgressBar = %HoldBar
 @onready var _notices: VBoxContainer = %Notices
@@ -87,12 +90,22 @@ func _process(delta: float) -> void:
 		_bind_interactor(player.interactor)
 	if player.inventory != _inventory:
 		_bind_inventory(player.inventory)
+	_update_build_panel()
 	if _player_signals_bound != player:
 		_player_signals_bound = player
 		player.item_use_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.transfer_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.weapon_picked_up.connect(func(def: WeaponDefinition) -> void:
 			show_notice("%s  →  slot %d" % [def.display_name, def.slot], Color(0.75, 0.9, 1.0)))
+		player.structure_placed.connect(func(st: Structure) -> void:
+			show_notice("Built " + st.definition.display_name, Color(0.8, 0.95, 0.7)))
+		player.structure_repaired.connect(func(st: Structure) -> void:
+			show_notice("Repaired " + st.definition.display_name, Color(0.8, 0.95, 0.7)))
+		player.structure_dismantled.connect(func(def: StructureDefinition) -> void:
+			show_notice("Dismantled " + def.display_name, Color(0.8, 0.95, 0.7)))
+		player.build_refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
 		inventory_screen.player = player
 		if container_screen != null:
 			container_screen.player = player
@@ -343,6 +356,21 @@ func _update_weapon_strip() -> void:
 		var label := "%d %s" % [s, w.definition.short_name if w != null else "—"]
 		parts.append("[%s]" % label if s == shown else label)
 	_weapon_strip.text = "   ".join(parts)
+
+
+## Build mode (B): what's selected and what's possible where you look.
+func _update_build_panel() -> void:
+	if _build_panel == null:
+		return
+	var bm := player.get_node_or_null("%BuildMode") as BuildMode
+	var on := bm != null and bm.active
+	_build_panel.visible = on
+	if not on:
+		return
+	_build_title.text = bm.title_text()
+	_build_status.text = bm.status_text()
+	var ok := bm.target != null or bm.ghost_valid
+	_build_status.add_theme_color_override("font_color", Color(0.85, 0.95, 0.8) if ok else Color(1.0, 0.55, 0.45))
 
 
 ## First-minutes guidance: until you own a gun, tell the player how to make one.

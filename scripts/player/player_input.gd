@@ -18,6 +18,9 @@ signal mouse_capture_changed(captured: bool)
 ## True while a menu (inventory) is open: the mouse is free and gameplay
 ## input is ignored.
 var ui_open := false
+## Build mode (B): mouse look and movement as normal, but the mouse buttons,
+## R, E and the number keys belong to BuildMode, not the gun.
+var build_mode := false
 
 var _look_accumulator := Vector2.ZERO
 var _crouch_latched := false
@@ -118,6 +121,14 @@ func gather() -> InputFrame:
 	frame.cycle = _pending_cycle
 	_pending_cycle = 0
 	_look_accumulator = Vector2.ZERO
+	if build_mode:
+		frame.fire = false
+		frame.reload = false
+		frame.interact = false
+		frame.aim = false
+		frame.slot = 0
+		frame.cycle = 0
+		frame.use_heal = false
 	return frame
 
 

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_4ug6d"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="2_o0llo"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="3_d2a7q"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_gfqmo"]
+
+[resource]
+script = ExtResource("4_gfqmo")
+id = &"metal_wall"
+display_name = "Metal Wall"
+scene_path = "res://scenes/structures/metal_wall.tscn"
+max_health = 900.0
+footprint = Vector3(2.4, 2.6, 0.3)
+repair_cost = Dictionary[ExtResource("1_4ug6d"), int]({
+ExtResource("2_o0llo"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_4ug6d"), int]({
+ExtResource("2_o0llo"): 2,
+ExtResource("3_d2a7q"): 1
+})

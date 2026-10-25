@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_qe7rs"]
+[ext_resource type="Texture2D" path="res://assets/icons/wooden_barricade_kit.png" id="1_ulvkj"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_ulvkj"]
+[ext_resource type="Resource" path="res://resources/structures/wooden_barricade.tres" id="3_p6xvx"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/wooden_barricade_kit.tscn" id="4_p3t8j"]
+
+[resource]
+script = ExtResource("2_ulvkj")
+id = &"wooden_barricade_kit"
+display_name = "Wooden Barricade Kit"
+description = "Planks and trestles for a quick waist-high barricade. Build it with B."
+category = 8
+icon = ExtResource("1_ulvkj")
+max_stack = 5
+weight = 2.0
+base_value = 24
+world_model = ExtResource("4_p3t8j")
+pickup_sound = ExtResource("1_qe7rs")
+structure = ExtResource("3_p6xvx")

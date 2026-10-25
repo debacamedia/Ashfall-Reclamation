@@ -85,6 +85,10 @@ var _attack_cooldown := 0.0
 var _strike_done := false
 var _search_running := false
 var _rng := RandomNumberGenerator.new()
+## Construction (Increment 13): a structure in the way that we're hacking at,
+## and how long we've been stuck trying to reach the target.
+var break_target: Structure = null
+var _stuck_time := 0.0
 var _arm_tween: Tween
 
 @onready var health: HealthComponent = %HealthComponent
@@ -233,7 +237,10 @@ func _process_chase(delta: float) -> void:
 		target = null
 		_enter(State.IDLE)
 		return
-	if _time_since_seen > lose_target_time:
+	if break_target != null and (not is_instance_valid(break_target) or break_target.is_queued_for_deletion()):
+		break_target = null
+	# Hacking through a wall: we know they're behind it, so keep at it
+	if _time_since_seen > lose_target_time and break_target == null:
 		# Keep hunting: run to where the target was last seen
 		_search_running = true
 		_enter(State.SEARCH)
@@ -244,14 +251,42 @@ func _process_chase(delta: float) -> void:
 		_brake(delta)
 		_face(target.global_position - global_position, delta)
 		if _attack_cooldown <= 0.0:
+			break_target = null
 			_enter(State.ATTACK)
 		return
+	if break_target != null:
+		if _time_since_seen < 0.5 and agent.is_target_reachable():
+			break_target = null  # a way round opened up (gate, broken wall)
+		else:
+			# Stick with the structure we're breaking until it gives
+			if _distance_to_structure(break_target) <= attack_range + 0.4:
+				_brake(delta)
+				_face(break_target.global_position - global_position, delta)
+				if _attack_cooldown <= 0.0:
+					_enter(State.ATTACK)
+			else:
+				_move_to(break_target.global_position, run_speed, delta)
+			return
 	_move_to(goal, run_speed, delta)
+	# Walled out? Hack through whatever structure is in the way
+	# (how fast we actually moved last tick, not how fast we're trying to)
+	var moved := get_real_velocity()
+	var horizontal := Vector2(moved.x, moved.z).length()
+	_stuck_time = _stuck_time + delta if horizontal < 0.6 else 0.0
+	if _stuck_time > 0.8 or (_state_time > 1.0 and not agent.is_target_reachable()):
+		var blocker := _structure_in_way(goal)
+		if blocker != null:
+			break_target = blocker
+			_stuck_time = 0.0
+			if _attack_cooldown <= 0.0:
+				_enter(State.ATTACK)
 
 
 func _process_attack(delta: float) -> void:
 	_brake(delta)
-	if target != null and not target.is_dead():
+	if break_target != null and is_instance_valid(break_target):
+		_face(break_target.global_position - global_position, delta)
+	elif target != null and not target.is_dead():
 		_face(target.global_position - global_position, delta)
 	if not _strike_done and _state_time >= attack_windup:
 		_strike_done = true
@@ -276,6 +311,17 @@ func _process_search(delta: float) -> void:
 
 func _strike() -> void:
 	var hit := false
+	if break_target != null:
+		if is_instance_valid(break_target) and not break_target.is_queued_for_deletion() \
+				and _distance_to_structure(break_target) <= attack_range + 0.6:
+			break_target.apply_damage(attack_damage, self)
+			hit = true
+		if not is_instance_valid(break_target) or break_target.is_queued_for_deletion():
+			break_target = null
+		_play_strike()
+		_play(_swing_sound)
+		attacked.emit(target, hit)
+		return
 	if target != null and not target.is_dead():
 		var to_target := target.global_position - global_position
 		var flat := Vector3(to_target.x, 0.0, to_target.z)
@@ -289,6 +335,41 @@ func _strike() -> void:
 	_play_strike()
 	_play(_swing_sound)
 	attacked.emit(target, hit)
+
+
+## The breakable structure between us and `goal` within reach, if any.
+func _structure_in_way(goal: Vector3) -> Structure:
+	var space := get_world_3d().direct_space_state
+	var chest := global_position + Vector3.UP * 1.1
+	var dirs: Array[Vector3] = []
+	var to_goal := Vector3(goal.x - chest.x, 0.0, goal.z - chest.z)
+	if to_goal.length() > 0.01:
+		dirs.append(to_goal.normalized())
+	var next := agent.get_next_path_position() - global_position
+	next.y = 0.0
+	if next.length() > 0.05:
+		dirs.append(next.normalized())
+	dirs.append(-global_basis.z)
+	for dir in dirs:
+		var q := PhysicsRayQueryParameters3D.create(chest, chest + dir * (attack_range + 1.0), PhysicsLayers.STRUCTURES, [get_rid()])
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			continue
+		var s := Structure.from_collider(hit["collider"])
+		if s != null and s.is_breakable() and not s.is_queued_for_deletion():
+			return s
+	return null
+
+
+func _distance_to_structure(s: Structure) -> float:
+	var space := get_world_3d().direct_space_state
+	var chest := global_position + Vector3.UP * 1.1
+	var to := s.global_position + Vector3.UP * 1.0
+	var q := PhysicsRayQueryParameters3D.create(chest, to, PhysicsLayers.STRUCTURES, [get_rid()])
+	var hit := space.intersect_ray(q)
+	if not hit.is_empty() and Structure.from_collider(hit["collider"]) == s:
+		return chest.distance_to(hit["position"])
+	return Vector2(to.x - chest.x, to.z - chest.z).length()
 
 
 # ---------------------------------------------------------------- perception

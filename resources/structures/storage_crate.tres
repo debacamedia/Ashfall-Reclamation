@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_dsyim"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_f7sqq"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_fb5v2"]
+
+[resource]
+script = ExtResource("3_fb5v2")
+id = &"storage_crate"
+display_name = "Storage Crate"
+scene_path = "res://scenes/structures/storage_crate.tscn"
+max_health = 250.0
+footprint = Vector3(1.15, 0.8, 0.75)
+repair_cost = Dictionary[ExtResource("1_dsyim"), int]({
+ExtResource("2_f7sqq"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_dsyim"), int]({
+ExtResource("2_f7sqq"): 2
+})

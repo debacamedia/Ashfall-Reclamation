@@ -93,7 +93,7 @@ res://
 │   ├── weapons/               (Inc 2)
 │   ├── enemies/               (Inc 4)
 │   ├── npcs/                  (later)
-│   ├── buildings/             player-constructed buildings (BuildingManager, later)
+│   ├── structures/            player-built structures: walls, gate, traps, crate, bench (Inc 13)
 │   ├── vehicles/              military_truck.tscn
 │   ├── world/
 │   │   ├── structures/        prefab buildings, towers, gate, walls, culvert
@@ -106,9 +106,10 @@ res://
 │   ├── world/                 scripts for world props (shipping_container.gd)
 │   ├── interaction/           interactable.gd, pickup.gd, player_interactor.gd
 │   ├── ui/                    hud.gd
-│   ├── combat/ inventory/ construction/ settlement/ economy/
+│   ├── construction/          structure.gd, build_mode.gd, construction_rules.gd, nav_rebaker.gd (Inc 13)
+│   ├── combat/ inventory/ settlement/ economy/
 │   ├── military/ factions/ networking/ persistence/   (filled in later increments)
-├── resources/                 items/ buildings/ crafting/ factions/ npc_types/  (.tres data)
+├── resources/                 items/ (incl. kits/) recipes/ structures/ loot/ factions/ npc_types/  (.tres data)
 ├── assets/
 │   ├── materials/             PBR materials (.tres) with normal maps
 │   ├── models/ textures/ animations/ audio/                (imported art, later)
@@ -126,6 +127,7 @@ res://
 - **`scripts/player/` added.** The player controller and input don't fit under `core/` or `combat/`, and they'll grow (stamina, interaction, equipment).
 - **`scenes/world/` split into `structures/` and `props/`.** Outposts reuse dozens of pieces, and the split keeps both lists scannable. `scenes/buildings/` is reserved for *player-built* structures, which carry BuildingManager data such as cost, health and upgrades. World set dressing does not.
 - **`scripts/ui/` and `scripts/world/` added.** Scripts sit next to the scene category they serve.
+- **Player-built structures live in `scenes/structures/`** (Increment 13), not `scenes/buildings/`. Each is described by a `StructureDefinition` (`resources/structures/`) holding health, footprint, repair cost and dismantle return. They're built from kit items, so no separate BuildingManager was needed: placement rules are in `ConstructionRules`, and validation is in `PlayerController.request_*`.
 - **`docs/` added.** Architecture and per-increment guides live with the code, so they stay in version control.
 
 ---
@@ -174,5 +176,6 @@ Each increment adds a guide in `docs/increments/` and tests in `tests/`.
 | Crafting ✅ (Inc 10: materials, recipes, benches) | Use a workbench at Outpost 17 to turn scrap, cloth, electronics and fuel into ammo, medkits and weapon parts via `RecipeDefinition` Resources |
 | Gun crafting + attachments ✅ (Inc 11) | Start with a machete and craft a pipe pistol; build gun parts and assemble guns at the weapons bench; fit attachments (red dot, 4× scope, suppressor, extended magazine, foregrip) |
 | First new region ✅ (Inc 12: Halden's Crossing) | Travel by road to a ruined town with a raider camp, close-quarters buildings and long sightlines; region state saved per level |
+| Construction ✅ (Inc 13) | Craft structure kits, place barricades, walls, gates, spike traps, storage crates and field workbenches with a validated ghost; raiders path around them (runtime navmesh rebakes) and break through when walled out; structures saved per region |
 
-Then co-op networking (`NetworkManager`, Milestone 3), settlements, building and the economy, with more regions added along the way.
+Then co-op networking (`NetworkManager`, Milestone 3), settlements and the economy, with more regions added along the way.

@@ -22,8 +22,9 @@
 [ext_resource type="Script" path="res://scripts/combat/weapon_slots.gd" id="19_cnsyf"]
 [ext_resource type="Script" path="res://scripts/combat/weapon_definition.gd" id="20_007i1"]
 [ext_resource type="Resource" path="res://resources/items/weapons/machete.tres" id="22_007i1"]
+[ext_resource type="Script" path="res://scripts/construction/build_mode.gd" id="23_ioxgp"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6cv16"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cnsyf"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
@@ -41,7 +42,7 @@ script = ExtResource("1_dovo2")
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_6cv16")
+shape = SubResource("CapsuleShape3D_cnsyf")
 
 [node name="Head" type="Node3D" parent="." unique_id=801003417]
 unique_name_in_owner = true
@@ -145,3 +146,7 @@ ExtResource("15_uf5tr"): 1
 unique_name_in_owner = true
 script = ExtResource("19_cnsyf")
 starting_weapons = Array[ExtResource("20_007i1")]([ExtResource("22_007i1")])
+
+[node name="BuildMode" type="Node" parent="." unique_id=1531526133]
+unique_name_in_owner = true
+script = ExtResource("23_ioxgp")

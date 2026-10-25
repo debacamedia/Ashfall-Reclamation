@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_pvh0u"]
+[ext_resource type="Texture2D" path="res://assets/icons/storage_crate_kit.png" id="1_vh0gx"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_vh0gx"]
+[ext_resource type="Resource" path="res://resources/structures/storage_crate.tres" id="3_opas1"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/storage_crate_kit.tscn" id="4_to8rj"]
+
+[resource]
+script = ExtResource("2_vh0gx")
+id = &"storage_crate_kit"
+display_name = "Storage Crate Kit"
+description = "A crate that keeps whatever you put in it. Build it with B."
+category = 8
+icon = ExtResource("1_vh0gx")
+max_stack = 5
+weight = 3.0
+base_value = 24
+world_model = ExtResource("4_to8rj")
+pickup_sound = ExtResource("1_pvh0u")
+structure = ExtResource("3_opas1")

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_k5i5g"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_4ukeu"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_5qtls"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_2vffh"]
+
+[resource]
+script = ExtResource("4_2vffh")
+id = &"wooden_gate"
+display_name = "Wooden Gate"
+scene_path = "res://scenes/structures/wooden_gate.tscn"
+max_health = 450.0
+footprint = Vector3(2.4, 2.6, 0.3)
+repair_cost = Dictionary[ExtResource("1_k5i5g"), int]({
+ExtResource("2_4ukeu"): 2
+})
+dismantle_return = Dictionary[ExtResource("1_k5i5g"), int]({
+ExtResource("2_4ukeu"): 3,
+ExtResource("3_5qtls"): 1
+})

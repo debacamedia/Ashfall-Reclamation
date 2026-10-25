@@ -1,0 +1,13 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/structure_hit_1.wav" id="1_b86vy"]
+[ext_resource type="AudioStream" path="res://assets/audio/structure_hit_2.wav" id="2_1unj7"]
+[ext_resource type="AudioStream" path="res://assets/audio/structure_hit_3.wav" id="3_uhui0"]
+
+[resource]
+random_pitch = 1.08
+random_volume_offset_db = 1.5
+streams_count = 3
+stream_0/stream = ExtResource("1_b86vy")
+stream_1/stream = ExtResource("2_1unj7")
+stream_2/stream = ExtResource("3_uhui0")

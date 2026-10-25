@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_u5dp0"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="2_oeenf"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_tvnxl"]
+[ext_resource type="Resource" path="res://resources/items/kits/sandbag_barricade_kit.tres" id="4_u8m4b"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_afmhe"]
+
+[resource]
+script = ExtResource("5_afmhe")
+id = &"kit_sandbag_barricade"
+category = 6
+inputs = Dictionary[ExtResource("1_u5dp0"), int]({
+ExtResource("2_oeenf"): 4,
+ExtResource("3_tvnxl"): 1
+})
+output = ExtResource("4_u8m4b")
+craft_time = 4.0

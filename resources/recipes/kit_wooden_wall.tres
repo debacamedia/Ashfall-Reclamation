@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_mrmfo"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_bksbk"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_u3l06"]
+[ext_resource type="Resource" path="res://resources/items/kits/wooden_wall_kit.tres" id="4_auji2"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_6p7mw"]
+
+[resource]
+script = ExtResource("5_6p7mw")
+id = &"kit_wooden_wall"
+category = 6
+station = 1
+inputs = Dictionary[ExtResource("1_mrmfo"), int]({
+ExtResource("2_bksbk"): 6,
+ExtResource("3_u3l06"): 2
+})
+output = ExtResource("4_auji2")
+craft_time = 6.0
