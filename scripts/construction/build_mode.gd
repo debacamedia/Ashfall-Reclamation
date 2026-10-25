@@ -5,16 +5,22 @@ extends Node
 ##   Left click        place the selected structure where the ghost is
 ##   Mouse wheel / [ ] choose which kit to place (only kits you carry)
 ##   R                 rotate 15° (Shift+R the other way)
+##   F                 pick up the structure you're looking at and move it
+##                     (click to put it down, F again to cancel)
 ##   E                 repair the structure you're looking at
-##   X                 dismantle the structure you're looking at
+##   X                 dismantle the structure you're looking at (within 30 s
+##                     of placing it, undamaged: you get the kit back)
 ##   B                 leave build mode
 ##
 ## Shows a see-through ghost at the spot you look at: green if it can go
 ## there, red with the reason if not. Looking at a structure you've built
-## shows its health and the repair/dismantle keys instead.
+## shows its health and the move/repair/dismantle keys instead.
 ##
-## This is the client side only: placing, repairing and dismantling all go
-## through PlayerController.request_* (validated, host-side in co-op).
+## You can enter build mode with kits to place, or with none to move, repair
+## or dismantle what's already built.
+##
+## This is the client side only: placing, moving, repairing and dismantling
+## all go through PlayerController.request_* (validated, host-side in co-op).
 ##
 ## Lives on the player: res://scenes/player/player.tscn → %BuildMode.
 
@@ -25,14 +31,16 @@ var active := false
 var kits: Array[ItemDefinition] = []
 var selected := 0
 var yaw := 0.0
-## Under the crosshair: a built structure (repair/dismantle) or null.
+## Under the crosshair: a built structure (move/repair/dismantle) or null.
 var target: Structure = null
+## The structure being moved (picked up with F), or null.
+var moving: Structure = null
 var ghost_transform := Transform3D.IDENTITY
 var ghost_reason := "Look at the ground"
 var ghost_valid := false
 
 var _ghost: Node3D
-var _ghost_kit: ItemDefinition
+var _ghost_def: StructureDefinition
 var _mat_ok: StandardMaterial3D
 var _mat_bad: StandardMaterial3D
 var _last_wheel_msec := -1000
@@ -66,7 +74,8 @@ func enter() -> bool:
 	if active or player == null or player.is_dead() or player.ladder != null:
 		return false
 	refresh_kits()
-	if kits.is_empty():
+	var root := ConstructionRules.structures_root(player.get_parent())
+	if kits.is_empty() and (root == null or root.get_child_count() == 0):
 		player.build_refused.emit("No structure kits: craft one first (K)")
 		return false
 	active = true
@@ -82,6 +91,7 @@ func enter() -> bool:
 func exit() -> void:
 	if not active:
 		return
+	cancel_move()
 	active = false
 	target = null
 	if player != null:
@@ -96,7 +106,7 @@ func current_kit() -> ItemDefinition:
 
 
 func select(direction: int) -> void:
-	if kits.is_empty():
+	if kits.is_empty() or moving != null:
 		return
 	selected = wrapi(selected + direction, 0, kits.size())
 	_rebuild_ghost()
@@ -110,11 +120,19 @@ func rotate(steps: int = 1) -> void:
 	changed.emit()
 
 
-## Places the selected kit at the ghost. Returns the structure or null.
+## Places the selected kit at the ghost, or puts down the structure being
+## moved. Returns the structure, or null if nothing happened.
 func place() -> Structure:
 	if not active:
 		return null
 	update_preview()
+	if moving != null:
+		var m := moving
+		if not player.request_move_structure(m, ghost_transform):
+			return null
+		_end_move()
+		changed.emit()
+		return m
 	var kit := current_kit()
 	if kit == null or target != null:
 		return null
@@ -127,6 +145,43 @@ func place() -> Structure:
 		update_preview()
 	changed.emit()
 	return s
+
+
+## Picks up the targeted structure: the ghost becomes it until you click
+## to put it down (or F / B to cancel). Its damage and contents come along.
+func start_move() -> bool:
+	if not active or moving != null or target == null:
+		return false
+	var reason := target.move_block_reason()
+	if reason != "":
+		player.build_refused.emit(reason)
+		return false
+	moving = target
+	target = null
+	# Keep its facing: the ghost yaw is relative to the way you look
+	yaw = wrapf(snappedf(rad_to_deg(moving.global_rotation.y - player.rotation.y), ConstructionRules.ROTATE_STEP), 0.0, 360.0)
+	moving.visible = false
+	_rebuild_ghost()
+	update_preview()
+	changed.emit()
+	return true
+
+
+## Puts the structure back where it was.
+func cancel_move() -> void:
+	if moving == null:
+		return
+	_end_move()
+	changed.emit()
+
+
+func _end_move() -> void:
+	if is_instance_valid(moving):
+		moving.visible = true
+	moving = null
+	yaw = 0.0
+	_rebuild_ghost()
+	update_preview()
 
 
 func repair() -> bool:
@@ -143,6 +198,7 @@ func dismantle() -> bool:
 	var ok := player.request_dismantle_structure(target)
 	target = null
 	refresh_kits()
+	_rebuild_ghost()
 	changed.emit()
 	return ok
 
@@ -165,27 +221,39 @@ func refresh_kits() -> void:
 
 # ---------------------------------------------------------------- preview
 
+## The definition the ghost shows: the structure being moved, or the kit's.
+func ghost_definition() -> StructureDefinition:
+	if moving != null:
+		return moving.definition
+	var kit := current_kit()
+	return kit.structure if kit != null else null
+
+
 ## Works out what's under the crosshair and where the ghost goes.
 func update_preview() -> void:
 	if not active:
 		return
-	var kit := current_kit()
+	var def := ghost_definition()
 	var cam := player.camera
 	var from := cam.global_position
 	var forward := -cam.global_basis.z
 	var space := player.get_world_3d().direct_space_state
-	var q := PhysicsRayQueryParameters3D.create(from, from + forward * (ConstructionRules.REACH + 1.0), PhysicsLayers.WORLD_SOLID)
-	q.exclude = [player.get_rid()]
+	var exclude: Array[RID] = [player.get_rid()]
+	if moving != null:
+		exclude.append_array(moving.get_collision_rids())
+	var q := PhysicsRayQueryParameters3D.create(from, from + forward * (ConstructionRules.REACH + 1.0), PhysicsLayers.WORLD_SOLID, exclude)
 	var hit := space.intersect_ray(q)
-	target = Structure.from_collider(hit["collider"]) if not hit.is_empty() else null
-	if target == null:
-		# Low structures you walk through (spike traps) are on the
-		# interactables layer: pick them out too
-		q.collision_mask = PhysicsLayers.INTERACTABLES
-		var low := space.intersect_ray(q)
-		if not low.is_empty() and (hit.is_empty() or from.distance_to(low["position"]) < from.distance_to(hit["position"])):
-			target = Structure.from_collider(low["collider"])
-	if target != null or kit == null:
+	target = null
+	if moving == null:
+		target = Structure.from_collider(hit["collider"]) if not hit.is_empty() else null
+		if target == null:
+			# Low structures you walk through (spike traps) are on the
+			# interactables layer: pick them out too
+			q.collision_mask = PhysicsLayers.INTERACTABLES
+			var low := space.intersect_ray(q)
+			if not low.is_empty() and (hit.is_empty() or from.distance_to(low["position"]) < from.distance_to(hit["position"])):
+				target = Structure.from_collider(low["collider"])
+	if target != null or def == null:
 		_show_ghost(false)
 		return
 	# Where the ghost stands: the ground you look at, or the ground in front
@@ -197,8 +265,8 @@ func update_preview() -> void:
 		point = hit["position"]
 		var normal: Vector3 = hit["normal"]
 		if normal.y < 0.6:
-			point += Vector3(normal.x, 0, normal.z).normalized() * (kit.structure.footprint.z * 0.5 + 0.1)
-	var y := ConstructionRules.ground_y(space, point)
+			point += Vector3(normal.x, 0, normal.z).normalized() * (def.footprint.z * 0.5 + 0.1)
+	var y := _ground_y(space, point, exclude)
 	if is_nan(y):
 		ghost_valid = false
 		ghost_reason = "Look at the ground"
@@ -207,13 +275,21 @@ func update_preview() -> void:
 	point.y = y
 	# Face the structure across your view unless you've rotated it yourself
 	var xform := ConstructionRules.snap(point, yaw + rad_to_deg(player.rotation.y))
-	var gy := ConstructionRules.ground_y(space, xform.origin)
+	var gy := _ground_y(space, xform.origin, exclude)
 	if not is_nan(gy):
 		xform.origin.y = gy
 	ghost_transform = xform
-	ghost_reason = player.place_refusal_reason(kit, xform)
+	if moving != null:
+		ghost_reason = player.move_refusal_reason(moving, xform)
+	else:
+		ghost_reason = player.place_refusal_reason(current_kit(), xform)
 	ghost_valid = ghost_reason == ""
 	_show_ghost(true)
+
+
+static func _ground_y(space: PhysicsDirectSpaceState3D, at: Vector3, exclude: Array[RID]) -> float:
+	var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.5, at + Vector3.DOWN * 1.5, PhysicsLayers.WORLD_SOLID, exclude))
+	return (hit["position"] as Vector3).y if not hit.is_empty() else NAN
 
 
 func _show_ghost(on: bool) -> void:
@@ -228,19 +304,19 @@ func _show_ghost(on: bool) -> void:
 
 
 func _rebuild_ghost() -> void:
-	var kit := current_kit()
-	if kit == _ghost_kit and _ghost != null:
+	var def := ghost_definition()
+	if def == _ghost_def and _ghost != null:
 		return
 	_free_ghost()
-	_ghost_kit = kit
-	if kit == null:
+	_ghost_def = def
+	if def == null:
 		return
 	_ghost = Node3D.new()
 	_ghost.name = "BuildGhost"
 	_ghost.top_level = true
 	# Copy just the meshes (never instance the real scene into the world: it
 	# would save itself and change the navmesh)
-	var scene := (load(kit.structure.scene_path) as PackedScene).instantiate()
+	var scene := (load(def.scene_path) as PackedScene).instantiate()
 	_copy_meshes(scene, Transform3D.IDENTITY, _ghost)
 	scene.free()
 	player.add_child(_ghost)
@@ -264,13 +340,16 @@ func _free_ghost() -> void:
 	if _ghost != null:
 		_ghost.queue_free()
 	_ghost = null
-	_ghost_kit = null
+	_ghost_def = null
 
 
 # ---------------------------------------------------------------- HUD text
 
-## One line for the HUD: the kit and count, or the targeted structure.
+## One line for the HUD: the kit and count, what you're moving, or the
+## targeted structure.
 func title_text() -> String:
+	if moving != null:
+		return "Moving " + moving.definition.display_name
 	if target != null:
 		return "%s  ·  %d%%" % [target.definition.display_name, roundi(target.get_health_fraction() * 100.0)]
 	var kit := current_kit()
@@ -281,12 +360,19 @@ func title_text() -> String:
 
 ## The second line: what's possible here, or why not.
 func status_text() -> String:
+	if moving != null:
+		return ("Click to put it here" if ghost_valid else ghost_reason) + "   [F] Cancel"
 	if target != null:
-		var parts: PackedStringArray = []
+		var parts: PackedStringArray = ["[F] Move"]
 		if target.is_damaged():
 			parts.append("[E] Repair (%s)" % StructureDefinition.cost_text(target.definition.repair_cost))
-		parts.append("[X] Dismantle (get back %s)" % StructureDefinition.cost_text(target.definition.dismantle_return))
+		if target.can_undo():
+			parts.append("[X] Dismantle (get the kit back)")
+		else:
+			parts.append("[X] Dismantle (get back %s)" % StructureDefinition.cost_text(target.definition.dismantle_return))
 		return "   ".join(parts)
+	if current_kit() == null:
+		return "Look at something you've built"
 	return "Click to build" if ghost_valid else ghost_reason
 
 
@@ -298,6 +384,9 @@ func _process(_delta: float) -> void:
 	if player.is_dead() or player.ladder != null or player.player_input.ui_open:
 		exit()
 		return
+	if moving != null and (not is_instance_valid(moving) or moving.is_queued_for_deletion()):
+		moving = null  # broken while we were carrying it
+		_rebuild_ghost()
 	update_preview()
 
 
@@ -323,6 +412,11 @@ func _input(event: InputEvent) -> void:
 		select(-1)
 	elif event.is_action_pressed("build_rotate"):
 		rotate(-1 if (event as InputEventWithModifiers).shift_pressed else 1)
+	elif event.is_action_pressed("build_move"):
+		if moving != null:
+			cancel_move()
+		else:
+			start_move()
 	elif event.is_action_pressed("fire"):
 		place()
 	elif event.is_action_pressed("interact"):

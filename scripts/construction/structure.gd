@@ -22,6 +22,10 @@ signal destroyed(structure: Structure)
 @export var definition: StructureDefinition
 
 var health := -1.0
+## The kit it was built from and when (msec), for the undo: dismantling it
+## soon after placing, undamaged, gives the kit back. Not saved.
+var kit: ItemDefinition = null
+var placed_msec := -1
 
 var _hit_sound: AudioStreamPlayer3D
 var _rng := RandomNumberGenerator.new()
@@ -92,6 +96,27 @@ func dismantle_block_reason() -> String:
 	return ""
 
 
+## Can it be picked up and moved right now? "" = yes, otherwise why not.
+## (Contents come along, so a full crate can move.)
+func move_block_reason() -> String:
+	return ""
+
+
+## True if dismantling now gives the kit back (placed in the last
+## ConstructionRules.UNDO_SECONDS and not damaged since).
+func can_undo() -> bool:
+	return kit != null and placed_msec >= 0 and not is_damaged() \
+		and Time.get_ticks_msec() - placed_msec < int(ConstructionRules.UNDO_SECONDS * 1000.0)
+
+
+## Every collision object of this structure (to leave it out of checks).
+func get_collision_rids() -> Array[RID]:
+	var out: Array[RID] = []
+	for c in find_children("*", "CollisionObject3D", true, false):
+		out.append((c as CollisionObject3D).get_rid())
+	return out
+
+
 func _one_shot(stream: AudioStream) -> void:
 	if stream == null or not is_inside_tree():
 		return
@@ -99,7 +124,9 @@ func _one_shot(stream: AudioStream) -> void:
 	p.stream = stream
 	p.bus = &"SFX"
 	p.unit_size = 4.0
-	get_parent().add_child(p)
+	# Beside the Structures node, not in it (so it isn't counted or saved)
+	var host := get_parent().get_parent() if get_parent().get_parent() != null else get_parent()
+	host.add_child(p)
 	p.global_position = global_position + Vector3.UP * 0.8
 	p.finished.connect(p.queue_free)
 	p.play()

@@ -9,6 +9,10 @@ extends Structure
 @onready var bench: CraftingStation = %Bench
 
 
+func move_block_reason() -> String:
+	return dismantle_block_reason()
+
+
 func dismantle_block_reason() -> String:
 	for p in get_tree().get_nodes_in_group("players"):
 		if (p as PlayerController).current_station == bench:

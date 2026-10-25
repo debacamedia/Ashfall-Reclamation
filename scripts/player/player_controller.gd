@@ -57,6 +57,7 @@ signal attachment_refused(reason: String)
 signal structure_placed(structure: Structure)
 signal structure_repaired(structure: Structure)
 signal structure_dismantled(definition: StructureDefinition)
+signal structure_moved(structure: Structure)
 signal build_refused(reason: String)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
@@ -614,6 +615,8 @@ func request_place_structure(kit: ItemDefinition, xform: Transform3D) -> Structu
 	var s := (load(kit.structure.scene_path) as PackedScene).instantiate() as Structure
 	s.name = "%s_%d" % [kit.structure.id, Time.get_ticks_usec() % 100000000]
 	s.transform = root.global_transform.affine_inverse() * xform
+	s.kit = kit
+	s.placed_msec = Time.get_ticks_msec()
 	root.add_child(s)
 	s._one_shot(load("res://assets/audio/build_place.wav"))
 	structure_placed.emit(s)
@@ -658,6 +661,8 @@ func dismantle_refusal_reason(s: Structure) -> String:
 	var blocked := s.dismantle_block_reason()
 	if blocked != "":
 		return blocked
+	if s.can_undo():
+		return "" if inventory.can_add(s.kit, 1) >= 1 else "No room for " + s.kit.display_name
 	for item: ItemDefinition in s.definition.dismantle_return:
 		if inventory.can_add(item, s.definition.dismantle_return[item]) < s.definition.dismantle_return[item]:
 			return "No room for " + item.display_name
@@ -671,11 +676,40 @@ func request_dismantle_structure(s: Structure) -> bool:
 		build_refused.emit(reason)
 		return false
 	var def := s.definition
-	for item: ItemDefinition in def.dismantle_return:
-		inventory.receive(item, def.dismantle_return[item])
+	if s.can_undo():
+		inventory.receive(s.kit, 1)  # changed your mind: the kit back
+	else:
+		for item: ItemDefinition in def.dismantle_return:
+			inventory.receive(item, def.dismantle_return[item])
 	s._one_shot(load("res://assets/audio/build_place.wav"))
 	s.queue_free()
 	structure_dismantled.emit(def)
+	return true
+
+
+## "" if `s` can be moved to `xform` now, otherwise why not.
+func move_refusal_reason(s: Structure, xform: Transform3D) -> String:
+	if is_dead() or s == null or not is_instance_valid(s) or s.is_queued_for_deletion() or not s.is_inside_tree():
+		return "Can't do that now"
+	if ConstructionRules.structures_root(get_parent()) != s.get_parent():
+		return "Can't move that"
+	var blocked := s.move_block_reason()
+	if blocked != "":
+		return blocked
+	return ConstructionRules.refusal_reason(self, s.definition, xform, s)
+
+
+## Moves `s` (with its damage and contents) to `xform` (validated).
+func request_move_structure(s: Structure, xform: Transform3D) -> bool:
+	var reason := move_refusal_reason(s, xform)
+	if reason != "":
+		build_refused.emit(reason)
+		return false
+	s.global_transform = xform
+	if s.definition.blocks_navigation:
+		NavRebaker.request(s)
+	s._one_shot(load("res://assets/audio/build_place.wav"))
+	structure_moved.emit(s)
 	return true
 
 

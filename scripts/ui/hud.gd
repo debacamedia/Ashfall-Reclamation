@@ -103,6 +103,8 @@ func _process(delta: float) -> void:
 			show_notice("Repaired " + st.definition.display_name, Color(0.8, 0.95, 0.7)))
 		player.structure_dismantled.connect(func(def: StructureDefinition) -> void:
 			show_notice("Dismantled " + def.display_name, Color(0.8, 0.95, 0.7)))
+		player.structure_moved.connect(func(st: Structure) -> void:
+			show_notice("Moved " + st.definition.display_name, Color(0.8, 0.95, 0.7)))
 		player.build_refused.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED))

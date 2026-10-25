@@ -12,6 +12,7 @@ const ROTATE_STEP := 15.0       ## degrees per R press
 const MAX_PER_REGION := 80
 const KEEP_CLEAR_RADIUS := 3.5  ## around spawns, arrivals and road signs (m)
 const GROUND_TOLERANCE := 0.35  ## max height difference under the footprint (m)
+const UNDO_SECONDS := 30.0      ## dismantle within this, undamaged: kit back
 
 
 ## The node structures are added to in `level` (null = can't build there).
@@ -33,7 +34,9 @@ static func ground_y(space: PhysicsDirectSpaceState3D, at: Vector3) -> float:
 
 
 ## "" if `def` can be placed at `xform` by `player`, otherwise why not.
-static func refusal_reason(player: PlayerController, def: StructureDefinition, xform: Transform3D) -> String:
+## `moving`: a structure being moved, left out of every check (it's where
+## it was until the move is done).
+static func refusal_reason(player: PlayerController, def: StructureDefinition, xform: Transform3D, moving: Structure = null) -> String:
 	if player == null or player.is_dead():
 		return "Can't build now"
 	var level := player.get_parent()
@@ -43,7 +46,7 @@ static func refusal_reason(player: PlayerController, def: StructureDefinition, x
 	var centre := xform.origin + Vector3.UP * (def.footprint.y * 0.5)
 	if player.head.global_position.distance_to(centre) > REACH:
 		return "Too far away"
-	if root.get_child_count() >= MAX_PER_REGION:
+	if moving == null and root.get_child_count() >= MAX_PER_REGION:
 		return "Too many structures here"
 	# Keep spawns, arrivals and road signs clear
 	var keep_clear: Array[Node3D] = []
@@ -60,6 +63,7 @@ static func refusal_reason(player: PlayerController, def: StructureDefinition, x
 		if d < KEEP_CLEAR_RADIUS + maxf(def.footprint.x, def.footprint.z) * 0.5:
 			return "Keep the road in clear"
 	var space := player.get_world_3d().direct_space_state
+	var ignore: Array[RID] = moving.get_collision_rids() if moving != null else ([] as Array[RID])
 	# Nothing in the way: walls, props, people, loot, benches, signs
 	var q := PhysicsShapeQueryParameters3D.new()
 	var box := BoxShape3D.new()
@@ -68,6 +72,7 @@ static func refusal_reason(player: PlayerController, def: StructureDefinition, x
 	q.transform = Transform3D(xform.basis, xform.origin + Vector3.UP * (def.footprint.y * 0.5 + 0.08))
 	q.collision_mask = PhysicsLayers.WORLD_SOLID | PhysicsLayers.PLAYER | PhysicsLayers.NPCS | PhysicsLayers.INTERACTABLES
 	q.collide_with_areas = true
+	q.exclude = ignore
 	for hit in space.intersect_shape(q, 16):
 		var obj := hit["collider"] as CollisionObject3D
 		if obj == null or obj.collision_layer == PhysicsLayers.TERRAIN:
@@ -78,7 +83,7 @@ static func refusal_reason(player: PlayerController, def: StructureDefinition, x
 	var half := Vector2(def.footprint.x, def.footprint.z) * 0.45
 	for corner in [Vector2.ZERO, Vector2(-half.x, -half.y), Vector2(half.x, -half.y), Vector2(-half.x, half.y), Vector2(half.x, half.y)]:
 		var at := xform * Vector3(corner.x, 0.0, corner.y)
-		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.0, at + Vector3.DOWN * 1.0, PhysicsLayers.WORLD_SOLID))
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.0, at + Vector3.DOWN * 1.0, PhysicsLayers.WORLD_SOLID, ignore))
 		if hit.is_empty():
 			return "Needs solid ground"
 		if Structure.from_collider(hit["collider"]) != null:

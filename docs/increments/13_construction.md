@@ -1,6 +1,8 @@
 # Milestone 2, Increment 13 — Construction
 
-**Status:** complete. 262 automated tests pass in headless Godot 4.7, 17 of them new in `tests/test_construction.gd`.
+**Status:** complete. 266 automated tests pass in headless Godot 4.7, 21 of them new in `tests/test_construction.gd`.
+
+**Update: moving and undo.** In build mode, look at something you've built and press **F** to pick it up: it becomes the ghost (keeping its damage and anything stored in it). Aim, rotate with **R** and click to put it down, or press **F** again (or **B**) to leave it where it was. Dismantling something within **30 seconds** of placing it, while it's undamaged, gives the **kit** back instead of materials. You can also enter build mode with no kits, to move, repair or dismantle what's already built. A real-window run placed a wall, picked it up with F, moved and rotated it, put it down, and dismantled it.
 
 A real-window run at Outpost 17, with injected key and mouse input, checked the whole loop:
 - **B** entered build mode with 8 kinds of kit. A green ghost followed the crosshair, and a click built a sandbag barricade.
@@ -24,7 +26,7 @@ The tests and the playtest caught several problems, all fixed:
   - **Mouse wheel** or **[ ]:** choose the kit. One Magic Mouse swipe = one step.
   - **R:** rotate 15°; **Shift+R** the other way.
   - **B** again (or opening the inventory, dying, or climbing a ladder) leaves build mode. Running out of kits does too.
-- **Look at something you've built** (in build mode) to see its health. **E** repairs it to full for a few materials; **X** dismantles it and gives some materials back (not the kit).
+- **Look at something you've built** (in build mode) to see its health. **F** picks it up to move it (click to put it down, F to cancel); **E** repairs it to full for a few materials; **X** dismantles it and gives some materials back. Within 30 s of placing it, undamaged, X gives the kit back instead (an undo).
 - **Raiders path around what you build:** the navmesh is rebaked a moment after you place, break or remove something. When you've **walled them out** completely, they **hack through**. A raider picks the wall in its way, keeps hitting it until it breaks, then comes in. Walls take 10–45 hits.
 - **Everything you build is saved** (F5 / F9) with its position, rotation and damage, and each region remembers its own structures when you travel.
 - Your bullets don't damage your own walls.
@@ -56,6 +58,7 @@ The tests and the playtest caught several problems, all fixed:
 - "Too many structures here": 80 per region.
 
 ![Green ghost](../screenshots/13_ghost_green.png)
+![Moving a wall](../screenshots/13_move.png)
 ![Red ghost](../screenshots/13_ghost_red.png)
 ![Built at Outpost 17](../screenshots/13_built.png)
 ![A raider hacking at the fort](../screenshots/13_raider_hacking.png)
@@ -78,8 +81,8 @@ The tests and the playtest caught several problems, all fixed:
 | `scripts/construction/bench_structure.gd` | **New.** Field workbench (a CraftingStation) |
 | `scripts/construction/construction_rules.gd` | **New.** `ConstructionRules`: grid snapping, ground height, and `refusal_reason`. Used by both the ghost and the authoritative check, so they can never disagree |
 | `scripts/construction/nav_rebaker.gd` | **New.** `NavRebaker`: batched, threaded navmesh rebakes on a copy of the level's navmesh |
-| `scripts/construction/build_mode.gd` | **New.** `BuildMode` (on the player): input, ghost, targeting, HUD text |
-| `scripts/player/player_controller.gd` | `place_refusal_reason` / `request_place_structure`, `repair_*`, `dismantle_*`; `building` lowers the gun; 4 new signals |
+| `scripts/construction/build_mode.gd` | **New.** `BuildMode` (on the player): input, ghost, targeting, moving (`start_move` / `cancel_move`), HUD text |
+| `scripts/player/player_controller.gd` | `place_refusal_reason` / `request_place_structure`, `move_refusal_reason` / `request_move_structure`, `repair_*`, `dismantle_*` (with the undo); `building` lowers the gun; 5 new signals |
 | `scripts/player/player_input.gd` | `build_mode`: fire, aim, reload, interact and weapon keys are free for building while it's on |
 | `scripts/npcs/raider.gd` | Breaks through structures when stuck or walled out (`break_target`); stuck check uses the real velocity |
 | `scripts/inventory/item_definition.gd` | `STRUCTURE` category and `structure: StructureDefinition` |
@@ -91,8 +94,8 @@ The tests and the playtest caught several problems, all fixed:
 | `resources/recipes/kit_*.tres` | **New.** 8 recipes (Structures category) |
 | `assets/audio/{build_place, structure_break, structure_hit_1..3}.wav`, `assets/audio/sets/structure_hit.tres` | **New** sounds (synthesized by `tools/audio/synth_sounds.py`) |
 | `levels/outpost_17/outpost_17.tscn`, `levels/haldens_crossing/haldens_crossing.tscn` | A `Structures` node each (in `navigation_geometry`). Nothing else changed |
-| `project.godot` | 5 input actions |
-| `tests/test_construction.gd` | **New.** 17 tests |
+| `project.godot` | 6 input actions |
+| `tests/test_construction.gd` | **New.** 21 tests |
 
 ## 2. Scene hierarchy
 
@@ -127,6 +130,8 @@ Player
 ## 3. Key points
 
 - **Kits are items.** You craft a kit, carry it (it has weight and an icon) and build from it. A kit's `structure` field says what it builds. Anything with a StructureDefinition can be added this way: a resource, a scene, a kit and a recipe.
+- **Moving:** the structure stays where it is (hidden) while you carry the ghost, and `ConstructionRules.refusal_reason(..., moving)` leaves its own collision out of every check, so you can nudge it half a metre. `request_move_structure` re-validates, sets the new transform and asks for a navmesh rebake. Damage, gate state and crate contents stay with it. A crate someone has open, or a bench in use, can't be moved.
+- **Undo:** `request_place_structure` records the kit and the time on the structure (`kit`, `placed_msec`; not saved). `Structure.can_undo()` is true for `ConstructionRules.UNDO_SECONDS` (30 s) while it's undamaged, and then dismantling returns the kit. Moving doesn't reset the clock.
 - **Authority:** BuildMode only asks. `PlayerController.request_place_structure` / `request_repair_structure` / `request_dismantle_structure` check everything again (`*_refusal_reason`). In co-op these run on the host.
 - **One set of rules:** `ConstructionRules.refusal_reason` colours the ghost *and* validates the request.
 - **The ghost** copies just the meshes of the structure's scene, with a see-through material. The real scene never enters the world while you preview, so nothing gets saved or rebaked by accident.
@@ -151,6 +156,7 @@ Player
 | `build_mode` | **B** | Enter / leave build mode |
 | `build_rotate` | **R** | 15°; **Shift+R** the other way. R only reloads outside build mode |
 | `build_dismantle` | **X** | Dismantle the structure you're looking at |
+| `build_move` | **F** | Pick up the structure you're looking at to move it; F again cancels |
 | `build_next` / `build_previous` | **]** / **[** | Choose the kit (the mouse wheel does too) |
 
 In build mode, left click (`fire`) places and **E** (`interact`) repairs. Firing, aiming, reloading, using things and switching weapons are off.
@@ -173,6 +179,7 @@ In build mode, left click (`fire`) places and **E** (`interact`) repairs. Firing
 | `structure_placed(structure)` | PlayerController | HUD ("Built …" + sound) |
 | `structure_repaired(structure)` | PlayerController | HUD ("Repaired …") |
 | `structure_dismantled(definition)` | PlayerController | HUD ("Dismantled …") |
+| `structure_moved(structure)` | PlayerController | HUD ("Moved …") |
 | `build_refused(reason)` | PlayerController | HUD (red notice + denied sound) |
 | `damaged(amount)` / `repaired` / `destroyed(structure)` | Structure | (tests; later: settlement alerts) |
 | `changed` | BuildMode | (HUD polls; available for UI) |
@@ -218,6 +225,12 @@ In build mode, left click (`fire`) places and **E** (`interact`) repairs. Firing
 - **Saving:**
   - A damaged, rotated metal wall, an open gate and a crate with 9 scrap go through save data (via JSON) and come back the same.
   - A barricade built after saving is removed on load.
+- **Moving:**
+  - A damaged crate with 6 scrap moves (including a nudge over its own spot) at a new angle, keeping damage and contents; it's moved, not copied.
+  - Moves are refused into a prop, another structure or out of reach, and a refused move leaves it put. A bench in use can't be moved.
+  - Turning the middle of three walls opens a gap the navmesh routes through.
+  - In build mode with no kits: F picks a wall up (hidden, ghost shown, "Moving Wooden Wall"), F again puts it back, click puts it down turned, and B mid-move cancels.
+- **Undo:** dismantling right after placing (and after moving) returns the kit, not planks. After 30 s, or once damaged, it's materials. Structures not placed this session have no undo.
 - **Per region:** a damaged wall at Outpost 17 is remembered after leaving and coming back. Both levels have a `Structures` node.
 - **Build mode:**
   - It won't start without kits, and offers each kind of kit once.

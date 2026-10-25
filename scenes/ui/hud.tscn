@@ -1062,7 +1062,7 @@ theme_override_colors/font_color = Color(0.75, 0.73, 0.66, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 14
-text = "BUILD MODE   [Click] Place   [Wheel] Kit   [R] Rotate   [E] Repair   [X] Dismantle   [B] Exit"
+text = "BUILD MODE   [Click] Place   [Wheel] Kit   [R] Rotate   [F] Move   [E] Repair   [X] Dismantle   [B] Exit"
 horizontal_alignment = 1
 
 [node name="UISound" type="AudioStreamPlayer" parent="." unique_id=1091512968]

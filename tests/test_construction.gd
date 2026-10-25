@@ -654,3 +654,138 @@ func test_build_mode_can_pick_out_spike_traps() -> void:
 	await _run(p, 10)
 	check(p.global_position.y < 0.2, "player stands in the trap, not on it")
 	bm.exit()
+
+
+# ---------------------------------------------------------------- moving + undo
+
+func test_moving_keeps_damage_rotation_and_contents() -> void:
+	await _world()
+	var p := _player()
+	await _run(p, 3)
+	var crate := _build("storage_crate", Vector3(0, 0, -2.5)) as StorageStructure
+	await wait_physics(2)
+	crate.apply_damage(100.0)
+	crate.storage.inventory.add_item(SCRAP, 6)
+	var moved: Array = []
+	p.structure_moved.connect(func(s: Structure) -> void: moved.append(s))
+	# A nudge that overlaps where it stands now: it doesn't block itself
+	var to := ConstructionRules.snap(Vector3(0.5, 0, -2.5), 45)
+	check(p.move_refusal_reason(crate, to) == "", "can nudge over its own spot: %s" % p.move_refusal_reason(crate, to))
+	check(p.request_move_structure(crate, to), "moved")
+	check(crate.global_transform.is_equal_approx(to), "at the new place and angle")
+	check(is_equal_approx(crate.health, 150.0), "still damaged")
+	check(crate.storage.inventory.count_of(SCRAP.id) == 6, "contents came along")
+	check(moved.size() == 1 and moved[0] == crate, "structure_moved emitted")
+	check(structures.get_child_count() == 1, "moved, not copied")
+	# Refusals use the same rules as placing
+	make_static_box(Vector3(1, 1, 1), Vector3(-3, 0.5, -3))
+	await wait_physics(2)
+	check(p.move_refusal_reason(crate, ConstructionRules.snap(Vector3(-3, 0, -3), 0)) == "Something's in the way", "not into a prop")
+	check(p.move_refusal_reason(crate, ConstructionRules.snap(Vector3(0, 0, -12), 0)) == "Too far away", "not out of reach")
+	var other := _build("wooden_barricade", Vector3(3, 0, -3))
+	await wait_physics(2)
+	check(p.move_refusal_reason(crate, ConstructionRules.snap(Vector3(3, 0, -3), 0)) == "Something's in the way", "not into another structure")
+	check(not p.request_move_structure(crate, ConstructionRules.snap(Vector3(3, 0, -3), 0)) and crate.global_transform.is_equal_approx(to), "refused move leaves it put")
+	check(other != null, "")
+	# A bench in use can't be moved
+	var b := _build("field_workbench", Vector3(-3, 0, 2)) as BenchStructure
+	await wait_physics(2)
+	p.current_station = b.bench
+	check(p.move_refusal_reason(b, ConstructionRules.snap(Vector3(-3, 0, 3), 0)) == "Someone's using it", "bench in use stays")
+	p.current_station = null
+
+
+func test_moving_a_wall_rebakes_the_navmesh() -> void:
+	var region := await _world(true)
+	var walls: Array[Structure] = []
+	for x in [-2.4, 0.0, 2.4]:
+		walls.append(_build("metal_wall", Vector3(x, 0, 0)))
+	await _wait_rebake(region)
+	var p := _player(Vector3(1.5, 0.05, 3.5))
+	await _run(p, 3)
+	check(absf(_path(region, Vector3(0, 0, 4), Vector3(0, 0, -4))[1].x) > 0.5 or _path(region, Vector3(0, 0, 4), Vector3(0, 0, -4)).size() > 2, "blocked at first")
+	# Swing the middle wall round to open a doorway
+	check(p.request_move_structure(walls[1], ConstructionRules.snap(Vector3(0, 0, 2.0), 90)), "middle wall moved")
+	await _wait_rebake(region)
+	var path := _path(region, Vector3(0, 0, 4), Vector3(0, 0, -4))
+	var widest := 0.0
+	for pt in path:
+		widest = maxf(widest, absf(pt.x))
+	check(widest < 2.0, "raiders can walk through the gap now (%.2f m out)" % widest)
+
+
+func test_build_mode_move_with_f() -> void:
+	await _world()
+	var p := _player()
+	var bm := p.get_node("%BuildMode") as BuildMode
+	await _run(p, 3)
+	var wall := _build("wooden_wall", Vector3(0, 0, -3))
+	var start := wall.global_transform
+	await wait_physics(2)
+	check(bm.enter(), "build mode works with no kits when there's something to move")
+	_look_at(p, wall.global_position + Vector3.UP * 1.2)
+	bm.update_preview()
+	check(bm.target == wall and bm.status_text().begins_with("[F] Move"), "F offered: %s" % bm.status_text())
+	check(bm.start_move() and bm.moving == wall and not wall.visible, "picked up")
+	check(bm.title_text() == "Moving Wooden Wall", "HUD says so")
+	var ghost := p.get_node_or_null("BuildGhost") as Node3D
+	check(ghost != null and ghost.get_child_count() > 0, "ghost is the wall")
+	_look_at(p, Vector3(2.5, 0, -3.5))
+	bm.update_preview()
+	check(bm.target == null and bm.ghost_valid, "green ghost at the new spot: %s" % bm.ghost_reason)
+	check(bm.status_text().begins_with("Click to put it here"), "status: %s" % bm.status_text())
+	bm.cancel_move()
+	check(bm.moving == null and wall.visible and wall.global_transform.is_equal_approx(start), "F again: back where it was")
+	_look_at(p, wall.global_position + Vector3.UP * 1.2)
+	bm.update_preview()
+	check(bm.start_move(), "picked up again")
+	bm.rotate(6)  # +90°
+	_look_at(p, Vector3(2.5, 0, -3.5))
+	var placed := bm.place()
+	check(placed == wall and wall.visible and bm.moving == null, "put down")
+	check(wall.global_position.distance_to(Vector3(2.5, 0, -3.5)) < 0.8, "at the new spot")
+	check(absf(angle_difference(wall.global_rotation.y, start.basis.get_euler().y)) > deg_to_rad(40), "turned")
+	check(structures.get_child_count() == 1, "still one wall")
+	# Leaving build mode mid-move puts it back
+	_look_at(p, wall.global_position + Vector3.UP * 1.2)
+	bm.update_preview()
+	var before := wall.global_transform
+	bm.start_move()
+	bm.exit()
+	check(wall.visible and wall.global_transform.is_equal_approx(before), "B mid-move cancels it")
+
+
+func test_dismantle_soon_after_placing_gives_the_kit_back() -> void:
+	await _world()
+	var p := _player()
+	var bm := p.get_node("%BuildMode") as BuildMode
+	var kit := _kit("wooden_barricade")
+	p.inventory.add_item(kit, 3)
+	await _run(p, 3)
+	var s := p.request_place_structure(kit, ConstructionRules.snap(Vector3(0, 0, -3), 0))
+	check(s != null and s.can_undo(), "just placed: undo available")
+	check(p.request_move_structure(s, ConstructionRules.snap(Vector3(0.5, 0, -3), 0)) and s.can_undo(), "moving it keeps the undo")
+	check(bm.enter(), "build mode")
+	_look_at(p, s.global_position + Vector3.UP * 0.6)
+	bm.update_preview()
+	check(bm.status_text().contains("[X] Dismantle (get the kit back)"), "HUD says the kit comes back: %s" % bm.status_text())
+	var planks := p.inventory.count_of(PLANK.id)
+	check(bm.dismantle(), "dismantled")
+	check(p.inventory.count_of(kit.id) == 3 and p.inventory.count_of(PLANK.id) == planks, "kit back, no planks")
+	bm.exit()
+	await wait_physics(3)
+	# Too late: materials
+	var late := p.request_place_structure(kit, ConstructionRules.snap(Vector3(0, 0, -3), 0))
+	late.placed_msec -= int(ConstructionRules.UNDO_SECONDS * 1000.0) + 10
+	check(not late.can_undo(), "no undo after 30 s")
+	check(p.request_dismantle_structure(late), "dismantled late")
+	check(p.inventory.count_of(kit.id) == 2 and p.inventory.count_of(PLANK.id) == planks + 1, "materials, not the kit")
+	await wait_physics(3)
+	# Damaged: materials
+	var hit := p.request_place_structure(kit, ConstructionRules.snap(Vector3(0, 0, -3), 0))
+	hit.apply_damage(5.0)
+	check(not hit.can_undo(), "no undo once damaged")
+	await get_tree().process_frame
+	# Loaded from a save: built earlier, so no undo
+	var fresh := _build("wooden_barricade", Vector3(4, 0, -3))
+	check(not fresh.can_undo(), "no undo for structures not placed this session")
