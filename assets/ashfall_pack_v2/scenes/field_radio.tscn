@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[sub_resource type="BoxMesh" id="mesh_0"]
+size = Vector3(0.62, 1.0, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="mat_0"]
+albedo_color = Color(0.16, 0.24, 0.18, 1)
+roughness = 0.86
+
+[sub_resource type="BoxMesh" id="mesh_1"]
+size = Vector3(0.33, 0.27, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="mat_1"]
+albedo_color = Color(0.08, 0.1, 0.09, 1)
+roughness = 0.86
+
+[sub_resource type="CylinderMesh" id="mesh_2"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 0.04
+
+[sub_resource type="StandardMaterial3D" id="mat_2"]
+albedo_color = Color(0.71, 0.63, 0.43, 1)
+roughness = 0.86
+
+[sub_resource type="BoxShape3D" id="col_shape"]
+size = Vector3(0.62, 1.0, 0.42)
+
+[node name="FieldRadio" type="StaticBody3D"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Body" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.5, 0)
+mesh = SubResource("mesh_0")
+material_override = SubResource("mat_0")
+
+[node name="Speaker" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.69, -0.23)
+mesh = SubResource("mesh_1")
+material_override = SubResource("mat_1")
+
+[node name="Dial" type="MeshInstance3D" parent="."]
+position = Vector3(0.17, 0.35, -0.24)
+mesh = SubResource("mesh_2")
+material_override = SubResource("mat_2")
+
+[node name="Collider" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.5, 0)
+shape = SubResource("col_shape")

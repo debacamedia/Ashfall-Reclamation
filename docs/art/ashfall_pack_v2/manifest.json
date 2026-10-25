@@ -1,0 +1,113 @@
+{
+  "pack": "ASHFALL Resource Pack 2.0",
+  "version": "2.0.0",
+  "engine": "Godot 4.7",
+  "install_path": "res://assets/ashfall_pack_v2/",
+  "usage": "Prototype environmental signage, decals, light prop meshes, UI icons and synthesized audio. Does not overwrite Pack 1.",
+  "assets": [
+    {
+      "path": "res://assets/ashfall_pack_v2/audio/alarm_short.wav",
+      "bytes": 264644
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/audio/distant_industry.wav",
+      "bytes": 617444
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/audio/metal_gate_rattle.wav",
+      "bytes": 194084
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/audio/power_generator_loop.wav",
+      "bytes": 441044
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/audio/radio_chatter_static.wav",
+      "bytes": 441044
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/audio/settlement_wind.wav",
+      "bytes": 705644
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/bullet_holes.png",
+      "bytes": 15808
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/checkpoint_17.png",
+      "bytes": 66768
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/danger_mines.png",
+      "bytes": 62747
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/market.png",
+      "bytes": 66471
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/medical_triage.png",
+      "bytes": 59492
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/radio_signal.png",
+      "bytes": 66247
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/rust_streaks.png",
+      "bytes": 9558
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/scratches.png",
+      "bytes": 8173
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/soot_marks.png",
+      "bytes": 18084
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/decals/water_purification.png",
+      "bytes": 65528
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/scenes/field_radio.tscn",
+      "bytes": 1370
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/scenes/portable_generator.tscn",
+      "bytes": 1390
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/scenes/salvage_toolbox.tscn",
+      "bytes": 1339
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/scenes/water_storage_tank.tscn",
+      "bytes": 1043
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/ui/defense.png",
+      "bytes": 1513
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/ui/faction_reputation.png",
+      "bytes": 3751
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/ui/food.png",
+      "bytes": 3676
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/ui/morale.png",
+      "bytes": 1459
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/ui/settlement.png",
+      "bytes": 2913
+    },
+    {
+      "path": "res://assets/ashfall_pack_v2/ui/trade.png",
+      "bytes": 3631
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v2/decals/water_purification.png" id="1_fgyas"]
+
+[resource]
+resource_name = "Sign water_purification"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_fgyas")
+roughness = 0.9
+texture_filter = 5

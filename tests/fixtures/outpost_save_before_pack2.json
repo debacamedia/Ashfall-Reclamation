@@ -1,0 +1,726 @@
+{
+	"format": "ashfall_save",
+	"level": "res://levels/outpost_17/outpost_17.tscn",
+	"nodes": [
+		{
+			"data": {
+				"health": 100.0,
+				"inventory": [
+					{
+						"id": "scrap_metal",
+						"qty": 4,
+						"slot": 0
+					},
+					{
+						"id": "cloth",
+						"qty": 2,
+						"slot": 1
+					},
+					{
+						"id": "pistol_ammo",
+						"qty": 12,
+						"slot": 2
+					},
+					{
+						"id": "medkit",
+						"qty": 1,
+						"slot": 3
+					}
+				],
+				"loadout": {
+					"equipped": 5,
+					"weapons": [
+						{
+							"attachments": [],
+							"id": "machete",
+							"magazine": 0
+						}
+					]
+				},
+				"magazine": 0,
+				"pitch": 0.0,
+				"position": [
+					-24.0,
+					0.0500000007450581,
+					-15.0
+				],
+				"yaw": 0.0
+			},
+			"parent": ".",
+			"path": "Player",
+			"scene": "res://scenes/player/player.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					-24.5,
+					1.33000004291534,
+					8.0
+				],
+				"quantity": 2,
+				"yaw": 2.3212878704071
+			},
+			"parent": "Loot",
+			"path": "Loot/WarehouseShelfElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					-24.5,
+					0.180000007152557,
+					3.0
+				],
+				"quantity": 4,
+				"yaw": 0.209439516067505
+			},
+			"parent": "Loot",
+			"path": "Loot/WarehouseShelfCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					-21.5,
+					0.0,
+					10.5
+				],
+				"quantity": 1,
+				"yaw": -1.60570311546326
+			},
+			"parent": "Loot",
+			"path": "Loot/WarehouseFuel",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					-19.0,
+					0.0,
+					4.0
+				],
+				"quantity": 30,
+				"yaw": 1.01229095458984
+			},
+			"parent": "Loot",
+			"path": "Loot/WarehouseAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "medkit",
+				"position": [
+					9.0,
+					1.0,
+					-17.5
+				],
+				"quantity": 1,
+				"yaw": -2.58308744430542
+			},
+			"parent": "Loot",
+			"path": "Loot/BarracksMedkit",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					14.5,
+					0.0,
+					-14.8000001907349
+				],
+				"quantity": 3,
+				"yaw": -2.79252672195435
+			},
+			"parent": "Loot",
+			"path": "Loot/BarracksCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					-9.5,
+					0.0,
+					-17.3999996185303
+				],
+				"quantity": 3,
+				"yaw": 0.226892799139023
+			},
+			"parent": "Loot",
+			"path": "Loot/CommandPostElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					-14.5,
+					0.0,
+					-14.6000003814697
+				],
+				"quantity": 30,
+				"yaw": -2.30383467674255
+			},
+			"parent": "Loot",
+			"path": "Loot/CommandPostAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					21.5,
+					0.0,
+					16.5
+				],
+				"quantity": 1,
+				"yaw": -1.58824944496155
+			},
+			"parent": "Loot",
+			"path": "Loot/MotorPoolFuelA",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					25.5,
+					0.0,
+					6.5
+				],
+				"quantity": 1,
+				"yaw": -1.57079637050629
+			},
+			"parent": "Loot",
+			"path": "Loot/MotorPoolFuelB",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					16.5,
+					0.0,
+					18.0
+				],
+				"quantity": 5,
+				"yaw": 1.69296932220459
+			},
+			"parent": "Loot",
+			"path": "Loot/MotorPoolScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					2.0,
+					0.0,
+					-17.5
+				],
+				"quantity": 4,
+				"yaw": -1.57079637050629
+			},
+			"parent": "Loot",
+			"path": "Loot/YardScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					-6.5,
+					0.0,
+					-7.5
+				],
+				"quantity": 2,
+				"yaw": 1.37881004810333
+			},
+			"parent": "Loot",
+			"path": "Loot/YardCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "medkit",
+				"position": [
+					5.5,
+					0.0,
+					19.5
+				],
+				"quantity": 1,
+				"yaw": 0.488692194223404
+			},
+			"parent": "Loot",
+			"path": "Loot/GateMedkit",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					11.5,
+					0.939999997615814,
+					35.4000015258789
+				],
+				"quantity": 30,
+				"yaw": 0.925024509429932
+			},
+			"parent": "Loot",
+			"path": "Loot/RangeAmmoA",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					11.5,
+					0.939999997615814,
+					36.5999984741211
+				],
+				"quantity": 30,
+				"yaw": 0.942477762699127
+			},
+			"parent": "Loot",
+			"path": "Loot/RangeAmmoB",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					-30.0,
+					0.0,
+					40.0
+				],
+				"quantity": 8,
+				"yaw": 1.83259570598602
+			},
+			"parent": "Loot",
+			"path": "Loot/WastelandScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					40.0,
+					0.0,
+					50.0
+				],
+				"quantity": 4,
+				"yaw": 2.00712871551514
+			},
+			"parent": "Loot",
+			"path": "Loot/WastelandElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					-45.0,
+					0.0,
+					-30.0
+				],
+				"quantity": 1,
+				"yaw": -2.86233997344971
+			},
+			"parent": "Loot",
+			"path": "Loot/WastelandFuel",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					24.0,
+					0.0,
+					55.0
+				],
+				"quantity": 40,
+				"yaw": -0.24434594810009
+			},
+			"parent": "Loot",
+			"path": "Loot/WastelandAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "medkit",
+				"position": [
+					-40.0,
+					0.0,
+					52.0
+				],
+				"quantity": 1,
+				"yaw": -0.872664749622345
+			},
+			"parent": "Loot",
+			"path": "Loot/WastelandMedkit",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "shotgun_shells",
+				"position": [
+					-10.1000003814697,
+					0.0,
+					-18.2999992370605
+				],
+				"quantity": 12,
+				"yaw": -0.349065840244293
+			},
+			"parent": "Loot",
+			"path": "Loot/CommandPostShells",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scoped_rifle",
+				"position": [
+					-28.5,
+					4.59999990463257,
+					-21.5
+				],
+				"quantity": 1,
+				"yaw": 0.174532935023308
+			},
+			"parent": "Loot",
+			"path": "Loot/TowerMarksmanRifle",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_308",
+				"position": [
+					-27.7000007629395,
+					4.59999990463257,
+					-21.8999996185303
+				],
+				"quantity": 10,
+				"yaw": 0.698131680488586
+			},
+			"parent": "Loot",
+			"path": "Loot/TowerMarksmanAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "pistol_ammo",
+				"position": [
+					10.1999998092651,
+					0.0,
+					-14.0
+				],
+				"quantity": 24,
+				"yaw": 0.261799424886703
+			},
+			"parent": "Loot",
+			"path": "Loot/BarracksPistolAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "gun_barrel",
+				"position": [
+					-11.0,
+					0.0,
+					-18.2000007629395
+				],
+				"quantity": 1,
+				"yaw": 1.30899691581726
+			},
+			"parent": "Loot",
+			"path": "Loot/CommandPostBarrel",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "trigger_group",
+				"position": [
+					-11.8000001907349,
+					0.0,
+					-18.2999992370605
+				],
+				"quantity": 1,
+				"yaw": 0.349065840244293
+			},
+			"parent": "Loot",
+			"path": "Loot/CommandPostTrigger",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scope_4x",
+				"position": [
+					-29.1000003814697,
+					4.59999990463257,
+					-21.8999996185303
+				],
+				"quantity": 1,
+				"yaw": -0.523598790168762
+			},
+			"parent": "Loot",
+			"path": "Loot/TowerScope",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "service_rifle",
+				"position": [
+					36.0,
+					0.0,
+					45.0
+				],
+				"quantity": 1,
+				"yaw": 1.04719758033752
+			},
+			"parent": "Loot",
+			"path": "Loot/WastelandServiceRifle",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/WarehouseCrateNorth",
+				"items": [
+					{
+						"id": "medkit",
+						"qty": 1,
+						"slot": 0
+					},
+					{
+						"id": "pistol_ammo",
+						"qty": 12,
+						"slot": 1
+					},
+					{
+						"id": "scrap_metal",
+						"qty": 3,
+						"slot": 2
+					},
+					{
+						"id": "electronics",
+						"qty": 1,
+						"slot": 3
+					}
+				],
+				"searched": true
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/WarehouseCrateNorth",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/WarehouseCrateSouth",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/WarehouseCrateSouth",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/WarehouseAmmoCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/WarehouseAmmoCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/BarracksFootlockerWest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/BarracksFootlockerWest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/BarracksFootlockerEast",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/BarracksFootlockerEast",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/BarracksLocker",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/BarracksLocker",
+			"scene": "res://scenes/world/containers/weapons_locker.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/CommandPostLocker",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/CommandPostLocker",
+			"scene": "res://scenes/world/containers/weapons_locker.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/MotorPoolToolChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/MotorPoolToolChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/RangeAmmoCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/RangeAmmoCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/StashSouthWest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/StashSouthWest",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"id": "/root/Outpost17/SalvageContainers/StashEast",
+				"items": [],
+				"searched": false
+			},
+			"parent": "SalvageContainers",
+			"path": "SalvageContainers/StashEast",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/WarehousePallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/WarehousePallet2",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/MotorPoolPallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/YardPallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/GatePallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/WastelandPallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/WastelandPallet2",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/BarracksFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/CommandPostFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "SalvagePiles",
+			"path": "SalvagePiles/WastelandFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		}
+	],
+	"regions": {},
+	"saved_at": "2026-10-25T13:30:00",
+	"version": 2
+}
