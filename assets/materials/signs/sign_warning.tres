@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/decals/warning.png" id="1_nog6p"]
+
+[resource]
+resource_name = "Sign warning"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_nog6p")
+roughness = 0.85
+texture_filter = 5
