@@ -1,0 +1,160 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_ydif2"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="2_bqnpr"]
+[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="3_unolv"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_fvlhg"]
+size = Vector3(0.045, 0.06, 0.25)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2mhv7"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.62
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_xymv5"]
+size = Vector3(0.05, 0.05, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yrniw"]
+size = Vector3(0.045, 0.085, 0.34)
+
+[sub_resource type="BoxMesh" id="BoxMesh_whr5q"]
+size = Vector3(0.035, 0.08, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gh86s"]
+size = Vector3(0.047, 0.095, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_padg5"]
+size = Vector3(0.03, 0.04, 0.07)
+
+[sub_resource type="BoxMesh" id="BoxMesh_s7ath"]
+size = Vector3(0.05, 0.012, 0.012)
+
+[sub_resource type="SphereMesh" id="SphereMesh_7n30r"]
+radius = 0.01
+height = 0.02
+
+[sub_resource type="BoxMesh" id="BoxMesh_ftk4d"]
+size = Vector3(0.02, 0.03, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bi783"]
+size = Vector3(0.02, 0.03, 0.02)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gqk5a"]
+top_radius = 0.016
+bottom_radius = 0.016
+height = 0.3
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_l2hoq"]
+top_radius = 0.022
+bottom_radius = 0.022
+height = 0.07
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bjypu"]
+top_radius = 0.019
+bottom_radius = 0.019
+height = 0.05
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k3vpa"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.03
+radial_segments = 12
+
+[node name="ScopedRifleWorld" type="Node3D" unique_id=790353003]
+
+[node name="Gun" type="Node3D" parent="." unique_id=1757873252]
+transform = Transform3D(-4.6548156e-08, -1.0648977, 0.74564934, 1.3, -5.6824803e-08, 0, 3.259337e-08, 0.74564934, 1.0648977, 0, 0.039, 0)
+
+[node name="Receiver" type="MeshInstance3D" parent="Gun" unique_id=1153508209]
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_fvlhg")
+
+[node name="Barrel" type="MeshInstance3D" parent="Gun" unique_id=1495790080]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.012, -0.43)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2mhv7")
+
+[node name="Forend" type="MeshInstance3D" parent="Gun" unique_id=526176609]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, -0.22)
+material_override = ExtResource("2_bqnpr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_xymv5")
+
+[node name="Stock" type="MeshInstance3D" parent="Gun" unique_id=651218755]
+transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, 0, -0.025, 0.28)
+material_override = ExtResource("2_bqnpr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_yrniw")
+
+[node name="Grip" type="MeshInstance3D" parent="Gun" unique_id=1515842478]
+transform = Transform3D(1, 0, 0, 0, 0.95105654, 0.309017, 0, -0.309017, 0.95105654, 0, -0.055, 0.1)
+material_override = ExtResource("2_bqnpr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_whr5q")
+
+[node name="ButtPad" type="MeshInstance3D" parent="Gun" unique_id=2056246933]
+transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, 0, -0.043, 0.45)
+material_override = ExtResource("3_unolv")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_gh86s")
+
+[node name="Magazine" type="MeshInstance3D" parent="Gun" unique_id=843584273]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.045, -0.02)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_padg5")
+
+[node name="BoltHandle" type="MeshInstance3D" parent="Gun" unique_id=2019740556]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.035, 0.012, 0.07)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_s7ath")
+
+[node name="BoltKnob" type="MeshInstance3D" parent="Gun" unique_id=92354648]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.062, 0.012, 0.07)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_7n30r")
+
+[node name="ScopeMountF" type="MeshInstance3D" parent="Gun" unique_id=1625808963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042, -0.08)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ftk4d")
+
+[node name="ScopeMountR" type="MeshInstance3D" parent="Gun" unique_id=858100832]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042, 0.06)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bi783")
+
+[node name="ScopeTube" type="MeshInstance3D" parent="Gun" unique_id=741636167]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.07, -0.01)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_gqk5a")
+
+[node name="ScopeObjective" type="MeshInstance3D" parent="Gun" unique_id=330140353]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.07, -0.19)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_l2hoq")
+
+[node name="ScopeOcular" type="MeshInstance3D" parent="Gun" unique_id=1576737795]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.07, 0.155)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_bjypu")
+
+[node name="ScopeTurret" type="MeshInstance3D" parent="Gun" unique_id=286309733]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.092, -0.01)
+material_override = ExtResource("1_ydif2")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_k3vpa")

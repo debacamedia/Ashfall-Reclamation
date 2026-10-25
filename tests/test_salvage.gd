@@ -291,7 +291,7 @@ func test_screen_opens_with_both_inventories() -> void:
 	check(screen.get_node("%PlayerGrid").get_child_count() == 24, "24 player slots")
 	check(screen.get_node("%ContainerGrid").get_child_count() == c.inventory.slot_count, "%d container slots" % c.inventory.slot_count)
 	check((screen.get_node("%Title") as Label).text == "SUPPLY CRATE", "title")
-	check((screen.get_node("%CarryLabel") as Label).text == "1.9 / 30 kg", "carry weight: %s" % (screen.get_node("%CarryLabel") as Label).text)
+	check((screen.get_node("%CarryLabel") as Label).text == "2.2 / 30 kg", "carry weight: %s" % (screen.get_node("%CarryLabel") as Label).text)
 	var shown := 0
 	for slot: InventorySlot in screen.get_node("%ContainerGrid").get_children():
 		if slot.tooltip_text != "":

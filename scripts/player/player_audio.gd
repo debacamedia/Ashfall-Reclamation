@@ -22,6 +22,7 @@ extends Node3D
 @onready var _pickup: AudioStreamPlayer = %Pickup
 @onready var _ladder_step: AudioStreamPlayer3D = get_node_or_null("%LadderStep")
 @onready var _aim: AudioStreamPlayer = get_node_or_null("%AimSound")
+@onready var _draw: AudioStreamPlayer = get_node_or_null("%DrawSound")
 
 var _distance := 0.0
 ## How many footstep sounds have played (used by tests).
@@ -47,6 +48,13 @@ func _ready() -> void:
 		_player.aim_changed.connect(func(aiming: bool) -> void:
 			if aiming:
 				_aim.play())
+	if _draw != null and _player.weapon_slots != null:
+		_player.weapon_slots.switch_started.connect(func(_slot: int) -> void: _draw.play())
+	_player.weapon_picked_up.connect(func(def: WeaponDefinition) -> void:
+		var item := ItemDatabase.find_weapon_item(def.id)
+		if item != null and item.pickup_sound != null:
+			_pickup.stream = item.pickup_sound
+			_pickup.play())
 	_player.item_use_finished.connect(func(item: ItemDefinition) -> void:
 		if item.use_sound != null:
 			_pickup.stream = item.use_sound

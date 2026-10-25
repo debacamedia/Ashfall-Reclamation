@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/shotgun.png" id="1_odu6t"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_weapon.wav" id="2_pwrsp"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_ljqkm"]
+[ext_resource type="Resource" path="res://resources/items/weapons/shotgun.tres" id="4_s6lmf"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/shotgun_world.tscn" id="5_ptrl2"]
+
+[resource]
+script = ExtResource("3_ljqkm")
+id = &"shotgun"
+display_name = "Pump Shotgun"
+description = "Devastating up close, useless at range. Loads a shell at a time. Slot 3."
+category = 3
+icon = ExtResource("1_odu6t")
+max_stack = 1
+weight = 0.0
+base_value = 150
+world_model = ExtResource("5_ptrl2")
+pickup_hold_time = 0.4
+pickup_sound = ExtResource("2_pwrsp")
+weapon = ExtResource("4_s6lmf")

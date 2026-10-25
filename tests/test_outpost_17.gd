@@ -397,3 +397,28 @@ func test_every_container_can_be_searched_from_the_front() -> void:
 			_player.simulate(f, DT)
 		check(c.is_searched and _player.current_container == c, "%s: searched and opened with a held E" % c.name)
 	_player.close_container()
+
+
+func test_new_guns_placed_in_the_outpost() -> void:
+	await _load_level()
+	var shotgun := _level.get_node("Loot/CommandPostShotgun") as Pickup
+	var marksman := _level.get_node("Loot/TowerMarksmanRifle") as Pickup
+	check(shotgun.item.weapon != null and shotgun.item.weapon.id == &"shotgun", "shotgun in the command post")
+	check(marksman.item.weapon != null and marksman.item.weapon.id == &"scoped_rifle", "marksman rifle up a guard tower")
+	check(marksman.global_position.y > 4.5, "on the tower platform (y %.2f)" % marksman.global_position.y)
+	# Climb the tower and take it
+	var tower := _level.get_node("GuardTowers/GuardTower") as Node3D
+	await _teleport(tower.global_position + Vector3(0, 4.65, -0.6), 0)
+	var eye := _player.head.global_position
+	var target := marksman.global_position + Vector3(0, 0.05, 0)
+	var flat := Vector3(target.x - eye.x, 0, target.z - eye.z)
+	_player.rotation.y = atan2(-flat.x, -flat.z)
+	_player.head.rotation.x = atan2(target.y - eye.y, flat.length())
+	await _walk(Vector2.ZERO, 2)
+	check(_player.interactor.focused == marksman, "can target the rifle on the platform")
+	var f := InputFrame.new()
+	f.interact = true
+	for i in 40:
+		await get_tree().physics_frame
+		_player.simulate(f, DT)
+	check(_player.weapon_slots.get_weapon(4) != null, "picked up into slot 4")

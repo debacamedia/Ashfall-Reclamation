@@ -199,11 +199,12 @@ func _refresh() -> void:
 	_weight_label.text = "%.1f / %.0f kg" % [weight, inv.max_weight]
 	_weight_bar.value = 100.0 * weight / maxf(inv.max_weight, 0.001)
 
-	var weapon := player.weapon
-	if weapon != null:
-		_weapon_label.text = "%s\n%d / %d  rounds" % [weapon.definition.display_name, weapon.ammo_in_magazine, weapon.reserve_ammo]
-	else:
-		_weapon_label.text = "Nothing equipped"
+	var weapon_lines := []
+	var owned: Array[HitscanWeapon] = player.weapon_slots.owned() if player.weapon_slots != null else ([player.weapon] if player.weapon != null else [] as Array[HitscanWeapon])
+	for w in owned:
+		weapon_lines.append("%s%d  %s\n     %d / %d" % ["▶ " if w == player.weapon else "   ", w.definition.slot,
+			w.definition.display_name, w.ammo_in_magazine, w.reserve_ammo])
+	_weapon_label.text = "\n".join(weapon_lines) if not weapon_lines.is_empty() else "Nothing equipped"
 
 	var item := inv.get_slot_item(selected) if selected >= 0 else null
 	_use_button.disabled = item == null or item.category != ItemDefinition.Category.MEDICAL

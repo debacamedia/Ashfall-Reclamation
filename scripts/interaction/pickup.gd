@@ -59,13 +59,19 @@ func _refresh() -> void:
 func get_block_reason(interactor: Node3D) -> String:
 	if item == null or quantity <= 0:
 		return "Empty"
+	if item.category == ItemDefinition.Category.WEAPON:
+		return "" if interactor is PlayerController else "Can't carry that"
 	var inventory := InventoryComponent.find_on(interactor)
 	if inventory == null:
 		return "Can't carry this"
 	return inventory.get_refusal_reason(item, quantity)
 
 
-func get_prompt(_interactor: Node3D) -> String:
+func get_prompt(interactor: Node3D) -> String:
+	var player := interactor as PlayerController
+	if item != null and item.weapon != null and player != null and player.weapon_slots != null \
+			and player.weapon_slots.has_weapon(item.weapon.id):
+		return "Take ammo from %s" % item.display_name
 	return "%s %s" % [action_name, object_name]
 
 
@@ -84,6 +90,9 @@ func set_highlighted(on: bool) -> void:
 
 
 func _perform(interactor: Node3D) -> void:
+	if item.category == ItemDefinition.Category.WEAPON and item.weapon != null:
+		_take_weapon(interactor)
+		return
 	var inventory := InventoryComponent.find_on(interactor)
 	var taken := inventory.receive(item, quantity)
 	if taken <= 0:
@@ -132,3 +141,23 @@ func load_state(data: Dictionary) -> void:
 ## Pickups can disappear (taken), so a save that doesn't list one removes it.
 func is_save_removable() -> bool:
 	return true
+
+
+## Guns go into their loadout slot. If you already have this gun, you take
+## its loaded magazine as ammo instead.
+func _take_weapon(interactor: Node3D) -> void:
+	var player := interactor as PlayerController
+	if player == null:
+		return
+	if player.give_weapon(item.weapon):
+		picked_up.emit(item, 1, interactor)
+		player.weapon_picked_up.emit(item.weapon)
+		queue_free()
+		return
+	var ammo := ItemDatabase.find_ammo_item(item.weapon.ammo_type)
+	if ammo == null or player.inventory == null:
+		return
+	var taken := player.inventory.receive(ammo, item.weapon.magazine_size)
+	if taken > 0:
+		picked_up.emit(item, 1, interactor)
+		queue_free()

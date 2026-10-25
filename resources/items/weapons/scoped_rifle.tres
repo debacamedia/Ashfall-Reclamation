@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/weapon_definition.gd" id="1_w0h7l"]
+
+[resource]
+script = ExtResource("1_w0h7l")
+id = &"scoped_rifle"
+display_name = "Marksman Rifle"
+short_name = "MARKSMAN"
+slot = 4
+scene_path = "res://scenes/weapons/scoped_rifle.tscn"
+damage = 90.0
+falloff_start = 150.0
+falloff_end = 400.0
+falloff_min_multiplier = 0.8
+max_range = 600.0
+fire_mode = 0
+rounds_per_minute = 48.0
+magazine_size = 5
+starting_reserve = 0
+max_reserve = 40
+ammo_type = &"rifle_308"
+reload_time = 3.0
+draw_time = 0.6
+cycle_sound_delay = 0.45
+noise_radius = 140.0
+base_spread = 2.0
+spread_per_shot = 0.0
+max_bloom = 0.0
+ads_zoom = 4.0
+ads_time = 0.35
+ads_spread_multiplier = 0.02
+ads_recoil_multiplier = 0.6
+ads_move_multiplier = 0.45
+scope_overlay = true
+recoil_pitch = 3.0
+recoil_yaw = 0.5

@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/hazard_yellow.tres" id="1_i4p3j"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mhmg4"]
+albedo_color = Color(0.22745098, 0.23921569, 0.2, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_p6c06"]
+size = Vector3(0.16, 0.08, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gilkr"]
+albedo_color = Color(0.16862746, 0.1764706, 0.15294118, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_8xbry"]
+size = Vector3(0.17, 0.02, 0.11)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5neqo"]
+size = Vector3(0.111999996, 0.02, 0.002)
+
+[node name="PistolAmmoBox" type="Node3D" unique_id=1531342947]
+
+[node name="Box" type="MeshInstance3D" parent="." unique_id=2035729969]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+material_override = SubResource("StandardMaterial3D_mhmg4")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_p6c06")
+
+[node name="Lid" type="MeshInstance3D" parent="." unique_id=1792884517]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.089999996, 0)
+material_override = SubResource("StandardMaterial3D_gilkr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_8xbry")
+
+[node name="Stripe" type="MeshInstance3D" parent="." unique_id=461148527]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, -0.051)
+material_override = ExtResource("1_i4p3j")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_5neqo")

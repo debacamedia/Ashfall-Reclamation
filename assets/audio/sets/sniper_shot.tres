@@ -1,0 +1,11 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/sniper_shot_1.wav" id="1_ecf70"]
+[ext_resource type="AudioStream" path="res://assets/audio/sniper_shot_2.wav" id="2_dm2j5"]
+
+[resource]
+random_pitch = 1.06
+random_volume_offset_db = 1.5
+streams_count = 2
+stream_0/stream = ExtResource("1_ecf70")
+stream_1/stream = ExtResource("2_dm2j5")

@@ -277,7 +277,7 @@ func test_screen_opens_and_shows_slots() -> void:
 		if q != "":
 			texts.append(q)
 	check(texts.has("120"), "ammo stack shows 120 (%s)" % [texts])
-	check((screen.get_node("%WeightLabel") as Label).text == "1.9 / 30 kg", "weight: %s" % (screen.get_node("%WeightLabel") as Label).text)
+	check((screen.get_node("%WeightLabel") as Label).text == "2.2 / 30 kg", "weight: %s" % (screen.get_node("%WeightLabel") as Label).text)
 	screen.close()
 	check(not screen.visible and not p.player_input.ui_open, "closed, input restored")
 

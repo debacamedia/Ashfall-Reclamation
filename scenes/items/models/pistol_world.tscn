@@ -1,0 +1,102 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_j3vu5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_hsvb4"]
+size = Vector3(0.03, 0.035, 0.19)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l667k"]
+albedo_color = Color(0.14901961, 0.15686275, 0.16470589, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_iicki"]
+size = Vector3(0.028, 0.025, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_38105"]
+size = Vector3(0.03, 0.1, 0.045)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q5a0k"]
+size = Vector3(0.006, 0.025, 0.045)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ga7bm"]
+albedo_color = Color(0.06666667, 0.06666667, 0.06666667, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_atek7"]
+size = Vector3(0.022, 0.022, 0.004)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6mmpr"]
+size = Vector3(0.005, 0.012, 0.006)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7x1k5"]
+size = Vector3(0.005, 0.012, 0.006)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3o8um"]
+size = Vector3(0.004, 0.012, 0.004)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i0lb5"]
+albedo_color = Color(0.9098039, 0.9411765, 0.78431374, 1)
+roughness = 0.7
+
+[sub_resource type="SphereMesh" id="SphereMesh_4fm2i"]
+radius = 0.0018
+height = 0.0036
+
+[node name="PistolWorld" type="Node3D" unique_id=2034312851]
+
+[node name="Gun" type="Node3D" parent="." unique_id=1512918347]
+transform = Transform3D(-4.6548156e-08, -1.0648977, 0.74564934, 1.3, -5.6824803e-08, 0, 3.259337e-08, 0.74564934, 1.0648977, 0, 0.039, 0)
+
+[node name="Slide" type="MeshInstance3D" parent="Gun" unique_id=184691456]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.022, -0.055)
+material_override = ExtResource("1_j3vu5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_hsvb4")
+
+[node name="Frame" type="MeshInstance3D" parent="Gun" unique_id=1247241954]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.006, -0.045)
+material_override = SubResource("StandardMaterial3D_l667k")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_iicki")
+
+[node name="Grip" type="MeshInstance3D" parent="Gun" unique_id=181593678]
+transform = Transform3D(1, 0, 0, 0, 0.9702957, 0.2419219, 0, -0.2419219, 0.9702957, 0, -0.06, 0.02)
+material_override = SubResource("StandardMaterial3D_l667k")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_38105")
+
+[node name="TriggerGuard" type="MeshInstance3D" parent="Gun" unique_id=755465164]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.028, -0.025)
+material_override = ExtResource("1_j3vu5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_q5a0k")
+
+[node name="Muzzle Face" type="MeshInstance3D" parent="Gun" unique_id=1834809709]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.151)
+material_override = SubResource("StandardMaterial3D_ga7bm")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_atek7")
+
+[node name="RearSightL" type="MeshInstance3D" parent="Gun" unique_id=1665821987]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007, 0.046, 0.03)
+material_override = ExtResource("1_j3vu5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6mmpr")
+
+[node name="RearSightR" type="MeshInstance3D" parent="Gun" unique_id=1925126828]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.007, 0.046, 0.03)
+material_override = ExtResource("1_j3vu5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_7x1k5")
+
+[node name="FrontSight" type="MeshInstance3D" parent="Gun" unique_id=1237055481]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.046, -0.14)
+material_override = ExtResource("1_j3vu5")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_3o8um")
+
+[node name="FrontDot" type="MeshInstance3D" parent="Gun" unique_id=1239863420]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0505, -0.1415)
+material_override = SubResource("StandardMaterial3D_i0lb5")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_4fm2i")

@@ -232,7 +232,11 @@ func test_containers_and_pickups_round_trip() -> void:
 func test_dropped_items_are_saved() -> void:
 	var p := _player()
 	await _tick(p, 3)
-	var dropped := p.request_drop_slot(1)  # the medkit
+	var med_slot := -1
+	for i in p.inventory.slot_count:
+		if p.inventory.get_slot_item(i) == MEDKIT:
+			med_slot = i
+	var dropped := p.request_drop_slot(med_slot)
 	check(dropped != null, "dropped the medkit")
 	var at := dropped.global_position
 	saves.save_game("drop", self)

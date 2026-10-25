@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/weapon_definition.gd" id="1_oay01"]
+
+[resource]
+script = ExtResource("1_oay01")
+id = &"shotgun"
+display_name = "Pump Shotgun"
+short_name = "SHOTGUN"
+slot = 3
+scene_path = "res://scenes/weapons/shotgun.tscn"
+damage = 13.0
+falloff_start = 6.0
+falloff_end = 25.0
+falloff_min_multiplier = 0.15
+max_range = 60.0
+pellets = 9
+fire_mode = 0
+rounds_per_minute = 70.0
+magazine_size = 6
+starting_reserve = 0
+max_reserve = 48
+ammo_type = &"shotgun_12"
+reload_time = 0.55
+reload_per_round = true
+draw_time = 0.55
+cycle_sound_delay = 0.32
+noise_radius = 90.0
+base_spread = 3.2
+spread_per_shot = 0.0
+max_bloom = 0.0
+ads_zoom = 1.15
+ads_time = 0.25
+ads_spread_multiplier = 0.75
+ads_recoil_multiplier = 0.8
+ads_move_multiplier = 0.7
+ads_eye_distance = 0.36
+recoil_pitch = 4.5
+recoil_yaw = 1.0

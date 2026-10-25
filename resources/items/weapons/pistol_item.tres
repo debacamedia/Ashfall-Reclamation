@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/pistol.png" id="1_4px8n"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_weapon.wav" id="2_imcce"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_mtoa5"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol.tres" id="4_bhahf"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/pistol_world.tscn" id="5_knrf6"]
+
+[resource]
+script = ExtResource("3_mtoa5")
+id = &"pistol"
+display_name = "Sidearm Pistol"
+description = "A reliable 9 mm sidearm. Slot 2."
+category = 3
+icon = ExtResource("1_4px8n")
+max_stack = 1
+weight = 0.0
+base_value = 150
+world_model = ExtResource("5_knrf6")
+pickup_hold_time = 0.4
+pickup_sound = ExtResource("2_imcce")
+weapon = ExtResource("4_bhahf")

@@ -17,11 +17,13 @@ var reload := false         ## True only on the tick reload was pressed.
 var interact := false       ## Interact key held this tick.
 var use_heal := false       ## True only on the tick the quick-heal key was pressed.
 var aim := false            ## Aim-down-sights held this tick.
+var slot := 0               ## Weapon slot (1-4) picked this tick, 0 = none.
+var cycle := 0              ## Mouse wheel this tick: +1 next weapon, -1 previous.
 
 
 ## Compact form for sending to the host later.
 func to_dict() -> Dictionary:
-	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload, "i": interact, "h": use_heal, "a": aim}
+	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload, "i": interact, "h": use_heal, "a": aim, "w": slot, "y": cycle}
 
 
 ## Builds a frame from untrusted data (e.g. a network peer). Values are
@@ -40,9 +42,19 @@ static func from_dict(data: Dictionary) -> InputFrame:
 	frame.interact = _strict_bool(data.get("i", false))
 	frame.use_heal = _strict_bool(data.get("h", false))
 	frame.aim = _strict_bool(data.get("a", false))
+	frame.slot = _small_int(data.get("w", 0), 0, 4)
+	frame.cycle = _small_int(data.get("y", 0), -1, 1)
 	return frame
 
 
 ## Only a real `true` counts; strings, numbers and nulls are treated as false.
 static func _strict_bool(value: Variant) -> bool:
 	return value is bool and value
+
+
+## Whole numbers in [lo, hi] only; anything else becomes 0.
+static func _small_int(value: Variant, lo: int, hi: int) -> int:
+	if not (value is int or value is float) or not is_finite(float(value)):
+		return 0
+	var i := int(value)
+	return i if i >= lo and i <= hi and float(i) == float(value) else 0

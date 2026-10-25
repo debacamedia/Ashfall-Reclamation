@@ -8,6 +8,22 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 
 @export var id: StringName = &"weapon"
 @export var display_name := "Weapon"
+## Short name for the HUD slot strip ("RIFLE").
+@export var short_name := "WEAPON"
+## Loadout slot (number key): 1 rifle, 2 sidearm, 3 shotgun, 4 marksman.
+@export_range(1, 4) var slot := 1
+## The weapon scene (a HitscanWeapon root) the loadout instances. A path,
+## not a PackedScene, because the scene itself references this definition.
+@export_file("*.tscn") var scene_path := ""
+
+
+func instantiate_weapon() -> HitscanWeapon:
+	if scene_path == "" or not ResourceLoader.exists(scene_path):
+		return null
+	var w := (load(scene_path) as PackedScene).instantiate() as HitscanWeapon
+	if w != null:
+		w.definition = self
+	return w
 
 @export_group("Damage")
 @export var damage := 30.0
@@ -17,6 +33,9 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 @export var falloff_end := 200.0
 @export_range(0.0, 1.0) var falloff_min_multiplier := 0.6
 @export var max_range := 300.0
+## Rays per shot. Shotguns fire several pellets, each doing `damage` and
+## spread across the cone (base_spread).
+@export_range(1, 20) var pellets := 1
 
 @export_group("Handling")
 @export var fire_mode: FireMode = FireMode.FULL_AUTO
@@ -29,6 +48,13 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 ## Which ammo items refill this weapon (ItemDefinition.ammo_type).
 @export var ammo_type: StringName = &"rifle_556"
 @export var reload_time := 2.3
+## Load one round per `reload_time` (shotgun shells) instead of a whole
+## magazine. Firing interrupts the reload if there's a round chambered.
+@export var reload_per_round := false
+## Seconds to raise this weapon after switching to it.
+@export var draw_time := 0.45
+## Seconds after a shot before the pump/bolt sound (0 = none).
+@export var cycle_sound_delay := 0.0
 
 ## Enemies within this distance hear each shot (m). 0 = silent.
 @export var noise_radius := 60.0
@@ -57,6 +83,8 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 @export_range(0.1, 1.0) var ads_move_multiplier := 0.55
 ## How far in front of the eye the rear of the sight sits (m).
 @export var ads_eye_distance := 0.2
+## Full-screen scope view when aimed (the gun model is hidden).
+@export var scope_overlay := false
 
 @export_group("Recoil (degrees per shot)")
 @export var recoil_pitch := 0.55

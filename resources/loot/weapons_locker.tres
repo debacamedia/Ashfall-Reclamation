@@ -4,7 +4,9 @@
 [ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="2_38m82"]
 [ext_resource type="Resource" path="res://resources/items/medkit.tres" id="3_xtou7"]
 [ext_resource type="Resource" path="res://resources/items/electronics.tres" id="4_3s2d1"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="5_38m82"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="5_i3cla"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="6_xtou7"]
 
 [sub_resource type="Resource" id="Resource_wg73u"]
 script = ExtResource("1_bfmaa")
@@ -23,6 +25,19 @@ max_quantity = 2
 script = ExtResource("1_bfmaa")
 item = ExtResource("4_3s2d1")
 
+[sub_resource type="Resource" id="Resource_xtou7"]
+script = ExtResource("1_bfmaa")
+item = ExtResource("5_38m82")
+weight = 2.0
+min_quantity = 6
+max_quantity = 12
+
+[sub_resource type="Resource" id="Resource_3s2d1"]
+script = ExtResource("1_bfmaa")
+item = ExtResource("6_xtou7")
+min_quantity = 12
+max_quantity = 24
+
 [sub_resource type="Resource" id="Resource_sfp23"]
 script = ExtResource("1_bfmaa")
 item = ExtResource("2_38m82")
@@ -32,5 +47,5 @@ max_quantity = 30
 [resource]
 script = ExtResource("5_i3cla")
 guaranteed = Array[ExtResource("1_bfmaa")]([SubResource("Resource_sfp23")])
-entries = Array[ExtResource("1_bfmaa")]([SubResource("Resource_wg73u"), SubResource("Resource_gscbb"), SubResource("Resource_ryxs8")])
+entries = Array[ExtResource("1_bfmaa")]([SubResource("Resource_wg73u"), SubResource("Resource_gscbb"), SubResource("Resource_ryxs8"), SubResource("Resource_xtou7"), SubResource("Resource_3s2d1")])
 max_rolls = 2

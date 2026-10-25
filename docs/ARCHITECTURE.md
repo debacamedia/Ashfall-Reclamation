@@ -169,7 +169,8 @@ Each increment adds a guide in `docs/increments/` and tests in `tests/`.
 ### Milestone 2 (early, planned)
 | Increment | Playable result |
 |---|---|
-| Weapon slots + new guns | Carry a pistol, shotgun and scoped rifle in numbered slots (1–3, mouse wheel); each draws its own ammo item from the inventory |
+| Weapon slots + new guns ✅ (Inc 9) | Carry a pistol, shotgun and scoped rifle in numbered slots (1–3, mouse wheel); each draws its own ammo item from the inventory |
 | Crafting | Use a workbench at Outpost 17 to turn scrap, cloth, electronics and fuel into ammo, medkits and weapon parts via `RecipeDefinition` Resources |
+| First new region | Travel by road to a ruined town with a raider camp, close-quarters buildings and long sightlines; region state saved per level |
 
-Then co-op networking (`NetworkManager`), settlements, building and the economy.
+Then co-op networking (`NetworkManager`, Milestone 3), settlements, building and the economy, with more regions added along the way.

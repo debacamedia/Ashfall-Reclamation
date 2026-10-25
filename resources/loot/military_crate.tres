@@ -7,6 +7,7 @@
 [ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_6clmi"]
 [ext_resource type="Resource" path="res://resources/items/cloth.tres" id="6_jj4ht"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_1qrt5"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="7_nhxqk"]
 
 [sub_resource type="Resource" id="Resource_n3bqc"]
 script = ExtResource("1_q301n")
@@ -38,8 +39,15 @@ script = ExtResource("1_q301n")
 item = ExtResource("6_jj4ht")
 max_quantity = 3
 
+[sub_resource type="Resource" id="Resource_j0um0"]
+script = ExtResource("1_q301n")
+item = ExtResource("7_nhxqk")
+weight = 2.0
+min_quantity = 12
+max_quantity = 24
+
 [resource]
 script = ExtResource("7_1qrt5")
-entries = Array[ExtResource("1_q301n")]([SubResource("Resource_n3bqc"), SubResource("Resource_tpjpg"), SubResource("Resource_tpx6m"), SubResource("Resource_1bqcv"), SubResource("Resource_du7al")])
+entries = Array[ExtResource("1_q301n")]([SubResource("Resource_n3bqc"), SubResource("Resource_tpjpg"), SubResource("Resource_tpx6m"), SubResource("Resource_1bqcv"), SubResource("Resource_du7al"), SubResource("Resource_j0um0")])
 min_rolls = 2
 max_rolls = 4

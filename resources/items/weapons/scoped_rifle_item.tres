@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/scoped_rifle.png" id="1_dgmra"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_weapon.wav" id="2_f3s42"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_e00co"]
+[ext_resource type="Resource" path="res://resources/items/weapons/scoped_rifle.tres" id="4_w3jpn"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/scoped_rifle_world.tscn" id="5_vlgrw"]
+
+[resource]
+script = ExtResource("3_e00co")
+id = &"scoped_rifle"
+display_name = "Marksman Rifle"
+description = "Bolt-action .308 with a 4× scope. One shot, one raider. Slot 4."
+category = 3
+icon = ExtResource("1_dgmra")
+max_stack = 1
+weight = 0.0
+base_value = 150
+world_model = ExtResource("5_vlgrw")
+pickup_hold_time = 0.4
+pickup_sound = ExtResource("2_f3s42")
+weapon = ExtResource("4_w3jpn")

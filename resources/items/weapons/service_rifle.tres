@@ -6,6 +6,8 @@
 script = ExtResource("1_guwi8")
 id = &"service_rifle"
 display_name = "Service Rifle"
+short_name = "RIFLE"
+scene_path = "res://scenes/weapons/service_rifle.tscn"
 damage = 34.0
 rounds_per_minute = 650.0
 starting_reserve = 120

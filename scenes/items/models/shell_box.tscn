@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bbkbb"]
+albedo_color = Color(0.47843137, 0.18039216, 0.13333334, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_vhxvi"]
+size = Vector3(0.18, 0.09, 0.12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mqwog"]
+albedo_color = Color(0.36078432, 0.13333334, 0.09803922, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_5jp32"]
+size = Vector3(0.19000001, 0.02, 0.13)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r7hat"]
+albedo_color = Color(0.8509804, 0.76862746, 0.6039216, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_qhy4r"]
+size = Vector3(0.126, 0.0225, 0.002)
+
+[node name="ShellBox" type="Node3D" unique_id=1081277173]
+
+[node name="Box" type="MeshInstance3D" parent="." unique_id=399166866]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.045, 0)
+material_override = SubResource("StandardMaterial3D_bbkbb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_vhxvi")
+
+[node name="Lid" type="MeshInstance3D" parent="." unique_id=1963399213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+material_override = SubResource("StandardMaterial3D_mqwog")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_5jp32")
+
+[node name="Stripe" type="MeshInstance3D" parent="." unique_id=2030506030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.049500003, -0.060999997)
+material_override = SubResource("StandardMaterial3D_r7hat")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_qhy4r")

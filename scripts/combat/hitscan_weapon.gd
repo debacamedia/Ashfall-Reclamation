@@ -1,6 +1,7 @@
 class_name HitscanWeapon
 extends Node3D
-## A firearm that hits instantly along a physics ray (rifles, pistols).
+## A firearm that hits instantly along a physics ray: rifles, pistols, and
+## shotguns (several pellets per shot, loaded a shell at a time).
 ##
 ## Simulation (ammo, fire rate, spread, damage) happens in tick(), called once
 ## per physics tick by the owner (PlayerController, later NPC soldiers). It is
@@ -83,6 +84,11 @@ var _model_rest := Vector3.ZERO
 @onready var _shot_sound: AudioStreamPlayer3D = get_node_or_null("%ShotSound")
 @onready var _reload_sound: AudioStreamPlayer3D = get_node_or_null("%ReloadSound")
 @onready var _dry_fire_sound: AudioStreamPlayer3D = get_node_or_null("%DryFireSound")
+## Pump / bolt sound a moment after each shot (optional).
+@onready var _cycle_sound: AudioStreamPlayer3D = get_node_or_null("%CycleSound")
+var _cycle_left := 0.0
+## Rounds loaded so far in a round-by-round reload (for the HUD).
+var rounds_loaded_this_reload := 0
 
 
 func _ready() -> void:
@@ -111,11 +117,15 @@ func tick(delta: float, trigger_held: bool, reload_pressed: bool, aim: Transform
 	_trigger_was_held = trigger_held
 
 	if is_reloading:
-		_reload_left -= delta
-		if _reload_left <= 0.0:
-			_finish_reload()
-		_cooldown = maxf(_cooldown, 0.0)
-		return Vector2.ZERO
+		# Shotguns: pulling the trigger stops loading shells and fires
+		if definition.reload_per_round and trigger_pulled and ammo_in_magazine > 0 and can_fire:
+			cancel_reload()
+		else:
+			_reload_left -= delta
+			if _reload_left <= 0.0:
+				_finish_reload()
+			_cooldown = maxf(_cooldown, 0.0)
+			return Vector2.ZERO
 
 	if reload_pressed:
 		start_reload()
@@ -147,6 +157,7 @@ func start_reload() -> bool:
 	if is_reloading or ammo_in_magazine >= definition.magazine_size or reserve_ammo <= 0:
 		return false
 	is_reloading = true
+	rounds_loaded_this_reload = 0
 	_reload_left = definition.reload_time
 	reload_started.emit(definition.reload_time)
 	if _reload_sound != null:
@@ -220,21 +231,35 @@ func set_rng_seed(seed_value: int) -> void:
 func _fire(aim: Transform3D, shooter: CollisionObject3D) -> Vector2:
 	ammo_in_magazine -= 1
 	var origin := aim.origin
-	var direction := _apply_spread(-aim.basis.z.normalized(), aim.basis, get_current_spread_degrees())
-
+	var forward := -aim.basis.z.normalized()
 	var exclude: Array[RID] = []
 	if shooter != null:
 		exclude.append(shooter.get_rid())
-	var query := PhysicsRayQueryParameters3D.create(origin, origin + direction * definition.max_range, HIT_MASK, exclude)
-	var result := get_world_3d().direct_space_state.intersect_ray(query)
 
-	fired.emit(origin, direction)
+	# One ray per pellet; hits on the same target are added up so a shotgun
+	# blast gives one hit marker with its total damage.
+	var hits := {}
+	var spread := get_current_spread_degrees()
+	var first_direction := forward
+	for i in maxi(definition.pellets, 1):
+		var direction := _apply_spread(forward, aim.basis, spread)
+		if i == 0:
+			first_direction = direction
+		var query := PhysicsRayQueryParameters3D.create(origin, origin + direction * definition.max_range, HIT_MASK, exclude)
+		var result := get_world_3d().direct_space_state.intersect_ray(query)
+		if not result.is_empty():
+			_resolve_hit(result, origin, direction, shooter, hits)
+
+	fired.emit(origin, first_direction)
 	if _shot_sound != null:
 		_shot_sound.play()
+	if definition.cycle_sound_delay > 0.0:
+		_cycle_left = definition.cycle_sound_delay
 	if definition.noise_radius > 0.0:
 		get_tree().call_group("noise_listeners", "hear_noise", origin, definition.noise_radius, shooter)
-	if not result.is_empty():
-		_resolve_hit(result, origin, direction, shooter)
+	for health: HealthComponent in hits:
+		var h: Dictionary = hits[health]
+		hit_confirmed.emit(health.get_parent(), h["dealt"], health.is_dead(), h["zone"])
 
 	_bloom = minf(_bloom + definition.spread_per_shot, definition.max_bloom)
 	_time_since_shot = 0.0
@@ -255,7 +280,7 @@ func _apply_spread(direction: Vector3, basis: Basis, spread_degrees: float) -> V
 	return direction.rotated(axis, angle).normalized()
 
 
-func _resolve_hit(result: Dictionary, origin: Vector3, direction: Vector3, shooter: Node) -> void:
+func _resolve_hit(result: Dictionary, origin: Vector3, direction: Vector3, shooter: Node, hits: Dictionary) -> void:
 	var collider := result["collider"] as Node
 	var position: Vector3 = result["position"]
 	var normal: Vector3 = result["normal"]
@@ -278,7 +303,10 @@ func _resolve_hit(result: Dictionary, origin: Vector3, direction: Vector3, shoot
 	info.zone_multiplier = zone_multiplier
 	var dealt := health.apply_damage(info)
 	if dealt > 0.0:
-		hit_confirmed.emit(health.get_parent(), dealt, health.is_dead(), zone_multiplier)
+		var h: Dictionary = hits.get(health, {"dealt": 0.0, "zone": 0.0})
+		h["dealt"] += dealt
+		h["zone"] = maxf(h["zone"], zone_multiplier)
+		hits[health] = h
 
 
 ## Reads the "damage_multiplier" metadata from the CollisionShape3D that was
@@ -296,6 +324,8 @@ func _zone_multiplier(collider: Node, shape_index: int) -> float:
 
 func _finish_reload() -> void:
 	var needed := definition.magazine_size - ammo_in_magazine
+	if definition.reload_per_round:
+		needed = mini(needed, 1)
 	var taken := 0
 	if _ammo_source != null:
 		taken = _ammo_source.take_ammo(definition.ammo_type, needed)
@@ -303,6 +333,14 @@ func _finish_reload() -> void:
 		taken = mini(needed, _reserve)
 		_reserve -= taken
 	ammo_in_magazine += taken
+	rounds_loaded_this_reload += taken
+	if definition.reload_per_round and taken > 0 and ammo_in_magazine < definition.magazine_size and reserve_ammo > 0:
+		# Next shell
+		_reload_left = definition.reload_time
+		ammo_changed.emit(ammo_in_magazine, reserve_ammo)
+		if _reload_sound != null:
+			_reload_sound.play()
+		return
 	is_reloading = false
 	_reload_left = 0.0
 	reload_finished.emit()
@@ -327,6 +365,12 @@ func _spawn_impact(position: Vector3, normal: Vector3, hard_surface: bool) -> vo
 # ---------------------------------------------------------------- visuals
 
 func _process(delta: float) -> void:
+	if _cycle_left > 0.0:
+		_cycle_left -= delta
+		if _cycle_left <= 0.0 and _cycle_sound != null:
+			_cycle_sound.play()
+	# Looking through a scope: the scope overlay replaces the gun
+	_model.visible = not (definition.scope_overlay and aim_amount >= 0.95)
 	_kick = move_toward(_kick, 0.0, delta * 9.0)
 	var offset := Vector3(0.0, 0.0, _kick * 0.045)
 	var tilt := Vector3(_kick * 0.05, 0.0, 0.0)
@@ -366,3 +410,16 @@ func get_ads_offset() -> Dictionary:
 	var yaw := atan2(-cam_forward.x, -cam_forward.z)
 	var sight_rest := Basis(Vector3.UP, yaw) * _sight.position
 	return {"offset": eye_point - (_model_rest + sight_rest), "yaw": yaw}
+
+
+## Puts the gun fully lowered at once (it then rises when `lowered` is false):
+## used when drawing a weapon after a switch.
+func snap_lowered() -> void:
+	_lower = 1.0
+	_model.position = _model_rest + Vector3(0.05, -0.22, 0.05)
+	_model.rotation = Vector3(-0.6, 0.35, 0.2)
+
+
+## True once the lower/raise animation has settled at `lowered`.
+func is_pose_settled() -> bool:
+	return is_equal_approx(_lower, 1.0 if lowered else 0.0)

@@ -29,6 +29,12 @@ var _aim_was_held := false
 ## After a menu closes, ignore Interact until the key is released (the E
 ## press that closed a container must not reopen it).
 var _interact_blocked_until_release := false
+## Mouse-wheel weapon cycling waiting for the next tick (+1 / -1).
+var _pending_cycle := 0
+var _last_cycle_msec := -10000
+## Ignore wheel events closer together than this (a Magic Mouse swipe sends
+## many) so one swipe moves one weapon.
+@export var wheel_cooldown_msec := 180
 ## Ignore the aim press that recaptured the mouse.
 var _aim_blocked_until_release := false
 
@@ -43,6 +49,8 @@ func _ready() -> void:
 		player.ladder_grabbed.connect(func(_l: Ladder) -> void: cancel_aim())
 		player.item_use_started.connect(func(_i: ItemDefinition, _d: float) -> void: cancel_aim())
 		player.died.connect(func(_info: DamageInfo) -> void: cancel_aim())
+		if player.weapon_slots != null:
+			player.weapon_slots.switch_started.connect(func(_slot: int) -> void: cancel_aim())
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -63,6 +71,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif crouch_toggle and event.is_action_pressed("crouch") and is_mouse_captured():
 		_crouch_latched = not _crouch_latched
+	elif event is InputEventMouseButton and event.is_pressed() and is_mouse_captured():
+		var wheel := (event as InputEventMouseButton).button_index
+		if wheel == MOUSE_BUTTON_WHEEL_DOWN or wheel == MOUSE_BUTTON_WHEEL_UP:
+			queue_cycle(1 if wheel == MOUSE_BUTTON_WHEEL_DOWN else -1)
 
 
 ## Called by PlayerController once per physics tick.
@@ -100,6 +112,11 @@ func gather() -> InputFrame:
 		aim_held = false
 	var sprinting := frame.sprint and frame.move.y < -0.3
 	frame.aim = update_aim(aim_held, sprinting)
+	for i in range(1, 5):
+		if Input.is_action_just_pressed("weapon_%d" % i):
+			frame.slot = i
+	frame.cycle = _pending_cycle
+	_pending_cycle = 0
 	_look_accumulator = Vector2.ZERO
 	return frame
 
@@ -117,6 +134,15 @@ func update_aim(aim_held: bool, sprinting: bool) -> bool:
 	if sprinting:
 		_aim_latched = false
 	return _aim_latched
+
+
+## Mouse wheel: queue one weapon step for the next tick (rate-limited).
+func queue_cycle(direction: int) -> void:
+	var now := Time.get_ticks_msec()
+	if now - _last_cycle_msec < wheel_cooldown_msec:
+		return
+	_last_cycle_msec = now
+	_pending_cycle = signi(direction)
 
 
 ## Lowers toggled sights (ladder, medkit, death).

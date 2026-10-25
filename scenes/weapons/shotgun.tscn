@@ -1,0 +1,224 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/hitscan_weapon.gd" id="1_844j2"]
+[ext_resource type="Resource" path="res://resources/items/weapons/shotgun.tres" id="2_cusjx"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_8wxhb"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="4_im8a1"]
+[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="5_2oak7"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/shotgun_shot.tres" id="6_urmid"]
+[ext_resource type="AudioStream" path="res://assets/audio/shell_insert.wav" id="7_l8kom"]
+[ext_resource type="AudioStream" path="res://assets/audio/rifle_dry_fire.wav" id="8_t2wk7"]
+[ext_resource type="AudioStream" path="res://assets/audio/shotgun_pump.wav" id="9_y48pn"]
+
+[sub_resource type="Gradient" id="Gradient_8x7y0"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6nsml"]
+gradient = SubResource("Gradient_8x7y0")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fauhy"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.75, 0.4, 1)
+albedo_texture = SubResource("GradientTexture2D_6nsml")
+
+[sub_resource type="QuadMesh" id="QuadMesh_uymuk"]
+material = SubResource("StandardMaterial3D_fauhy")
+size = Vector2(0.09, 0.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_tnr1d"]
+material = SubResource("StandardMaterial3D_fauhy")
+size = Vector2(0.09, 0.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_d3byv"]
+material = SubResource("StandardMaterial3D_fauhy")
+size = Vector2(0.11, 0.11)
+
+[sub_resource type="BoxMesh" id="BoxMesh_54cn8"]
+size = Vector3(0.05, 0.075, 0.24)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_n13ib"]
+top_radius = 0.011
+bottom_radius = 0.011
+height = 0.55
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_23ktc"]
+size = Vector3(0.006, 0.004, 0.52)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4f8mk"]
+top_radius = 0.01
+bottom_radius = 0.01
+height = 0.42
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_e43ah"]
+size = Vector3(0.046, 0.04, 0.17)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dd7es"]
+size = Vector3(0.035, 0.09, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_y46jc"]
+size = Vector3(0.042, 0.075, 0.28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5m6wv"]
+size = Vector3(0.044, 0.085, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dvdvk"]
+size = Vector3(0.006, 0.025, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_b7orl"]
+size = Vector3(0.005, 0.01, 0.005)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gbrlp"]
+size = Vector3(0.005, 0.01, 0.005)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4xu40"]
+albedo_color = Color(0.9411765, 0.9019608, 0.7529412, 1)
+roughness = 0.7
+
+[sub_resource type="SphereMesh" id="SphereMesh_g8ty6"]
+radius = 0.0035
+height = 0.007
+
+[node name="Shotgun" type="Node3D" unique_id=1313030349]
+script = ExtResource("1_844j2")
+definition = ExtResource("2_cusjx")
+
+[node name="Model" type="Node3D" parent="." unique_id=1942135348]
+unique_name_in_owner = true
+
+[node name="Muzzle" type="Marker3D" parent="Model" unique_id=1846146746]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.032, -0.67)
+
+[node name="MuzzleFlash" type="Node3D" parent="Model/Muzzle" unique_id=213973775]
+unique_name_in_owner = true
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+
+[node name="FlashLight" type="OmniLight3D" parent="Model/Muzzle/MuzzleFlash" unique_id=1338265442]
+light_color = Color(1, 0.72, 0.38, 1)
+light_energy = 3.0
+omni_range = 7.0
+
+[node name="FlashCard" type="MeshInstance3D" parent="Model/Muzzle/MuzzleFlash" unique_id=1857497791]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.07)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_uymuk")
+
+[node name="FlashCard2" type="MeshInstance3D" parent="Model/Muzzle/MuzzleFlash" unique_id=66324612]
+transform = Transform3D(-4.371139e-08, -1, 0, -4.371139e-08, 1.9106855e-15, -1, 1, -4.371139e-08, -4.371139e-08, 0, 0, -0.07)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_tnr1d")
+
+[node name="FlashStar" type="MeshInstance3D" parent="Model/Muzzle/MuzzleFlash" unique_id=1003668365]
+cast_shadow = 0
+mesh = SubResource("QuadMesh_d3byv")
+
+[node name="Receiver" type="MeshInstance3D" parent="Model" unique_id=1108670604]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, -0.02)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_54cn8")
+
+[node name="Barrel" type="MeshInstance3D" parent="Model" unique_id=1417813377]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.032, -0.39)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_n13ib")
+
+[node name="Rib" type="MeshInstance3D" parent="Model" unique_id=1886745404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0445, -0.39)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_23ktc")
+
+[node name="MagTube" type="MeshInstance3D" parent="Model" unique_id=178662212]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.008, -0.33)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_4f8mk")
+
+[node name="Forend" type="MeshInstance3D" parent="Model" unique_id=300229302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, -0.3)
+material_override = ExtResource("4_im8a1")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_e43ah")
+
+[node name="Grip" type="MeshInstance3D" parent="Model" unique_id=1343223970]
+transform = Transform3D(1, 0, 0, 0, 0.9396926, 0.34202012, 0, -0.34202012, 0.9396926, 0, -0.06, 0.1)
+material_override = ExtResource("4_im8a1")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_dd7es")
+
+[node name="Stock" type="MeshInstance3D" parent="Model" unique_id=1796236172]
+transform = Transform3D(1, 0, 0, 0, 0.99254614, 0.12186935, 0, -0.12186935, 0.99254614, 0, -0.025, 0.25)
+material_override = ExtResource("4_im8a1")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_y46jc")
+
+[node name="ButtPad" type="MeshInstance3D" parent="Model" unique_id=24009677]
+transform = Transform3D(1, 0, 0, 0, 0.99254614, 0.12186935, 0, -0.12186935, 0.99254614, 0, -0.044, 0.39)
+material_override = ExtResource("5_2oak7")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_5m6wv")
+
+[node name="TriggerGuard" type="MeshInstance3D" parent="Model" unique_id=297727048]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.045, 0.03)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_dvdvk")
+
+[node name="RearNotchL" type="MeshInstance3D" parent="Model" unique_id=1744647430]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.006, 0.043, -0.08)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_b7orl")
+
+[node name="RearNotchR" type="MeshInstance3D" parent="Model" unique_id=631765586]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.006, 0.043, -0.08)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_gbrlp")
+
+[node name="Bead" type="MeshInstance3D" parent="Model" unique_id=1024964562]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.048, -0.6)
+material_override = SubResource("StandardMaterial3D_4xu40")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_g8ty6")
+
+[node name="SightAnchor" type="Marker3D" parent="Model" unique_id=526140785]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.048, -0.08)
+
+[node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=994840292]
+unique_name_in_owner = true
+stream = ExtResource("6_urmid")
+unit_size = 14.0
+max_polyphony = 6
+bus = &"SFX"
+
+[node name="ReloadSound" type="AudioStreamPlayer3D" parent="." unique_id=1940694398]
+unique_name_in_owner = true
+stream = ExtResource("7_l8kom")
+volume_db = -2.0
+unit_size = 3.0
+bus = &"SFX"
+
+[node name="DryFireSound" type="AudioStreamPlayer3D" parent="." unique_id=1772050682]
+unique_name_in_owner = true
+stream = ExtResource("8_t2wk7")
+volume_db = -4.0
+unit_size = 3.0
+bus = &"SFX"
+
+[node name="CycleSound" type="AudioStreamPlayer3D" parent="." unique_id=499923175]
+unique_name_in_owner = true
+stream = ExtResource("9_y48pn")
+unit_size = 4.0
+bus = &"SFX"

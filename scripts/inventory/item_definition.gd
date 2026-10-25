@@ -38,6 +38,9 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC }
 @export var use_sound: AudioStream
 ## For ammo items: the weapon ammo type this refills (matches WeaponDefinition.ammo_type).
 @export var ammo_type: StringName = &""
+## For weapon items: the gun you get when you pick it up (it goes into its
+## loadout slot, not the inventory grid).
+@export var weapon: WeaponDefinition
 
 
 func get_label(quantity: int) -> String:

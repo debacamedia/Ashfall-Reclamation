@@ -41,6 +41,8 @@ signal container_opened(container: SalvageContainer)
 signal container_closed(container: SalvageContainer)
 ## A take/store was refused ("Too heavy", "Inventory full", "Container full").
 signal transfer_refused(reason: String)
+## A new gun joined the loadout (HUD notice, sound).
+signal weapon_picked_up(weapon: WeaponDefinition)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
 
@@ -132,8 +134,10 @@ var current_container: SalvageContainer = null
 @onready var head_clearance: ShapeCast3D = %HeadClearance
 @onready var player_input: PlayerInput = %PlayerInput
 @onready var health: HealthComponent = %HealthComponent
-## The equipped weapon, if any (scene node %Weapon under the camera).
-@onready var weapon: HitscanWeapon = get_node_or_null("%Weapon")
+## The gun in hand, if any. Set by WeaponSlots when you switch.
+var weapon: HitscanWeapon
+## The loadout (%WeaponSlots): up to four guns, number keys / mouse wheel.
+@onready var weapon_slots: WeaponSlots = get_node_or_null("%WeaponSlots")
 @onready var interactor: PlayerInteractor = get_node_or_null("%Interactor")
 @onready var inventory: PlayerInventory = get_node_or_null("%Inventory")
 
@@ -146,10 +150,15 @@ func _ready() -> void:
 	_base_fov = camera.fov
 	health.died.connect(_on_health_died)
 	landed.connect(_on_landed)
-	if weapon != null:
-		weapon.aim_camera = camera
-		if inventory != null:
-			weapon.set_ammo_source(inventory)
+	if weapon_slots != null:
+		weapon_slots.setup(self, camera.get_node("WeaponMount"))
+	else:
+		# Older scenes: a single %Weapon under the camera
+		weapon = get_node_or_null("%Weapon")
+		if weapon != null:
+			weapon.aim_camera = camera
+			if inventory != null:
+				weapon.set_ammo_source(inventory)
 	if controlled_locally:
 		camera.make_current()
 	else:
@@ -197,12 +206,15 @@ func simulate(frame: InputFrame, delta: float) -> void:
 	_update_movement_state()
 	_update_head_bob(delta)
 
+	_update_weapon_selection(frame, delta)
 	if weapon != null:
 		# Aim from the head (not the bobbing camera). Can't shoot mid-sprint;
 		# pressing fire cancels sprint, so there is a short sprint-to-fire delay.
-		# Hands are busy on a ladder or while using an item.
-		var hands_busy := is_using_item() or ladder != null
-		weapon.lowered = hands_busy
+		# Hands are busy on a ladder, while using an item or switching guns.
+		var switching := is_switching_weapon()
+		var hands_busy := is_using_item() or ladder != null or switching
+		if not switching:
+			weapon.lowered = hands_busy  # WeaponSlots animates switches itself
 		weapon.aim_amount = aim_amount
 		var spread := _spread_multiplier() * lerpf(1.0, weapon.definition.ads_spread_multiplier, aim_amount)
 		var recoil := weapon.tick(delta, frame.fire, frame.reload and not hands_busy, head.global_transform, self,
@@ -237,13 +249,16 @@ func respawn_at(spawn: Transform3D) -> void:
 	is_crouching = false
 	_current_height = stand_height
 	_apply_height(stand_height)
+	if weapon_slots != null and weapon_slots.current_slot > 0:
+		weapon_slots.equip_immediately(weapon_slots.pending_slot if weapon_slots.pending_slot != 0 else weapon_slots.current_slot)
+	# Never respawn without ammo; the inventory itself is kept on death for now
+	for w in _owned_weapons():
+		if inventory != null and w.definition.starting_reserve > 0:
+			inventory.ensure_minimum_ammo(w.definition.ammo_type, w.definition.starting_reserve)
+		w.restock()
 	if weapon != null:
 		weapon.visible = true
 		weapon.lowered = false
-		# Never respawn without ammo; the inventory itself is kept on death for now
-		if inventory != null:
-			inventory.ensure_minimum_ammo(weapon.definition.ammo_type, weapon.definition.starting_reserve)
-		weapon.restock()
 	movement_state = MovementState.IDLE
 	movement_state_changed.emit(movement_state)
 	respawned.emit()
@@ -475,6 +490,7 @@ func save_state() -> Dictionary:
 		"health": health.current_health,
 		"inventory": inventory.to_data() if inventory != null else [],
 		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
+		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
 	}
 
 
@@ -495,9 +511,14 @@ func load_state(data: Dictionary) -> void:
 	head.rotation.x = clampf(_number(data.get("pitch"), 0.0), -limit, limit)
 	if inventory != null and data.get("inventory") is Array:
 		inventory.from_data(data["inventory"])
-	if weapon != null:
+	var loadout: Variant = data.get("loadout")
+	if weapon_slots != null and loadout is Dictionary and not (loadout as Dictionary).is_empty():
+		weapon_slots.load_state(loadout)
+	elif weapon != null:
+		# Version-1 saves from before the loadout: one magazine for the rifle
 		weapon.cancel_reload()
 		weapon.ammo_in_magazine = clampi(int(_number(data.get("magazine"), weapon.ammo_in_magazine)), 0, weapon.definition.magazine_size)
+	if weapon != null:
 		weapon.ammo_changed.emit(weapon.ammo_in_magazine, weapon.reserve_ammo)
 	var hp := _number(data.get("health"), health.max_health)
 	health.revive(clampf(hp, 1.0, health.max_health) / health.max_health)
@@ -505,6 +526,45 @@ func load_state(data: Dictionary) -> void:
 
 static func _number(value: Variant, fallback: float) -> float:
 	return float(value) if (value is float or value is int) and is_finite(float(value)) else fallback
+
+
+# ---------------------------------------------------------------- weapons
+
+func is_switching_weapon() -> bool:
+	return weapon_slots != null and weapon_slots.is_switching()
+
+
+## Picks up a gun (validated in WeaponSlots). Returns true if it was new.
+func give_weapon(def: WeaponDefinition) -> bool:
+	if weapon_slots == null or is_dead():
+		return false
+	if not weapon_slots.give_weapon(def):
+		return false
+	var w := weapon_slots.get_weapon(def.slot)
+	if inventory != null and w != null:
+		w.set_ammo_source(inventory)
+	return true
+
+
+func _owned_weapons() -> Array[HitscanWeapon]:
+	if weapon_slots != null:
+		return weapon_slots.owned()
+	var single: Array[HitscanWeapon] = []
+	if weapon != null:
+		single.append(weapon)
+	return single
+
+
+func _update_weapon_selection(frame: InputFrame, delta: float) -> void:
+	if weapon_slots == null:
+		return
+	# Number keys pick a slot, the wheel cycles; not while healing
+	if not is_using_item():
+		if frame.slot > 0:
+			weapon_slots.request_slot(frame.slot)
+		elif frame.cycle != 0:
+			weapon_slots.cycle(signi(frame.cycle))
+	weapon_slots.tick(delta)
 
 
 # ---------------------------------------------------------------- walking
@@ -547,7 +607,7 @@ func _ads_zoom() -> float:
 
 func _update_aim(frame: InputFrame, delta: float) -> void:
 	var can_aim := frame.aim and weapon != null and ladder == null \
-		and not is_using_item() and not weapon.is_reloading
+		and not is_using_item() and not weapon.is_reloading and not is_switching_weapon()
 	var ads_time := weapon.definition.ads_time if weapon != null else 0.2
 	aim_amount = move_toward(aim_amount, 1.0 if can_aim else 0.0, delta / maxf(ads_time, 0.01))
 	if can_aim != is_aiming:

@@ -38,15 +38,17 @@
 [ext_resource type="Resource" path="res://resources/items/cloth.tres" id="37_xntxo"]
 [ext_resource type="Resource" path="res://resources/items/fuel.tres" id="38_0486g"]
 [ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="39_ig36p"]
+[ext_resource type="Script" path="res://scripts/interaction/pickup.gd" id="40_5x06j"]
 [ext_resource type="Resource" path="res://resources/items/medkit.tres" id="40_ck1o8"]
 [ext_resource type="PackedScene" path="res://scenes/world/containers/supply_crate.tscn" id="40_ds1ph"]
-[ext_resource type="Script" path="res://scripts/interaction/salvage_container.gd" id="41_4fdvy"]
-[ext_resource type="Resource" path="res://resources/loot/military_crate.tres" id="42_5x06j"]
+[ext_resource type="Resource" path="res://resources/items/weapons/shotgun_item.tres" id="41_flnt2"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="42_3ehoi"]
+[ext_resource type="Resource" path="res://resources/items/weapons/scoped_rifle_item.tres" id="43_dcipq"]
 [ext_resource type="Resource" path="res://resources/loot/ammo_crate.tres" id="43_flnt2"]
 [ext_resource type="PackedScene" path="res://scenes/world/containers/footlocker.tscn" id="44_3ehoi"]
-[ext_resource type="Resource" path="res://resources/loot/footlocker.tres" id="45_dcipq"]
+[ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="44_tscnw"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="45_ssps7"]
 [ext_resource type="PackedScene" path="res://scenes/world/containers/weapons_locker.tscn" id="46_tscnw"]
-[ext_resource type="Resource" path="res://resources/loot/weapons_locker.tres" id="47_ssps7"]
 [ext_resource type="Resource" path="res://resources/loot/tool_chest.tres" id="48_4ia1j"]
 [ext_resource type="Resource" path="res://resources/loot/scavenger_stash.tres" id="49_bkh55"]
 
@@ -784,7 +786,6 @@ unique_name_in_owner = true
 stream = ExtResource("32_uf8n3")
 volume_db = -2.0
 autoplay = true
-stream_paused = true
 bus = &"Ambience"
 
 [node name="Loot" type="Node3D" parent="." unique_id=466982758]
@@ -940,147 +941,123 @@ item = ExtResource("40_ck1o8")
 action_name = "Pick up"
 object_name = "Medkit"
 
+[node name="CommandPostShotgun" type="Area3D" parent="Loot" unique_id=1305499086 instance=ExtResource("33_ixxyf")]
+transform = Transform3D(0.25881907, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, 0.25881907, -11, 0, -18.2)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("40_5x06j")
+item = ExtResource("41_flnt2")
+
+[node name="CommandPostShells" type="Area3D" parent="Loot" unique_id=729200850 instance=ExtResource("33_ixxyf")]
+transform = Transform3D(0.9396926, 0, -0.34202012, 0, 1, 0, 0.34202012, 0, 0.9396926, -10.1, 0, -18.3)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("40_5x06j")
+item = ExtResource("42_3ehoi")
+quantity = 12
+
+[node name="TowerMarksmanRifle" type="Area3D" parent="Loot" unique_id=1891572138 instance=ExtResource("33_ixxyf")]
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, -28.5, 4.6, -21.5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("40_5x06j")
+item = ExtResource("43_dcipq")
+
+[node name="TowerMarksmanAmmo" type="Area3D" parent="Loot" unique_id=1846869357 instance=ExtResource("33_ixxyf")]
+transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -27.7, 4.6, -21.9)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("40_5x06j")
+item = ExtResource("44_tscnw")
+quantity = 10
+
+[node name="BarracksPistolAmmo" type="Area3D" parent="Loot" unique_id=162509147 instance=ExtResource("33_ixxyf")]
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 10.2, 0, -14)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("40_5x06j")
+item = ExtResource("45_ssps7")
+quantity = 24
+
 [node name="SalvageContainers" type="Node3D" parent="." unique_id=964546882 groups=["navigation_geometry"]]
 
-[node name="WarehouseCrateNorth" type="Area3D" parent="SalvageContainers" unique_id=1612591179 instance=ExtResource("40_ds1ph")]
+[node name="WarehouseCrateNorth" parent="SalvageContainers" unique_id=1612591179 instance=ExtResource("40_ds1ph")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -17.2, 0, 13.6)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
-loot_table = ExtResource("42_5x06j")
 action_name = "Search"
 object_name = "Supply Crate"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="WarehouseCrateSouth" type="Area3D" parent="SalvageContainers" unique_id=765360806 instance=ExtResource("40_ds1ph")]
+[node name="WarehouseCrateSouth" parent="SalvageContainers" unique_id=765360806 instance=ExtResource("40_ds1ph")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -17.2, 0, 2.4)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
-loot_table = ExtResource("42_5x06j")
 action_name = "Search"
 object_name = "Supply Crate"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="WarehouseAmmoCrate" type="Area3D" parent="SalvageContainers" unique_id=1790760232 instance=ExtResource("40_ds1ph")]
+[node name="WarehouseAmmoCrate" parent="SalvageContainers" unique_id=1790760232 instance=ExtResource("40_ds1ph")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -21.5, 0, 15.3)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
 container_name = "Ammo Crate"
 loot_table = ExtResource("43_flnt2")
 action_name = "Search"
 object_name = "Ammo Crate"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="BarracksFootlockerWest" type="Area3D" parent="SalvageContainers" unique_id=953733768 instance=ExtResource("44_3ehoi")]
+[node name="BarracksFootlockerWest" parent="SalvageContainers" unique_id=953733768 instance=ExtResource("44_3ehoi")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 7.65, 0, -15.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
-container_name = "Footlocker"
-loot_table = ExtResource("45_dcipq")
 action_name = "Search"
 object_name = "Footlocker"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.294, 0)
 
-[node name="BarracksFootlockerEast" type="Area3D" parent="SalvageContainers" unique_id=1326304286 instance=ExtResource("44_3ehoi")]
+[node name="BarracksFootlockerEast" parent="SalvageContainers" unique_id=1326304286 instance=ExtResource("44_3ehoi")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 16.35, 0, -15.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
-container_name = "Footlocker"
-loot_table = ExtResource("45_dcipq")
 action_name = "Search"
 object_name = "Footlocker"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.294, 0)
 
-[node name="BarracksLocker" type="Area3D" parent="SalvageContainers" unique_id=597602749 instance=ExtResource("46_tscnw")]
+[node name="BarracksLocker" parent="SalvageContainers" unique_id=597602749 instance=ExtResource("46_tscnw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, -18.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
-container_name = "Weapons Locker"
-loot_table = ExtResource("47_ssps7")
-lid_open_rotation = Vector3(0, -110, 0)
 action_name = "Search"
 object_name = "Weapons Locker"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.98999995, 0)
 
-[node name="CommandPostLocker" type="Area3D" parent="SalvageContainers" unique_id=1426092198 instance=ExtResource("46_tscnw")]
+[node name="CommandPostLocker" parent="SalvageContainers" unique_id=1426092198 instance=ExtResource("46_tscnw")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -16.5, 0, -16.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
-container_name = "Weapons Locker"
-loot_table = ExtResource("47_ssps7")
-lid_open_rotation = Vector3(0, -110, 0)
 action_name = "Search"
 object_name = "Weapons Locker"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.98999995, 0)
 
-[node name="MotorPoolToolChest" type="Area3D" parent="SalvageContainers" unique_id=2064774936 instance=ExtResource("44_3ehoi")]
+[node name="MotorPoolToolChest" parent="SalvageContainers" unique_id=2064774936 instance=ExtResource("44_3ehoi")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 29.5, 0, 12.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
 container_name = "Tool Chest"
 loot_table = ExtResource("48_4ia1j")
 action_name = "Search"
 object_name = "Tool Chest"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.294, 0)
 
-[node name="RangeAmmoCrate" type="Area3D" parent="SalvageContainers" unique_id=915159628 instance=ExtResource("40_ds1ph")]
+[node name="RangeAmmoCrate" parent="SalvageContainers" unique_id=915159628 instance=ExtResource("40_ds1ph")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 8.8, 0, 34)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
 container_name = "Ammo Crate"
 loot_table = ExtResource("43_flnt2")
 action_name = "Search"
 object_name = "Ammo Crate"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="StashSouthWest" type="Area3D" parent="SalvageContainers" unique_id=1329857070 instance=ExtResource("40_ds1ph")]
+[node name="StashSouthWest" parent="SalvageContainers" unique_id=1329857070 instance=ExtResource("40_ds1ph")]
 transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, -33, 0, 42)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
 container_name = "Scavenger Stash"
 loot_table = ExtResource("49_bkh55")
 action_name = "Search"
 object_name = "Scavenger Stash"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="StashEast" type="Area3D" parent="SalvageContainers" unique_id=622903300 instance=ExtResource("40_ds1ph")]
+[node name="StashEast" parent="SalvageContainers" unique_id=622903300 instance=ExtResource("40_ds1ph")]
 transform = Transform3D(-0.50000006, 0, -0.8660254, 0, 1, 0, 0.8660254, 0, -0.50000006, 38, 0, 47)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("41_4fdvy")
 container_name = "Scavenger Stash"
 loot_table = ExtResource("49_bkh55")
 action_name = "Search"
 object_name = "Scavenger Stash"
 hold_time = 1.2
-focus_offset = Vector3(0, 0.42000002, 0)

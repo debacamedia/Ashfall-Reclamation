@@ -35,6 +35,8 @@ extends CanvasLayer
 @onready var _use_bar: ProgressBar = %UseBar
 @onready var inventory_screen: InventoryScreen = %InventoryScreen
 @onready var container_screen: ContainerScreen = get_node_or_null("%ContainerScreen")
+@onready var _weapon_strip: Label = get_node_or_null("%WeaponStrip")
+@onready var _scope: Control = get_node_or_null("%ScopeOverlay")
 @onready var _ui_sound: AudioStreamPlayer = %UISound
 
 const SOUND_HIT := preload("res://assets/audio/ui_hit.wav")
@@ -81,6 +83,8 @@ func _process(delta: float) -> void:
 		_player_signals_bound = player
 		player.item_use_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.transfer_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
+		player.weapon_picked_up.connect(func(def: WeaponDefinition) -> void:
+			show_notice("%s  →  slot %d" % [def.display_name, def.slot], Color(0.75, 0.9, 1.0)))
 		inventory_screen.player = player
 		if container_screen != null:
 			container_screen.player = player
@@ -93,7 +97,13 @@ func _process(delta: float) -> void:
 		_crosshair.camera_fov = player.camera.fov
 		_crosshair.reticle_alpha = 1.0 - smoothstep(0.15, 0.6, player.aim_amount)
 		if _weapon.is_reloading:
-			_ammo_label.text = "RELOADING  %d%%" % roundi(_weapon.get_reload_progress() * 100.0)
+			if _weapon.definition.reload_per_round:
+				_ammo_label.text = "LOADING  %d / %d" % [_weapon.ammo_in_magazine, _weapon.definition.magazine_size]
+			else:
+				_ammo_label.text = "RELOADING  %d%%" % roundi(_weapon.get_reload_progress() * 100.0)
+		if _scope != null:
+			_scope.visible = _weapon.definition.scope_overlay and player.aim_amount >= 0.95 and not player.is_dead()
+	_update_weapon_strip()
 
 	_update_health_visuals(delta)
 	_update_death_screen()
@@ -290,3 +300,20 @@ func _update_notices(delta: float) -> void:
 func _play_ui(stream: AudioStream) -> void:
 	_ui_sound.stream = stream
 	_ui_sound.play()
+
+
+## "1 RIFLE   2 PISTOL   3 —   4 —" with the gun in hand in brackets.
+func _update_weapon_strip() -> void:
+	if _weapon_strip == null:
+		return
+	var slots := player.weapon_slots
+	if slots == null:
+		_weapon_strip.text = ""
+		return
+	var parts := []
+	var shown := slots.pending_slot if slots.pending_slot != 0 else slots.current_slot
+	for s in range(1, WeaponSlots.SLOT_COUNT + 1):
+		var w := slots.get_weapon(s)
+		var label := "%d %s" % [s, w.definition.short_name if w != null else "—"]
+		parts.append("[%s]" % label if s == shown else label)
+	_weapon_strip.text = "   ".join(parts)

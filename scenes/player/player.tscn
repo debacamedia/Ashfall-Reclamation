@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_dovo2"]
 [ext_resource type="Script" path="res://scripts/player/player_input.gd" id="2_gmlin"]
-[ext_resource type="PackedScene" path="res://scenes/weapons/service_rifle.tscn" id="2_p47bc"]
 [ext_resource type="Script" path="res://scripts/interaction/player_interactor.gd" id="3_fm80t"]
 [ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="4_lvxji"]
 [ext_resource type="Script" path="res://scripts/player/player_audio.gd" id="7_ugbui"]
@@ -15,10 +14,16 @@
 [ext_resource type="AudioStream" path="res://assets/audio/death_sting.wav" id="12_lgqa7"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="13_myrg7"]
 [ext_resource type="AudioStream" path="res://assets/audio/aim_in.wav" id="13_uf5tr"]
+[ext_resource type="AudioStream" path="res://assets/audio/weapon_draw.wav" id="13_yj68g"]
 [ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="14_kvlxm"]
 [ext_resource type="Resource" path="res://resources/items/medkit.tres" id="15_uf5tr"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="17_ioxgp"]
+[ext_resource type="Script" path="res://scripts/combat/weapon_slots.gd" id="19_cnsyf"]
+[ext_resource type="Script" path="res://scripts/combat/weapon_definition.gd" id="20_007i1"]
+[ext_resource type="Resource" path="res://resources/items/weapons/service_rifle.tres" id="21_6cv16"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol.tres" id="22_j4nxn"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lgqa7"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yj68g"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
@@ -36,7 +41,7 @@ script = ExtResource("1_dovo2")
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_lgqa7")
+shape = SubResource("CapsuleShape3D_yj68g")
 
 [node name="Head" type="Node3D" parent="." unique_id=801003417]
 unique_name_in_owner = true
@@ -48,9 +53,6 @@ far = 1500.0
 
 [node name="WeaponMount" type="Node3D" parent="Head/Camera" unique_id=403093288]
 transform = Transform3D(0.71956146, 0, -0.025127638, 0, 0.72, 0, 0.025127638, 0, 0.71956146, 0.13, -0.135, -0.4)
-
-[node name="Weapon" parent="Head/Camera/WeaponMount" unique_id=1313030349 instance=ExtResource("2_p47bc")]
-unique_name_in_owner = true
 
 [node name="Interactor" type="RayCast3D" parent="Head" unique_id=919620665]
 unique_name_in_owner = true
@@ -124,10 +126,21 @@ stream = ExtResource("13_uf5tr")
 volume_db = -4.0
 bus = &"SFX"
 
+[node name="DrawSound" type="AudioStreamPlayer" parent="Audio" unique_id=1171740584]
+unique_name_in_owner = true
+stream = ExtResource("13_yj68g")
+bus = &"SFX"
+
 [node name="Inventory" type="Node" parent="." unique_id=817297279]
 unique_name_in_owner = true
 script = ExtResource("12_fcs02")
 starting_items = Dictionary[ExtResource("13_myrg7"), int]({
 ExtResource("14_kvlxm"): 120,
+ExtResource("17_ioxgp"): 36,
 ExtResource("15_uf5tr"): 1
 })
+
+[node name="WeaponSlots" type="Node" parent="." unique_id=1673740436]
+unique_name_in_owner = true
+script = ExtResource("19_cnsyf")
+starting_weapons = Array[ExtResource("20_007i1")]([ExtResource("21_6cv16"), ExtResource("22_j4nxn")])

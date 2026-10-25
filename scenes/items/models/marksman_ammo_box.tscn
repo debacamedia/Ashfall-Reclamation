@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h840n"]
+albedo_color = Color(0.18431373, 0.23137255, 0.16470589, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_wctcm"]
+size = Vector3(0.22, 0.09, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8us43"]
+albedo_color = Color(0.13725491, 0.17254902, 0.1254902, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_6oggt"]
+size = Vector3(0.23, 0.02, 0.11)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_srhud"]
+albedo_color = Color(0.7882353, 0.69803923, 0.47843137, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_46mc0"]
+size = Vector3(0.154, 0.0225, 0.002)
+
+[node name="MarksmanAmmoBox" type="Node3D" unique_id=1955437802]
+
+[node name="Box" type="MeshInstance3D" parent="." unique_id=976623157]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.045, 0)
+material_override = SubResource("StandardMaterial3D_h840n")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_wctcm")
+
+[node name="Lid" type="MeshInstance3D" parent="." unique_id=189376270]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+material_override = SubResource("StandardMaterial3D_8us43")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6oggt")
+
+[node name="Stripe" type="MeshInstance3D" parent="." unique_id=172015478]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.049500003, -0.051)
+material_override = SubResource("StandardMaterial3D_srhud")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_46mc0")

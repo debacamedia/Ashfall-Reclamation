@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="4_3152r"]
 [ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_pesx1"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="6_l7n8s"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="6_udaoi"]
 
 [sub_resource type="Resource" id="Resource_e3tyn"]
 script = ExtResource("1_ntd00")
@@ -31,7 +32,14 @@ script = ExtResource("1_ntd00")
 item = ExtResource("5_pesx1")
 max_quantity = 2
 
+[sub_resource type="Resource" id="Resource_ywtaq"]
+script = ExtResource("1_ntd00")
+item = ExtResource("6_udaoi")
+weight = 2.0
+min_quantity = 12
+max_quantity = 24
+
 [resource]
 script = ExtResource("6_l7n8s")
-entries = Array[ExtResource("1_ntd00")]([SubResource("Resource_e3tyn"), SubResource("Resource_ewq3e"), SubResource("Resource_n73gs"), SubResource("Resource_yxmoy")])
+entries = Array[ExtResource("1_ntd00")]([SubResource("Resource_e3tyn"), SubResource("Resource_ewq3e"), SubResource("Resource_n73gs"), SubResource("Resource_yxmoy"), SubResource("Resource_ywtaq")])
 empty_chance = 0.1

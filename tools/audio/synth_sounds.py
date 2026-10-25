@@ -527,6 +527,121 @@ def crate_close() -> np.ndarray:
     return out
 
 
+def pistol_shot(seed: int) -> np.ndarray:
+    """Sharper and lighter than the rifle: a snappy crack, less body."""
+    rng = np.random.default_rng(seed)
+    out = silence(0.8)
+    place(out, hp(noise(0.02, rng), 2400) * decay(int(0.02 * SR), 0.004), 0.0, 1.0)
+    place(out, bp(noise(0.12, rng), 600, 3000) * decay(int(0.12 * SR), 0.025), 0.0, 0.8)
+    place(out, sine_glide(0.1, 190 + rng.uniform(-15, 15), 80, 0.5) * decay(int(0.1 * SR), 0.03), 0.0, 0.7)
+    place(out, lp(noise(0.7, rng), 900) * decay(int(0.7 * SR), 0.18, attack=0.01), 0.004, 0.15)
+    place(out, metal(0.04, [(3800, 1, 0.008), (5200, 0.5, 0.006)], rng), 0.03, 0.1)
+    return soft_clip(out, 2.2)
+
+
+def shotgun_shot(seed: int) -> np.ndarray:
+    """A deep boom with a long, rolling tail."""
+    rng = np.random.default_rng(seed)
+    out = silence(1.6)
+    place(out, hp(noise(0.04, rng), 1200) * decay(int(0.04 * SR), 0.008), 0.0, 0.9)
+    place(out, lp(noise(0.4, rng), 900) * decay(int(0.4 * SR), 0.08), 0.0, 1.0)
+    place(out, sine_glide(0.35, 95 + rng.uniform(-8, 8), 38, 0.5) * decay(int(0.35 * SR), 0.1), 0.0, 1.3)
+    place(out, lp(noise(1.4, rng), 500) * decay(int(1.4 * SR), 0.4, attack=0.03), 0.01, 0.3)
+    place(out, lp(noise(0.8, rng), 380) * decay(int(0.8 * SR), 0.25, attack=0.04), 0.16 + rng.uniform(0, 0.05), 0.15)
+    return soft_clip(out, 2.8)
+
+
+def shotgun_pump() -> np.ndarray:
+    """Pump back (slide + clack), pump forward (clack)."""
+    rng = np.random.default_rng(810)
+    out = silence(0.55)
+    place(out, bp(noise(0.12, rng), 700, 3200) * np.hanning(int(0.12 * SR)), 0.0, 0.4)
+    place(out, metal(0.08, [(1500, 1, 0.02), (2400, 0.7, 0.015), (3700, 0.4, 0.01)], rng), 0.12, 0.8)
+    place(out, bp(noise(0.1, rng), 700, 3200) * np.hanning(int(0.1 * SR)), 0.2, 0.35)
+    place(out, metal(0.1, [(1300, 1, 0.025), (2100, 0.8, 0.02), (3300, 0.5, 0.012)], rng), 0.31, 1.0)
+    place(out, lp(noise(0.05, rng), 700) * decay(int(0.05 * SR), 0.012), 0.31, 0.6)
+    return out
+
+
+def shell_insert(seed: int) -> np.ndarray:
+    """One shell pushed into the tube: a click and a soft thunk."""
+    rng = np.random.default_rng(seed)
+    out = silence(0.35)
+    place(out, metal(0.05, [(2600 + seed % 3 * 150, 1, 0.01), (4000, 0.5, 0.007)], rng), 0.05, 0.6)
+    place(out, lp(noise(0.05, rng), 600) * decay(int(0.05 * SR), 0.012), 0.08, 0.7)
+    return out
+
+
+def sniper_shot(seed: int) -> np.ndarray:
+    """A hard, very loud crack with a long echo off the hills."""
+    rng = np.random.default_rng(seed)
+    out = silence(2.4)
+    place(out, hp(noise(0.025, rng), 2000) * decay(int(0.025 * SR), 0.005), 0.0, 1.0)
+    place(out, lp(noise(0.3, rng), 1600) * decay(int(0.3 * SR), 0.05), 0.0, 1.0)
+    place(out, sine_glide(0.25, 110 + rng.uniform(-8, 8), 40, 0.5) * decay(int(0.25 * SR), 0.07), 0.0, 1.2)
+    place(out, lp(noise(2.0, rng), 600) * decay(int(2.0 * SR), 0.55, attack=0.03), 0.01, 0.25)
+    place(out, lp(noise(1.2, rng), 420) * decay(int(1.2 * SR), 0.35, attack=0.05), 0.3 + rng.uniform(0, 0.08), 0.2)
+    place(out, lp(noise(0.9, rng), 350) * decay(int(0.9 * SR), 0.3, attack=0.05), 0.75 + rng.uniform(0, 0.1), 0.1)
+    return soft_clip(out, 2.6)
+
+
+def bolt_cycle() -> np.ndarray:
+    """Bolt up, back, forward, down."""
+    rng = np.random.default_rng(820)
+    out = silence(0.7)
+    place(out, metal(0.05, [(2200, 1, 0.012), (3500, 0.6, 0.008)], rng), 0.0, 0.6)
+    place(out, bp(noise(0.12, rng), 1000, 4000) * np.hanning(int(0.12 * SR)), 0.06, 0.35)
+    place(out, metal(0.07, [(1700, 1, 0.018), (2900, 0.6, 0.012)], rng), 0.2, 0.8)
+    place(out, bp(noise(0.1, rng), 1000, 4000) * np.hanning(int(0.1 * SR)), 0.3, 0.3)
+    place(out, metal(0.09, [(1500, 1, 0.022), (2500, 0.7, 0.016)], rng), 0.42, 0.9)
+    place(out, metal(0.05, [(2400, 1, 0.01)], rng), 0.52, 0.5)
+    return out
+
+
+def pistol_reload() -> np.ndarray:
+    """1.5 s: magazine out, in, slide release."""
+    rng = np.random.default_rng(830)
+    out = silence(1.5)
+    place(out, metal(0.05, [(3100, 1, 0.01), (4500, 0.5, 0.007)], rng), 0.1, 0.5)
+    place(out, bp(noise(0.15, rng), 900, 3500) * np.hanning(int(0.15 * SR)), 0.18, 0.4)
+    place(out, lp(noise(0.06, rng), 600) * decay(int(0.06 * SR), 0.015), 0.75, 0.8)
+    place(out, metal(0.1, [(1900, 1, 0.02), (2900, 0.6, 0.015)], rng), 0.76, 0.7)
+    place(out, metal(0.12, [(1600, 1, 0.025), (2700, 0.7, 0.02), (4100, 0.4, 0.012)], rng), 1.25, 0.9)
+    return out
+
+
+def sniper_reload() -> np.ndarray:
+    """3.0 s: bolt open, magazine swap, bolt closed."""
+    rng = np.random.default_rng(840)
+    out = silence(3.0)
+    place(out, bolt_cycle()[: int(0.3 * SR)], 0.1, 0.8)
+    place(out, metal(0.05, [(2900, 1, 0.01)], rng), 0.6, 0.5)
+    place(out, bp(noise(0.2, rng), 900, 3500) * np.hanning(int(0.2 * SR)), 0.7, 0.4)
+    place(out, lp(noise(0.08, rng), 500) * decay(int(0.08 * SR), 0.02), 1.6, 0.9)
+    place(out, metal(0.12, [(1700, 1, 0.025), (2650, 0.7, 0.02)], rng), 1.61, 0.8)
+    place(out, bolt_cycle()[int(0.3 * SR):], 2.2, 0.9)
+    return out
+
+
+def weapon_draw() -> np.ndarray:
+    """Switching guns: cloth rustle and a light metal knock."""
+    rng = np.random.default_rng(850)
+    out = silence(0.4)
+    place(out, bp(noise(0.18, rng), 800, 4500) * decay(int(0.18 * SR), 0.06, attack=0.03), 0.0, 0.45)
+    place(out, metal(0.08, [(1900, 1, 0.02), (3000, 0.5, 0.012)], rng), 0.14, 0.5)
+    return out
+
+
+def pickup_weapon() -> np.ndarray:
+    """Picking up a gun: a heavy grab and a chamber check."""
+    rng = np.random.default_rng(860)
+    out = silence(0.7)
+    place(out, lp(noise(0.08, rng), 600) * decay(int(0.08 * SR), 0.02), 0.0, 0.8)
+    place(out, bp(noise(0.12, rng), 900, 3500) * np.hanning(int(0.12 * SR)), 0.15, 0.35)
+    place(out, metal(0.12, [(1600, 1, 0.025), (2600, 0.7, 0.02), (3900, 0.4, 0.012)], rng), 0.32, 0.9)
+    return out
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
     print("Writing to", os.path.abspath(OUT))
@@ -573,6 +688,18 @@ def main() -> None:
     write("locker_open", locker_open(), -5)
     write("rummage", rummage(), -8)
     write("crate_close", crate_close(), -6)
+    for i in range(3):
+        write(f"pistol_shot_{i + 1}", pistol_shot(900 + i), -1.5)
+    for i in range(2):
+        write(f"shotgun_shot_{i + 1}", shotgun_shot(910 + i), -0.5)
+        write(f"sniper_shot_{i + 1}", sniper_shot(920 + i), -0.3)
+    write("shotgun_pump", shotgun_pump(), -3)
+    write("shell_insert", shell_insert(930), -4)
+    write("bolt_cycle", bolt_cycle(), -3)
+    write("pistol_reload", pistol_reload(), -3)
+    write("sniper_reload", sniper_reload(), -3)
+    write("weapon_draw", weapon_draw(), -8)
+    write("pickup_weapon", pickup_weapon(), -4)
 
 
 if __name__ == "__main__":

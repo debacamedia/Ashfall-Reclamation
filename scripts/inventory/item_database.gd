@@ -7,6 +7,7 @@ extends RefCounted
 const ROOT := "res://resources/items"
 
 static var _by_id: Dictionary = {}
+static var _weapons: Dictionary = {}
 static var _loaded := false
 
 
@@ -32,10 +33,26 @@ static func find_ammo_item(ammo_type: StringName) -> ItemDefinition:
 	return null
 
 
+## A WeaponDefinition by its id (saves store weapon ids).
+static func get_weapon(id: StringName) -> WeaponDefinition:
+	_ensure_loaded()
+	return _weapons.get(id)
+
+
+## The WEAPON item that gives this gun (for dropping or showing it).
+static func find_weapon_item(weapon_id: StringName) -> ItemDefinition:
+	_ensure_loaded()
+	for item: ItemDefinition in _by_id.values():
+		if item.category == ItemDefinition.Category.WEAPON and item.weapon != null and item.weapon.id == weapon_id:
+			return item
+	return null
+
+
 ## Forces a rescan (after adding item files at runtime, e.g. in tools).
 static func reload() -> void:
 	_loaded = false
 	_by_id.clear()
+	_weapons.clear()
 	_ensure_loaded()
 
 
@@ -60,3 +77,5 @@ static func _scan(path: String) -> void:
 		var res := load(path.path_join(name))
 		if res is ItemDefinition:
 			_by_id[(res as ItemDefinition).id] = res
+		elif res is WeaponDefinition:
+			_weapons[(res as WeaponDefinition).id] = res
