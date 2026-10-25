@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_odr0s"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="2_4phha"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="3_jaoa7"]
+[ext_resource type="Resource" path="res://resources/items/gun_stock.tres" id="4_vfa6n"]
+[ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="5_3qrwp"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="6_ei62c"]
+[ext_resource type="Resource" path="res://resources/items/weapons/scoped_rifle_item.tres" id="7_owl4p"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="8_ixunr"]
+
+[resource]
+script = ExtResource("8_ixunr")
+id = &"craft_marksman_rifle"
+category = 4
+station = 2
+inputs = Dictionary[ExtResource("1_odr0s"), int]({
+ExtResource("2_4phha"): 1,
+ExtResource("3_jaoa7"): 1,
+ExtResource("4_vfa6n"): 1,
+ExtResource("5_3qrwp"): 1,
+ExtResource("6_ei62c"): 2
+})
+output = ExtResource("7_owl4p")
+craft_time = 12.0

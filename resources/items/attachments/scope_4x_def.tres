@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttachmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/attachment_definition.gd" id="1_snksy"]
+
+[resource]
+script = ExtResource("1_snksy")
+id = &"scope_4x"
+display_name = "4× Scope"
+compatible = Array[StringName]([&"service_rifle", &"scoped_rifle"])
+model_path = "res://scenes/weapons/attachments/scope_4x.tscn"
+ads_zoom = 4.0
+scope_overlay = true
+ads_time_multiplier = 1.4
+ads_spread_multiplier = 0.1
+ads_move_multiplier = 0.85

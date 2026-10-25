@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_nukcy"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="2_dedeu"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_4njw3"]
+[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="4_mb22s"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_d2k8i"]
+
+[resource]
+script = ExtResource("5_d2k8i")
+id = &"extended_mag"
+category = 5
+station = 2
+inputs = Dictionary[ExtResource("1_nukcy"), int]({
+ExtResource("2_dedeu"): 2,
+ExtResource("3_4njw3"): 1
+})
+output = ExtResource("4_mb22s")
+craft_time = 5.0

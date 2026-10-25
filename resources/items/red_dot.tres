@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Resource" path="res://resources/items/attachments/red_dot_def.tres" id="1_heuhn"]
+[ext_resource type="Texture2D" path="res://assets/icons/red_dot.png" id="2_awojv"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="2_otyo1"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_awojv"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/red_dot_item.tscn" id="4_svt34"]
+
+[resource]
+script = ExtResource("3_awojv")
+id = &"red_dot"
+display_name = "Red Dot Sight"
+description = "A reflex sight: a lit dot on clear glass. Faster, steadier aiming. Fits the service rifle, pistol and shotgun."
+category = 7
+icon = ExtResource("2_awojv")
+max_stack = 3
+weight = 0.3
+base_value = 30
+world_model = ExtResource("4_svt34")
+pickup_sound = ExtResource("2_otyo1")
+attachment = ExtResource("1_heuhn")

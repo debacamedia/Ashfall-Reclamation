@@ -51,6 +51,8 @@ signal craft_refused(reason: String)
 ## A bench was opened / closed (the HUD shows the crafting screen).
 signal station_opened(station: CraftingStation)
 signal station_closed(station: CraftingStation)
+## Fitting or removing an attachment was refused.
+signal attachment_refused(reason: String)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
 
@@ -270,7 +272,7 @@ func respawn_at(spawn: Transform3D) -> void:
 		weapon_slots.equip_immediately(weapon_slots.pending_slot if weapon_slots.pending_slot != 0 else weapon_slots.current_slot)
 	# Never respawn without ammo; the inventory itself is kept on death for now
 	for w in _owned_weapons():
-		if inventory != null and w.definition.starting_reserve > 0:
+		if inventory != null and w.definition.starting_reserve > 0 and not w.definition.melee:
 			inventory.ensure_minimum_ammo(w.definition.ammo_type, w.definition.starting_reserve)
 		w.restock()
 	if weapon != null:
@@ -555,6 +557,7 @@ func is_switching_weapon() -> bool:
 
 
 ## Picks up a gun (validated in WeaponSlots). Returns true if it was new.
+## With only a blade in hand, the new gun comes straight out.
 func give_weapon(def: WeaponDefinition) -> bool:
 	if weapon_slots == null or is_dead():
 		return false
@@ -563,6 +566,90 @@ func give_weapon(def: WeaponDefinition) -> bool:
 	var w := weapon_slots.get_weapon(def.slot)
 	if inventory != null and w != null:
 		w.set_ammo_source(inventory)
+	if weapon != null and weapon.definition.melee and not def.melee:
+		weapon_slots.request_slot(def.slot)
+	return true
+
+
+## Why a crafted or found gun can't be added ("" = it can).
+func weapon_refusal_reason(def: WeaponDefinition) -> String:
+	if weapon_slots == null:
+		return "Can't carry that"
+	var existing := weapon_slots.get_weapon(def.slot)
+	if existing == null:
+		return ""
+	if existing.base_definition.id == def.id:
+		return "You already have a " + def.display_name
+	if existing.base_definition.tier > def.tier:
+		return "Your %s is better" % existing.base_definition.display_name
+	return ""
+
+
+# ---------------------------------------------------------------- attachments
+
+## "" if `item` can be fitted to the gun in `weapon_slot`, otherwise why not.
+## Only at a weapons bench.
+func attachment_refusal_reason(weapon_slot: int, item: ItemDefinition) -> String:
+	if is_dead() or inventory == null or weapon_slots == null:
+		return "Can't do that now"
+	if get_crafting_station() != RecipeDefinition.Station.WEAPONS_BENCH:
+		return "Needs a Weapons Bench"
+	var w := weapon_slots.get_weapon(weapon_slot)
+	if w == null:
+		return "No weapon in that slot"
+	if item == null or item.attachment == null:
+		return "That isn't an attachment"
+	if inventory.count_of(item.id) <= 0:
+		return "You don't have a " + item.display_name
+	if not item.attachment.fits(w.base_definition.id):
+		return "Doesn't fit the " + w.base_definition.display_name
+	var old := w.get_attachment(item.attachment.slot)
+	if old == item.attachment:
+		return "Already fitted"
+	if old != null:
+		var old_item := ItemDatabase.find_attachment_item(old.id)
+		var remove: Dictionary[ItemDefinition, int] = {item: 1}
+		if old_item != null and not inventory.can_exchange(remove, old_item, 1):
+			return "No room for the " + old_item.display_name
+	return ""
+
+
+## Fits an attachment from the inventory (validated). Whatever it replaces
+## goes back into the inventory.
+func request_fit_attachment(weapon_slot: int, item: ItemDefinition) -> bool:
+	var reason := attachment_refusal_reason(weapon_slot, item)
+	if reason != "":
+		attachment_refused.emit(reason)
+		return false
+	var w := weapon_slots.get_weapon(weapon_slot)
+	inventory.remove_item(item.id, 1)
+	var old := w.fit_attachment(item.attachment)
+	if old != null:
+		var old_item := ItemDatabase.find_attachment_item(old.id)
+		if old_item != null:
+			inventory.add_item(old_item, 1)
+	return true
+
+
+## Takes an attachment off and puts it in the inventory (validated).
+func request_remove_attachment(weapon_slot: int, slot: AttachmentDefinition.Slot) -> bool:
+	var reason := ""
+	var w := weapon_slots.get_weapon(weapon_slot) if weapon_slots != null else null
+	if is_dead() or inventory == null or w == null:
+		reason = "Can't do that now"
+	elif get_crafting_station() != RecipeDefinition.Station.WEAPONS_BENCH:
+		reason = "Needs a Weapons Bench"
+	elif w.get_attachment(slot) == null:
+		reason = "Nothing fitted there"
+	else:
+		var item := ItemDatabase.find_attachment_item(w.get_attachment(slot).id)
+		if item == null or inventory.can_add(item, 1) < 1:
+			reason = inventory.get_refusal_reason(item, 1) if item != null else "Can't remove that"
+	if reason != "":
+		attachment_refused.emit(reason)
+		return false
+	var att := w.remove_attachment(slot)
+	inventory.add_item(ItemDatabase.find_attachment_item(att.id), 1)
 	return true
 
 
@@ -649,6 +736,8 @@ func craft_refusal_reason(recipe: RecipeDefinition) -> String:
 		var have := inventory.count_of(item.id)
 		if have < recipe.inputs[item]:
 			return "Missing %d %s" % [recipe.inputs[item] - have, item.display_name]
+	if recipe.output.weapon != null:
+		return weapon_refusal_reason(recipe.output.weapon)
 	if not inventory.can_exchange(recipe.inputs, recipe.output, recipe.output_quantity):
 		return "Inventory full"
 	return ""
@@ -699,7 +788,12 @@ func _update_crafting(delta: float) -> void:
 		return
 	for item: ItemDefinition in recipe.inputs:
 		inventory.remove_item(item.id, recipe.inputs[item])
-	inventory.receive(recipe.output, recipe.output_quantity)
+	if recipe.output.weapon != null:
+		# A gun goes into its loadout slot, not the bag
+		give_weapon(recipe.output.weapon)
+		weapon_picked_up.emit(recipe.output.weapon)
+	else:
+		inventory.receive(recipe.output, recipe.output_quantity)
 	crafting_finished.emit(recipe)
 	_craft_count -= 1
 	if _craft_count <= 0:
@@ -756,7 +850,7 @@ func _ads_zoom() -> float:
 
 
 func _update_aim(frame: InputFrame, delta: float) -> void:
-	var can_aim := frame.aim and weapon != null and ladder == null \
+	var can_aim := frame.aim and weapon != null and not weapon.definition.melee and ladder == null \
 		and not is_using_item() and not weapon.is_reloading and not is_switching_weapon()
 	var ads_time := weapon.definition.ads_time if weapon != null else 0.2
 	aim_amount = move_toward(aim_amount, 1.0 if can_aim else 0.0, delta / maxf(ads_time, 0.01))

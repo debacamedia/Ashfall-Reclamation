@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_1wgyy"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="2_5txld"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="3_fkf42"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="4_08sm8"]
+[ext_resource type="Resource" path="res://resources/items/scope_4x.tres" id="5_stj8g"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_nuv0x"]
+
+[resource]
+script = ExtResource("6_nuv0x")
+id = &"scope_4x"
+category = 5
+station = 2
+inputs = Dictionary[ExtResource("1_1wgyy"), int]({
+ExtResource("2_5txld"): 2,
+ExtResource("3_fkf42"): 1,
+ExtResource("4_08sm8"): 1
+})
+output = ExtResource("5_stj8g")
+craft_time = 7.0

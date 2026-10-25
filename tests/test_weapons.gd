@@ -18,7 +18,7 @@ var MARKSMAN_AMMO: ItemDefinition = load("res://resources/items/rifle_308.tres")
 
 func _player() -> PlayerController:
 	make_static_box(Vector3(60, 1, 60), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
-	var p := PLAYER_SCENE.instantiate() as PlayerController
+	var p := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p.controlled_locally = false
 	p.head_bob_enabled = false
 	p.position = Vector3(0, 0.05, 0)
@@ -66,7 +66,7 @@ func _target(distance: float, hp := 1000.0) -> HealthComponent:
 
 func test_definitions_and_scenes_are_valid() -> void:
 	for def: WeaponDefinition in [RIFLE, PISTOL, SHOTGUN, MARKSMAN]:
-		check(def.slot >= 1 and def.slot <= 4, "%s has a slot" % def.id)
+		check(def.slot >= 1 and def.slot <= 5, "%s has a slot" % def.id)
 		var w := def.instantiate_weapon()
 		check(w != null and w.definition == def, "%s scene instantiates" % def.id)
 		if w == null:
@@ -292,7 +292,15 @@ func test_marksman_scope() -> void:
 	var hip := mr.get_current_spread_degrees()
 	var aim := _frame()
 	aim.aim = true
+	# Iron sights until a 4× Scope is fitted at a weapons bench
 	await _run(p, aim, 30)
+	for i in 4:
+		await get_tree().process_frame
+	check_near(p.camera.fov, 75.0 / 1.3, 0.1, "irons: 1.3× (FOV %.1f)" % p.camera.fov)
+	check(not (hud.get_node("%ScopeOverlay") as Control).visible, "no scope overlay on irons")
+	await _run(p, _frame(), 30)
+	mr.fit_attachment(ItemDatabase.get_attachment(&"scope_4x"))
+	await _run(p, aim, 40)
 	for i in 4:
 		await get_tree().process_frame
 	check_near(p.camera.fov, 75.0 / 4.0, 0.1, "4× zoom (FOV %.1f)" % p.camera.fov)
@@ -328,11 +336,11 @@ func test_hud_weapon_strip() -> void:
 	await _run(p, _frame(), 3)
 	await get_tree().process_frame
 	var strip := hud.get_node("%WeaponStrip") as Label
-	check(strip.text == "[1 RIFLE]   2 PISTOL   3 —   4 —", "strip: '%s'" % strip.text)
+	check(strip.text == "[1 RIFLE]   2 PISTOL   3 —   4 —   5 —", "strip: '%s'" % strip.text)
 	p.give_weapon(SHOTGUN)
 	await _switch(p, 3)
 	await get_tree().process_frame
-	check(strip.text == "1 RIFLE   2 PISTOL   [3 SHOTGUN]   4 —", "strip: '%s'" % strip.text)
+	check(strip.text == "1 RIFLE   2 PISTOL   [3 SHOTGUN]   4 —   5 —", "strip: '%s'" % strip.text)
 	check((hud.get_node("%WeaponLabel") as Label).text == "PUMP SHOTGUN", "weapon name follows the switch")
 
 
@@ -344,7 +352,7 @@ func test_loadout_saved_and_loaded() -> void:
 	p.weapon.ammo_in_magazine = 2
 	p.weapon_slots.get_weapon(2).ammo_in_magazine = 7
 	var data := JSON.parse_string(JSON.stringify(p.save_state())) as Dictionary
-	var p2 := PLAYER_SCENE.instantiate() as PlayerController
+	var p2 := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p2.controlled_locally = false
 	p2.position = Vector3(4, 0.05, 0)
 	add_child(p2)
@@ -357,7 +365,7 @@ func test_loadout_saved_and_loaded() -> void:
 	var old := data.duplicate()
 	old.erase("loadout")
 	old["magazine"] = 9
-	var p3 := PLAYER_SCENE.instantiate() as PlayerController
+	var p3 := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p3.controlled_locally = false
 	p3.position = Vector3(-4, 0.05, 0)
 	add_child(p3)
@@ -375,7 +383,7 @@ func test_respawn_restocks_every_gun() -> void:
 	p.weapon_slots.get_weapon(2).ammo_in_magazine = 0
 	p.health.apply_damage(DamageInfo.create(500.0, DamageInfo.Type.FALL))
 	p.respawn_at(Transform3D(Basis.IDENTITY, Vector3(0, 0.05, 0)))
-	check(p.inventory.count_ammo(&"pistol_9mm") == 36 and p.weapon_slots.get_weapon(2).ammo_in_magazine == 12, "pistol topped up on respawn")
+	check(p.inventory.count_ammo(&"pistol_9mm") == PISTOL.starting_reserve and p.weapon_slots.get_weapon(2).ammo_in_magazine == 12, "pistol topped up on respawn")
 	check(p.weapon.visible, "gun in hand after respawn")
 
 
@@ -411,6 +419,6 @@ func test_iron_sights_line_up() -> void:
 		var anchor := to_cam * (p.weapon.get_node("%SightAnchor") as Node3D).global_position
 		check(absf(anchor.x) < 0.002 and absf(anchor.y) < 0.002, "%s: rear sight on the centre line (%s)" % [p.weapon.definition.id, anchor])
 		var front_name := "FrontDot" if slot == 2 else "Bead"
-		var front := to_cam * (p.weapon.get_node("Model/" + front_name) as Node3D).global_position
+		var front := to_cam * (p.weapon.get_node(("%IronSights/" if slot == 2 else "Model/") + front_name) as Node3D).global_position
 		check(absf(front.x) < 0.003 and absf(front.y) < 0.006, "%s: front sight lines up too (%s)" % [p.weapon.definition.id, front])
 		await _run(p, _frame(), 20)

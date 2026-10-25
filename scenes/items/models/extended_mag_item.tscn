@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_1dd5r"]
+[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="2_d5nfv"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_2i4q0"]
+size = Vector3(0.032, 0.18, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qvkqj"]
+size = Vector3(0.036, 0.015, 0.065)
+
+[node name="ExtendedMagItem" type="Node3D" unique_id=1816459585]
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=494580782]
+transform = Transform3D(1, 0, 0, 0, 0.9781476, -0.2079117, 0, 0.2079117, 0.9781476, 0, 0.09, 0)
+material_override = ExtResource("1_1dd5r")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_2i4q0")
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=1743825514]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, 0)
+material_override = ExtResource("2_d5nfv")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_qvkqj")

@@ -112,7 +112,7 @@ func gather() -> InputFrame:
 		aim_held = false
 	var sprinting := frame.sprint and frame.move.y < -0.3
 	frame.aim = update_aim(aim_held, sprinting)
-	for i in range(1, 5):
+	for i in range(1, 6):
 		if Input.is_action_just_pressed("weapon_%d" % i):
 			frame.slot = i
 	frame.cycle = _pending_cycle

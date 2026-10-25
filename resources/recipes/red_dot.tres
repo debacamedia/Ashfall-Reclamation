@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_bv558"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="2_1tcyi"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="3_qr0ai"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="4_d5bm8"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_e580u"]
+
+[resource]
+script = ExtResource("5_e580u")
+id = &"red_dot"
+category = 5
+station = 2
+inputs = Dictionary[ExtResource("1_bv558"), int]({
+ExtResource("2_1tcyi"): 2,
+ExtResource("3_qr0ai"): 1
+})
+output = ExtResource("4_d5bm8")
+craft_time = 5.0

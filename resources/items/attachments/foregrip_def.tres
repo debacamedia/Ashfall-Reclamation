@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AttachmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/attachment_definition.gd" id="1_04d51"]
+
+[resource]
+script = ExtResource("1_04d51")
+id = &"foregrip"
+display_name = "Foregrip"
+slot = 3
+compatible = Array[StringName]([&"service_rifle", &"shotgun"])
+model_path = "res://scenes/weapons/attachments/foregrip.tscn"
+hip_spread_multiplier = 0.85
+recoil_multiplier = 0.7

@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="1_ckr44"]
+[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="2_03jvk"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1bejm"]
+size = Vector3(0.05, 0.09, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_p7qd6"]
+size = Vector3(0.052, 0.1, 0.02)
+
+[node name="GunStock" type="Node3D" unique_id=432075591]
+
+[node name="Stock" type="MeshInstance3D" parent="." unique_id=1026545391]
+transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, 0, 0.045, 0)
+material_override = ExtResource("1_ckr44")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_1bejm")
+
+[node name="Pad" type="MeshInstance3D" parent="." unique_id=1873560375]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0.16)
+material_override = ExtResource("2_03jvk")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_p7qd6")

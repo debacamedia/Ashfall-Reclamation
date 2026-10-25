@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_h2ng5"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="2_krun1"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="3_23u6j"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="4_exm0c"]
+
+[resource]
+script = ExtResource("4_exm0c")
+id = &"gun_barrel"
+category = 1
+station = 2
+inputs = Dictionary[ExtResource("1_h2ng5"), int]({
+ExtResource("2_krun1"): 2
+})
+output = ExtResource("3_23u6j")
+craft_time = 4.0

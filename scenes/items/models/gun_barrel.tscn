@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_vniia"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fbryy"]
+top_radius = 0.014
+bottom_radius = 0.014
+height = 0.4
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_prd0e"]
+top_radius = 0.017
+bottom_radius = 0.017
+height = 0.03
+radial_segments = 12
+
+[node name="GunBarrel" type="Node3D" unique_id=1986095147]
+
+[node name="Tube" type="MeshInstance3D" parent="." unique_id=528451417]
+transform = Transform3D(-4.371139e-08, -1, 0, -4.371139e-08, 1.9106855e-15, -1, 1, -4.371139e-08, -4.371139e-08, 0, 0.014, 0)
+material_override = ExtResource("1_vniia")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_fbryy")
+
+[node name="Crown" type="MeshInstance3D" parent="." unique_id=1002799476]
+transform = Transform3D(-4.371139e-08, -1, 0, -4.371139e-08, 1.9106855e-15, -1, 1, -4.371139e-08, -4.371139e-08, 0.19, 0.014, 0)
+material_override = ExtResource("1_vniia")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_prd0e")

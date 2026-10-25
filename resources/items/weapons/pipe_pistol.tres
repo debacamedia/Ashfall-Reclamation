@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/weapon_definition.gd" id="1_y4jpa"]
+
+[resource]
+script = ExtResource("1_y4jpa")
+id = &"pipe_pistol"
+display_name = "Pipe Pistol"
+short_name = "PIPE PISTOL"
+slot = 2
+tier = 0
+scene_path = "res://scenes/weapons/pipe_pistol.tscn"
+damage = 35.0
+falloff_start = 10.0
+falloff_end = 40.0
+falloff_min_multiplier = 0.5
+max_range = 100.0
+fire_mode = 0
+rounds_per_minute = 60.0
+magazine_size = 1
+starting_reserve = 12
+max_reserve = 60
+ammo_type = &"pistol_9mm"
+reload_time = 1.8
+draw_time = 0.35
+noise_radius = 50.0
+base_spread = 1.2
+spread_per_shot = 0.0
+max_bloom = 0.0
+ads_zoom = 1.1
+ads_time = 0.18
+ads_spread_multiplier = 0.6
+ads_recoil_multiplier = 0.8
+ads_move_multiplier = 0.75
+ads_eye_distance = 0.3
+recoil_pitch = 2.2
+recoil_yaw = 0.6

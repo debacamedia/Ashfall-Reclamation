@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_4aeka"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_0hp2w"]
+size = Vector3(0.03, 0.12, 0.06)
+
+[node name="GunMagazine" type="Node3D" unique_id=1706566879]
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=294052820]
+transform = Transform3D(1, 0, 0, 0, 0.9781476, -0.2079117, 0, 0.2079117, 0.9781476, 0, 0.06, 0)
+material_override = ExtResource("1_4aeka")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_0hp2w")

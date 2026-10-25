@@ -80,10 +80,18 @@ func test_culvert_needs_crouch() -> void:
 	check(_player.global_position.z < -9.5, "crouching player gets through the culvert (z=%.1f)" % _player.global_position.z)
 
 
+## The level starts you with only a machete; range tests need the rifle.
+func _arm_rifle() -> void:
+	_player.give_weapon(load("res://resources/items/weapons/service_rifle.tres"))
+	_player.weapon_slots.equip_immediately(1)
+	await get_tree().physics_frame
+
+
 func test_firing_range_targets_take_damage() -> void:
 	await _load_level()
 	var dummy := _level.get_node("FiringRange/Target10mA") as TargetDummy
 	check(dummy != null, "10 m target exists")
+	await _arm_rifle()
 	# Stand at the firing line, aim at the torso of the 10 m target
 	await _teleport(Vector3(13.5, 0.05, 34), -90)
 	var torso := dummy.global_position + Vector3(0, 1.3, 0)
@@ -265,6 +273,7 @@ func test_hud_prompt_and_notice_for_range_ammo() -> void:
 	await _load_level()
 	var hud := _level.get_node("HUD") as HUD
 	var ammo := _level.get_node("Loot/RangeAmmoA") as Pickup
+	await _arm_rifle()
 	await _teleport(Vector3(10.2, 0.05, 35.4), 0)
 	var eye := _player.head.global_position
 	var target := ammo.global_position + Vector3(0, 0.1, 0)
@@ -401,9 +410,14 @@ func test_every_container_can_be_searched_from_the_front() -> void:
 
 func test_new_guns_placed_in_the_outpost() -> void:
 	await _load_level()
-	var shotgun := _level.get_node("Loot/CommandPostShotgun") as Pickup
+	# Increment 11: guns are rarer; the command post has gun parts instead
+	check(_level.get_node_or_null("Loot/CommandPostShotgun") == null, "no free shotgun any more")
+	check((_level.get_node("Loot/CommandPostBarrel") as Pickup).item.id == &"gun_barrel", "a gun barrel in the command post")
+	check((_level.get_node("Loot/CommandPostTrigger") as Pickup).item.id == &"trigger_group", "a trigger group in the command post")
+	check((_level.get_node("Loot/WastelandServiceRifle") as Pickup).item.weapon.id == &"service_rifle", "a service rifle out in the wastes")
+	var scope := _level.get_node("Loot/TowerScope") as Pickup
+	check(scope.item.attachment != null and scope.item.attachment.id == &"scope_4x", "a 4× scope by the marksman rifle")
 	var marksman := _level.get_node("Loot/TowerMarksmanRifle") as Pickup
-	check(shotgun.item.weapon != null and shotgun.item.weapon.id == &"shotgun", "shotgun in the command post")
 	check(marksman.item.weapon != null and marksman.item.weapon.id == &"scoped_rifle", "marksman rifle up a guard tower")
 	check(marksman.global_position.y > 4.5, "on the tower platform (y %.2f)" % marksman.global_position.y)
 	# Climb the tower and take it

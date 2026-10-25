@@ -10,8 +10,12 @@ enum FireMode { SEMI_AUTO, FULL_AUTO }
 @export var display_name := "Weapon"
 ## Short name for the HUD slot strip ("RIFLE").
 @export var short_name := "WEAPON"
-## Loadout slot (number key): 1 rifle, 2 sidearm, 3 shotgun, 4 marksman.
-@export_range(1, 4) var slot := 1
+## Loadout slot (number key): 1 rifle, 2 sidearm, 3 shotgun, 4 marksman,
+## 5 melee.
+@export_range(1, 5) var slot := 1
+## Better guns have a higher tier; crafting never replaces a gun in the
+## same slot with a worse one (pipe pistol 0 < pistol 1).
+@export var tier := 1
 ## The weapon scene (a HitscanWeapon root) the loadout instances. A path,
 ## not a PackedScene, because the scene itself references this definition.
 @export_file("*.tscn") var scene_path := ""
@@ -36,6 +40,13 @@ func instantiate_weapon() -> HitscanWeapon:
 ## Rays per shot. Shotguns fire several pellets, each doing `damage` and
 ## spread across the cone (base_spread).
 @export_range(1, 20) var pellets := 1
+
+@export_group("Melee")
+## A blade: no ammo, no aiming; each swing checks a short fan of rays.
+@export var melee := false
+## Total width of the swing (degrees) and how many rays cover it.
+@export var melee_arc := 60.0
+@export_range(1, 15) var melee_rays := 7
 
 @export_group("Handling")
 @export var fire_mode: FireMode = FireMode.FULL_AUTO

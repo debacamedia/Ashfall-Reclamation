@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Resource" path="res://resources/items/attachments/suppressor_def.tres" id="1_ahg7x"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="2_c1ubn"]
+[ext_resource type="Texture2D" path="res://assets/icons/suppressor.png" id="2_j7u1v"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_j7u1v"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/suppressor_item.tscn" id="4_pii6p"]
+
+[resource]
+script = ExtResource("3_j7u1v")
+id = &"suppressor"
+display_name = "Suppressor"
+description = "Cuts the sound of each shot to a third: raiders hear you from much closer. Slightly less damage. Fits the pistol, service rifle and marksman rifle."
+category = 7
+icon = ExtResource("2_j7u1v")
+max_stack = 3
+weight = 0.3
+base_value = 30
+world_model = ExtResource("4_pii6p")
+pickup_sound = ExtResource("2_c1ubn")
+attachment = ExtResource("1_ahg7x")

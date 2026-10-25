@@ -17,7 +17,7 @@ var reload := false         ## True only on the tick reload was pressed.
 var interact := false       ## Interact key held this tick.
 var use_heal := false       ## True only on the tick the quick-heal key was pressed.
 var aim := false            ## Aim-down-sights held this tick.
-var slot := 0               ## Weapon slot (1-4) picked this tick, 0 = none.
+var slot := 0               ## Weapon slot (1-5) picked this tick, 0 = none.
 var cycle := 0              ## Mouse wheel this tick: +1 next weapon, -1 previous.
 
 
@@ -42,7 +42,7 @@ static func from_dict(data: Dictionary) -> InputFrame:
 	frame.interact = _strict_bool(data.get("i", false))
 	frame.use_heal = _strict_bool(data.get("h", false))
 	frame.aim = _strict_bool(data.get("a", false))
-	frame.slot = _small_int(data.get("w", 0), 0, 4)
+	frame.slot = _small_int(data.get("w", 0), 0, 5)
 	frame.cycle = _small_int(data.get("y", 0), -1, 1)
 	return frame
 

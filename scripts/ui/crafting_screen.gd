@@ -40,6 +40,12 @@ var _message_left := 0.0
 @onready var _cancel: Button = %CancelCraftButton
 @onready var _progress: ProgressBar = %CraftProgress
 @onready var _queue: Label = %CraftQueue
+## Weapons bench only: Crafting / Modify Weapons tabs.
+@onready var _tabs: Control = get_node_or_null("%CraftTabs")
+@onready var _craft_tab: Button = get_node_or_null("%CraftTab")
+@onready var _modify_tab: Button = get_node_or_null("%ModifyTab")
+@onready var _body: Control = get_node_or_null("%CraftBody")
+@onready var gunsmith: GunsmithPanel = get_node_or_null("%GunsmithPanel")
 
 
 func _ready() -> void:
@@ -49,6 +55,24 @@ func _ready() -> void:
 	_cancel.pressed.connect(func() -> void:
 		if player != null:
 			player.cancel_crafting())
+	if _craft_tab != null:
+		_craft_tab.pressed.connect(func() -> void: show_gunsmith(false))
+		_modify_tab.pressed.connect(func() -> void: show_gunsmith(true))
+
+
+## Switches between the recipe list and the Modify Weapons tab.
+func show_gunsmith(on: bool) -> void:
+	if gunsmith == null:
+		return
+	var allowed := on and player != null and player.current_station != null \
+		and player.current_station.station == RecipeDefinition.Station.WEAPONS_BENCH
+	gunsmith.visible = allowed
+	_body.visible = not allowed
+	_craft_tab.button_pressed = not allowed
+	_modify_tab.button_pressed = allowed
+	if allowed:
+		gunsmith.player = player
+		gunsmith.refresh()
 
 
 func is_open() -> bool:
@@ -65,6 +89,9 @@ func open() -> void:
 	_build_list()
 	if selected == null or not _buttons.has(selected):
 		selected = _first_craftable()
+	if _tabs != null:
+		_tabs.visible = player.current_station != null and player.current_station.station == RecipeDefinition.Station.WEAPONS_BENCH
+		show_gunsmith(false)
 	_refresh()
 
 
@@ -127,10 +154,15 @@ func _bind() -> void:
 	player.craft_refused.connect(_on_refused)
 	player.crafting_finished.connect(func(_r: RecipeDefinition) -> void: _refresh())
 	player.crafting_cancelled.connect(func(_r: RecipeDefinition) -> void: _refresh())
+	player.attachment_refused.connect(func(reason: String) -> void:
+		if gunsmith != null and gunsmith.visible:
+			gunsmith.show_message(reason))
 	if player.inventory != null:
 		player.inventory.contents_changed.connect(func(_s: PackedInt32Array) -> void:
 			if visible:
-				_refresh())
+				_refresh()
+				if gunsmith != null and gunsmith.visible:
+					gunsmith.refresh())
 
 
 func _unbind() -> void:

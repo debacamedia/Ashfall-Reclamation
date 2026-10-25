@@ -12,6 +12,10 @@
 [ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="9_bub3v"]
 [ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="10_rkwqf"]
 [ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="11_qe5jl"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="12_krrew"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="13_ian25"]
+[ext_resource type="Resource" path="res://resources/items/suppressor.tres" id="14_onqjp"]
+[ext_resource type="Resource" path="res://resources/items/foregrip.tres" id="15_tlqu8"]
 
 [sub_resource type="Resource" id="Resource_tlqu8"]
 script = ExtResource("1_4tuds")
@@ -75,8 +79,27 @@ weight = 2.0
 min_quantity = 3
 max_quantity = 6
 
+[sub_resource type="Resource" id="Resource_ian25"]
+script = ExtResource("1_4tuds")
+item = ExtResource("12_krrew")
+
+[sub_resource type="Resource" id="Resource_onqjp"]
+script = ExtResource("1_4tuds")
+item = ExtResource("13_ian25")
+weight = 0.4
+
+[sub_resource type="Resource" id="Resource_eyd1s"]
+script = ExtResource("1_4tuds")
+item = ExtResource("14_onqjp")
+weight = 0.3
+
+[sub_resource type="Resource" id="Resource_74he3"]
+script = ExtResource("1_4tuds")
+item = ExtResource("15_tlqu8")
+weight = 0.4
+
 [resource]
 script = ExtResource("8_onqjp")
-entries = Array[ExtResource("1_4tuds")]([SubResource("Resource_tlqu8"), SubResource("Resource_ojl0o"), SubResource("Resource_f1gqb"), SubResource("Resource_rjvsb"), SubResource("Resource_tnrqw"), SubResource("Resource_l3km2"), SubResource("Resource_bub3v"), SubResource("Resource_rkwqf"), SubResource("Resource_qe5jl"), SubResource("Resource_krrew")])
+entries = Array[ExtResource("1_4tuds")]([SubResource("Resource_tlqu8"), SubResource("Resource_ojl0o"), SubResource("Resource_f1gqb"), SubResource("Resource_rjvsb"), SubResource("Resource_tnrqw"), SubResource("Resource_l3km2"), SubResource("Resource_bub3v"), SubResource("Resource_rkwqf"), SubResource("Resource_qe5jl"), SubResource("Resource_krrew"), SubResource("Resource_ian25"), SubResource("Resource_onqjp"), SubResource("Resource_eyd1s"), SubResource("Resource_74he3")])
 min_rolls = 3
 max_rolls = 5

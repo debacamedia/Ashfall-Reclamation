@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_g10ub"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_c2eag"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="3_ofgmy"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pipe_pistol_item.tres" id="4_ygb1k"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_2ok3g"]
+
+[resource]
+script = ExtResource("5_2ok3g")
+id = &"craft_pipe_pistol"
+category = 4
+inputs = Dictionary[ExtResource("1_g10ub"), int]({
+ExtResource("2_c2eag"): 4,
+ExtResource("3_ofgmy"): 1
+})
+output = ExtResource("4_ygb1k")
+craft_time = 6.0

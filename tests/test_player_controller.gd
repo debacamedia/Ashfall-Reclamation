@@ -8,7 +8,7 @@ const DT := 1.0 / 60.0
 
 func _spawn(at := Vector3(0, 0.05, 0)) -> PlayerController:
 	make_static_box(Vector3(60, 1, 60), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
-	var player := PLAYER_SCENE.instantiate() as PlayerController
+	var player := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	player.controlled_locally = false
 	player.head_bob_enabled = false
 	player.position = at

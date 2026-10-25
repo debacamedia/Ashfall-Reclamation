@@ -140,33 +140,44 @@ material_override = SubResource("StandardMaterial3D_ga7bm")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_lhkx6")
 
-[node name="RearSightL" type="MeshInstance3D" parent="Model" unique_id=326982171]
+[node name="SightAnchor" type="Marker3D" parent="Model" unique_id=1690478168]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.052, 0.03)
+
+[node name="IronSights" type="Node3D" parent="Model" unique_id=586798109]
+unique_name_in_owner = true
+
+[node name="RearSightL" type="MeshInstance3D" parent="Model/IronSights" unique_id=326982171]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007, 0.046, 0.03)
 material_override = ExtResource("3_c5u5x")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_0bp0l")
 
-[node name="RearSightR" type="MeshInstance3D" parent="Model" unique_id=1269453901]
+[node name="RearSightR" type="MeshInstance3D" parent="Model/IronSights" unique_id=1269453901]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.007, 0.046, 0.03)
 material_override = ExtResource("3_c5u5x")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_4adec")
 
-[node name="FrontSight" type="MeshInstance3D" parent="Model" unique_id=325283631]
+[node name="FrontSight" type="MeshInstance3D" parent="Model/IronSights" unique_id=325283631]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.046, -0.14)
 material_override = ExtResource("3_c5u5x")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_23fli")
 
-[node name="FrontDot" type="MeshInstance3D" parent="Model" unique_id=705646769]
+[node name="FrontDot" type="MeshInstance3D" parent="Model/IronSights" unique_id=705646769]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0505, -0.1415)
 material_override = SubResource("StandardMaterial3D_i0lb5")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_rgd36")
 
-[node name="SightAnchor" type="Marker3D" parent="Model" unique_id=1690478168]
+[node name="OpticMount" type="Marker3D" parent="Model" unique_id=711446593]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.052, 0.03)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0395, -0.06)
+
+[node name="MuzzleMount" type="Marker3D" parent="Model" unique_id=2116941964]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.155)
 
 [node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=994840292]
 unique_name_in_owner = true

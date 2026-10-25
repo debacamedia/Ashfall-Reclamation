@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/ui/inventory_screen.gd" id="4_8qguk"]
 [ext_resource type="Script" path="res://scripts/ui/container_screen.gd" id="5_136eg"]
 [ext_resource type="Script" path="res://scripts/ui/crafting_screen.gd" id="7_gss2c"]
+[ext_resource type="Script" path="res://scripts/ui/gunsmith_panel.gd" id="8_h022r"]
 
 [sub_resource type="Gradient" id="Gradient_8qguk"]
 offsets = PackedFloat32Array(0, 0.55, 1)
@@ -810,109 +811,132 @@ theme_override_colors/font_color = Color(0.95, 0.8, 0.45, 1)
 theme_override_font_sizes/font_size = 26
 text = "CRAFTING"
 
-[node name="Body" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout" unique_id=2086789023]
+[node name="CraftTabs" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout" unique_id=1795735676]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CraftTab" type="Button" parent="Root/CraftingScreen/Window/Layout/CraftTabs" unique_id=193078543]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 32)
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+text = "Crafting"
+
+[node name="ModifyTab" type="Button" parent="Root/CraftingScreen/Window/Layout/CraftTabs" unique_id=1262322325]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 32)
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+text = "Modify Weapons"
+
+[node name="CraftBody" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout" unique_id=2086789023]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="RecipeScroll" type="ScrollContainer" parent="Root/CraftingScreen/Window/Layout/Body" unique_id=962141844]
+[node name="RecipeScroll" type="ScrollContainer" parent="Root/CraftingScreen/Window/Layout/CraftBody" unique_id=962141844]
 custom_minimum_size = Vector2(290, 0)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="RecipeList" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/Body/RecipeScroll" unique_id=1539741782]
+[node name="RecipeList" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/CraftBody/RecipeScroll" unique_id=1539741782]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="Detail" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/Body" unique_id=1754436829]
+[node name="Detail" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/CraftBody" unique_id=1754436829]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="Top" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=425500579]
+[node name="Top" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=425500579]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="RecipeIcon" type="TextureRect" parent="Root/CraftingScreen/Window/Layout/Body/Detail/Top" unique_id=477617855]
+[node name="RecipeIcon" type="TextureRect" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail/Top" unique_id=477617855]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NameBox" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/Body/Detail/Top" unique_id=1675590019]
+[node name="NameBox" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail/Top" unique_id=1675590019]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RecipeName" type="Label" parent="Root/CraftingScreen/Window/Layout/Body/Detail/Top/NameBox" unique_id=409497759]
+[node name="RecipeName" type="Label" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail/Top/NameBox" unique_id=409497759]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.85, 0.6, 1)
 theme_override_font_sizes/font_size = 22
 
-[node name="RecipeDescription" type="Label" parent="Root/CraftingScreen/Window/Layout/Body/Detail/Top/NameBox" unique_id=127803061]
+[node name="RecipeDescription" type="Label" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail/Top/NameBox" unique_id=127803061]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.76, 0.7, 1)
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 2
 
-[node name="NeedsTitle" type="Label" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=98046986]
+[node name="NeedsTitle" type="Label" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=98046986]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.68, 0.6, 1)
 theme_override_font_sizes/font_size = 13
 text = "NEEDS"
 
-[node name="RecipeIngredients" type="Label" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=115977877]
+[node name="RecipeIngredients" type="Label" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=115977877]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.9, 0.84, 1)
 theme_override_font_sizes/font_size = 17
 
-[node name="RecipeInfo" type="Label" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=854793855]
+[node name="RecipeInfo" type="Label" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=854793855]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.68, 0.6, 1)
 theme_override_font_sizes/font_size = 14
 
-[node name="RecipeStatus" type="Label" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=1802984506]
+[node name="RecipeStatus" type="Label" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=1802984506]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.5, 0.4, 1)
 theme_override_font_sizes/font_size = 16
 
-[node name="Spacer" type="Control" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=797790440]
+[node name="Spacer" type="Control" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=797790440]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Buttons" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=1321790621]
+[node name="Buttons" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=1321790621]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="CraftButton" type="Button" parent="Root/CraftingScreen/Window/Layout/Body/Detail/Buttons" unique_id=1325038313]
+[node name="CraftButton" type="Button" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail/Buttons" unique_id=1325038313]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 38)
 layout_mode = 2
 focus_mode = 0
 text = "Craft"
 
-[node name="Craft5Button" type="Button" parent="Root/CraftingScreen/Window/Layout/Body/Detail/Buttons" unique_id=1534810532]
+[node name="Craft5Button" type="Button" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail/Buttons" unique_id=1534810532]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 38)
 layout_mode = 2
 focus_mode = 0
 text = "Craft ×5"
 
-[node name="CancelCraftButton" type="Button" parent="Root/CraftingScreen/Window/Layout/Body/Detail/Buttons" unique_id=1341776719]
+[node name="CancelCraftButton" type="Button" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail/Buttons" unique_id=1341776719]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 38)
 layout_mode = 2
 focus_mode = 0
 text = "Cancel"
 
-[node name="CraftProgress" type="ProgressBar" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=1860572646]
+[node name="CraftProgress" type="ProgressBar" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=1860572646]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 12)
@@ -921,17 +945,82 @@ theme_override_styles/background = SubResource("StyleBoxFlat_h022r")
 theme_override_styles/fill = SubResource("StyleBoxFlat_4jqwt")
 show_percentage = false
 
-[node name="CraftQueue" type="Label" parent="Root/CraftingScreen/Window/Layout/Body/Detail" unique_id=1090815228]
+[node name="CraftQueue" type="Label" parent="Root/CraftingScreen/Window/Layout/CraftBody/Detail" unique_id=1090815228]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.95, 0.75, 1)
 theme_override_font_sizes/font_size = 14
+
+[node name="GunsmithPanel" type="HBoxContainer" parent="Root/CraftingScreen/Window/Layout" unique_id=1336105859]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+script = ExtResource("8_h022r")
+
+[node name="GunList" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/GunsmithPanel" unique_id=1001685322]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(270, 0)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="GunDetail" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/GunsmithPanel" unique_id=1659956044]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="GunTitle" type="Label" parent="Root/CraftingScreen/Window/Layout/GunsmithPanel/GunDetail" unique_id=136468457]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.6, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="GunStats" type="Label" parent="Root/CraftingScreen/Window/Layout/GunsmithPanel/GunDetail" unique_id=688886096]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.73, 0.66, 1)
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 2
+
+[node name="AttachTitle" type="Label" parent="Root/CraftingScreen/Window/Layout/GunsmithPanel/GunDetail" unique_id=709746880]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.68, 0.6, 1)
+theme_override_font_sizes/font_size = 13
+text = "ATTACHMENTS"
+
+[node name="AttachmentSlots" type="VBoxContainer" parent="Root/CraftingScreen/Window/Layout/GunsmithPanel/GunDetail" unique_id=1575799001]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GunStatus" type="Label" parent="Root/CraftingScreen/Window/Layout/GunsmithPanel/GunDetail" unique_id=1337489495]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 16
 
 [node name="Footer" type="Label" parent="Root/CraftingScreen/Window/Layout" unique_id=1980913901]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.53, 0.48, 1)
 theme_override_font_sizes/font_size = 13
 text = "K / Tab / Esc to close  ·  hand crafting keeps going when closed"
+
+[node name="HintLabel" type="Label" parent="Root" unique_id=411402974]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -500.0
+offset_top = 70.0
+offset_right = 500.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.95, 0.85, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
 
 [node name="UISound" type="AudioStreamPlayer" parent="." unique_id=1091512968]
 unique_name_in_owner = true

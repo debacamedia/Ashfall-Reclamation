@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_ahr8w"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_2ejpd"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_78x8h"]
+[ext_resource type="Resource" path="res://resources/items/foregrip.tres" id="4_nmorj"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_em0re"]
+
+[resource]
+script = ExtResource("5_em0re")
+id = &"foregrip"
+category = 5
+station = 2
+inputs = Dictionary[ExtResource("1_ahr8w"), int]({
+ExtResource("2_2ejpd"): 1,
+ExtResource("3_78x8h"): 1
+})
+output = ExtResource("4_nmorj")
+craft_time = 3.0

@@ -38,7 +38,7 @@ func _clean() -> void:
 
 func _player(at := Vector3(0, 0.05, 0)) -> PlayerController:
 	make_static_box(Vector3(40, 1, 40), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
-	var p := PLAYER_SCENE.instantiate() as PlayerController
+	var p := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p.name = "Player"
 	p.controlled_locally = false
 	p.head_bob_enabled = false

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_y578s"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="2_dfa0p"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="3_b3pwd"]
+[ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="4_hoa8x"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="5_vn6e7"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol_item.tres" id="6_14hob"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="7_12yy7"]
+
+[resource]
+script = ExtResource("7_12yy7")
+id = &"craft_pistol"
+category = 4
+station = 2
+inputs = Dictionary[ExtResource("1_y578s"), int]({
+ExtResource("2_dfa0p"): 1,
+ExtResource("3_b3pwd"): 1,
+ExtResource("4_hoa8x"): 1,
+ExtResource("5_vn6e7"): 1
+})
+output = ExtResource("6_14hob")
+craft_time = 8.0

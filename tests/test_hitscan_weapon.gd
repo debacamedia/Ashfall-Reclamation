@@ -105,7 +105,7 @@ func test_reload_timing_and_ammo_transfer() -> void:
 	await _hold(w, 10, false)
 	check(not w.is_reloading, "reload finished")
 	check(w.ammo_in_magazine == 30, "magazine full")
-	check(w.reserve_ammo == 120 - fired, "reserve reduced by the rounds loaded")
+	check(w.reserve_ammo == w.definition.starting_reserve - fired, "reserve reduced by the rounds loaded")
 
 
 func test_cannot_fire_while_reloading() -> void:

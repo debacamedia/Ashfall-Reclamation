@@ -72,12 +72,6 @@ size = Vector3(0.044, 0.085, 0.02)
 [sub_resource type="BoxMesh" id="BoxMesh_dvdvk"]
 size = Vector3(0.006, 0.025, 0.05)
 
-[sub_resource type="BoxMesh" id="BoxMesh_b7orl"]
-size = Vector3(0.005, 0.01, 0.005)
-
-[sub_resource type="BoxMesh" id="BoxMesh_gbrlp"]
-size = Vector3(0.005, 0.01, 0.005)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4xu40"]
 albedo_color = Color(0.9411765, 0.9019608, 0.7529412, 1)
 roughness = 0.7
@@ -85,6 +79,12 @@ roughness = 0.7
 [sub_resource type="SphereMesh" id="SphereMesh_g8ty6"]
 radius = 0.0035
 height = 0.007
+
+[sub_resource type="BoxMesh" id="BoxMesh_b7orl"]
+size = Vector3(0.005, 0.01, 0.005)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gbrlp"]
+size = Vector3(0.005, 0.01, 0.005)
 
 [node name="Shotgun" type="Node3D" unique_id=1313030349]
 script = ExtResource("1_844j2")
@@ -174,18 +174,6 @@ material_override = ExtResource("3_8wxhb")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_dvdvk")
 
-[node name="RearNotchL" type="MeshInstance3D" parent="Model" unique_id=1744647430]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.006, 0.043, -0.08)
-material_override = ExtResource("3_8wxhb")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_b7orl")
-
-[node name="RearNotchR" type="MeshInstance3D" parent="Model" unique_id=631765586]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.006, 0.043, -0.08)
-material_override = ExtResource("3_8wxhb")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_gbrlp")
-
 [node name="Bead" type="MeshInstance3D" parent="Model" unique_id=1024964562]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.048, -0.6)
 material_override = SubResource("StandardMaterial3D_4xu40")
@@ -195,6 +183,29 @@ mesh = SubResource("SphereMesh_g8ty6")
 [node name="SightAnchor" type="Marker3D" parent="Model" unique_id=526140785]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.048, -0.08)
+
+[node name="IronSights" type="Node3D" parent="Model" unique_id=1097418218]
+unique_name_in_owner = true
+
+[node name="RearNotchL" type="MeshInstance3D" parent="Model/IronSights" unique_id=1744647430]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.006, 0.043, -0.08)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_b7orl")
+
+[node name="RearNotchR" type="MeshInstance3D" parent="Model/IronSights" unique_id=631765586]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.006, 0.043, -0.08)
+material_override = ExtResource("3_8wxhb")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_gbrlp")
+
+[node name="OpticMount" type="Marker3D" parent="Model" unique_id=1863625304]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0425, -0.02)
+
+[node name="UnderMount" type="Marker3D" parent="Model" unique_id=1923762130]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.014, -0.3)
 
 [node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=994840292]
 unique_name_in_owner = true

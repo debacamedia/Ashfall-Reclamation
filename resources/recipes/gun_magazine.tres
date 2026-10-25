@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_qb36q"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="2_v0p8q"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_1wqg8"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="4_phuwr"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_0p0i6"]
+
+[resource]
+script = ExtResource("5_0p0i6")
+id = &"gun_magazine"
+category = 1
+station = 2
+inputs = Dictionary[ExtResource("1_qb36q"), int]({
+ExtResource("2_v0p8q"): 1,
+ExtResource("3_1wqg8"): 1
+})
+output = ExtResource("4_phuwr")
+craft_time = 3.0

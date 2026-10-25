@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/weapon_definition.gd" id="1_goy4m"]
+
+[resource]
+script = ExtResource("1_goy4m")
+id = &"machete"
+display_name = "Machete"
+short_name = "MACHETE"
+slot = 5
+tier = 0
+scene_path = "res://scenes/weapons/machete.tscn"
+damage = 40.0
+falloff_start = 10.0
+falloff_end = 20.0
+max_range = 1.9
+melee = true
+melee_arc = 70.0
+melee_rays = 9
+fire_mode = 0
+rounds_per_minute = 85.0
+magazine_size = 0
+starting_reserve = 0
+max_reserve = 0
+ammo_type = &""
+draw_time = 0.25
+noise_radius = 6.0
+base_spread = 0.0
+spread_per_shot = 0.0
+max_bloom = 0.0
+recoil_pitch = 0.0
+recoil_yaw = 0.0

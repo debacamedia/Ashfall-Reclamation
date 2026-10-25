@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_1wphp"]
+[ext_resource type="Texture2D" path="res://assets/icons/trigger_group.png" id="1_ngwti"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_ngwti"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/trigger_group.tscn" id="3_7xfl1"]
+
+[resource]
+script = ExtResource("2_ngwti")
+id = &"trigger_group"
+display_name = "Trigger Group"
+description = "Trigger, hammer and springs. Makes a gun fire."
+category = 6
+icon = ExtResource("1_ngwti")
+max_stack = 5
+weight = 0.2
+base_value = 15
+world_model = ExtResource("3_7xfl1")
+pickup_sound = ExtResource("1_1wphp")

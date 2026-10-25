@@ -15,15 +15,15 @@
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="13_myrg7"]
 [ext_resource type="AudioStream" path="res://assets/audio/aim_in.wav" id="13_uf5tr"]
 [ext_resource type="AudioStream" path="res://assets/audio/weapon_draw.wav" id="13_yj68g"]
-[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="14_kvlxm"]
 [ext_resource type="Resource" path="res://resources/items/medkit.tres" id="15_uf5tr"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="16_yj68g"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="17_cnsyf"]
 [ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="17_ioxgp"]
 [ext_resource type="Script" path="res://scripts/combat/weapon_slots.gd" id="19_cnsyf"]
 [ext_resource type="Script" path="res://scripts/combat/weapon_definition.gd" id="20_007i1"]
-[ext_resource type="Resource" path="res://resources/items/weapons/service_rifle.tres" id="21_6cv16"]
-[ext_resource type="Resource" path="res://resources/items/weapons/pistol.tres" id="22_j4nxn"]
+[ext_resource type="Resource" path="res://resources/items/weapons/machete.tres" id="22_007i1"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yj68g"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6cv16"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.8
@@ -41,7 +41,7 @@ script = ExtResource("1_dovo2")
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=894990083]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_yj68g")
+shape = SubResource("CapsuleShape3D_6cv16")
 
 [node name="Head" type="Node3D" parent="." unique_id=801003417]
 unique_name_in_owner = true
@@ -135,12 +135,13 @@ bus = &"SFX"
 unique_name_in_owner = true
 script = ExtResource("12_fcs02")
 starting_items = Dictionary[ExtResource("13_myrg7"), int]({
-ExtResource("14_kvlxm"): 120,
-ExtResource("17_ioxgp"): 36,
+ExtResource("16_yj68g"): 4,
+ExtResource("17_cnsyf"): 2,
+ExtResource("17_ioxgp"): 12,
 ExtResource("15_uf5tr"): 1
 })
 
 [node name="WeaponSlots" type="Node" parent="." unique_id=1673740436]
 unique_name_in_owner = true
 script = ExtResource("19_cnsyf")
-starting_weapons = Array[ExtResource("20_007i1")]([ExtResource("21_6cv16"), ExtResource("22_j4nxn")])
+starting_weapons = Array[ExtResource("20_007i1")]([ExtResource("22_007i1")])

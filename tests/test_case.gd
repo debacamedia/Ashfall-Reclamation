@@ -85,3 +85,22 @@ func wait_for_navigation(map: RID) -> void:
 			var probe := NavigationServer3D.map_get_closest_point(map, Vector3.ZERO)
 			if NavigationServer3D.map_get_path(map, probe, probe + Vector3(1, 0, 0), true).size() > 0:
 				return
+
+
+## The Increment 10 starting kit (service rifle + pistol, 120 rifle rounds,
+## 36 pistol rounds, one medkit). Older suites were written against it; call
+## on a freshly instantiated player BEFORE adding it to the tree. The real
+## start (Increment 11) is a machete plus scrap for a pipe pistol.
+func classic_kit(p: PlayerController) -> PlayerController:
+	var guns: Array[WeaponDefinition] = [
+		load("res://resources/items/weapons/service_rifle.tres"),
+		load("res://resources/items/weapons/pistol.tres"),
+	]
+	p.get_node("WeaponSlots").set("starting_weapons", guns)
+	var kit: Dictionary[ItemDefinition, int] = {
+		ItemDatabase.get_item(&"rifle_ammo"): 120,
+		ItemDatabase.get_item(&"pistol_ammo"): 36,
+		ItemDatabase.get_item(&"medkit"): 1,
+	}
+	p.get_node("Inventory").set("starting_items", kit)
+	return p

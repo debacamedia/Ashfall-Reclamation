@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_p4hcr"]
+[ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="2_l08oa"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6v0kr"]
+size = Vector3(0.05, 0.07, 0.28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_oiooy"]
+size = Vector3(0.055, 0.06, 0.2)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7m567"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 0.2
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_q5ydi"]
+size = Vector3(0.035, 0.12, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2nrbj"]
+size = Vector3(0.04, 0.07, 0.2)
+
+[node name="ServiceRifleWorld" type="Node3D" unique_id=1990354265]
+
+[node name="Gun" type="Node3D" parent="." unique_id=1780142380]
+transform = Transform3D(-4.6548156e-08, -1.0648977, 0.74564934, 1.3, -5.6824803e-08, 0, 3.259337e-08, 0.74564934, 1.0648977, 0, 0.039, 0)
+
+[node name="Receiver" type="MeshInstance3D" parent="Gun" unique_id=1825319232]
+material_override = ExtResource("1_p4hcr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_6v0kr")
+
+[node name="Handguard" type="MeshInstance3D" parent="Gun" unique_id=38887962]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.003, -0.23)
+material_override = ExtResource("2_l08oa")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_oiooy")
+
+[node name="Barrel" type="MeshInstance3D" parent="Gun" unique_id=642278361]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.014, -0.42)
+material_override = ExtResource("1_p4hcr")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_7m567")
+
+[node name="Magazine" type="MeshInstance3D" parent="Gun" unique_id=598761037]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.085, -0.05)
+material_override = ExtResource("1_p4hcr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_q5ydi")
+
+[node name="Stock" type="MeshInstance3D" parent="Gun" unique_id=1158835196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0.24)
+material_override = ExtResource("2_l08oa")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_2nrbj")

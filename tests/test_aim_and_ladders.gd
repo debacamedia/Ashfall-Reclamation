@@ -9,7 +9,7 @@ const DT := 1.0 / 60.0
 
 
 func _player(at := Vector3(0, 0.05, 0), yaw_deg := 0.0) -> PlayerController:
-	var p := PLAYER_SCENE.instantiate() as PlayerController
+	var p := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p.controlled_locally = false
 	p.head_bob_enabled = false
 	p.position = at
@@ -133,17 +133,34 @@ func test_cannot_aim_while_reloading_or_healing() -> void:
 	check(p.aim_amount == 0.0, "no aiming while using a medkit")
 
 
+func _settle() -> void:
+	for i in 90:  # let the visual pose settle (it eases in _process)
+		await get_tree().process_frame
+		await get_tree().physics_frame
+
+
 func test_sight_lines_up_with_screen_centre() -> void:
 	make_static_box(Vector3(20, 1, 20), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
 	var p := _player()
 	await wait_physics(3)
+	# Iron sights (no optic fitted): rear notch and front post on the centre line
 	await _run(p, _frame(Vector2.ZERO, true), 15)
-	for i in 90:  # let the visual pose settle (it eases in _process)
-		await get_tree().process_frame
-		await get_tree().physics_frame
+	await _settle()
 	var to_cam := p.camera.global_transform.affine_inverse()
-	var dot := to_cam * (p.weapon.get_node("Model/RedDot") as Node3D).global_position
-	var anchor := to_cam * (p.weapon.get_node("%SightAnchor") as Node3D).global_position
+	var rear := to_cam * (p.weapon.get_node("%SightAnchor") as Node3D).global_position
+	var post := to_cam * (p.weapon.get_node("%IronSights/FrontPost") as Node3D).global_position
+	check(absf(rear.x) < 0.0015 and absf(rear.y) < 0.0015, "irons: rear sight on the centre line (%s)" % rear)
+	check(absf(post.x) < 0.002 and absf(post.y) < 0.012, "irons: front post on the centre line (%s)" % post)
+	# Fit a red dot: the irons fold away and the dot sits on the centre line
+	await _run(p, _frame(), 15)
+	p.weapon.fit_attachment(ItemDatabase.get_attachment(&"red_dot"))
+	check(not (p.weapon.get_node("%IronSights") as Node3D).visible, "irons hidden under the optic")
+	await _run(p, _frame(Vector2.ZERO, true), 15)
+	await _settle()
+	to_cam = p.camera.global_transform.affine_inverse()
+	var optic := p.weapon.get_node("%OpticMount").get_child(0)
+	var dot := to_cam * (optic.get_node("Dot") as Node3D).global_position
+	var anchor := to_cam * (optic.get_node("Sight") as Node3D).global_position
 	check(absf(dot.x) < 0.0015 and absf(dot.y) < 0.0015, "red dot on the centre line (%s)" % dot)
 	check(absf(anchor.x) < 0.0015 and absf(anchor.y) < 0.0015, "rear of sight on the centre line (%s)" % anchor)
 	check_near(-anchor.z, p.weapon.definition.ads_eye_distance, 0.005, "sight %.3f m from the eye" % -anchor.z)
@@ -151,10 +168,8 @@ func test_sight_lines_up_with_screen_centre() -> void:
 	check(barrel.dot(Vector3.FORWARD) > 0.9995, "barrel parallel to the view")
 	# Hip pose is different (sights are not centred)
 	await _run(p, _frame(), 15)
-	for i in 60:
-		await get_tree().process_frame
-		await get_tree().physics_frame
-	var hip := to_cam * (p.weapon.get_node("Model/RedDot") as Node3D).global_position
+	await _settle()
+	var hip := to_cam * (optic.get_node("Dot") as Node3D).global_position
 	check(absf(hip.x) > 0.03, "back to the hip afterwards")
 
 

@@ -70,35 +70,14 @@ size = Vector3(0.05, 0.012, 0.012)
 radius = 0.01
 height = 0.02
 
-[sub_resource type="BoxMesh" id="BoxMesh_wrrmj"]
-size = Vector3(0.02, 0.03, 0.02)
+[sub_resource type="BoxMesh" id="BoxMesh_1u2kv"]
+size = Vector3(0.005, 0.014, 0.005)
 
-[sub_resource type="BoxMesh" id="BoxMesh_8vdfu"]
-size = Vector3(0.02, 0.03, 0.02)
+[sub_resource type="BoxMesh" id="BoxMesh_31w3p"]
+size = Vector3(0.005, 0.014, 0.005)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_rdkvh"]
-top_radius = 0.016
-bottom_radius = 0.016
-height = 0.3
-radial_segments = 12
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_tuj2t"]
-top_radius = 0.022
-bottom_radius = 0.022
-height = 0.07
-radial_segments = 12
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_0ehui"]
-top_radius = 0.019
-bottom_radius = 0.019
-height = 0.05
-radial_segments = 12
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_axkf5"]
-top_radius = 0.009
-bottom_radius = 0.009
-height = 0.03
-radial_segments = 12
+[sub_resource type="BoxMesh" id="BoxMesh_tf2q4"]
+size = Vector3(0.004, 0.022, 0.004)
 
 [node name="ScopedRifle" type="Node3D" unique_id=1313030349]
 script = ExtResource("1_1u2kv")
@@ -187,45 +166,38 @@ material_override = ExtResource("3_tf2q4")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_te8vo")
 
-[node name="ScopeMountF" type="MeshInstance3D" parent="Model" unique_id=1141534219]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042, -0.08)
-material_override = ExtResource("3_tf2q4")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_wrrmj")
-
-[node name="ScopeMountR" type="MeshInstance3D" parent="Model" unique_id=394791716]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042, 0.06)
-material_override = ExtResource("3_tf2q4")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_8vdfu")
-
-[node name="ScopeTube" type="MeshInstance3D" parent="Model" unique_id=1785419750]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.07, -0.01)
-material_override = ExtResource("3_tf2q4")
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_rdkvh")
-
-[node name="ScopeObjective" type="MeshInstance3D" parent="Model" unique_id=1429270497]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.07, -0.19)
-material_override = ExtResource("3_tf2q4")
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_tuj2t")
-
-[node name="ScopeOcular" type="MeshInstance3D" parent="Model" unique_id=536544696]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.07, 0.155)
-material_override = ExtResource("3_tf2q4")
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_0ehui")
-
-[node name="ScopeTurret" type="MeshInstance3D" parent="Model" unique_id=14916998]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.092, -0.01)
-material_override = ExtResource("3_tf2q4")
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_axkf5")
-
-[node name="SightAnchor" type="Marker3D" parent="Model" unique_id=1156106462]
+[node name="IronSights" type="Node3D" parent="Model" unique_id=650213975]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0.18)
+
+[node name="RearL" type="MeshInstance3D" parent="Model/IronSights" unique_id=2028675986]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.006, 0.035, 0.1)
+material_override = ExtResource("3_tf2q4")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_1u2kv")
+
+[node name="RearR" type="MeshInstance3D" parent="Model/IronSights" unique_id=942876344]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.006, 0.035, 0.1)
+material_override = ExtResource("3_tf2q4")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_31w3p")
+
+[node name="FrontPost" type="MeshInstance3D" parent="Model/IronSights" unique_id=257860652]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.031, -0.72)
+material_override = ExtResource("3_tf2q4")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_tf2q4")
+
+[node name="SightAnchor" type="Marker3D" parent="Model" unique_id=32672574]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042, 0.1)
+
+[node name="OpticMount" type="Marker3D" parent="Model" unique_id=325692754]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -0.01)
+
+[node name="MuzzleMount" type="Marker3D" parent="Model" unique_id=765334652]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, -0.74)
 
 [node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=994840292]
 unique_name_in_owner = true

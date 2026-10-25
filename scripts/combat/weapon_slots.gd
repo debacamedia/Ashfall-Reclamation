@@ -1,7 +1,8 @@
 class_name WeaponSlots
 extends Node
-## The player's loadout: up to four guns, one per slot (1 rifle, 2 sidearm,
-## 3 shotgun, 4 marksman), switched with the number keys or the mouse wheel.
+## The player's loadout: up to five weapons, one per slot (1 rifle, 2 sidearm,
+## 3 shotgun, 4 marksman, 5 melee), switched with the number keys or the
+## mouse wheel.
 ##
 ## Owned weapons are HitscanWeapon instances under the camera's WeaponMount;
 ## only the equipped one is visible and ticked. Switching takes the old gun
@@ -18,7 +19,7 @@ signal switch_started(to_slot: int)
 ## The new weapon is up and usable.
 signal weapon_equipped(weapon: HitscanWeapon)
 
-const SLOT_COUNT := 4
+const SLOT_COUNT := 5
 
 ## Guns you start with (and get back on a new game).
 @export var starting_weapons: Array[WeaponDefinition] = []
@@ -26,7 +27,7 @@ const SLOT_COUNT := 4
 @export var holster_time := 0.2
 
 ## Slot number (1-4) → HitscanWeapon, or null.
-var weapons: Array[HitscanWeapon] = [null, null, null, null, null]
+var weapons: Array[HitscanWeapon] = [null, null, null, null, null, null]
 ## Slot currently in hand (0 = none).
 var current_slot := 0
 ## Slot being switched to (0 = not switching).
@@ -64,7 +65,7 @@ func has_weapon(id: StringName) -> bool:
 
 func find_slot(id: StringName) -> int:
 	for s in range(1, SLOT_COUNT + 1):
-		if weapons[s] != null and weapons[s].definition.id == id:
+		if weapons[s] != null and weapons[s].base_definition.id == id:
 			return s
 	return 0
 
@@ -93,7 +94,7 @@ func is_switching() -> bool:
 func give_weapon(def: WeaponDefinition) -> bool:
 	if def == null or def.scene_path == "" or def.slot < 1 or def.slot > SLOT_COUNT:
 		return false
-	if weapons[def.slot] != null and weapons[def.slot].definition == def:
+	if weapons[def.slot] != null and weapons[def.slot].base_definition.id == def.id:
 		return false
 	_add(def)
 	if current_slot == 0:
@@ -183,7 +184,9 @@ func _equip_now(slot: int) -> void:
 
 
 func _add(def: WeaponDefinition) -> HitscanWeapon:
+	var was_in_hand := def.slot == current_slot and weapons[def.slot] != null
 	if weapons[def.slot] != null:
+		# An upgrade replaces the gun in that slot (pipe pistol → pistol)
 		weapons[def.slot].queue_free()
 		weapons[def.slot] = null
 	var w := def.instantiate_weapon()
@@ -195,6 +198,8 @@ func _add(def: WeaponDefinition) -> HitscanWeapon:
 		w.set_ammo_source(_player.inventory)
 	weapons[def.slot] = w
 	weapon_added.emit(w)
+	if was_in_hand:
+		_equip_now(def.slot)
 	return w
 
 
@@ -204,7 +209,10 @@ func _add(def: WeaponDefinition) -> HitscanWeapon:
 func save_state() -> Dictionary:
 	var list := []
 	for w in owned():
-		list.append({"id": String(w.definition.id), "magazine": w.ammo_in_magazine})
+		var atts := []
+		for slot in w.attachments:
+			atts.append(String((w.attachments[slot] as AttachmentDefinition).id))
+		list.append({"id": String(w.base_definition.id), "magazine": w.ammo_in_magazine, "attachments": atts})
 	return {"weapons": list, "equipped": current_slot}
 
 
@@ -219,7 +227,7 @@ func load_state(data: Dictionary) -> void:
 		var def := ItemDatabase.get_weapon(StringName(str(e.get("id", ""))))
 		if def == null or def.scene_path == "":
 			continue
-		wanted[def.slot] = [def, e.get("magazine")]
+		wanted[def.slot] = [def, e.get("magazine"), e.get("attachments", [])]
 	if wanted.is_empty():
 		return  # never leave the player unarmed because of a bad save
 	for s in range(1, SLOT_COUNT + 1):
@@ -228,10 +236,19 @@ func load_state(data: Dictionary) -> void:
 			weapons[s] = null
 	for s in wanted:
 		var def: WeaponDefinition = wanted[s][0]
-		var w := weapons[s] if weapons[s] != null and weapons[s].definition == def else _add(def)
+		var w := weapons[s] if weapons[s] != null and weapons[s].base_definition.id == def.id else _add(def)
+		# Attachments first: they can change the magazine size
+		for slot in w.attachments.keys():
+			w.remove_attachment(slot)
+		var atts: Variant = wanted[s][2]
+		if atts is Array:
+			for att_id in atts:
+				var att := ItemDatabase.get_attachment(StringName(str(att_id)))
+				if att != null and att.fits(def.id):
+					w.fit_attachment(att)
 		var mag: Variant = wanted[s][1]
 		if mag is float or mag is int:
 			w.cancel_reload()
-			w.ammo_in_magazine = clampi(int(mag), 0, def.magazine_size)
+			w.ammo_in_magazine = clampi(int(mag), 0, w.definition.magazine_size)
 	var equip := int(data.get("equipped", 0)) if (data.get("equipped") is float or data.get("equipped") is int) else 0
 	equip_immediately(equip if get_weapon(equip) != null else first_owned_slot())

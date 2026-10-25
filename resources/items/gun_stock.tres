@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/gun_stock.png" id="1_t841n"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_todff"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_t841n"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/gun_stock.tscn" id="3_k006e"]
+
+[resource]
+script = ExtResource("2_t841n")
+id = &"gun_stock"
+display_name = "Gun Stock"
+description = "A shaped wooden stock. Steadier shooting for long guns."
+category = 6
+icon = ExtResource("1_t841n")
+max_stack = 5
+weight = 0.7
+base_value = 8
+world_model = ExtResource("3_k006e")
+pickup_sound = ExtResource("1_todff")

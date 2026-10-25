@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AttachmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/attachment_definition.gd" id="1_kf8le"]
+
+[resource]
+script = ExtResource("1_kf8le")
+id = &"extended_mag"
+display_name = "Extended Magazine"
+slot = 2
+compatible = Array[StringName]([&"pistol", &"service_rifle"])
+ads_time_multiplier = 1.05
+magazine_bonus = 0.5
+reload_time_multiplier = 1.1

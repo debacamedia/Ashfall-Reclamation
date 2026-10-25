@@ -1,0 +1,81 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_7ab7r"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_qfrvu"]
+size = Vector3(0.036, 0.006, 0.09)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x27aj"]
+size = Vector3(0.036, 0.006, 0.09)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ym4by"]
+size = Vector3(0.006, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7rf04"]
+size = Vector3(0.006, 0.04, 0.09)
+
+[sub_resource type="BoxMesh" id="BoxMesh_llkh6"]
+size = Vector3(0.03, 0.006, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ium3j"]
+transparency = 1
+albedo_color = Color(0.35, 0.6, 0.55, 0.18)
+metallic = 0.3
+roughness = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_vsj6y"]
+size = Vector3(0.026, 0.026, 0.004)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sme0v"]
+render_priority = 10
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(1, 0.12, 0.08, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_sv6sx"]
+radius = 0.0012
+height = 0.0024
+
+[node name="RedDotItem" type="Node3D" unique_id=262801746]
+
+[node name="Top" type="MeshInstance3D" parent="." unique_id=1086198184]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.038, 0)
+material_override = ExtResource("1_7ab7r")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_qfrvu")
+
+[node name="Bottom" type="MeshInstance3D" parent="." unique_id=1963346448]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.004, 0)
+material_override = ExtResource("1_7ab7r")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_x27aj")
+
+[node name="Left" type="MeshInstance3D" parent="." unique_id=2025025845]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.015, 0.021, 0)
+material_override = ExtResource("1_7ab7r")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ym4by")
+
+[node name="Right" type="MeshInstance3D" parent="." unique_id=537915002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.015, 0.021, 0)
+material_override = ExtResource("1_7ab7r")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_7rf04")
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=29333178]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.002, 0)
+material_override = ExtResource("1_7ab7r")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_llkh6")
+
+[node name="Lens" type="MeshInstance3D" parent="." unique_id=381783763]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.021, -0.047)
+material_override = SubResource("StandardMaterial3D_ium3j")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_vsj6y")
+
+[node name="Dot" type="MeshInstance3D" parent="." unique_id=627494939]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.021, -0.043)
+material_override = SubResource("StandardMaterial3D_sme0v")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_sv6sx")

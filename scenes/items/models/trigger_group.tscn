@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_n6vqf"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_wae3f"]
+size = Vector3(0.03, 0.04, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l0r41"]
+albedo_color = Color(0.6039216, 0.6039216, 0.6039216, 1)
+metallic = 0.3
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_75y4y"]
+size = Vector3(0.006, 0.03, 0.008)
+
+[node name="TriggerGroup" type="Node3D" unique_id=1033596456]
+
+[node name="Housing" type="MeshInstance3D" parent="." unique_id=1596453212]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = ExtResource("1_n6vqf")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_wae3f")
+
+[node name="Trigger" type="MeshInstance3D" parent="." unique_id=626791081]
+transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 0, -0.005, 0.01)
+material_override = SubResource("StandardMaterial3D_l0r41")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_75y4y")

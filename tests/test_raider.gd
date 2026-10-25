@@ -16,7 +16,7 @@ func _raider(at: Vector3, facing_yaw_deg := 0.0) -> Raider:
 
 
 func _player(at: Vector3) -> PlayerController:
-	var p := PLAYER_SCENE.instantiate() as PlayerController
+	var p := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p.controlled_locally = false
 	p.head_bob_enabled = false
 	p.position = at

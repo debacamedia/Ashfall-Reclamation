@@ -10,6 +10,7 @@
 [ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="7_nhxqk"]
 [ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="8_j0um0"]
 [ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="9_ahk6h"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="10_6clmi"]
 
 [sub_resource type="Resource" id="Resource_n3bqc"]
 script = ExtResource("1_q301n")
@@ -59,8 +60,13 @@ item = ExtResource("9_ahk6h")
 min_quantity = 2
 max_quantity = 4
 
+[sub_resource type="Resource" id="Resource_jj4ht"]
+script = ExtResource("1_q301n")
+item = ExtResource("10_6clmi")
+weight = 0.5
+
 [resource]
 script = ExtResource("7_1qrt5")
-entries = Array[ExtResource("1_q301n")]([SubResource("Resource_n3bqc"), SubResource("Resource_tpjpg"), SubResource("Resource_tpx6m"), SubResource("Resource_1bqcv"), SubResource("Resource_du7al"), SubResource("Resource_j0um0"), SubResource("Resource_ahk6h"), SubResource("Resource_6clmi")])
+entries = Array[ExtResource("1_q301n")]([SubResource("Resource_n3bqc"), SubResource("Resource_tpjpg"), SubResource("Resource_tpx6m"), SubResource("Resource_1bqcv"), SubResource("Resource_du7al"), SubResource("Resource_j0um0"), SubResource("Resource_ahk6h"), SubResource("Resource_6clmi"), SubResource("Resource_jj4ht")])
 min_rolls = 2
 max_rolls = 4

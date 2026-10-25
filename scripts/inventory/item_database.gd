@@ -8,6 +8,7 @@ const ROOT := "res://resources/items"
 
 static var _by_id: Dictionary = {}
 static var _weapons: Dictionary = {}
+static var _attachments: Dictionary = {}
 static var _loaded := false
 
 
@@ -48,11 +49,27 @@ static func find_weapon_item(weapon_id: StringName) -> ItemDefinition:
 	return null
 
 
+## An AttachmentDefinition by id (saves store attachment ids).
+static func get_attachment(id: StringName) -> AttachmentDefinition:
+	_ensure_loaded()
+	return _attachments.get(id)
+
+
+## The item you carry for an attachment (removing one gives this back).
+static func find_attachment_item(attachment_id: StringName) -> ItemDefinition:
+	_ensure_loaded()
+	for item: ItemDefinition in _by_id.values():
+		if item.attachment != null and item.attachment.id == attachment_id:
+			return item
+	return null
+
+
 ## Forces a rescan (after adding item files at runtime, e.g. in tools).
 static func reload() -> void:
 	_loaded = false
 	_by_id.clear()
 	_weapons.clear()
+	_attachments.clear()
 	_ensure_loaded()
 
 
@@ -79,3 +96,5 @@ static func _scan(path: String) -> void:
 			_by_id[(res as ItemDefinition).id] = res
 		elif res is WeaponDefinition:
 			_weapons[(res as WeaponDefinition).id] = res
+		elif res is AttachmentDefinition:
+			_attachments[(res as AttachmentDefinition).id] = res

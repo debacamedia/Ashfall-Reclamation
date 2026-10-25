@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_5tcfa"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="2_w6ytr"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="3_ago2v"]
+[ext_resource type="Resource" path="res://resources/items/gun_stock.tres" id="4_ba2vx"]
+[ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="5_lvean"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="6_6gxc8"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="7_ufygh"]
+[ext_resource type="Resource" path="res://resources/items/weapons/service_rifle_item.tres" id="8_uiu5e"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="9_d0mb1"]
+
+[resource]
+script = ExtResource("9_d0mb1")
+id = &"craft_service_rifle"
+category = 4
+station = 2
+inputs = Dictionary[ExtResource("1_5tcfa"), int]({
+ExtResource("2_w6ytr"): 1,
+ExtResource("3_ago2v"): 1,
+ExtResource("4_ba2vx"): 1,
+ExtResource("5_lvean"): 1,
+ExtResource("6_6gxc8"): 1,
+ExtResource("7_ufygh"): 1
+})
+output = ExtResource("8_uiu5e")
+craft_time = 12.0

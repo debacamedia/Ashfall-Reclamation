@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_vbh2s"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_yuit4"]
+size = Vector3(0.02, 0.03, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kcami"]
+size = Vector3(0.02, 0.03, 0.02)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vhahj"]
+top_radius = 0.016
+bottom_radius = 0.016
+height = 0.3
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ee2yi"]
+top_radius = 0.022
+bottom_radius = 0.022
+height = 0.07
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ns21y"]
+top_radius = 0.019
+bottom_radius = 0.019
+height = 0.05
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_u0pom"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.03
+radial_segments = 12
+
+[node name="Scope4x" type="Node3D" unique_id=1954619780]
+
+[node name="MountF" type="MeshInstance3D" parent="." unique_id=103443503]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -0.07)
+material_override = ExtResource("1_vbh2s")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_yuit4")
+
+[node name="MountR" type="MeshInstance3D" parent="." unique_id=752792736]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0.07)
+material_override = ExtResource("1_vbh2s")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_kcami")
+
+[node name="Tube" type="MeshInstance3D" parent="." unique_id=84643987]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.04, 0)
+material_override = ExtResource("1_vbh2s")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_vhahj")
+
+[node name="Objective" type="MeshInstance3D" parent="." unique_id=894202278]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.04, -0.18)
+material_override = ExtResource("1_vbh2s")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_ee2yi")
+
+[node name="Ocular" type="MeshInstance3D" parent="." unique_id=1000397838]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.04, 0.165)
+material_override = ExtResource("1_vbh2s")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_ns21y")
+
+[node name="Turret" type="MeshInstance3D" parent="." unique_id=2096388768]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.062, 0)
+material_override = ExtResource("1_vbh2s")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_u0pom")
+
+[node name="Sight" type="Marker3D" parent="." unique_id=204587032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0.19)

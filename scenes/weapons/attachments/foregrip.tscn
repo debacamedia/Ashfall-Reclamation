@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="1_7bbcc"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="2_mv15w"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_eoryc"]
+size = Vector3(0.026, 0.07, 0.032)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cm1wo"]
+size = Vector3(0.03, 0.01, 0.045)
+
+[node name="Foregrip" type="Node3D" unique_id=1862413212]
+
+[node name="Grip" type="MeshInstance3D" parent="." unique_id=2096188427]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.035, 0)
+material_override = ExtResource("1_7bbcc")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_eoryc")
+
+[node name="Clamp" type="MeshInstance3D" parent="." unique_id=1989930925]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.002, 0)
+material_override = ExtResource("2_mv15w")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_cm1wo")

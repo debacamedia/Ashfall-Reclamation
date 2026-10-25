@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_2s45g"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="2_807je"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_23c75"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="4_30owf"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_jvwks"]
+
+[resource]
+script = ExtResource("5_jvwks")
+id = &"gun_receiver"
+category = 1
+station = 2
+inputs = Dictionary[ExtResource("1_2s45g"), int]({
+ExtResource("2_807je"): 2,
+ExtResource("3_23c75"): 1
+})
+output = ExtResource("4_30owf")
+craft_time = 5.0

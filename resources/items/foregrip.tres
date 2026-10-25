@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Resource" path="res://resources/items/attachments/foregrip_def.tres" id="1_nprxd"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="2_6a7qi"]
+[ext_resource type="Texture2D" path="res://assets/icons/foregrip.png" id="2_cbay7"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_cbay7"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/foregrip_item.tscn" id="4_pv3yo"]
+
+[resource]
+script = ExtResource("3_cbay7")
+id = &"foregrip"
+display_name = "Foregrip"
+description = "A vertical grip under the barrel: about a third less recoil and a steadier hip-fire. Fits the service rifle and shotgun."
+category = 7
+icon = ExtResource("2_cbay7")
+max_stack = 3
+weight = 0.3
+base_value = 30
+world_model = ExtResource("4_pv3yo")
+pickup_sound = ExtResource("2_6a7qi")
+attachment = ExtResource("1_nprxd")

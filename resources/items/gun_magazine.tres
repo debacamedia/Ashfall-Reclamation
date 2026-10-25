@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_4cawf"]
+[ext_resource type="Texture2D" path="res://assets/icons/gun_magazine.png" id="1_sfhc3"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_sfhc3"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/gun_magazine.tscn" id="3_hnlh5"]
+
+[resource]
+script = ExtResource("2_sfhc3")
+id = &"gun_magazine"
+display_name = "Magazine"
+description = "A box magazine. Pistols and rifles need one."
+category = 6
+icon = ExtResource("1_sfhc3")
+max_stack = 5
+weight = 0.2
+base_value = 8
+world_model = ExtResource("3_hnlh5")
+pickup_sound = ExtResource("1_4cawf")

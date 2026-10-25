@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_78ngg"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="2_s6asm"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="3_sp8bw"]
+[ext_resource type="Resource" path="res://resources/items/gun_stock.tres" id="4_44anx"]
+[ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="5_yj0fl"]
+[ext_resource type="Resource" path="res://resources/items/weapons/shotgun_item.tres" id="6_agqtg"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="7_ncbjc"]
+
+[resource]
+script = ExtResource("7_ncbjc")
+id = &"craft_shotgun"
+category = 4
+station = 2
+inputs = Dictionary[ExtResource("1_78ngg"), int]({
+ExtResource("2_s6asm"): 2,
+ExtResource("3_sp8bw"): 1,
+ExtResource("4_44anx"): 1,
+ExtResource("5_yj0fl"): 1
+})
+output = ExtResource("6_agqtg")
+craft_time = 10.0

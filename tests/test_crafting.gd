@@ -18,7 +18,7 @@ var PLANK_R: RecipeDefinition = load("res://resources/recipes/wood_plank.tres")
 
 func _player(at := Vector3(0, 0.05, 0)) -> PlayerController:
 	make_static_box(Vector3(60, 1, 60), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
-	var p := PLAYER_SCENE.instantiate() as PlayerController
+	var p := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p.controlled_locally = false
 	p.head_bob_enabled = false
 	p.position = at

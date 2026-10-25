@@ -15,7 +15,7 @@ var MEDKIT: ItemDefinition = load("res://resources/items/medkit.tres")
 ## Player at the origin facing -Z, looking down at the floor 1.8 m ahead.
 func _player() -> PlayerController:
 	make_static_box(Vector3(40, 1, 40), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
-	var p := PLAYER_SCENE.instantiate() as PlayerController
+	var p := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p.controlled_locally = false
 	p.head_bob_enabled = false
 	p.position = Vector3(0, 0.05, 0)

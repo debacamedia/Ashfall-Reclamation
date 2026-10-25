@@ -70,7 +70,7 @@ func get_block_reason(interactor: Node3D) -> String:
 func get_prompt(interactor: Node3D) -> String:
 	var player := interactor as PlayerController
 	if item != null and item.weapon != null and player != null and player.weapon_slots != null \
-			and player.weapon_slots.has_weapon(item.weapon.id):
+			and player.weapon_refusal_reason(item.weapon) != "":
 		return "Take ammo from %s" % item.display_name
 	return "%s %s" % [action_name, object_name]
 
@@ -149,7 +149,7 @@ func _take_weapon(interactor: Node3D) -> void:
 	var player := interactor as PlayerController
 	if player == null:
 		return
-	if player.give_weapon(item.weapon):
+	if player.weapon_refusal_reason(item.weapon) == "" and player.give_weapon(item.weapon):
 		picked_up.emit(item, 1, interactor)
 		player.weapon_picked_up.emit(item.weapon)
 		queue_free()

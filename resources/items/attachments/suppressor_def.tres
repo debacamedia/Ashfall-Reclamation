@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttachmentDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/attachment_definition.gd" id="1_lv4qb"]
+
+[resource]
+script = ExtResource("1_lv4qb")
+id = &"suppressor"
+display_name = "Suppressor"
+slot = 1
+compatible = Array[StringName]([&"pistol", &"service_rifle", &"scoped_rifle"])
+model_path = "res://scenes/weapons/attachments/suppressor.tscn"
+recoil_multiplier = 0.9
+noise_multiplier = 0.3
+damage_multiplier = 0.92
+flash_multiplier = 0.25

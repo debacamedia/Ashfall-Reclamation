@@ -1,7 +1,14 @@
 class_name HitscanWeapon
 extends Node3D
 ## A firearm that hits instantly along a physics ray: rifles, pistols, and
-## shotguns (several pellets per shot, loaded a shell at a time).
+## shotguns (several pellets per shot, loaded a shell at a time), plus melee
+## weapons (definition.melee: a swing checks a short fan of rays).
+##
+## ATTACHMENTS: `base_definition` is the gun as designed; `definition` is the
+## effective copy with fitted attachments applied (recompute_stats), so
+## everything that reads `definition` (zoom, spread, recoil, magazine, noise)
+## sees the modified values. Attachment models appear on %OpticMount,
+## %MuzzleMount and %UnderMount; %IronSights hide when an optic is fitted.
 ##
 ## Simulation (ammo, fire rate, spread, damage) happens in tick(), called once
 ## per physics tick by the owner (PlayerController, later NPC soldiers). It is
@@ -21,12 +28,24 @@ signal reload_started(duration: float)
 signal reload_finished
 ## Trigger pulled with an empty magazine.
 signal dry_fired
+## Attachments changed (stats recomputed).
+signal attachments_changed
 
 const IMPACT_SCENE_PATH := "res://scenes/weapons/effects/bullet_impact.tscn"
 const HIT_MASK := PhysicsLayers.TERRAIN | PhysicsLayers.STRUCTURES | PhysicsLayers.PLAYER | PhysicsLayers.NPCS
 const MAX_IMPACT_EFFECTS := 64
 
+## Effective stats (base + attachments). Set this before adding to the tree;
+## it becomes the base.
 @export var definition: WeaponDefinition
+## The gun as designed, without attachments.
+var base_definition: WeaponDefinition
+## AttachmentDefinition.Slot → AttachmentDefinition.
+var attachments: Dictionary = {}
+var _attachment_models: Dictionary = {}
+var _flash_scale := Vector3.ONE
+var _magazine_rest := Vector3.ONE
+var _swing := 0.0
 ## Turn off for remote players / dedicated host to save effects.
 @export var spawn_impact_effects := true
 
@@ -80,6 +99,8 @@ var _model_rest := Vector3.ZERO
 @onready var _muzzle_flash: Node3D = %MuzzleFlash
 ## Marker on the rear of the sight, on the sight line (optional).
 @onready var _sight: Node3D = get_node_or_null("%SightAnchor")
+@onready var _iron_sights: Node3D = get_node_or_null("%IronSights")
+@onready var _melee_hit_sound: AudioStreamPlayer3D = get_node_or_null("%MeleeHitSound")
 # Optional sound players (scene nodes); the weapon works without them.
 @onready var _shot_sound: AudioStreamPlayer3D = get_node_or_null("%ShotSound")
 @onready var _reload_sound: AudioStreamPlayer3D = get_node_or_null("%ReloadSound")
@@ -93,9 +114,16 @@ var rounds_loaded_this_reload := 0
 
 func _ready() -> void:
 	assert(definition != null, "HitscanWeapon needs a WeaponDefinition")
+	if base_definition == null:
+		base_definition = definition
+	_model_rest = _model.position
+	_flash_scale = _muzzle_flash.scale
+	var mag := _model.get_node_or_null("Magazine") as Node3D
+	if mag != null:
+		_magazine_rest = mag.scale
+	recompute_stats()
 	ammo_in_magazine = definition.magazine_size
 	_reserve = definition.starting_reserve
-	_model_rest = _model.position
 	_muzzle_flash.visible = false
 	if spawn_impact_effects:
 		_impact_scene = load(IMPACT_SCENE_PATH)
@@ -115,6 +143,14 @@ func tick(delta: float, trigger_held: bool, reload_pressed: bool, aim: Transform
 	_cooldown -= delta
 	var trigger_pulled := trigger_held and not _trigger_was_held
 	_trigger_was_held = trigger_held
+
+	if definition.melee:
+		# Hold to keep swinging, one swing per interval
+		if trigger_held and can_fire and _cooldown <= 0.0:
+			_cooldown = definition.get_shot_interval()
+			_melee_swing(aim, shooter)
+		_cooldown = maxf(_cooldown, -0.01)
+		return Vector2.ZERO
 
 	if is_reloading:
 		# Shotguns: pulling the trigger stops loading shells and fires
@@ -154,7 +190,7 @@ func tick(delta: float, trigger_held: bool, reload_pressed: bool, aim: Transform
 
 ## Starts reloading if it makes sense. Returns true if a reload began.
 func start_reload() -> bool:
-	if is_reloading or ammo_in_magazine >= definition.magazine_size or reserve_ammo <= 0:
+	if definition.melee or is_reloading or ammo_in_magazine >= definition.magazine_size or reserve_ammo <= 0:
 		return false
 	is_reloading = true
 	rounds_loaded_this_reload = 0
@@ -371,6 +407,8 @@ func _process(delta: float) -> void:
 			_cycle_sound.play()
 	# Looking through a scope: the scope overlay replaces the gun
 	_model.visible = not (definition.scope_overlay and aim_amount >= 0.95)
+	if definition.melee:
+		_swing = move_toward(_swing, 0.0, delta * 4.0)
 	_kick = move_toward(_kick, 0.0, delta * 9.0)
 	var offset := Vector3(0.0, 0.0, _kick * 0.045)
 	var tilt := Vector3(_kick * 0.05, 0.0, 0.0)
@@ -387,6 +425,12 @@ func _process(delta: float) -> void:
 		offset.y -= dip * 0.08
 		tilt.z = dip * 0.5
 		tilt.x -= dip * 0.15
+	if definition.melee and _swing > 0.0:
+		# Machete: a fast right-to-left chop
+		var t := 1.0 - _swing
+		var arc := sin(t * PI)
+		offset += Vector3(-0.1 * arc, 0.04 * arc, -0.14 * arc)
+		tilt += Vector3(-0.5 * arc, lerpf(0.9, -1.1, t), -0.6 * arc)
 	_model.position = _model.position.lerp(_model_rest + offset, 1.0 - exp(-25.0 * delta))
 	_model.rotation = _model.rotation.lerp(tilt, 1.0 - exp(-20.0 * delta))
 
@@ -401,14 +445,15 @@ func _process(delta: float) -> void:
 ## Model offset and yaw (in this node's space) that put the rear of the sight
 ## on the camera's centre line, `ads_eye_distance` in front of the eye.
 func get_ads_offset() -> Dictionary:
-	if aim_camera == null or _sight == null or not is_inside_tree():
+	var sight := get_sight_node()
+	if aim_camera == null or sight == null or not is_inside_tree():
 		return {"offset": Vector3.ZERO, "yaw": 0.0}
 	var to_local := global_transform.affine_inverse()
 	var eye_point := to_local * (aim_camera.global_transform * Vector3(0.0, 0.0, -definition.ads_eye_distance))
 	# Turn the model so its barrel is parallel to the camera's view
 	var cam_forward := (to_local.basis * -aim_camera.global_basis.z).normalized()
 	var yaw := atan2(-cam_forward.x, -cam_forward.z)
-	var sight_rest := Basis(Vector3.UP, yaw) * _sight.position
+	var sight_rest := Basis(Vector3.UP, yaw) * _model.to_local(sight.global_position)
 	return {"offset": eye_point - (_model_rest + sight_rest), "yaw": yaw}
 
 
@@ -423,3 +468,162 @@ func snap_lowered() -> void:
 ## True once the lower/raise animation has settled at `lowered`.
 func is_pose_settled() -> bool:
 	return is_equal_approx(_lower, 1.0 if lowered else 0.0)
+
+
+# ---------------------------------------------------------------- attachments
+
+## The marker the eye lines up with: the fitted optic's "Sight", or the iron
+## sights' %SightAnchor.
+func get_sight_node() -> Node3D:
+	var optic: Node3D = _attachment_models.get(AttachmentDefinition.Slot.OPTIC)
+	if optic != null and is_instance_valid(optic):
+		var s := optic.get_node_or_null("Sight") as Node3D
+		if s != null:
+			return s
+	return _sight
+
+
+func get_attachment(slot: AttachmentDefinition.Slot) -> AttachmentDefinition:
+	return attachments.get(slot)
+
+
+## Fits an attachment (replacing whatever was in its slot). Returns the one it
+## replaced, or null. Callers validate (PlayerController.request_fit_attachment).
+func fit_attachment(att: AttachmentDefinition) -> AttachmentDefinition:
+	var old: AttachmentDefinition = attachments.get(att.slot)
+	attachments[att.slot] = att
+	recompute_stats()
+	return old
+
+
+## Removes the attachment in a slot and returns it (or null).
+func remove_attachment(slot: AttachmentDefinition.Slot) -> AttachmentDefinition:
+	var old: AttachmentDefinition = attachments.get(slot)
+	if old == null:
+		return null
+	attachments.erase(slot)
+	recompute_stats()
+	return old
+
+
+## Rebuilds `definition` from `base_definition` and the fitted attachments.
+func recompute_stats() -> void:
+	# No attachments: use the shared definition itself (no copy)
+	var d := base_definition if attachments.is_empty() else base_definition.duplicate() as WeaponDefinition
+	var mag_bonus := 0.0
+	var flash := 1.0
+	for slot in attachments:
+		var a: AttachmentDefinition = attachments[slot]
+		if a.ads_zoom > 0.0:
+			d.ads_zoom = a.ads_zoom
+		d.ads_zoom *= a.ads_zoom_multiplier
+		d.scope_overlay = d.scope_overlay or a.scope_overlay
+		d.ads_time *= a.ads_time_multiplier
+		d.ads_spread_multiplier *= a.ads_spread_multiplier
+		d.ads_move_multiplier *= a.ads_move_multiplier
+		d.base_spread *= a.hip_spread_multiplier
+		d.recoil_pitch *= a.recoil_multiplier
+		d.recoil_yaw *= a.recoil_multiplier
+		d.reload_time *= a.reload_time_multiplier
+		d.noise_radius *= a.noise_multiplier
+		d.damage *= a.damage_multiplier
+		mag_bonus += a.magazine_bonus
+		flash *= a.flash_multiplier
+	d.magazine_size = int(ceil(base_definition.magazine_size * (1.0 + mag_bonus)))
+	definition = d
+	if ammo_in_magazine > d.magazine_size:
+		# Extra rounds go back into the pack (or the internal counter)
+		var extra := ammo_in_magazine - d.magazine_size
+		ammo_in_magazine = d.magazine_size
+		reserve_ammo += extra
+	if _muzzle_flash != null:
+		_muzzle_flash.scale = _flash_scale * flash
+	_update_attachment_models()
+	attachments_changed.emit()
+	ammo_changed.emit(ammo_in_magazine, reserve_ammo)
+
+
+func _update_attachment_models() -> void:
+	if not is_node_ready():
+		return
+	for slot in _attachment_models.keys():
+		var m: Node3D = _attachment_models[slot]
+		if is_instance_valid(m) and (not attachments.has(slot) or m.get_meta("attachment_id", &"") != attachments[slot].id):
+			m.queue_free()
+			_attachment_models.erase(slot)
+	var mounts := {
+		AttachmentDefinition.Slot.OPTIC: get_node_or_null("%OpticMount"),
+		AttachmentDefinition.Slot.MUZZLE: get_node_or_null("%MuzzleMount"),
+		AttachmentDefinition.Slot.UNDERBARREL: get_node_or_null("%UnderMount"),
+	}
+	for slot in attachments:
+		var a: AttachmentDefinition = attachments[slot]
+		if _attachment_models.has(slot) or a.model_path == "" or not ResourceLoader.exists(a.model_path):
+			continue
+		var mount: Node3D = mounts.get(slot)
+		if mount == null:
+			continue
+		var m := (load(a.model_path) as PackedScene).instantiate() as Node3D
+		m.set_meta("attachment_id", a.id)
+		mount.add_child(m)
+		_attachment_models[slot] = m
+	if _iron_sights != null:
+		_iron_sights.visible = not attachments.has(AttachmentDefinition.Slot.OPTIC)
+	var mag := _model.get_node_or_null("Magazine") as Node3D
+	if mag != null:
+		var extended := attachments.has(AttachmentDefinition.Slot.MAGAZINE)
+		mag.scale = _magazine_rest * (Vector3(1.0, 1.5, 1.15) if extended else Vector3.ONE)
+
+
+# ---------------------------------------------------------------- melee
+
+func _melee_swing(aim: Transform3D, shooter: CollisionObject3D) -> void:
+	_swing = 1.0
+	if _shot_sound != null:
+		_shot_sound.play()
+	var origin := aim.origin
+	var forward := -aim.basis.z.normalized()
+	var up := aim.basis.y.normalized()
+	var exclude: Array[RID] = []
+	if shooter != null:
+		exclude.append(shooter.get_rid())
+	var space := get_world_3d().direct_space_state
+	var rays := maxi(definition.melee_rays, 1)
+	var half := deg_to_rad(definition.melee_arc) / 2.0
+	var surface: Dictionary = {}
+	fired.emit(origin, forward)
+	if definition.noise_radius > 0.0:
+		get_tree().call_group("noise_listeners", "hear_noise", origin, definition.noise_radius, shooter)
+	# Centre ray first, then outwards: the first thing with health takes the hit
+	for i in rays:
+		var k := (i + 1) / 2 * (1 if i % 2 == 1 else -1)
+		var angle := 0.0 if rays == 1 else half * float(k) / float(maxi(rays / 2, 1))
+		var dir := forward.rotated(up, angle).normalized()
+		var q := PhysicsRayQueryParameters3D.create(origin, origin + dir * definition.max_range, HIT_MASK, exclude)
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			continue
+		var health := HealthComponent.find_on(hit["collider"])
+		if health == null:
+			if surface.is_empty():
+				surface = hit
+			continue
+		var zone := _zone_multiplier(hit["collider"], hit["shape"])
+		if zone <= 0.0:
+			continue
+		var info := DamageInfo.create(definition.damage * zone, DamageInfo.Type.MELEE, shooter)
+		info.hit_position = hit["position"]
+		info.hit_normal = hit["normal"]
+		info.direction = dir
+		info.zone_multiplier = zone
+		var dealt := health.apply_damage(info)
+		if _melee_hit_sound != null:
+			_melee_hit_sound.play()
+		surface_hit.emit(hit["position"], hit["normal"], hit["collider"])
+		if dealt > 0.0:
+			hit_confirmed.emit(health.get_parent(), dealt, health.is_dead(), zone)
+		return
+	if not surface.is_empty():
+		surface_hit.emit(surface["position"], surface["normal"], surface["collider"])
+		if _melee_hit_sound != null:
+			_melee_hit_sound.play()

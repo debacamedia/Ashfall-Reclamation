@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_8r4xs"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="2_1653k"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_egv71"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="4_wj5vd"]
+[ext_resource type="Resource" path="res://resources/items/suppressor.tres" id="5_63vpt"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_mkbys"]
+
+[resource]
+script = ExtResource("6_mkbys")
+id = &"suppressor"
+category = 5
+station = 2
+inputs = Dictionary[ExtResource("1_8r4xs"), int]({
+ExtResource("2_1653k"): 1,
+ExtResource("3_egv71"): 2,
+ExtResource("4_wj5vd"): 1
+})
+output = ExtResource("5_63vpt")
+craft_time = 6.0

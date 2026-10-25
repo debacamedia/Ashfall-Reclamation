@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/pipe_pistol.png" id="1_cm1aq"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_weapon.wav" id="1_p1kk1"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_cm1aq"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pipe_pistol.tres" id="3_3vjss"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/pipe_pistol_world.tscn" id="4_rsimg"]
+
+[resource]
+script = ExtResource("2_cm1aq")
+id = &"pipe_pistol"
+display_name = "Pipe Pistol"
+description = "A length of pipe, a nail and a prayer. One shot, then reload. Slot 2."
+category = 3
+icon = ExtResource("1_cm1aq")
+max_stack = 1
+weight = 0.0
+base_value = 60
+world_model = ExtResource("4_rsimg")
+pickup_hold_time = 0.4
+pickup_sound = ExtResource("1_p1kk1")
+weapon = ExtResource("3_3vjss")

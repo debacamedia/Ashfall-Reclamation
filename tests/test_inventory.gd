@@ -23,7 +23,7 @@ func _inv(slots := 6, max_weight := 0.0) -> InventoryComponent:
 
 func _player() -> PlayerController:
 	make_static_box(Vector3(40, 1, 40), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
-	var p := PLAYER_SCENE.instantiate() as PlayerController
+	var p := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p.controlled_locally = false
 	p.head_bob_enabled = false
 	p.position = Vector3(0, 0.05, 0)

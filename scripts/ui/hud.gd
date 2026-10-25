@@ -37,6 +37,7 @@ extends CanvasLayer
 @onready var container_screen: ContainerScreen = get_node_or_null("%ContainerScreen")
 @onready var _weapon_strip: Label = get_node_or_null("%WeaponStrip")
 @onready var crafting_screen: CraftingScreen = get_node_or_null("%CraftingScreen")
+@onready var _hint: Label = get_node_or_null("%HintLabel")
 @onready var _scope: Control = get_node_or_null("%ScopeOverlay")
 @onready var _ui_sound: AudioStreamPlayer = %UISound
 
@@ -92,6 +93,7 @@ func _process(delta: float) -> void:
 		if crafting_screen != null:
 			crafting_screen.player = player
 		player.craft_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
+		player.attachment_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 	_update_prompt()
 	_update_item_use()
 	_update_notices(delta)
@@ -108,6 +110,7 @@ func _process(delta: float) -> void:
 		if _scope != null:
 			_scope.visible = _weapon.definition.scope_overlay and player.aim_amount >= 0.95 and not player.is_dead()
 	_update_weapon_strip()
+	_update_hint()
 
 	_update_health_visuals(delta)
 	_update_death_screen()
@@ -204,6 +207,10 @@ func _bind_weapon(weapon: HitscanWeapon) -> void:
 
 
 func _on_ammo_changed(in_magazine: int, reserve: int) -> void:
+	if _weapon != null and _weapon.definition.melee:
+		_ammo_label.text = "—"
+		_ammo_label.modulate = Color.WHITE
+		return
 	_ammo_label.text = "%d / %d" % [in_magazine, reserve]
 	_ammo_label.modulate = Color(1.0, 0.4, 0.3) if in_magazine == 0 else Color.WHITE
 
@@ -330,3 +337,19 @@ func _update_weapon_strip() -> void:
 		var label := "%d %s" % [s, w.definition.short_name if w != null else "—"]
 		parts.append("[%s]" % label if s == shown else label)
 	_weapon_strip.text = "   ".join(parts)
+
+
+## First-minutes guidance: until you own a gun, tell the player how to make one.
+func _update_hint() -> void:
+	if _hint == null:
+		return
+	var has_gun := false
+	if player.weapon_slots != null:
+		for w in player.weapon_slots.owned():
+			if not w.definition.melee:
+				has_gun = true
+	_hint.visible = not has_gun and not player.is_dead()
+	if _hint.visible:
+		var wood := player.inventory.count_of(&"wood") if player.inventory != null else 0
+		_hint.text = ("You only have a machete.  Press K and craft a Pipe Pistol." if wood > 0
+			else "You only have a machete.  Break down a pallet (hold E) for wood, then press K to craft a Pipe Pistol.")

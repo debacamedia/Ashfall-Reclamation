@@ -32,30 +32,6 @@ size = Vector3(0.04, 0.07, 0.12)
 [sub_resource type="BoxMesh" id="BoxMesh_1kai7"]
 size = Vector3(0.012, 0.01, 0.3)
 
-[sub_resource type="BoxMesh" id="BoxMesh_s6jbf"]
-size = Vector3(0.036, 0.006, 0.09)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ortpp"]
-size = Vector3(0.036, 0.006, 0.09)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ke06b"]
-size = Vector3(0.006, 0.04, 0.09)
-
-[sub_resource type="BoxMesh" id="BoxMesh_8x7y0"]
-size = Vector3(0.006, 0.04, 0.09)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6nsml"]
-transparency = 1
-albedo_color = Color(0.35, 0.6, 0.55, 0.18)
-metallic = 0.3
-roughness = 0.05
-
-[sub_resource type="BoxMesh" id="BoxMesh_q6xh2"]
-size = Vector3(0.026, 0.026, 0.004)
-
-[sub_resource type="BoxMesh" id="BoxMesh_tafql"]
-size = Vector3(0.02, 0.03, 0.015)
-
 [sub_resource type="BoxMesh" id="BoxMesh_ecs6q"]
 size = Vector3(0.03, 0.012, 0.03)
 
@@ -88,15 +64,14 @@ size = Vector2(0.09, 0.2)
 material = SubResource("StandardMaterial3D_fauhy")
 size = Vector2(0.11, 0.11)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uymuk"]
-render_priority = 10
-no_depth_test = true
-shading_mode = 0
-albedo_color = Color(1, 0.12, 0.08, 1)
+[sub_resource type="BoxMesh" id="BoxMesh_s6jbf"]
+size = Vector3(0.005, 0.016, 0.006)
 
-[sub_resource type="SphereMesh" id="SphereMesh_tnr1d"]
-radius = 0.0012
-height = 0.0024
+[sub_resource type="BoxMesh" id="BoxMesh_ortpp"]
+size = Vector3(0.005, 0.016, 0.006)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tafql"]
+size = Vector3(0.02, 0.03, 0.015)
 
 [node name="ServiceRifle" type="Node3D" unique_id=1313030349]
 script = ExtResource("1_v1wk2")
@@ -152,45 +127,6 @@ material_override = ExtResource("3_i7nsr")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_1kai7")
 
-[node name="Optic" type="Node3D" parent="Model" unique_id=2080875940]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.068, -0.01)
-
-[node name="Top" type="MeshInstance3D" parent="Model/Optic" unique_id=1588899736]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.017, 0)
-material_override = ExtResource("3_i7nsr")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_s6jbf")
-
-[node name="Bottom" type="MeshInstance3D" parent="Model/Optic" unique_id=1043105161]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.017, 0)
-material_override = ExtResource("3_i7nsr")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_ortpp")
-
-[node name="Left" type="MeshInstance3D" parent="Model/Optic" unique_id=123857965]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.015, 0, 0)
-material_override = ExtResource("3_i7nsr")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_ke06b")
-
-[node name="Right" type="MeshInstance3D" parent="Model/Optic" unique_id=2079317427]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.015, 0, 0)
-material_override = ExtResource("3_i7nsr")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_8x7y0")
-
-[node name="OpticLens" type="MeshInstance3D" parent="Model" unique_id=1199417013]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.068, -0.057)
-material_override = SubResource("StandardMaterial3D_6nsml")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_q6xh2")
-
-[node name="FrontPost" type="MeshInstance3D" parent="Model" unique_id=1817205410]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027, -0.31)
-material_override = ExtResource("3_i7nsr")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_tafql")
-
 [node name="ChargingHandle" type="MeshInstance3D" parent="Model" unique_id=1947823146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.038, 0.12)
 material_override = ExtResource("3_i7nsr")
@@ -223,15 +159,42 @@ mesh = SubResource("QuadMesh_tnr1d")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_d3byv")
 
-[node name="RedDot" type="MeshInstance3D" parent="Model" unique_id=580780049]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.068, -0.053)
-material_override = SubResource("StandardMaterial3D_uymuk")
-cast_shadow = 0
-mesh = SubResource("SphereMesh_tnr1d")
-
-[node name="SightAnchor" type="Marker3D" parent="Model" unique_id=1668512627]
+[node name="IronSights" type="Node3D" parent="Model" unique_id=1986497165]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.068, 0.035)
+
+[node name="RearL" type="MeshInstance3D" parent="Model/IronSights" unique_id=937088068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007, 0.055, 0.08)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_s6jbf")
+
+[node name="RearR" type="MeshInstance3D" parent="Model/IronSights" unique_id=486492511]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.007, 0.055, 0.08)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_ortpp")
+
+[node name="FrontPost" type="MeshInstance3D" parent="Model/IronSights" unique_id=1817205410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.047, -0.31)
+material_override = ExtResource("3_i7nsr")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_tafql")
+
+[node name="SightAnchor" type="Marker3D" parent="Model" unique_id=1662755958]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.062, 0.08)
+
+[node name="OpticMount" type="Marker3D" parent="Model" unique_id=1543995149]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.047, -0.01)
+
+[node name="MuzzleMount" type="Marker3D" parent="Model" unique_id=810398945]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.014, -0.52)
+
+[node name="UnderMount" type="Marker3D" parent="Model" unique_id=1774015068]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.027, -0.25)
 
 [node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=994840292]
 unique_name_in_owner = true

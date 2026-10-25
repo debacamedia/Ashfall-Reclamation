@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_1ka18"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="2_wnns2"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_pvr17"]
+[ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="4_b2tq2"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_iu7am"]
+
+[resource]
+script = ExtResource("5_iu7am")
+id = &"trigger_group"
+category = 1
+station = 2
+inputs = Dictionary[ExtResource("1_1ka18"), int]({
+ExtResource("2_wnns2"): 2,
+ExtResource("3_pvr17"): 1
+})
+output = ExtResource("4_b2tq2")
+craft_time = 3.0

@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Milestone 2 in progress (Increment 10)
+## Current state: Milestone 2 in progress (Increment 11)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -14,13 +14,14 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 8:** **save and load**: F5 quick save, F9 quick load (fn+F5 / fn+F9 on Mac). Saves the player, inventory, every container and the loot on the ground as versioned JSON. Also quieter footsteps and clanging lockers.
 - **Increment 9 (Milestone 2):** **weapon slots** (1–4, mouse wheel): service rifle, sidearm pistol, pump shotgun (pellets, shell-by-shell reload; command post) and a marksman rifle with a 4× scope (up the north-west tower). Each gun has its own ammo.
 - **Increment 10:** **crafting**: K to craft by hand anywhere; a workbench (warehouse) and weapons bench (command post); 13 recipes for components, ammo, bandages and medkits; break down pallets and furniture for wood.
+- **Increment 11:** **gun crafting and attachments**: you now start with only a **machete** (slot 5) and craft a **pipe pistol** by hand. Gun parts (barrel, receiver, stock, trigger group, magazine) are made at the weapons bench and assembled into the pistol, shotgun, service rifle and marksman rifle. **Attachments** (red dot, 4× scope, suppressor, extended magazine, foregrip) are fitted on the bench's **Modify Weapons** tab and show on the gun. Every gun has iron sights.
 
 ## Run it
 1. Install Godot 4.7 (standard, not .NET).
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
 3. Press **F5**.
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–4 / mouse wheel switch guns · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
 
 ## After pulling an update — important
 Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.
