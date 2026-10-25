@@ -1,0 +1,35 @@
+{
+  "pack": "ASHFALL Resource Pack 1.0",
+  "target": "Godot 4.7 Forward+",
+  "engine_resource_root": "res://assets/ashfall_pack_v1",
+  "materials": [
+    "concrete_weathered",
+    "concrete_cracked",
+    "asphalt_worn",
+    "gravel_mixed",
+    "dirt_dry",
+    "rusted_steel",
+    "corrugated_metal",
+    "wood_weathered",
+    "sandbag_canvas"
+  ],
+  "decals": [
+    "restricted.png",
+    "warning.png",
+    "outpost_17.png",
+    "salvage.png"
+  ],
+  "audio": [
+    "generator_idle.wav",
+    "radio_static.wav",
+    "metal_clank.wav",
+    "distant_wind.wav"
+  ],
+  "notes": [
+    "Texture albedos are procedural, not captured photos or AI photogrammetry.",
+    "Normals derived from procedural height; roughness included.",
+    "Textures are near-seamless via periodic noise; cracks are stylized and not guaranteed perfectly seam-free.",
+    "Audio effects are synthetic prototypes, not field recordings.",
+    "The folder is additive and does not replace original game assets."
+  ]
+}

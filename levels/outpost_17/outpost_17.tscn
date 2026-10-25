@@ -1,18 +1,24 @@
 [gd_scene format=3]
 
 [ext_resource type="Environment" path="res://levels/outpost_17/outpost_17_environment.tres" id="1_qku07"]
-[ext_resource type="Material" path="res://assets/materials/ground_dirt.tres" id="2_6fgd1"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/dirt_dry.tres" id="2_kfd1t"]
 [ext_resource type="Material" path="res://assets/materials/earth_berm.tres" id="3_a2oq6"]
-[ext_resource type="Material" path="res://assets/materials/asphalt.tres" id="4_c0itq"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/asphalt_worn.tres" id="4_ipiw7"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/gravel_mixed.tres" id="5_gc22m"]
 [ext_resource type="Material" path="res://assets/materials/gravel.tres" id="5_wmgfa"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/concrete_cracked.tres" id="6_01gja"]
 [ext_resource type="Material" path="res://assets/materials/hazard_yellow.tres" id="6_ouv22"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/concrete_wall_segment.tscn" id="7_2tvmt"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/fortified_gate.tscn" id="8_iodjj"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/guard_tower.tscn" id="9_j2khw"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/concrete_weathered.tres" id="9_y3n6b"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/prefab_building_small.tscn" id="10_3a7hk"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/corrugated_metal.tres" id="11_0khwf"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/warehouse.tscn" id="11_e0ma5"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/shipping_container.tscn" id="12_b53bt"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="13_pnlfr"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/sandbag_wall.tscn" id="14_0yja2"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/sandbag_canvas.tres" id="14_58idb"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/jersey_barrier.tscn" id="15_ljb1u"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/wood_crate.tscn" id="16_uf8n3"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/fuel_drums.tscn" id="17_ixxyf"]
@@ -22,6 +28,7 @@
 [ext_resource type="PackedScene" path="res://scenes/vehicles/military_truck.tscn" id="20_78cal"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/drainage_culvert.tscn" id="21_xntxo"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="22_0486g"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/rusted_steel.tres" id="22_hlbef"]
 [ext_resource type="Material" path="res://assets/materials/wood.tres" id="23_6fgd1"]
 [ext_resource type="PackedScene" path="res://scenes/world/range/target_dummy.tscn" id="24_a2oq6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="24_ck1o8"]
@@ -58,7 +65,15 @@
 [ext_resource type="PackedScene" path="res://scenes/world/salvage/wood_pallet.tscn" id="54_ytx8q"]
 [ext_resource type="PackedScene" path="res://scenes/world/region_exit.tscn" id="58_cwwbh"]
 [ext_resource type="PackedScene" path="res://scenes/world/salvage/broken_furniture.tscn" id="58_k06fk"]
-[ext_resource type="Script" path="res://scripts/interaction/region_exit.gd" id="59_88d5v"]
+[ext_resource type="Material" path="res://assets/materials/signs/sign_outpost_17.tres" id="66_stloa"]
+[ext_resource type="Material" path="res://assets/materials/signs/sign_restricted.tres" id="67_8knfx"]
+[ext_resource type="Material" path="res://assets/materials/signs/sign_salvage.tres" id="68_w8fv7"]
+[ext_resource type="Material" path="res://assets/materials/signs/sign_warning.tres" id="69_3avs7"]
+[ext_resource type="AudioStream" path="res://assets/audio/loops/generator_idle_loop.wav" id="70_0gtjb"]
+[ext_resource type="AudioStream" path="res://assets/audio/loops/radio_static_loop.wav" id="71_7oji5"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v1/audio/metal_clank.wav" id="72_e4xjc"]
+[ext_resource type="Script" path="res://scripts/world/random_sound_emitter.gd" id="73_h1q64"]
+[ext_resource type="AudioStream" path="res://assets/audio/loops/distant_wind_loop.wav" id="74_wak0s"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -135,6 +150,18 @@ size = Vector3(0.1, 2, 0.1)
 [sub_resource type="BoxMesh" id="BoxMesh_uf8n3"]
 size = Vector3(1.6, 0.5, 0.05)
 
+[sub_resource type="QuadMesh" id="QuadMesh_w7s1h"]
+size = Vector2(2.2, 1.1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_wysvy"]
+size = Vector2(2.2, 1.1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_m66i5"]
+size = Vector2(3.2, 1.6)
+
+[sub_resource type="QuadMesh" id="QuadMesh_6gm2m"]
+size = Vector2(1.2, 0.6)
+
 [node name="Outpost17" type="Node3D" unique_id=1417219746]
 metadata/region_name = "Outpost 17"
 
@@ -154,7 +181,7 @@ directional_shadow_max_distance = 150.0
 collision_mask = 0
 
 [node name="Ground" type="MeshInstance3D" parent="Terrain" unique_id=129602332]
-material_override = ExtResource("2_6fgd1")
+material_override = ExtResource("2_kfd1t")
 mesh = SubResource("PlaneMesh_4fdvy")
 
 [node name="GroundCol" type="CollisionShape3D" parent="Terrain" unique_id=738752397]
@@ -201,17 +228,17 @@ shape = SubResource("BoxShape3D_cwwbh")
 
 [node name="MainRoad" type="MeshInstance3D" parent="Surfaces" unique_id=2050582221]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 30)
-material_override = ExtResource("4_c0itq")
+material_override = ExtResource("4_ipiw7")
 mesh = SubResource("BoxMesh_88d5v")
 
 [node name="Yard" type="MeshInstance3D" parent="Surfaces" unique_id=521061365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.008, -2)
-material_override = ExtResource("5_wmgfa")
+material_override = ExtResource("5_gc22m")
 mesh = SubResource("BoxMesh_ytx8q")
 
 [node name="MotorPool" type="MeshInstance3D" parent="Surfaces" unique_id=1572236382]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.009, 11)
-material_override = ExtResource("5_wmgfa")
+material_override = ExtResource("6_01gja")
 mesh = SubResource("BoxMesh_qovcg")
 
 [node name="CenterLine" type="MeshInstance3D" parent="Surfaces" unique_id=1475782391]
@@ -224,294 +251,1212 @@ mesh = SubResource("BoxMesh_otu0x")
 [node name="NorthWall" parent="Perimeter" unique_id=1188945795 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.625, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall" parent="Perimeter" unique_id=282045502 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -30.625, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall2" parent="Perimeter" unique_id=1045939724 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.175, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall2" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall2" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall2" parent="Perimeter" unique_id=1299492978 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -28.175, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall2" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall2" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall3" parent="Perimeter" unique_id=525231784 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.725, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall3" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall3" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall3" parent="Perimeter" unique_id=402739528 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -25.725, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall3" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall3" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall4" parent="Perimeter" unique_id=1212320658 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.275, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall4" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall4" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall4" parent="Perimeter" unique_id=1887670678 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -23.275, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall4" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall4" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall5" parent="Perimeter" unique_id=947359669 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.825, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall5" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall5" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall5" parent="Perimeter" unique_id=1086948928 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -20.825, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall5" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall5" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall6" parent="Perimeter" unique_id=131040948 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.375, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall6" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall6" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall6" parent="Perimeter" unique_id=1743832445 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -18.375, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall6" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall6" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall7" parent="Perimeter" unique_id=589395932 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.925, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall7" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall7" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall7" parent="Perimeter" unique_id=57021391 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -15.925, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall7" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall7" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall8" parent="Perimeter" unique_id=1742112498 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.475, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall8" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall8" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall8" parent="Perimeter" unique_id=377905130 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -13.475, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall8" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall8" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall9" parent="Perimeter" unique_id=1137573621 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.025, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall9" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall9" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall9" parent="Perimeter" unique_id=1131705641 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -11.025, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall9" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall9" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall10" parent="Perimeter" unique_id=467497117 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.575, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall10" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall10" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall10" parent="Perimeter" unique_id=1608530256 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -8.575, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall10" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall10" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall11" parent="Perimeter" unique_id=94048706 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.125, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall11" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall11" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall11" parent="Perimeter" unique_id=1479746890 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6.125, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall11" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall11" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall12" parent="Perimeter" unique_id=1641573751 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.675, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall12" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall12" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="NorthWall13" parent="Perimeter" unique_id=1102003434 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.225, 0, -24.5)
+
+[node name="Slab" parent="Perimeter/NorthWall13" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall13" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall14" parent="Perimeter" unique_id=673301339 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.225, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall14" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall14" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="NorthWall15" parent="Perimeter" unique_id=1074725376 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.675, 0, -24.5)
+
+[node name="Slab" parent="Perimeter/NorthWall15" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall15" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall16" parent="Perimeter" unique_id=1255263518 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.125, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall16" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall16" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall12" parent="Perimeter" unique_id=1316260939 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6.125, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall12" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall12" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall17" parent="Perimeter" unique_id=367397981 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.575, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall17" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall17" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall13" parent="Perimeter" unique_id=881499345 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 8.575, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall13" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall13" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall18" parent="Perimeter" unique_id=1070425790 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.025, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall18" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall18" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall14" parent="Perimeter" unique_id=1169527063 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 11.025, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall14" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall14" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall19" parent="Perimeter" unique_id=681376331 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.475, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall19" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall19" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall15" parent="Perimeter" unique_id=1051705374 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 13.475, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall15" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall15" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall20" parent="Perimeter" unique_id=1400446949 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.925, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall20" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall20" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall16" parent="Perimeter" unique_id=679417145 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 15.925, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall16" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall16" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall21" parent="Perimeter" unique_id=317762694 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.375, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall21" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall21" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall17" parent="Perimeter" unique_id=64177775 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 18.375, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall17" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall17" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall22" parent="Perimeter" unique_id=1919055675 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.825, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall22" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall22" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall18" parent="Perimeter" unique_id=149673719 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 20.825, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall18" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall18" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall23" parent="Perimeter" unique_id=166431496 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.275, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall23" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall23" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall19" parent="Perimeter" unique_id=1574239929 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 23.275, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall19" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall19" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall24" parent="Perimeter" unique_id=2035419338 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.725, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall24" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall24" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall20" parent="Perimeter" unique_id=1287422755 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 25.725, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall20" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall20" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall25" parent="Perimeter" unique_id=1755339885 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.175, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall25" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall25" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall21" parent="Perimeter" unique_id=296849743 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 28.175, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall21" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall21" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="NorthWall26" parent="Perimeter" unique_id=142897109 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.625, 0, -24.5)
 
+[node name="Slab" parent="Perimeter/NorthWall26" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/NorthWall26" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="SouthWall22" parent="Perimeter" unique_id=1236709742 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 30.625, 0, 24.5)
+
+[node name="Slab" parent="Perimeter/SouthWall22" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/SouthWall22" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall" parent="Perimeter" unique_id=1530236231 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -23.275)
 
+[node name="Slab" parent="Perimeter/WestWall" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall" parent="Perimeter" unique_id=2095646212 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -23.275)
+
+[node name="Slab" parent="Perimeter/EastWall" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall2" parent="Perimeter" unique_id=280592506 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -20.825)
 
+[node name="Slab" parent="Perimeter/WestWall2" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall2" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall2" parent="Perimeter" unique_id=728031249 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -20.825)
+
+[node name="Slab" parent="Perimeter/EastWall2" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall2" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall3" parent="Perimeter" unique_id=180575236 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -18.375)
 
+[node name="Slab" parent="Perimeter/WestWall3" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall3" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall3" parent="Perimeter" unique_id=38145222 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -18.375)
+
+[node name="Slab" parent="Perimeter/EastWall3" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall3" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall4" parent="Perimeter" unique_id=1809814956 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -15.925)
 
+[node name="Slab" parent="Perimeter/WestWall4" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall4" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall4" parent="Perimeter" unique_id=1770077752 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -15.925)
+
+[node name="Slab" parent="Perimeter/EastWall4" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall4" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall5" parent="Perimeter" unique_id=1400653239 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -13.475)
 
+[node name="Slab" parent="Perimeter/WestWall5" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall5" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall5" parent="Perimeter" unique_id=2020601913 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -13.475)
+
+[node name="Slab" parent="Perimeter/EastWall5" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall5" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall6" parent="Perimeter" unique_id=1601735969 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -11.025)
 
+[node name="Slab" parent="Perimeter/WestWall6" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall6" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall6" parent="Perimeter" unique_id=1208451181 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -11.025)
+
+[node name="Slab" parent="Perimeter/EastWall6" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall6" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall7" parent="Perimeter" unique_id=1160492258 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -8.575)
 
+[node name="Slab" parent="Perimeter/WestWall7" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall7" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall7" parent="Perimeter" unique_id=1282063269 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -8.575)
+
+[node name="Slab" parent="Perimeter/EastWall7" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall7" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall8" parent="Perimeter" unique_id=521750441 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -6.125)
 
+[node name="Slab" parent="Perimeter/WestWall8" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall8" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall8" parent="Perimeter" unique_id=231041806 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -6.125)
+
+[node name="Slab" parent="Perimeter/EastWall8" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall8" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall9" parent="Perimeter" unique_id=1961867632 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -3.675)
 
+[node name="Slab" parent="Perimeter/WestWall9" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall9" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall9" parent="Perimeter" unique_id=179867599 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -3.675)
+
+[node name="Slab" parent="Perimeter/EastWall9" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall9" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall10" parent="Perimeter" unique_id=1199009051 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, -1.225)
 
+[node name="Slab" parent="Perimeter/WestWall10" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall10" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall10" parent="Perimeter" unique_id=2085894518 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, -1.225)
+
+[node name="Slab" parent="Perimeter/EastWall10" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall10" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall11" parent="Perimeter" unique_id=1390016634 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 1.225)
 
+[node name="Slab" parent="Perimeter/WestWall11" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall11" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall11" parent="Perimeter" unique_id=1329677258 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 1.225)
+
+[node name="Slab" parent="Perimeter/EastWall11" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall11" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall12" parent="Perimeter" unique_id=1819673232 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 3.675)
 
+[node name="Slab" parent="Perimeter/WestWall12" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall12" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall12" parent="Perimeter" unique_id=466506825 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 3.675)
+
+[node name="Slab" parent="Perimeter/EastWall12" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall12" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall13" parent="Perimeter" unique_id=262736185 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 6.125)
 
+[node name="Slab" parent="Perimeter/WestWall13" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall13" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall13" parent="Perimeter" unique_id=533316343 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 6.125)
+
+[node name="Slab" parent="Perimeter/EastWall13" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall13" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall14" parent="Perimeter" unique_id=643293241 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 8.575)
 
+[node name="Slab" parent="Perimeter/WestWall14" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall14" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall14" parent="Perimeter" unique_id=1406610954 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 8.575)
+
+[node name="Slab" parent="Perimeter/EastWall14" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall14" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall15" parent="Perimeter" unique_id=1980138755 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 11.025)
 
+[node name="Slab" parent="Perimeter/WestWall15" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall15" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall15" parent="Perimeter" unique_id=445625601 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 11.025)
+
+[node name="Slab" parent="Perimeter/EastWall15" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall15" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall16" parent="Perimeter" unique_id=1459010536 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 13.475)
 
+[node name="Slab" parent="Perimeter/WestWall16" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall16" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall16" parent="Perimeter" unique_id=1642826275 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 13.475)
+
+[node name="Slab" parent="Perimeter/EastWall16" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall16" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall17" parent="Perimeter" unique_id=518195534 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 15.925)
 
+[node name="Slab" parent="Perimeter/WestWall17" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall17" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall17" parent="Perimeter" unique_id=1910502868 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 15.925)
+
+[node name="Slab" parent="Perimeter/EastWall17" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall17" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall18" parent="Perimeter" unique_id=2139718421 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 18.375)
 
+[node name="Slab" parent="Perimeter/WestWall18" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall18" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall18" parent="Perimeter" unique_id=2119964241 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 18.375)
+
+[node name="Slab" parent="Perimeter/EastWall18" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall18" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall19" parent="Perimeter" unique_id=935749355 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 20.825)
 
+[node name="Slab" parent="Perimeter/WestWall19" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall19" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall19" parent="Perimeter" unique_id=1180868246 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 20.825)
+
+[node name="Slab" parent="Perimeter/EastWall19" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall19" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
 
 [node name="WestWall20" parent="Perimeter" unique_id=977532301 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.85, 0, 23.275)
 
+[node name="Slab" parent="Perimeter/WestWall20" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/WestWall20" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="EastWall20" parent="Perimeter" unique_id=620905666 instance=ExtResource("7_2tvmt")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.85, 0, 23.275)
 
+[node name="Slab" parent="Perimeter/EastWall20" index="0" unique_id=1885640486]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Base" parent="Perimeter/EastWall20" index="2" unique_id=1767614319]
+material_override = ExtResource("6_01gja")
+
 [node name="MainGate" parent="." unique_id=1225674280 groups=["navigation_geometry"] instance=ExtResource("8_iodjj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24.5)
+
+[node name="Pillar" parent="MainGate" index="0" unique_id=360795990]
+material_override = ExtResource("9_y3n6b")
+
+[node name="PillarCap" parent="MainGate" index="2" unique_id=1953055163]
+material_override = ExtResource("6_01gja")
+
+[node name="Pillar2" parent="MainGate" index="3" unique_id=1801502959]
+material_override = ExtResource("9_y3n6b")
+
+[node name="PillarCap2" parent="MainGate" index="5" unique_id=1469949536]
+material_override = ExtResource("6_01gja")
+
+[node name="Booth" parent="MainGate" index="12" unique_id=413158720]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BoothRoof" parent="MainGate" index="15" unique_id=808024845]
+material_override = ExtResource("11_0khwf")
 
 [node name="GuardTowers" type="Node3D" parent="." unique_id=384893514 groups=["navigation_geometry"]]
 
 [node name="GuardTower" parent="GuardTowers" unique_id=1866840479 instance=ExtResource("9_j2khw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 0, -21)
 
+[node name="Leg" parent="GuardTowers/GuardTower" index="0" unique_id=1304386496]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg2" parent="GuardTowers/GuardTower" index="2" unique_id=489007810]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg3" parent="GuardTowers/GuardTower" index="4" unique_id=1801218930]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg4" parent="GuardTowers/GuardTower" index="6" unique_id=1904930458]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace" parent="GuardTowers/GuardTower" index="8" unique_id=1755209879]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace2" parent="GuardTowers/GuardTower" index="9" unique_id=1181267332]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace3" parent="GuardTowers/GuardTower" index="10" unique_id=1549457715]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace4" parent="GuardTowers/GuardTower" index="11" unique_id=1292128985]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Platform" parent="GuardTowers/GuardTower" index="12" unique_id=214036406]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Parapet" parent="GuardTowers/GuardTower" index="14" unique_id=31222700]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet2" parent="GuardTowers/GuardTower" index="16" unique_id=1405022866]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet3" parent="GuardTowers/GuardTower" index="18" unique_id=1645447211]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet4" parent="GuardTowers/GuardTower" index="20" unique_id=727111109]
+material_override = ExtResource("14_58idb")
+
+[node name="Roof" parent="GuardTowers/GuardTower" index="22" unique_id=1514475046]
+material_override = ExtResource("11_0khwf")
+
+[node name="Parapet2b" parent="GuardTowers/GuardTower" index="25" unique_id=1243749882]
+material_override = ExtResource("14_58idb")
+
 [node name="GuardTower2" parent="GuardTowers" unique_id=2080758170 instance=ExtResource("9_j2khw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, -21)
+
+[node name="Leg" parent="GuardTowers/GuardTower2" index="0" unique_id=1304386496]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg2" parent="GuardTowers/GuardTower2" index="2" unique_id=489007810]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg3" parent="GuardTowers/GuardTower2" index="4" unique_id=1801218930]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg4" parent="GuardTowers/GuardTower2" index="6" unique_id=1904930458]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace" parent="GuardTowers/GuardTower2" index="8" unique_id=1755209879]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace2" parent="GuardTowers/GuardTower2" index="9" unique_id=1181267332]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace3" parent="GuardTowers/GuardTower2" index="10" unique_id=1549457715]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace4" parent="GuardTowers/GuardTower2" index="11" unique_id=1292128985]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Platform" parent="GuardTowers/GuardTower2" index="12" unique_id=214036406]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Parapet" parent="GuardTowers/GuardTower2" index="14" unique_id=31222700]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet2" parent="GuardTowers/GuardTower2" index="16" unique_id=1405022866]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet3" parent="GuardTowers/GuardTower2" index="18" unique_id=1645447211]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet4" parent="GuardTowers/GuardTower2" index="20" unique_id=727111109]
+material_override = ExtResource("14_58idb")
+
+[node name="Roof" parent="GuardTowers/GuardTower2" index="22" unique_id=1514475046]
+material_override = ExtResource("11_0khwf")
+
+[node name="Parapet2b" parent="GuardTowers/GuardTower2" index="25" unique_id=1243749882]
+material_override = ExtResource("14_58idb")
 
 [node name="GuardTower3" parent="GuardTowers" unique_id=963607748 instance=ExtResource("9_j2khw")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -28.5, 0, 21)
 
+[node name="Leg" parent="GuardTowers/GuardTower3" index="0" unique_id=1304386496]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg2" parent="GuardTowers/GuardTower3" index="2" unique_id=489007810]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg3" parent="GuardTowers/GuardTower3" index="4" unique_id=1801218930]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg4" parent="GuardTowers/GuardTower3" index="6" unique_id=1904930458]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace" parent="GuardTowers/GuardTower3" index="8" unique_id=1755209879]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace2" parent="GuardTowers/GuardTower3" index="9" unique_id=1181267332]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace3" parent="GuardTowers/GuardTower3" index="10" unique_id=1549457715]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace4" parent="GuardTowers/GuardTower3" index="11" unique_id=1292128985]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Platform" parent="GuardTowers/GuardTower3" index="12" unique_id=214036406]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Parapet" parent="GuardTowers/GuardTower3" index="14" unique_id=31222700]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet2" parent="GuardTowers/GuardTower3" index="16" unique_id=1405022866]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet3" parent="GuardTowers/GuardTower3" index="18" unique_id=1645447211]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet4" parent="GuardTowers/GuardTower3" index="20" unique_id=727111109]
+material_override = ExtResource("14_58idb")
+
+[node name="Roof" parent="GuardTowers/GuardTower3" index="22" unique_id=1514475046]
+material_override = ExtResource("11_0khwf")
+
+[node name="Parapet2b" parent="GuardTowers/GuardTower3" index="25" unique_id=1243749882]
+material_override = ExtResource("14_58idb")
+
 [node name="GuardTower4" parent="GuardTowers" unique_id=934465257 instance=ExtResource("9_j2khw")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 28.5, 0, 21)
+
+[node name="Leg" parent="GuardTowers/GuardTower4" index="0" unique_id=1304386496]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg2" parent="GuardTowers/GuardTower4" index="2" unique_id=489007810]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg3" parent="GuardTowers/GuardTower4" index="4" unique_id=1801218930]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Leg4" parent="GuardTowers/GuardTower4" index="6" unique_id=1904930458]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace" parent="GuardTowers/GuardTower4" index="8" unique_id=1755209879]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace2" parent="GuardTowers/GuardTower4" index="9" unique_id=1181267332]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace3" parent="GuardTowers/GuardTower4" index="10" unique_id=1549457715]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Brace4" parent="GuardTowers/GuardTower4" index="11" unique_id=1292128985]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Platform" parent="GuardTowers/GuardTower4" index="12" unique_id=214036406]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Parapet" parent="GuardTowers/GuardTower4" index="14" unique_id=31222700]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet2" parent="GuardTowers/GuardTower4" index="16" unique_id=1405022866]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet3" parent="GuardTowers/GuardTower4" index="18" unique_id=1645447211]
+material_override = ExtResource("14_58idb")
+
+[node name="Parapet4" parent="GuardTowers/GuardTower4" index="20" unique_id=727111109]
+material_override = ExtResource("14_58idb")
+
+[node name="Roof" parent="GuardTowers/GuardTower4" index="22" unique_id=1514475046]
+material_override = ExtResource("11_0khwf")
+
+[node name="Parapet2b" parent="GuardTowers/GuardTower4" index="25" unique_id=1243749882]
+material_override = ExtResource("14_58idb")
 
 [node name="Buildings" type="Node3D" parent="." unique_id=650262360 groups=["navigation_geometry"]]
 
 [node name="CommandPost" parent="Buildings" unique_id=1461665727 instance=ExtResource("10_3a7hk")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -16)
 
+[node name="FrontWall0" parent="Buildings/CommandPost" index="0" unique_id=1564753126]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall1" parent="Buildings/CommandPost" index="2" unique_id=1186847888]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall2" parent="Buildings/CommandPost" index="4" unique_id=695193490]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall3" parent="Buildings/CommandPost" index="6" unique_id=1715750673]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall4" parent="Buildings/CommandPost" index="8" unique_id=1514531432]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall5" parent="Buildings/CommandPost" index="10" unique_id=1172623945]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall6" parent="Buildings/CommandPost" index="12" unique_id=1924736542]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall7" parent="Buildings/CommandPost" index="14" unique_id=1018925476]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall8" parent="Buildings/CommandPost" index="16" unique_id=207335199]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall0" parent="Buildings/CommandPost" index="18" unique_id=305276706]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall1" parent="Buildings/CommandPost" index="20" unique_id=1363263818]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall2" parent="Buildings/CommandPost" index="22" unique_id=412846069]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall3" parent="Buildings/CommandPost" index="24" unique_id=1423668782]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall4" parent="Buildings/CommandPost" index="26" unique_id=2094936124]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall5" parent="Buildings/CommandPost" index="28" unique_id=295454278]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall6" parent="Buildings/CommandPost" index="30" unique_id=902369341]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall0" parent="Buildings/CommandPost" index="32" unique_id=11309047]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall1" parent="Buildings/CommandPost" index="34" unique_id=26033405]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall2" parent="Buildings/CommandPost" index="36" unique_id=1050505748]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall3" parent="Buildings/CommandPost" index="38" unique_id=474463004]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall0" parent="Buildings/CommandPost" index="40" unique_id=1847802858]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall1" parent="Buildings/CommandPost" index="42" unique_id=1734361931]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall2" parent="Buildings/CommandPost" index="44" unique_id=1020039460]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall3" parent="Buildings/CommandPost" index="46" unique_id=1740833364]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Roof" parent="Buildings/CommandPost" index="48" unique_id=1100254228]
+material_override = ExtResource("11_0khwf")
+
+[node name="Floor" parent="Buildings/CommandPost" index="50" unique_id=525650218]
+material_override = ExtResource("6_01gja")
+
+[node name="Awning" parent="Buildings/CommandPost" index="52" unique_id=330147167]
+material_override = ExtResource("11_0khwf")
+
 [node name="Barracks" parent="Buildings" unique_id=1832761185 instance=ExtResource("10_3a7hk")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -16)
 
+[node name="FrontWall0" parent="Buildings/Barracks" index="0" unique_id=1564753126]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall1" parent="Buildings/Barracks" index="2" unique_id=1186847888]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall2" parent="Buildings/Barracks" index="4" unique_id=695193490]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall3" parent="Buildings/Barracks" index="6" unique_id=1715750673]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall4" parent="Buildings/Barracks" index="8" unique_id=1514531432]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall5" parent="Buildings/Barracks" index="10" unique_id=1172623945]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall6" parent="Buildings/Barracks" index="12" unique_id=1924736542]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall7" parent="Buildings/Barracks" index="14" unique_id=1018925476]
+material_override = ExtResource("9_y3n6b")
+
+[node name="FrontWall8" parent="Buildings/Barracks" index="16" unique_id=207335199]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall0" parent="Buildings/Barracks" index="18" unique_id=305276706]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall1" parent="Buildings/Barracks" index="20" unique_id=1363263818]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall2" parent="Buildings/Barracks" index="22" unique_id=412846069]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall3" parent="Buildings/Barracks" index="24" unique_id=1423668782]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall4" parent="Buildings/Barracks" index="26" unique_id=2094936124]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall5" parent="Buildings/Barracks" index="28" unique_id=295454278]
+material_override = ExtResource("9_y3n6b")
+
+[node name="BackWall6" parent="Buildings/Barracks" index="30" unique_id=902369341]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall0" parent="Buildings/Barracks" index="32" unique_id=11309047]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall1" parent="Buildings/Barracks" index="34" unique_id=26033405]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall2" parent="Buildings/Barracks" index="36" unique_id=1050505748]
+material_override = ExtResource("9_y3n6b")
+
+[node name="LeftWall3" parent="Buildings/Barracks" index="38" unique_id=474463004]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall0" parent="Buildings/Barracks" index="40" unique_id=1847802858]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall1" parent="Buildings/Barracks" index="42" unique_id=1734361931]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall2" parent="Buildings/Barracks" index="44" unique_id=1020039460]
+material_override = ExtResource("9_y3n6b")
+
+[node name="RightWall3" parent="Buildings/Barracks" index="46" unique_id=1740833364]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Roof" parent="Buildings/Barracks" index="48" unique_id=1100254228]
+material_override = ExtResource("11_0khwf")
+
+[node name="Floor" parent="Buildings/Barracks" index="50" unique_id=525650218]
+material_override = ExtResource("6_01gja")
+
+[node name="Awning" parent="Buildings/Barracks" index="52" unique_id=330147167]
+material_override = ExtResource("11_0khwf")
+
 [node name="Warehouse" parent="Buildings" unique_id=1709048150 instance=ExtResource("11_e0ma5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -20, 0, 8)
+
+[node name="FrontWall0" parent="Buildings/Warehouse" index="0" unique_id=929006600]
+material_override = ExtResource("11_0khwf")
+
+[node name="FrontWall1" parent="Buildings/Warehouse" index="2" unique_id=281047260]
+material_override = ExtResource("11_0khwf")
+
+[node name="FrontWall2" parent="Buildings/Warehouse" index="4" unique_id=1197260404]
+material_override = ExtResource("11_0khwf")
+
+[node name="BackWall0" parent="Buildings/Warehouse" index="6" unique_id=813039266]
+material_override = ExtResource("11_0khwf")
+
+[node name="LeftWall0" parent="Buildings/Warehouse" index="8" unique_id=751418329]
+material_override = ExtResource("11_0khwf")
+
+[node name="LeftWall1" parent="Buildings/Warehouse" index="10" unique_id=1108848230]
+material_override = ExtResource("11_0khwf")
+
+[node name="LeftWall2" parent="Buildings/Warehouse" index="12" unique_id=1711499852]
+material_override = ExtResource("11_0khwf")
+
+[node name="RightWall0" parent="Buildings/Warehouse" index="14" unique_id=110033830]
+material_override = ExtResource("11_0khwf")
+
+[node name="Roof" parent="Buildings/Warehouse" index="16" unique_id=680499742]
+material_override = ExtResource("11_0khwf")
+
+[node name="Floor" parent="Buildings/Warehouse" index="18" unique_id=668817198]
+material_override = ExtResource("6_01gja")
 
 [node name="Props" type="Node3D" parent="." unique_id=1695839539 groups=["navigation_geometry"]]
 
@@ -533,50 +1478,416 @@ paint = Color(0.22, 0.3, 0.38, 1)
 [node name="GateSandbagsL" parent="Props" unique_id=992725299 instance=ExtResource("14_0yja2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, 20.5)
 
+[node name="Bag" parent="Props/GateSandbagsL" index="0" unique_id=400698941]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag2" parent="Props/GateSandbagsL" index="1" unique_id=1916477046]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag3" parent="Props/GateSandbagsL" index="2" unique_id=1889058150]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag4" parent="Props/GateSandbagsL" index="3" unique_id=1736956107]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag5" parent="Props/GateSandbagsL" index="4" unique_id=690613669]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag6" parent="Props/GateSandbagsL" index="5" unique_id=877453782]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag7" parent="Props/GateSandbagsL" index="6" unique_id=967842776]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag8" parent="Props/GateSandbagsL" index="7" unique_id=1616911708]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag9" parent="Props/GateSandbagsL" index="8" unique_id=956814975]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag10" parent="Props/GateSandbagsL" index="9" unique_id=690766516]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag11" parent="Props/GateSandbagsL" index="10" unique_id=492641144]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag12" parent="Props/GateSandbagsL" index="11" unique_id=109110050]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag13" parent="Props/GateSandbagsL" index="12" unique_id=1052921929]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag14" parent="Props/GateSandbagsL" index="13" unique_id=657638356]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag15" parent="Props/GateSandbagsL" index="14" unique_id=174946704]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag16" parent="Props/GateSandbagsL" index="15" unique_id=1260953348]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag17" parent="Props/GateSandbagsL" index="16" unique_id=1222003849]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag18" parent="Props/GateSandbagsL" index="17" unique_id=232492868]
+material_override = ExtResource("14_58idb")
+
 [node name="GateSandbagsR" parent="Props" unique_id=2066882300 instance=ExtResource("14_0yja2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 20.5)
+
+[node name="Bag" parent="Props/GateSandbagsR" index="0" unique_id=400698941]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag2" parent="Props/GateSandbagsR" index="1" unique_id=1916477046]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag3" parent="Props/GateSandbagsR" index="2" unique_id=1889058150]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag4" parent="Props/GateSandbagsR" index="3" unique_id=1736956107]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag5" parent="Props/GateSandbagsR" index="4" unique_id=690613669]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag6" parent="Props/GateSandbagsR" index="5" unique_id=877453782]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag7" parent="Props/GateSandbagsR" index="6" unique_id=967842776]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag8" parent="Props/GateSandbagsR" index="7" unique_id=1616911708]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag9" parent="Props/GateSandbagsR" index="8" unique_id=956814975]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag10" parent="Props/GateSandbagsR" index="9" unique_id=690766516]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag11" parent="Props/GateSandbagsR" index="10" unique_id=492641144]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag12" parent="Props/GateSandbagsR" index="11" unique_id=109110050]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag13" parent="Props/GateSandbagsR" index="12" unique_id=1052921929]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag14" parent="Props/GateSandbagsR" index="13" unique_id=657638356]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag15" parent="Props/GateSandbagsR" index="14" unique_id=174946704]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag16" parent="Props/GateSandbagsR" index="15" unique_id=1260953348]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag17" parent="Props/GateSandbagsR" index="16" unique_id=1222003849]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag18" parent="Props/GateSandbagsR" index="17" unique_id=232492868]
+material_override = ExtResource("14_58idb")
 
 [node name="YardPositionN" parent="Props" unique_id=996730078 instance=ExtResource("14_0yja2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -6)
 
+[node name="Bag" parent="Props/YardPositionN" index="0" unique_id=400698941]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag2" parent="Props/YardPositionN" index="1" unique_id=1916477046]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag3" parent="Props/YardPositionN" index="2" unique_id=1889058150]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag4" parent="Props/YardPositionN" index="3" unique_id=1736956107]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag5" parent="Props/YardPositionN" index="4" unique_id=690613669]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag6" parent="Props/YardPositionN" index="5" unique_id=877453782]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag7" parent="Props/YardPositionN" index="6" unique_id=967842776]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag8" parent="Props/YardPositionN" index="7" unique_id=1616911708]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag9" parent="Props/YardPositionN" index="8" unique_id=956814975]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag10" parent="Props/YardPositionN" index="9" unique_id=690766516]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag11" parent="Props/YardPositionN" index="10" unique_id=492641144]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag12" parent="Props/YardPositionN" index="11" unique_id=109110050]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag13" parent="Props/YardPositionN" index="12" unique_id=1052921929]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag14" parent="Props/YardPositionN" index="13" unique_id=657638356]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag15" parent="Props/YardPositionN" index="14" unique_id=174946704]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag16" parent="Props/YardPositionN" index="15" unique_id=1260953348]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag17" parent="Props/YardPositionN" index="16" unique_id=1222003849]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag18" parent="Props/YardPositionN" index="17" unique_id=232492868]
+material_override = ExtResource("14_58idb")
+
 [node name="YardPositionW" parent="Props" unique_id=2020771262 instance=ExtResource("14_0yja2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -5.7, 0, -4.3)
+
+[node name="Bag" parent="Props/YardPositionW" index="0" unique_id=400698941]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag2" parent="Props/YardPositionW" index="1" unique_id=1916477046]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag3" parent="Props/YardPositionW" index="2" unique_id=1889058150]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag4" parent="Props/YardPositionW" index="3" unique_id=1736956107]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag5" parent="Props/YardPositionW" index="4" unique_id=690613669]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag6" parent="Props/YardPositionW" index="5" unique_id=877453782]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag7" parent="Props/YardPositionW" index="6" unique_id=967842776]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag8" parent="Props/YardPositionW" index="7" unique_id=1616911708]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag9" parent="Props/YardPositionW" index="8" unique_id=956814975]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag10" parent="Props/YardPositionW" index="9" unique_id=690766516]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag11" parent="Props/YardPositionW" index="10" unique_id=492641144]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag12" parent="Props/YardPositionW" index="11" unique_id=109110050]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag13" parent="Props/YardPositionW" index="12" unique_id=1052921929]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag14" parent="Props/YardPositionW" index="13" unique_id=657638356]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag15" parent="Props/YardPositionW" index="14" unique_id=174946704]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag16" parent="Props/YardPositionW" index="15" unique_id=1260953348]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag17" parent="Props/YardPositionW" index="16" unique_id=1222003849]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag18" parent="Props/YardPositionW" index="17" unique_id=232492868]
+material_override = ExtResource("14_58idb")
 
 [node name="Chicane1" parent="Props" unique_id=693192301 instance=ExtResource("15_ljb1u")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 31)
 
+[node name="Foot" parent="Props/Chicane1" index="0" unique_id=2020613958]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Taper" parent="Props/Chicane1" index="1" unique_id=226637600]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Top" parent="Props/Chicane1" index="2" unique_id=581337772]
+material_override = ExtResource("9_y3n6b")
+
 [node name="Chicane2" parent="Props" unique_id=1583954164 instance=ExtResource("15_ljb1u")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 35)
+
+[node name="Foot" parent="Props/Chicane2" index="0" unique_id=2020613958]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Taper" parent="Props/Chicane2" index="1" unique_id=226637600]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Top" parent="Props/Chicane2" index="2" unique_id=581337772]
+material_override = ExtResource("9_y3n6b")
 
 [node name="Chicane3" parent="Props" unique_id=1673583338 instance=ExtResource("15_ljb1u")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 39)
 
+[node name="Foot" parent="Props/Chicane3" index="0" unique_id=2020613958]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Taper" parent="Props/Chicane3" index="1" unique_id=226637600]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Top" parent="Props/Chicane3" index="2" unique_id=581337772]
+material_override = ExtResource("9_y3n6b")
+
 [node name="YardBarrier" parent="Props" unique_id=737460408 instance=ExtResource("15_ljb1u")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 8, 0, 4)
+
+[node name="Foot" parent="Props/YardBarrier" index="0" unique_id=2020613958]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Taper" parent="Props/YardBarrier" index="1" unique_id=226637600]
+material_override = ExtResource("9_y3n6b")
+
+[node name="Top" parent="Props/YardBarrier" index="2" unique_id=581337772]
+material_override = ExtResource("9_y3n6b")
 
 [node name="Crate1" parent="Props" unique_id=512671566 instance=ExtResource("16_uf8n3")]
 transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, -14, 0, 2)
 
+[node name="Box" parent="Props/Crate1" index="0" unique_id=942586678]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat" parent="Props/Crate1" index="2" unique_id=1806305241]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat2" parent="Props/Crate1" index="3" unique_id=2311336]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat3" parent="Props/Crate1" index="4" unique_id=446388174]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat4" parent="Props/Crate1" index="5" unique_id=348367707]
+material_override = ExtResource("13_pnlfr")
+
 [node name="Crate2" parent="Props" unique_id=641446403 instance=ExtResource("16_uf8n3")]
 transform = Transform3D(0.99026805, 0, -0.1391731, 0, 1, 0, 0.1391731, 0, 0.99026805, -14.2, 0, 3.2)
+
+[node name="Box" parent="Props/Crate2" index="0" unique_id=942586678]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat" parent="Props/Crate2" index="2" unique_id=1806305241]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat2" parent="Props/Crate2" index="3" unique_id=2311336]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat3" parent="Props/Crate2" index="4" unique_id=446388174]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat4" parent="Props/Crate2" index="5" unique_id=348367707]
+material_override = ExtResource("13_pnlfr")
 
 [node name="Crate3" parent="Props" unique_id=1974820681 instance=ExtResource("16_uf8n3")]
 transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, -14.1, 1, 2.5)
 
+[node name="Box" parent="Props/Crate3" index="0" unique_id=942586678]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat" parent="Props/Crate3" index="2" unique_id=1806305241]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat2" parent="Props/Crate3" index="3" unique_id=2311336]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat3" parent="Props/Crate3" index="4" unique_id=446388174]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat4" parent="Props/Crate3" index="5" unique_id=348367707]
+material_override = ExtResource("13_pnlfr")
+
 [node name="Crate4" parent="Props" unique_id=1686710145 instance=ExtResource("16_uf8n3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -18.5)
+
+[node name="Box" parent="Props/Crate4" index="0" unique_id=942586678]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat" parent="Props/Crate4" index="2" unique_id=1806305241]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat2" parent="Props/Crate4" index="3" unique_id=2311336]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat3" parent="Props/Crate4" index="4" unique_id=446388174]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat4" parent="Props/Crate4" index="5" unique_id=348367707]
+material_override = ExtResource("13_pnlfr")
 
 [node name="BarracksCrate" parent="Props" unique_id=1009093172 instance=ExtResource("16_uf8n3")]
 transform = Transform3D(0.9396926, 0, 0.34202012, 0, 1, 0, -0.34202012, 0, 0.9396926, 9, 0, -17.5)
 
+[node name="Box" parent="Props/BarracksCrate" index="0" unique_id=942586678]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat" parent="Props/BarracksCrate" index="2" unique_id=1806305241]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat2" parent="Props/BarracksCrate" index="3" unique_id=2311336]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat3" parent="Props/BarracksCrate" index="4" unique_id=446388174]
+material_override = ExtResource("13_pnlfr")
+
+[node name="Slat4" parent="Props/BarracksCrate" index="5" unique_id=348367707]
+material_override = ExtResource("13_pnlfr")
+
 [node name="DrumsMotorPool" parent="Props" unique_id=1482630216 instance=ExtResource("17_ixxyf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 16)
+
+[node name="Rim" parent="Props/DrumsMotorPool" index="1" unique_id=1555310839]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim2" parent="Props/DrumsMotorPool" index="2" unique_id=47068610]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim3" parent="Props/DrumsMotorPool" index="4" unique_id=24051961]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim4" parent="Props/DrumsMotorPool" index="5" unique_id=1371484970]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim5" parent="Props/DrumsMotorPool" index="7" unique_id=243762996]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim6" parent="Props/DrumsMotorPool" index="8" unique_id=606254219]
+material_override = ExtResource("22_hlbef")
 
 [node name="DrumsYard" parent="Props" unique_id=1554328413 instance=ExtResource("17_ixxyf")]
 transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, 10, 0, -4)
 
+[node name="Rim" parent="Props/DrumsYard" index="1" unique_id=1555310839]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim2" parent="Props/DrumsYard" index="2" unique_id=47068610]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim3" parent="Props/DrumsYard" index="4" unique_id=24051961]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim4" parent="Props/DrumsYard" index="5" unique_id=1371484970]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim5" parent="Props/DrumsYard" index="7" unique_id=243762996]
+material_override = ExtResource("22_hlbef")
+
+[node name="Rim6" parent="Props/DrumsYard" index="8" unique_id=606254219]
+material_override = ExtResource("22_hlbef")
+
 [node name="FlagPole" parent="Props" unique_id=1506597232 instance=ExtResource("18_wpo68")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9)
+
+[node name="Base" parent="Props/FlagPole" index="2" unique_id=378806381]
+material_override = ExtResource("9_y3n6b")
 
 [node name="MotorPoolFence" parent="Props" unique_id=368225125 instance=ExtResource("19_so4bl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, 2)
@@ -614,8 +1925,26 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13, 
 [node name="BurningBarrelYard" parent="Props" unique_id=1904776390 instance=ExtResource("19_c0itq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -3)
 
+[node name="Drum" parent="Props/BurningBarrelYard" index="0" unique_id=1969443853]
+material_override = ExtResource("22_hlbef")
+
+[node name="FireLight" parent="Props/BurningBarrelYard" index="3" unique_id=1817345526]
+light_energy = 1.8573554
+
+[node name="FireSound" parent="Props/BurningBarrelYard" index="5" unique_id=1072601748]
+stream_paused = true
+
 [node name="BurningBarrelMotorPool" parent="Props" unique_id=2060302660 instance=ExtResource("19_c0itq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 5)
+
+[node name="Drum" parent="Props/BurningBarrelMotorPool" index="0" unique_id=1969443853]
+material_override = ExtResource("22_hlbef")
+
+[node name="FireLight" parent="Props/BurningBarrelMotorPool" index="3" unique_id=1817345526]
+light_energy = 1.6004484
+
+[node name="FireSound" parent="Props/BurningBarrelMotorPool" index="5" unique_id=1072601748]
+stream_paused = true
 
 [node name="Vehicles" type="Node3D" parent="." unique_id=92360141 groups=["navigation_geometry"]]
 
@@ -648,8 +1977,116 @@ mesh = SubResource("BoxMesh_ouv22")
 [node name="FiringLineN" parent="FiringRange" unique_id=205815133 instance=ExtResource("14_0yja2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 15, 0, 32.5)
 
+[node name="Bag" parent="FiringRange/FiringLineN" index="0" unique_id=400698941]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag2" parent="FiringRange/FiringLineN" index="1" unique_id=1916477046]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag3" parent="FiringRange/FiringLineN" index="2" unique_id=1889058150]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag4" parent="FiringRange/FiringLineN" index="3" unique_id=1736956107]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag5" parent="FiringRange/FiringLineN" index="4" unique_id=690613669]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag6" parent="FiringRange/FiringLineN" index="5" unique_id=877453782]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag7" parent="FiringRange/FiringLineN" index="6" unique_id=967842776]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag8" parent="FiringRange/FiringLineN" index="7" unique_id=1616911708]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag9" parent="FiringRange/FiringLineN" index="8" unique_id=956814975]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag10" parent="FiringRange/FiringLineN" index="9" unique_id=690766516]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag11" parent="FiringRange/FiringLineN" index="10" unique_id=492641144]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag12" parent="FiringRange/FiringLineN" index="11" unique_id=109110050]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag13" parent="FiringRange/FiringLineN" index="12" unique_id=1052921929]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag14" parent="FiringRange/FiringLineN" index="13" unique_id=657638356]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag15" parent="FiringRange/FiringLineN" index="14" unique_id=174946704]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag16" parent="FiringRange/FiringLineN" index="15" unique_id=1260953348]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag17" parent="FiringRange/FiringLineN" index="16" unique_id=1222003849]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag18" parent="FiringRange/FiringLineN" index="17" unique_id=232492868]
+material_override = ExtResource("14_58idb")
+
 [node name="FiringLineS" parent="FiringRange" unique_id=31457929 instance=ExtResource("14_0yja2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 15, 0, 39.5)
+
+[node name="Bag" parent="FiringRange/FiringLineS" index="0" unique_id=400698941]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag2" parent="FiringRange/FiringLineS" index="1" unique_id=1916477046]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag3" parent="FiringRange/FiringLineS" index="2" unique_id=1889058150]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag4" parent="FiringRange/FiringLineS" index="3" unique_id=1736956107]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag5" parent="FiringRange/FiringLineS" index="4" unique_id=690613669]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag6" parent="FiringRange/FiringLineS" index="5" unique_id=877453782]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag7" parent="FiringRange/FiringLineS" index="6" unique_id=967842776]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag8" parent="FiringRange/FiringLineS" index="7" unique_id=1616911708]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag9" parent="FiringRange/FiringLineS" index="8" unique_id=956814975]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag10" parent="FiringRange/FiringLineS" index="9" unique_id=690766516]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag11" parent="FiringRange/FiringLineS" index="10" unique_id=492641144]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag12" parent="FiringRange/FiringLineS" index="11" unique_id=109110050]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag13" parent="FiringRange/FiringLineS" index="12" unique_id=1052921929]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag14" parent="FiringRange/FiringLineS" index="13" unique_id=657638356]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag15" parent="FiringRange/FiringLineS" index="14" unique_id=174946704]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag16" parent="FiringRange/FiringLineS" index="15" unique_id=1260953348]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag17" parent="FiringRange/FiringLineS" index="16" unique_id=1222003849]
+material_override = ExtResource("14_58idb")
+
+[node name="Bag18" parent="FiringRange/FiringLineS" index="17" unique_id=232492868]
+material_override = ExtResource("14_58idb")
 
 [node name="ShootingBench" type="StaticBody3D" parent="FiringRange" unique_id=2119664278]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, 36)
@@ -795,6 +2232,7 @@ unique_name_in_owner = true
 stream = ExtResource("32_uf8n3")
 volume_db = -2.0
 autoplay = true
+stream_paused = true
 bus = &"Ambience"
 
 [node name="Loot" type="Node3D" parent="." unique_id=466982758]
@@ -981,18 +2419,27 @@ object_name = "Pistol Ammo ×24"
 [node name="CommandPostBarrel" parent="Loot" unique_id=1074021943 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.25881907, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, 0.25881907, -11, 0, -18.2)
 item = ExtResource("45_cwwbh")
+action_name = "Pick up"
+object_name = "Gun Barrel"
 
 [node name="CommandPostTrigger" parent="Loot" unique_id=1165770525 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.9396926, 0, 0.34202012, 0, 1, 0, -0.34202012, 0, 0.9396926, -11.8, 0, -18.3)
 item = ExtResource("46_88d5v")
+action_name = "Pick up"
+object_name = "Trigger Group"
 
 [node name="TowerScope" parent="Loot" unique_id=1362709168 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.8660254, 0, -0.5, 0, 1, 0, 0.5, 0, 0.8660254, -29.1, 4.6, -21.9)
 item = ExtResource("47_ytx8q")
+action_name = "Pick up"
+object_name = "4× Scope"
 
 [node name="WastelandServiceRifle" parent="Loot" unique_id=1625042225 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.49999997, 0, 0.86602545, 0, 1, 0, -0.86602545, 0, 0.49999997, 36, 0, 45)
 item = ExtResource("48_qovcg")
+action_name = "Pick up"
+object_name = "Service Rifle"
+hold_time = 0.4
 
 [node name="SalvageContainers" type="Node3D" parent="." unique_id=964546882 groups=["navigation_geometry"]]
 
@@ -1151,15 +2598,189 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 64)
 
 [node name="Exits" type="Node3D" parent="." unique_id=1562726423]
 
-[node name="RoadToHaldens" type="Area3D" parent="Exits" unique_id=1471285466 instance=ExtResource("58_cwwbh")]
+[node name="RoadToHaldens" parent="Exits" unique_id=1471285466 instance=ExtResource("58_cwwbh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0, 69.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("59_88d5v")
 target_level = "res://levels/haldens_crossing/haldens_crossing.tscn"
 arrival_id = &"FromOutpost"
 destination_name = "Halden's Crossing"
-hold_time = 1.0
-max_distance = 3.5
-focus_offset = Vector3(0, 1.4, 0)
+action_name = "Follow the road to"
+object_name = "Halden's Crossing"
+
+[node name="Signage" type="Node3D" parent="." unique_id=378657225]
+
+[node name="GateOutpost17" type="MeshInstance3D" parent="Signage" unique_id=1992337438]
+transform = Transform3D(1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, 1, -6, 2.3, 24.656)
+material_override = ExtResource("66_stloa")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_w7s1h")
+
+[node name="GateRestricted" type="MeshInstance3D" parent="Signage" unique_id=497936333]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.3, 27.906)
+material_override = ExtResource("67_8knfx")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_wysvy")
+
+[node name="WarehouseSalvage" type="MeshInstance3D" parent="Signage" unique_id=1234569527]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -13.844, 2.5, 2.5999997)
+material_override = ExtResource("68_w8fv7")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_m66i5")
+
+[node name="CulvertWarning" type="MeshInstance3D" parent="Signage" unique_id=81396798]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -22.4, 1, -9.006)
+material_override = ExtResource("69_3avs7")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_6gm2m")
+
+[node name="Soundscape" type="Node3D" parent="." unique_id=1644658095]
+
+[node name="GeneratorHum" type="AudioStreamPlayer3D" parent="Soundscape" unique_id=1335600577]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4, 0.8, 16)
+stream = ExtResource("70_0gtjb")
+volume_db = -6.0
+unit_size = 3.0
+autoplay = true
+max_distance = 35.0
+bus = &"SFX"
+
+[node name="RadioStatic" type="AudioStreamPlayer3D" parent="Soundscape" unique_id=902132699]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.2, -16)
+stream = ExtResource("71_7oji5")
+volume_db = -10.0
+unit_size = 1.5
+autoplay = true
+max_distance = 14.0
+bus = &"SFX"
+
+[node name="MotorPoolClank" type="AudioStreamPlayer3D" parent="Soundscape" unique_id=2040573221]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 1, 8)
+stream = ExtResource("72_e4xjc")
+volume_db = -8.0
+unit_size = 4.0
+max_distance = 45.0
+bus = &"SFX"
+script = ExtResource("73_h1q64")
+
+[node name="DistantWind" type="AudioStreamPlayer" parent="Soundscape" unique_id=875777305]
+stream = ExtResource("74_wak0s")
+volume_db = -14.0
+autoplay = true
+stream_paused = true
+bus = &"Ambience"
+
+[editable path="Perimeter/NorthWall"]
+[editable path="Perimeter/SouthWall"]
+[editable path="Perimeter/NorthWall2"]
+[editable path="Perimeter/SouthWall2"]
+[editable path="Perimeter/NorthWall3"]
+[editable path="Perimeter/SouthWall3"]
+[editable path="Perimeter/NorthWall4"]
+[editable path="Perimeter/SouthWall4"]
+[editable path="Perimeter/NorthWall5"]
+[editable path="Perimeter/SouthWall5"]
+[editable path="Perimeter/NorthWall6"]
+[editable path="Perimeter/SouthWall6"]
+[editable path="Perimeter/NorthWall7"]
+[editable path="Perimeter/SouthWall7"]
+[editable path="Perimeter/NorthWall8"]
+[editable path="Perimeter/SouthWall8"]
+[editable path="Perimeter/NorthWall9"]
+[editable path="Perimeter/SouthWall9"]
+[editable path="Perimeter/NorthWall10"]
+[editable path="Perimeter/SouthWall10"]
+[editable path="Perimeter/NorthWall11"]
+[editable path="Perimeter/SouthWall11"]
+[editable path="Perimeter/NorthWall12"]
+[editable path="Perimeter/NorthWall13"]
+[editable path="Perimeter/NorthWall14"]
+[editable path="Perimeter/NorthWall15"]
+[editable path="Perimeter/NorthWall16"]
+[editable path="Perimeter/SouthWall12"]
+[editable path="Perimeter/NorthWall17"]
+[editable path="Perimeter/SouthWall13"]
+[editable path="Perimeter/NorthWall18"]
+[editable path="Perimeter/SouthWall14"]
+[editable path="Perimeter/NorthWall19"]
+[editable path="Perimeter/SouthWall15"]
+[editable path="Perimeter/NorthWall20"]
+[editable path="Perimeter/SouthWall16"]
+[editable path="Perimeter/NorthWall21"]
+[editable path="Perimeter/SouthWall17"]
+[editable path="Perimeter/NorthWall22"]
+[editable path="Perimeter/SouthWall18"]
+[editable path="Perimeter/NorthWall23"]
+[editable path="Perimeter/SouthWall19"]
+[editable path="Perimeter/NorthWall24"]
+[editable path="Perimeter/SouthWall20"]
+[editable path="Perimeter/NorthWall25"]
+[editable path="Perimeter/SouthWall21"]
+[editable path="Perimeter/NorthWall26"]
+[editable path="Perimeter/SouthWall22"]
+[editable path="Perimeter/WestWall"]
+[editable path="Perimeter/EastWall"]
+[editable path="Perimeter/WestWall2"]
+[editable path="Perimeter/EastWall2"]
+[editable path="Perimeter/WestWall3"]
+[editable path="Perimeter/EastWall3"]
+[editable path="Perimeter/WestWall4"]
+[editable path="Perimeter/EastWall4"]
+[editable path="Perimeter/WestWall5"]
+[editable path="Perimeter/EastWall5"]
+[editable path="Perimeter/WestWall6"]
+[editable path="Perimeter/EastWall6"]
+[editable path="Perimeter/WestWall7"]
+[editable path="Perimeter/EastWall7"]
+[editable path="Perimeter/WestWall8"]
+[editable path="Perimeter/EastWall8"]
+[editable path="Perimeter/WestWall9"]
+[editable path="Perimeter/EastWall9"]
+[editable path="Perimeter/WestWall10"]
+[editable path="Perimeter/EastWall10"]
+[editable path="Perimeter/WestWall11"]
+[editable path="Perimeter/EastWall11"]
+[editable path="Perimeter/WestWall12"]
+[editable path="Perimeter/EastWall12"]
+[editable path="Perimeter/WestWall13"]
+[editable path="Perimeter/EastWall13"]
+[editable path="Perimeter/WestWall14"]
+[editable path="Perimeter/EastWall14"]
+[editable path="Perimeter/WestWall15"]
+[editable path="Perimeter/EastWall15"]
+[editable path="Perimeter/WestWall16"]
+[editable path="Perimeter/EastWall16"]
+[editable path="Perimeter/WestWall17"]
+[editable path="Perimeter/EastWall17"]
+[editable path="Perimeter/WestWall18"]
+[editable path="Perimeter/EastWall18"]
+[editable path="Perimeter/WestWall19"]
+[editable path="Perimeter/EastWall19"]
+[editable path="Perimeter/WestWall20"]
+[editable path="Perimeter/EastWall20"]
+[editable path="MainGate"]
+[editable path="GuardTowers/GuardTower"]
+[editable path="GuardTowers/GuardTower2"]
+[editable path="GuardTowers/GuardTower3"]
+[editable path="GuardTowers/GuardTower4"]
+[editable path="Buildings/CommandPost"]
+[editable path="Buildings/Barracks"]
+[editable path="Buildings/Warehouse"]
+[editable path="Props/GateSandbagsL"]
+[editable path="Props/GateSandbagsR"]
+[editable path="Props/YardPositionN"]
+[editable path="Props/YardPositionW"]
+[editable path="Props/Chicane1"]
+[editable path="Props/Chicane2"]
+[editable path="Props/Chicane3"]
+[editable path="Props/YardBarrier"]
+[editable path="Props/Crate1"]
+[editable path="Props/Crate2"]
+[editable path="Props/Crate3"]
+[editable path="Props/Crate4"]
+[editable path="Props/BarracksCrate"]
+[editable path="Props/DrumsMotorPool"]
+[editable path="Props/DrumsYard"]
+[editable path="Props/FlagPole"]
+[editable path="Props/BurningBarrelYard"]
+[editable path="Props/BurningBarrelMotorPool"]
+[editable path="FiringRange/FiringLineN"]
+[editable path="FiringRange/FiringLineS"]
