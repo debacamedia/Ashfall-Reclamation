@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_45rla"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_nppd5"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="3_lovfk"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="4_u4cfp"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="5_o7xb1"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_fgato"]
+
+[resource]
+script = ExtResource("6_fgato")
+id = &"shotgun_shells"
+category = 2
+station = 1
+inputs = Dictionary[ExtResource("1_45rla"), int]({
+ExtResource("2_nppd5"): 1,
+ExtResource("3_lovfk"): 1,
+ExtResource("4_u4cfp"): 1
+})
+output = ExtResource("5_o7xb1")
+output_quantity = 6
+craft_time = 3.0

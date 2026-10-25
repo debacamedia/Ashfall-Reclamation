@@ -5,6 +5,9 @@
 [ext_resource type="Resource" path="res://resources/items/electronics.tres" id="3_v0xje"]
 [ext_resource type="Resource" path="res://resources/items/fuel.tres" id="4_0l3ui"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="5_a486i"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="5_ug0wf"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="6_v0xje"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="7_0l3ui"]
 
 [sub_resource type="Resource" id="Resource_n5785"]
 script = ExtResource("1_eu2aa")
@@ -23,7 +26,25 @@ max_quantity = 3
 script = ExtResource("1_eu2aa")
 item = ExtResource("4_0l3ui")
 
+[sub_resource type="Resource" id="Resource_v0xje"]
+script = ExtResource("1_eu2aa")
+item = ExtResource("5_ug0wf")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_0l3ui"]
+script = ExtResource("1_eu2aa")
+item = ExtResource("6_v0xje")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_a486i"]
+script = ExtResource("1_eu2aa")
+item = ExtResource("7_0l3ui")
+min_quantity = 2
+max_quantity = 4
+
 [resource]
 script = ExtResource("5_a486i")
-entries = Array[ExtResource("1_eu2aa")]([SubResource("Resource_n5785"), SubResource("Resource_vpsmi"), SubResource("Resource_y6wwf")])
+entries = Array[ExtResource("1_eu2aa")]([SubResource("Resource_n5785"), SubResource("Resource_vpsmi"), SubResource("Resource_y6wwf"), SubResource("Resource_v0xje"), SubResource("Resource_0l3ui"), SubResource("Resource_a486i")])
 min_rolls = 2

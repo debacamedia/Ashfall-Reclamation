@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/metal_plate.png" id="1_b5ktd"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_efb2f"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_b5ktd"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/metal_plate.tscn" id="3_qfdr8"]
+
+[resource]
+script = ExtResource("2_b5ktd")
+id = &"metal_plate"
+display_name = "Metal Plate"
+description = "Hammered-flat scrap. Armour, barricades, gun receivers."
+category = 5
+icon = ExtResource("1_b5ktd")
+max_stack = 20
+weight = 0.8
+base_value = 3
+world_model = ExtResource("3_qfdr8")
+pickup_sound = ExtResource("1_efb2f")

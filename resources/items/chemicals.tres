@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/chemicals.png" id="1_np3xj"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_scq2b"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_np3xj"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/chemicals.tscn" id="3_06wms"]
+
+[resource]
+script = ExtResource("2_np3xj")
+id = &"chemicals"
+display_name = "Chemicals"
+description = "A jug of mixed solvents and fertiliser. Used for gunpowder and medicine."
+icon = ExtResource("1_np3xj")
+max_stack = 10
+weight = 0.8
+base_value = 4
+world_model = ExtResource("3_06wms")
+pickup_sound = ExtResource("1_scq2b")

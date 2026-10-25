@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_c82n6"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="2_2advo"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="3_c5k8i"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="4_s4j00"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_gqlp8"]
+
+[resource]
+script = ExtResource("5_gqlp8")
+id = &"medkit"
+category = 3
+station = 1
+inputs = Dictionary[ExtResource("1_c82n6"), int]({
+ExtResource("2_2advo"): 2,
+ExtResource("3_c5k8i"): 1
+})
+output = ExtResource("4_s4j00")
+craft_time = 3.5

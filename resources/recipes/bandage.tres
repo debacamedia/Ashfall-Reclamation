@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_1gj3w"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="2_kaii8"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="3_q316y"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="4_vvbo0"]
+
+[resource]
+script = ExtResource("4_vvbo0")
+id = &"bandage"
+category = 3
+inputs = Dictionary[ExtResource("1_1gj3w"), int]({
+ExtResource("2_kaii8"): 2
+})
+output = ExtResource("3_q316y")

@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oqg14"]
+albedo_color = Color(0.23921569, 0.43137255, 0.56078434, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_td7e5"]
+size = Vector3(0.16, 0.24, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3vdbi"]
+albedo_color = Color(0.8156863, 0.8156863, 0.8156863, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wxy1s"]
+top_radius = 0.025
+bottom_radius = 0.025
+height = 0.04
+radial_segments = 14
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3h4lx"]
+albedo_color = Color(0.9098039, 0.8862745, 0.78431374, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_18uwv"]
+size = Vector3(0.12, 0.08, 0.002)
+
+[node name="Chemicals" type="Node3D" unique_id=1591475462]
+
+[node name="Jug" type="MeshInstance3D" parent="." unique_id=469989363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+material_override = SubResource("StandardMaterial3D_oqg14")
+mesh = SubResource("BoxMesh_td7e5")
+
+[node name="Cap" type="MeshInstance3D" parent="." unique_id=781478857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, 0.26, 0)
+material_override = SubResource("StandardMaterial3D_3vdbi")
+mesh = SubResource("CylinderMesh_wxy1s")
+
+[node name="Label" type="MeshInstance3D" parent="." unique_id=898608526]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, -0.051)
+material_override = SubResource("StandardMaterial3D_3h4lx")
+mesh = SubResource("BoxMesh_18uwv")

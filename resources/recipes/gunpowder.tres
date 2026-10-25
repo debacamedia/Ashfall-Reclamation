@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_bu5n5"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="2_xqynv"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="3_h5mlv"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="4_trutm"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_fi2tu"]
+
+[resource]
+script = ExtResource("5_fi2tu")
+id = &"gunpowder"
+category = 1
+station = 1
+inputs = Dictionary[ExtResource("1_bu5n5"), int]({
+ExtResource("2_xqynv"): 1,
+ExtResource("3_h5mlv"): 1
+})
+output = ExtResource("4_trutm")
+output_quantity = 3
+craft_time = 3.0

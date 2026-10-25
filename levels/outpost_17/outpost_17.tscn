@@ -38,7 +38,6 @@
 [ext_resource type="Resource" path="res://resources/items/cloth.tres" id="37_xntxo"]
 [ext_resource type="Resource" path="res://resources/items/fuel.tres" id="38_0486g"]
 [ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="39_ig36p"]
-[ext_resource type="Script" path="res://scripts/interaction/pickup.gd" id="40_5x06j"]
 [ext_resource type="Resource" path="res://resources/items/medkit.tres" id="40_ck1o8"]
 [ext_resource type="PackedScene" path="res://scenes/world/containers/supply_crate.tscn" id="40_ds1ph"]
 [ext_resource type="Resource" path="res://resources/items/weapons/shotgun_item.tres" id="41_flnt2"]
@@ -51,6 +50,14 @@
 [ext_resource type="PackedScene" path="res://scenes/world/containers/weapons_locker.tscn" id="46_tscnw"]
 [ext_resource type="Resource" path="res://resources/loot/tool_chest.tres" id="48_4ia1j"]
 [ext_resource type="Resource" path="res://resources/loot/scavenger_stash.tres" id="49_bkh55"]
+[ext_resource type="PackedScene" path="res://scenes/world/stations/workbench.tscn" id="51_bkh55"]
+[ext_resource type="Script" path="res://scripts/crafting/crafting_station.gd" id="52_cwwbh"]
+[ext_resource type="PackedScene" path="res://scenes/world/stations/weapons_bench.tscn" id="53_88d5v"]
+[ext_resource type="PackedScene" path="res://scenes/world/salvage/wood_pallet.tscn" id="54_ytx8q"]
+[ext_resource type="Script" path="res://scripts/interaction/salvage_pile.gd" id="55_qovcg"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="56_otu0x"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="57_jkow7"]
+[ext_resource type="PackedScene" path="res://scenes/world/salvage/broken_furniture.tscn" id="58_k06fk"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -786,6 +793,7 @@ unique_name_in_owner = true
 stream = ExtResource("32_uf8n3")
 volume_db = -2.0
 autoplay = true
+stream_paused = true
 bus = &"Ambience"
 
 [node name="Loot" type="Node3D" parent="." unique_id=466982758]
@@ -941,48 +949,40 @@ item = ExtResource("40_ck1o8")
 action_name = "Pick up"
 object_name = "Medkit"
 
-[node name="CommandPostShotgun" type="Area3D" parent="Loot" unique_id=1305499086 instance=ExtResource("33_ixxyf")]
+[node name="CommandPostShotgun" parent="Loot" unique_id=1305499086 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.25881907, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, 0.25881907, -11, 0, -18.2)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("40_5x06j")
 item = ExtResource("41_flnt2")
+action_name = "Pick up"
+object_name = "Pump Shotgun"
+hold_time = 0.4
 
-[node name="CommandPostShells" type="Area3D" parent="Loot" unique_id=729200850 instance=ExtResource("33_ixxyf")]
+[node name="CommandPostShells" parent="Loot" unique_id=729200850 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.9396926, 0, -0.34202012, 0, 1, 0, 0.34202012, 0, 0.9396926, -10.1, 0, -18.3)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("40_5x06j")
 item = ExtResource("42_3ehoi")
 quantity = 12
+action_name = "Pick up"
+object_name = "Shotgun Shells ×12"
 
-[node name="TowerMarksmanRifle" type="Area3D" parent="Loot" unique_id=1891572138 instance=ExtResource("33_ixxyf")]
+[node name="TowerMarksmanRifle" parent="Loot" unique_id=1891572138 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, -28.5, 4.6, -21.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("40_5x06j")
 item = ExtResource("43_dcipq")
+action_name = "Pick up"
+object_name = "Marksman Rifle"
+hold_time = 0.4
 
-[node name="TowerMarksmanAmmo" type="Area3D" parent="Loot" unique_id=1846869357 instance=ExtResource("33_ixxyf")]
+[node name="TowerMarksmanAmmo" parent="Loot" unique_id=1846869357 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -27.7, 4.6, -21.9)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("40_5x06j")
 item = ExtResource("44_tscnw")
 quantity = 10
+action_name = "Pick up"
+object_name = "Marksman Rounds ×10"
 
-[node name="BarracksPistolAmmo" type="Area3D" parent="Loot" unique_id=162509147 instance=ExtResource("33_ixxyf")]
+[node name="BarracksPistolAmmo" parent="Loot" unique_id=162509147 instance=ExtResource("33_ixxyf")]
 transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 10.2, 0, -14)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("40_5x06j")
 item = ExtResource("45_ssps7")
 quantity = 24
+action_name = "Pick up"
+object_name = "Pistol Ammo ×24"
 
 [node name="SalvageContainers" type="Node3D" parent="." unique_id=964546882 groups=["navigation_geometry"]]
 
@@ -1061,3 +1061,172 @@ loot_table = ExtResource("49_bkh55")
 action_name = "Search"
 object_name = "Scavenger Stash"
 hold_time = 1.2
+
+[node name="CraftingStations" type="Node3D" parent="." unique_id=348801427 groups=["navigation_geometry"]]
+
+[node name="Workbench" type="Area3D" parent="CraftingStations" unique_id=584366734 instance=ExtResource("51_bkh55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0, 0.6)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("52_cwwbh")
+object_name = "Workbench"
+focus_offset = Vector3(0, 0.95, 0)
+
+[node name="WeaponsBench" type="Area3D" parent="CraftingStations" unique_id=644624440 instance=ExtResource("53_88d5v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0, -18.45)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("52_cwwbh")
+station = 2
+object_name = "Weapons Bench"
+focus_offset = Vector3(0, 0.95, 0)
+
+[node name="SalvagePiles" type="Node3D" parent="." unique_id=88798242]
+
+[node name="WarehousePallet" type="Area3D" parent="SalvagePiles" unique_id=1808535177 instance=ExtResource("54_ytx8q")]
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, -15.8, 0, 5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 3
+})
+action_name = "Break down"
+object_name = "Pallet"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="WarehousePallet2" type="Area3D" parent="SalvagePiles" unique_id=637820044 instance=ExtResource("54_ytx8q")]
+transform = Transform3D(0.9396926, 0, -0.34202012, 0, 1, 0, 0.34202012, 0, 0.9396926, -15.8, 0, 11.2)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 3
+})
+action_name = "Break down"
+object_name = "Pallet"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="MotorPoolPallet" type="Area3D" parent="SalvagePiles" unique_id=360185042 instance=ExtResource("54_ytx8q")]
+transform = Transform3D(0.8660254, 0, 0.5, 0, 1, 0, -0.5, 0, 0.8660254, 22, 0, 21)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 3
+})
+action_name = "Break down"
+object_name = "Pallet"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="YardPallet" type="Area3D" parent="SalvagePiles" unique_id=1646139522 instance=ExtResource("54_ytx8q")]
+transform = Transform3D(0.34202015, 0, 0.9396926, 0, 1, 0, -0.9396926, 0, 0.34202015, -6, 0, 6)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 3
+})
+action_name = "Break down"
+object_name = "Pallet"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="GatePallet" type="Area3D" parent="SalvagePiles" unique_id=1387847186 instance=ExtResource("54_ytx8q")]
+transform = Transform3D(0.9961947, 0, 0.08715574, 0, 1, 0, -0.08715574, 0, 0.9961947, 8.5, 0, 16.5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 3
+})
+action_name = "Break down"
+object_name = "Pallet"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="WastelandPallet" type="Area3D" parent="SalvagePiles" unique_id=881468840 instance=ExtResource("54_ytx8q")]
+transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -24, 0, 34)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 3
+})
+action_name = "Break down"
+object_name = "Pallet"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="WastelandPallet2" type="Area3D" parent="SalvagePiles" unique_id=1989167698 instance=ExtResource("54_ytx8q")]
+transform = Transform3D(0.81915206, 0, -0.57357645, 0, 1, 0, 0.57357645, 0, 0.81915206, 30, 0, 36)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 3
+})
+action_name = "Break down"
+object_name = "Pallet"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="BarracksFurniture" type="Area3D" parent="SalvagePiles" unique_id=1855720208 instance=ExtResource("58_k06fk")]
+transform = Transform3D(0.9396926, 0, 0.34202012, 0, 1, 0, -0.34202012, 0, 0.9396926, 15.6, 0, -17.6)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 2,
+ExtResource("35_so4bl"): 1
+})
+pile_name = "Broken Furniture"
+action_name = "Break down"
+object_name = "Broken Furniture"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.36, 0)
+
+[node name="CommandPostFurniture" type="Area3D" parent="SalvagePiles" unique_id=1169921516 instance=ExtResource("58_k06fk")]
+transform = Transform3D(0.8660254, 0, -0.5, 0, 1, 0, 0.5, 0, 0.8660254, -8.2, 0, -14.2)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 2,
+ExtResource("35_so4bl"): 1
+})
+pile_name = "Broken Furniture"
+action_name = "Break down"
+object_name = "Broken Furniture"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.36, 0)
+
+[node name="WastelandFurniture" type="Area3D" parent="SalvagePiles" unique_id=759828590 instance=ExtResource("58_k06fk")]
+transform = Transform3D(0.49999997, 0, 0.86602545, 0, 1, 0, -0.86602545, 0, 0.49999997, -38, 0, 46)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("55_qovcg")
+yields = Dictionary[ExtResource("56_otu0x"), int]({
+ExtResource("57_jkow7"): 2,
+ExtResource("35_so4bl"): 1
+})
+pile_name = "Broken Furniture"
+action_name = "Break down"
+object_name = "Broken Furniture"
+hold_time = 1.5
+focus_offset = Vector3(0, 0.36, 0)

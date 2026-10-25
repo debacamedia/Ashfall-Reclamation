@@ -36,6 +36,7 @@ extends CanvasLayer
 @onready var inventory_screen: InventoryScreen = %InventoryScreen
 @onready var container_screen: ContainerScreen = get_node_or_null("%ContainerScreen")
 @onready var _weapon_strip: Label = get_node_or_null("%WeaponStrip")
+@onready var crafting_screen: CraftingScreen = get_node_or_null("%CraftingScreen")
 @onready var _scope: Control = get_node_or_null("%ScopeOverlay")
 @onready var _ui_sound: AudioStreamPlayer = %UISound
 
@@ -88,6 +89,9 @@ func _process(delta: float) -> void:
 		inventory_screen.player = player
 		if container_screen != null:
 			container_screen.player = player
+		if crafting_screen != null:
+			crafting_screen.player = player
+		player.craft_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 	_update_prompt()
 	_update_item_use()
 	_update_notices(delta)
@@ -221,7 +225,8 @@ func _bind_interactor(interactor: PlayerInteractor) -> void:
 
 func _update_prompt() -> void:
 	var target := _interactor.focused if _interactor != null else null
-	if target == null or not is_instance_valid(target) or player.is_dead() or player.current_container != null:
+	if target == null or not is_instance_valid(target) or player.is_dead() or player.current_container != null \
+			or (crafting_screen != null and crafting_screen.visible):
 		_prompt_label.visible = false
 		_prompt_reason.visible = false
 		_hold_bar.visible = false
@@ -262,11 +267,19 @@ func _on_inventory_changed(_slots: PackedInt32Array) -> void:
 
 func _update_item_use() -> void:
 	var progress := player.get_item_use_progress()
-	_use_bar.visible = progress >= 0.0
-	_use_label.visible = progress >= 0.0
 	if progress >= 0.0:
+		_use_bar.visible = true
+		_use_label.visible = true
 		_use_bar.value = progress * 100.0
 		_use_label.text = "Using %s…  (fire or sprint to cancel)" % player.get_item_in_use().display_name
+		return
+	# Hand crafting carries on with the menu closed: show it here
+	var crafting := player.is_crafting() and not (crafting_screen != null and crafting_screen.visible)
+	_use_bar.visible = crafting
+	_use_label.visible = crafting
+	if crafting:
+		_use_bar.value = player.get_crafting_progress() * 100.0
+		_use_label.text = "Crafting %s  (%d left)" % [player.get_crafting_recipe().get_display_name(), player.get_crafting_count()]
 
 
 func _on_item_received(item: ItemDefinition, quantity: int) -> void:

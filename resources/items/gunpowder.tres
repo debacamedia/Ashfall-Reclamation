@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_40ogn"]
+[ext_resource type="Texture2D" path="res://assets/icons/gunpowder.png" id="1_cedcn"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_cedcn"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/gunpowder.tscn" id="3_o6qgu"]
+
+[resource]
+script = ExtResource("2_cedcn")
+id = &"gunpowder"
+display_name = "Gunpowder"
+description = "Black powder in a tin. Every round of ammunition needs some."
+category = 5
+icon = ExtResource("1_cedcn")
+weight = 0.1
+base_value = 3
+world_model = ExtResource("3_o6qgu")
+pickup_sound = ExtResource("1_40ogn")

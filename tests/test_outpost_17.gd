@@ -422,3 +422,60 @@ func test_new_guns_placed_in_the_outpost() -> void:
 		await get_tree().physics_frame
 		_player.simulate(f, DT)
 	check(_player.weapon_slots.get_weapon(4) != null, "picked up into slot 4")
+
+
+func test_benches_placed_and_usable() -> void:
+	await _load_level()
+	var space := _level.get_world_3d().direct_space_state
+	for name in ["Workbench", "WeaponsBench"]:
+		var bench := _level.get_node("CraftingStations/" + name) as CraftingStation
+		var body := bench.get_node("Body") as StaticBody3D
+		var shape := body.get_node("BodyShape") as CollisionShape3D
+		var box := (shape.shape as BoxShape3D).duplicate() as BoxShape3D
+		box.size -= Vector3(0.06, 0.06, 0.06)
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = box
+		q.transform = shape.global_transform
+		q.collision_mask = PhysicsLayers.WORLD_SOLID
+		q.exclude = [body.get_rid()]
+		var hits := space.intersect_shape(q, 4)
+		check(hits.is_empty(), "%s clear of walls (%s)" % [name, hits.map(func(h: Dictionary) -> String: return str((h["collider"] as Node).name))])
+		_player.close_station()
+		var front := bench.global_basis.z
+		await _teleport(bench.global_position + front * 1.4 + Vector3.UP * 0.05, 0)
+		var eye := _player.head.global_position
+		var t := bench.get_focus_point()
+		var flat := Vector3(t.x - eye.x, 0, t.z - eye.z)
+		_player.rotation.y = atan2(-flat.x, -flat.z)
+		_player.head.rotation.x = atan2(t.y - eye.y, flat.length())
+		await _walk(Vector2.ZERO, 2)
+		var f := InputFrame.new()
+		f.interact = true
+		await get_tree().physics_frame
+		_player.simulate(f, DT)
+		check(_player.current_station == bench, "%s opens with E from the front" % name)
+	_player.close_station()
+
+
+func test_salvage_piles_on_open_ground() -> void:
+	await _load_level()
+	var piles := _level.get_node("SalvagePiles").get_children()
+	check(piles.size() >= 8, "8+ salvage piles (%d)" % piles.size())
+	var space := _level.get_world_3d().direct_space_state
+	for pile: SalvagePile in piles:
+		var shape := pile.get_node("Shape") as CollisionShape3D
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = shape.shape
+		q.transform = shape.global_transform
+		q.collision_mask = PhysicsLayers.WORLD_SOLID
+		var hits := space.intersect_shape(q, 4).filter(func(h: Dictionary) -> bool: return (h["collider"] as Node).name != "Terrain" and (h["collider"] as Node).name != "Floor")
+		check(hits.is_empty(), "%s clear of walls and props (%s)" % [pile.name, hits.map(func(h: Dictionary) -> String: return str((h["collider"] as Node).name))])
+		_player.health.revive(1.0)
+		await _teleport(pile.global_position + Vector3(0, 0.05, 1.4).rotated(Vector3.UP, pile.rotation.y), 0)
+		var eye := _player.head.global_position
+		var t := pile.get_focus_point()
+		var flat := Vector3(t.x - eye.x, 0, t.z - eye.z)
+		_player.rotation.y = atan2(-flat.x, -flat.z)
+		_player.head.rotation.x = atan2(t.y - eye.y, flat.length())
+		await _walk(Vector2.ZERO, 2)
+		check(_player.interactor.focused == pile, "%s can be targeted (got %s)" % [pile.name, _player.interactor.focused])

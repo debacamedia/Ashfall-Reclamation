@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_ocskc"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_c56r8"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_c1kjg"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="4_e8kfk"]
+
+[resource]
+script = ExtResource("4_e8kfk")
+id = &"spring"
+category = 1
+station = 1
+inputs = Dictionary[ExtResource("1_ocskc"), int]({
+ExtResource("2_c56r8"): 1
+})
+output = ExtResource("3_c1kjg")
+output_quantity = 2
+craft_time = 1.5

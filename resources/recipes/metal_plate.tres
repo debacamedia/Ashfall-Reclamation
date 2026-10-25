@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_w7t3j"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_ary08"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="3_llurc"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="4_6yq03"]
+
+[resource]
+script = ExtResource("4_6yq03")
+id = &"metal_plate"
+category = 1
+station = 1
+inputs = Dictionary[ExtResource("1_w7t3j"), int]({
+ExtResource("2_ary08"): 3
+})
+output = ExtResource("3_llurc")
+craft_time = 2.5

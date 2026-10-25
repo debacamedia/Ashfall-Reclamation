@@ -1,0 +1,97 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/salvage_pile.gd" id="1_pyp52"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_hgp3d"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="3_ijusj"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="4_scp0u"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_t6awr"]
+size = Vector3(1.1, 0.35, 1.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8r3mg"]
+size = Vector3(1, 0.025, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_l5u8u"]
+size = Vector3(1, 0.025, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_onbuq"]
+size = Vector3(1, 0.025, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lpk4y"]
+size = Vector3(1, 0.025, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h6dp0"]
+size = Vector3(1, 0.025, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jskjj"]
+size = Vector3(0.1, 0.1, 0.95)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gsv7i"]
+size = Vector3(0.1, 0.1, 0.95)
+
+[sub_resource type="BoxMesh" id="BoxMesh_afvy6"]
+size = Vector3(0.1, 0.1, 0.95)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wna64"]
+size = Vector3(0.6, 0.025, 0.1)
+
+[node name="WoodPallet" type="Area3D" unique_id=1808535177]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_pyp52")
+yields = Dictionary[ExtResource("2_hgp3d"), int]({
+ExtResource("3_ijusj"): 3
+})
+focus_offset = Vector3(0, 0.21, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=512432239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0)
+shape = SubResource("BoxShape3D_t6awr")
+
+[node name="Model" type="Node3D" parent="." unique_id=1778756906]
+
+[node name="Slat0" type="MeshInstance3D" parent="Model" unique_id=314657600]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, -0.4)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_8r3mg")
+
+[node name="Slat1" type="MeshInstance3D" parent="Model" unique_id=1429572186]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, -0.2)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_l5u8u")
+
+[node name="Slat2" type="MeshInstance3D" parent="Model" unique_id=1561382189]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_onbuq")
+
+[node name="Slat3" type="MeshInstance3D" parent="Model" unique_id=561425792]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0.2)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_lpk4y")
+
+[node name="Slat4" type="MeshInstance3D" parent="Model" unique_id=840795302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0.4)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_h6dp0")
+
+[node name="Runner0" type="MeshInstance3D" parent="Model" unique_id=363686796]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 0.06, 0)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_jskjj")
+
+[node name="Runner1" type="MeshInstance3D" parent="Model" unique_id=688896433]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_gsv7i")
+
+[node name="Runner2" type="MeshInstance3D" parent="Model" unique_id=939416994]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42, 0.06, 0)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_afvy6")
+
+[node name="BrokenSlat" type="MeshInstance3D" parent="Model" unique_id=384522927]
+transform = Transform3D(0.89748764, -0.12613367, 0.42261827, 0.1391731, 0.99026805, 0, -0.41850537, 0.058817096, 0.90630776, 0.2, 0.15, 0.55)
+material_override = ExtResource("4_scp0u")
+mesh = SubResource("BoxMesh_wna64")

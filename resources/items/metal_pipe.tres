@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/metal_pipe.png" id="1_o7a11"]
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_oas36"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_o7a11"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/metal_pipe.tscn" id="3_gymn0"]
+
+[resource]
+script = ExtResource("2_o7a11")
+id = &"metal_pipe"
+display_name = "Metal Pipe"
+description = "A length of steel pipe. Gun barrels and frames."
+category = 5
+icon = ExtResource("1_o7a11")
+max_stack = 20
+weight = 0.6
+base_value = 3
+world_model = ExtResource("3_gymn0")
+pickup_sound = ExtResource("1_oas36")

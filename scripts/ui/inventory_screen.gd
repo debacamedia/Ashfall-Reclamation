@@ -78,6 +78,9 @@ func toggle() -> void:
 func _input(event: InputEvent) -> void:
 	if player == null or not player.controlled_locally or player.current_container != null:
 		return
+	var hud := get_parent().get_parent() as HUD if get_parent() != null else null
+	if hud != null and hud.crafting_screen != null and hud.crafting_screen.visible:
+		return
 	if event.is_action_pressed("inventory"):
 		toggle()
 		get_viewport().set_input_as_handled()

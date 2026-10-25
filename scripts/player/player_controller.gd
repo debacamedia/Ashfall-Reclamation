@@ -43,6 +43,14 @@ signal container_closed(container: SalvageContainer)
 signal transfer_refused(reason: String)
 ## A new gun joined the loadout (HUD notice, sound).
 signal weapon_picked_up(weapon: WeaponDefinition)
+## Crafting: one unit started / finished; the queue was cancelled or refused.
+signal crafting_started(recipe: RecipeDefinition, duration: float)
+signal crafting_finished(recipe: RecipeDefinition)
+signal crafting_cancelled(recipe: RecipeDefinition)
+signal craft_refused(reason: String)
+## A bench was opened / closed (the HUD shows the crafting screen).
+signal station_opened(station: CraftingStation)
+signal station_closed(station: CraftingStation)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
 
@@ -127,6 +135,11 @@ var _ladder_cooldown := 0.0
 var _climb_distance := 0.0
 ## The salvage container whose contents are open, or null.
 var current_container: SalvageContainer = null
+## The crafting bench in use, or null (hand crafting).
+var current_station: CraftingStation = null
+var _craft_recipe: RecipeDefinition = null
+var _craft_left := 0.0
+var _craft_count := 0
 
 @onready var collision_shape: CollisionShape3D = %CollisionShape
 @onready var head: Node3D = %Head
@@ -191,6 +204,7 @@ func simulate(frame: InputFrame, delta: float) -> void:
 	_apply_look(frame.look * lerpf(1.0, 1.0 / _ads_zoom(), aim_amount))
 	_update_stance(frame.crouch and ladder == null, delta)
 	_update_item_use(frame, delta)
+	_update_crafting(delta)
 	_update_aim(frame, delta)
 
 	_ladder_cooldown = maxf(_ladder_cooldown - delta, 0.0)
@@ -226,10 +240,13 @@ func simulate(frame: InputFrame, delta: float) -> void:
 	if interactor != null:
 		interactor.tick(delta, frame.interact, self)
 
-	# Walked away from an open container
+	# Walked away from an open container or bench
 	if current_container != null and (not is_instance_valid(current_container)
 			or not current_container.is_within_reach(head.global_position)):
 		close_container()
+	if current_station != null and (not is_instance_valid(current_station)
+			or not current_station.is_within_reach(head.global_position)):
+		close_station()
 
 
 ## Brings the player back to life at `spawn` with full health. Called by
@@ -401,6 +418,7 @@ func open_container(container: SalvageContainer) -> void:
 	if container == current_container or container == null:
 		return
 	close_container()
+	close_station()
 	cancel_item_use()
 	current_container = container
 	container_opened.emit(container)
@@ -504,6 +522,8 @@ func load_state(data: Dictionary) -> void:
 	var yaw := _number(data.get("yaw"), rotation.y)
 	# respawn_at resets everything transient: death camera, ladder, crouch...
 	close_container()
+	cancel_crafting()
+	close_station()
 	cancel_item_use()
 	ladder = null
 	respawn_at(Transform3D(Basis(Vector3.UP, yaw), pos))
@@ -565,6 +585,136 @@ func _update_weapon_selection(frame: InputFrame, delta: float) -> void:
 		elif frame.cycle != 0:
 			weapon_slots.cycle(signi(frame.cycle))
 	weapon_slots.tick(delta)
+
+
+# ---------------------------------------------------------------- crafting
+
+## Called by CraftingStation after a validated interaction.
+func open_station(station: CraftingStation) -> void:
+	if station == current_station or station == null:
+		return
+	close_container()
+	close_station()
+	current_station = station
+	station_opened.emit(station)
+
+
+func close_station() -> void:
+	if current_station == null:
+		return
+	var s := current_station
+	current_station = null
+	# Bench recipes need the bench; hand recipes keep going
+	if _craft_recipe != null and _craft_recipe.station != RecipeDefinition.Station.HAND:
+		cancel_crafting()
+	station_closed.emit(s)
+
+
+## The station you're crafting with right now (HAND if no bench is open).
+func get_crafting_station() -> RecipeDefinition.Station:
+	if current_station != null and is_instance_valid(current_station) and current_station.is_within_reach(head.global_position):
+		return current_station.station
+	return RecipeDefinition.Station.HAND
+
+
+func is_crafting() -> bool:
+	return _craft_recipe != null
+
+
+func get_crafting_recipe() -> RecipeDefinition:
+	return _craft_recipe
+
+
+## How many more are queued, including the one in progress.
+func get_crafting_count() -> int:
+	return _craft_count
+
+
+## 0..1 progress of the unit being made (-1 when idle).
+func get_crafting_progress() -> float:
+	if _craft_recipe == null:
+		return -1.0
+	return 1.0 - _craft_left / maxf(_craft_recipe.craft_time, 0.001)
+
+
+## "" if one of `recipe` could be crafted right now, otherwise why not.
+func craft_refusal_reason(recipe: RecipeDefinition) -> String:
+	if recipe == null or recipe.output == null:
+		return "Unknown recipe"
+	if is_dead() or inventory == null:
+		return "Can't do that now"
+	if not recipe.can_make_at(get_crafting_station()):
+		return "Needs a " + RecipeDefinition.station_name(recipe.station)
+	for item: ItemDefinition in recipe.inputs:
+		var have := inventory.count_of(item.id)
+		if have < recipe.inputs[item]:
+			return "Missing %d %s" % [recipe.inputs[item] - have, item.display_name]
+	if not inventory.can_exchange(recipe.inputs, recipe.output, recipe.output_quantity):
+		return "Inventory full"
+	return ""
+
+
+## Starts crafting `count` of a recipe (validated). Adding to the same
+## recipe extends the queue; a different recipe replaces it.
+func request_craft(recipe: RecipeDefinition, count: int = 1) -> bool:
+	var reason := craft_refusal_reason(recipe)
+	if reason != "":
+		craft_refused.emit(reason)
+		return false
+	count = clampi(count, 1, 99)
+	if _craft_recipe == recipe:
+		_craft_count = mini(_craft_count + count, 99)
+		return true
+	if _craft_recipe != null:
+		cancel_crafting()
+	_craft_recipe = recipe
+	_craft_count = count
+	_craft_left = recipe.craft_time
+	crafting_started.emit(recipe, recipe.craft_time)
+	return true
+
+
+func cancel_crafting() -> void:
+	if _craft_recipe == null:
+		return
+	var r := _craft_recipe
+	_craft_recipe = null
+	_craft_count = 0
+	_craft_left = 0.0
+	crafting_cancelled.emit(r)
+
+
+func _update_crafting(delta: float) -> void:
+	if _craft_recipe == null:
+		return
+	_craft_left -= delta
+	if _craft_left > 0.0:
+		return
+	# Check again: materials may have been dropped, the bench left behind
+	var recipe := _craft_recipe
+	var reason := craft_refusal_reason(recipe)
+	if reason != "":
+		craft_refused.emit(reason)
+		cancel_crafting()
+		return
+	for item: ItemDefinition in recipe.inputs:
+		inventory.remove_item(item.id, recipe.inputs[item])
+	inventory.receive(recipe.output, recipe.output_quantity)
+	crafting_finished.emit(recipe)
+	_craft_count -= 1
+	if _craft_count <= 0:
+		_craft_recipe = null
+		_craft_left = 0.0
+		return
+	if craft_refusal_reason(recipe) != "":
+		# Out of materials for the rest of the queue
+		_craft_recipe = null
+		_craft_count = 0
+		_craft_left = 0.0
+		crafting_cancelled.emit(recipe)
+		return
+	_craft_left = recipe.craft_time
+	crafting_started.emit(recipe, recipe.craft_time)
 
 
 # ---------------------------------------------------------------- walking
@@ -726,6 +876,8 @@ func _on_landed(impact_speed: float) -> void:
 func _on_health_died(info: DamageInfo) -> void:
 	cancel_item_use()
 	close_container()
+	cancel_crafting()
+	close_station()
 	if ladder != null:
 		_release_ladder()
 	aim_amount = 0.0

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_3swpm"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_krwau"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="3_8h3we"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="4_nicgi"]
+
+[resource]
+script = ExtResource("4_nicgi")
+id = &"metal_pipe"
+category = 1
+station = 1
+inputs = Dictionary[ExtResource("1_3swpm"), int]({
+ExtResource("2_krwau"): 2
+})
+output = ExtResource("3_8h3we")

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_qhony"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="2_df7wh"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="3_0o6kn"]
+[ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="4_skknc"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_1arn8"]
+
+[resource]
+script = ExtResource("5_1arn8")
+id = &"rifle_308"
+category = 2
+station = 2
+inputs = Dictionary[ExtResource("1_qhony"), int]({
+ExtResource("2_df7wh"): 1,
+ExtResource("3_0o6kn"): 2
+})
+output = ExtResource("4_skknc")
+output_quantity = 10
+craft_time = 4.0

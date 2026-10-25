@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_8h3va"]
+[ext_resource type="Texture2D" path="res://assets/icons/wood_plank.png" id="1_tef50"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_tef50"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/wood_plank.tscn" id="3_5m7dn"]
+
+[resource]
+script = ExtResource("2_tef50")
+id = &"wood_plank"
+display_name = "Wood Plank"
+description = "Cut, squared timber. Building material and gun stocks."
+category = 5
+icon = ExtResource("1_tef50")
+max_stack = 30
+world_model = ExtResource("3_5m7dn")
+pickup_sound = ExtResource("1_8h3va")

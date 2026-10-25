@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_lck6d"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="2_hlhnh"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_32r6i"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="4_s8w5j"]
+
+[resource]
+script = ExtResource("4_s8w5j")
+id = &"cloth_from_bandages"
+station = 1
+inputs = Dictionary[ExtResource("1_lck6d"), int]({
+ExtResource("2_hlhnh"): 2
+})
+output = ExtResource("3_32r6i")
+output_quantity = 3
+craft_time = 1.0

@@ -93,6 +93,20 @@ func can_add(item: ItemDefinition, quantity: int) -> int:
 	return fit
 
 
+## True if, after removing `remove` ({ItemDefinition: qty}), all of
+## `quantity` × `item` would fit. Changes nothing and emits nothing (used to
+## check a crafting recipe's output before starting it).
+func can_exchange(remove: Dictionary, item: ItemDefinition, quantity: int) -> bool:
+	var saved := _slots.duplicate(true)
+	set_block_signals(true)
+	for it: ItemDefinition in remove:
+		remove_item(it.id, int(remove[it]))
+	var fits := can_add(item, quantity) >= quantity
+	_slots = saved
+	set_block_signals(false)
+	return fits
+
+
 ## "" if at least one could be added, otherwise why not.
 func get_refusal_reason(item: ItemDefinition, quantity: int) -> String:
 	if item == null or quantity <= 0:

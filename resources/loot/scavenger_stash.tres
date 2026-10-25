@@ -10,6 +10,8 @@
 [ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="8_c8f0y"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="8_onqjp"]
 [ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="9_bub3v"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="10_rkwqf"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="11_qe5jl"]
 
 [sub_resource type="Resource" id="Resource_tlqu8"]
 script = ExtResource("1_4tuds")
@@ -60,8 +62,21 @@ item = ExtResource("9_bub3v")
 min_quantity = 6
 max_quantity = 12
 
+[sub_resource type="Resource" id="Resource_qe5jl"]
+script = ExtResource("1_4tuds")
+item = ExtResource("10_rkwqf")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_krrew"]
+script = ExtResource("1_4tuds")
+item = ExtResource("11_qe5jl")
+weight = 2.0
+min_quantity = 3
+max_quantity = 6
+
 [resource]
 script = ExtResource("8_onqjp")
-entries = Array[ExtResource("1_4tuds")]([SubResource("Resource_tlqu8"), SubResource("Resource_ojl0o"), SubResource("Resource_f1gqb"), SubResource("Resource_rjvsb"), SubResource("Resource_tnrqw"), SubResource("Resource_l3km2"), SubResource("Resource_bub3v"), SubResource("Resource_rkwqf")])
+entries = Array[ExtResource("1_4tuds")]([SubResource("Resource_tlqu8"), SubResource("Resource_ojl0o"), SubResource("Resource_f1gqb"), SubResource("Resource_rjvsb"), SubResource("Resource_tnrqw"), SubResource("Resource_l3km2"), SubResource("Resource_bub3v"), SubResource("Resource_rkwqf"), SubResource("Resource_qe5jl"), SubResource("Resource_krrew")])
 min_rolls = 3
 max_rolls = 5

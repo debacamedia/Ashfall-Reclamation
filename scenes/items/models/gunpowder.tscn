@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_as5us"]
+albedo_color = Color(0.22745098, 0.22745098, 0.21176471, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_8ayi4"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 0.08
+radial_segments = 14
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vw652"]
+albedo_color = Color(0.6039216, 0.5411765, 0.3529412, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lspjm"]
+top_radius = 0.052
+bottom_radius = 0.052
+height = 0.012
+radial_segments = 14
+
+[node name="Gunpowder" type="Node3D" unique_id=1513178481]
+
+[node name="Tin" type="MeshInstance3D" parent="." unique_id=857796932]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+material_override = SubResource("StandardMaterial3D_as5us")
+mesh = SubResource("CylinderMesh_8ayi4")
+
+[node name="Lid" type="MeshInstance3D" parent="." unique_id=2143046152]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086, 0)
+material_override = SubResource("StandardMaterial3D_vw652")
+mesh = SubResource("CylinderMesh_lspjm")

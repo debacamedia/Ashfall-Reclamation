@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="1_lwjcf"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_e1g8l"]
+size = Vector3(0.7, 0.03, 0.14)
+
+[node name="WoodPlank" type="Node3D" unique_id=56992718]
+
+[node name="Plank" type="MeshInstance3D" parent="." unique_id=1028521891]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
+material_override = ExtResource("1_lwjcf")
+mesh = SubResource("BoxMesh_e1g8l")

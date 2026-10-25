@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_tlb3e"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tvtj0"]
+top_radius = 0.022
+bottom_radius = 0.022
+height = 0.45
+radial_segments = 14
+
+[node name="MetalPipe" type="Node3D" unique_id=1993487805]
+
+[node name="Pipe" type="MeshInstance3D" parent="." unique_id=1300587395]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0.022, 0)
+material_override = ExtResource("1_tlb3e")
+mesh = SubResource("CylinderMesh_tvtj0")

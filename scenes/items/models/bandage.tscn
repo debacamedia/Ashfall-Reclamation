@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yu1ia"]
+albedo_color = Color(0.9254902, 0.9019608, 0.8392157, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_yf786"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 0.08
+radial_segments = 14
+
+[node name="Bandage" type="Node3D" unique_id=769967892]
+
+[node name="Roll" type="MeshInstance3D" parent="." unique_id=1300779363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+material_override = SubResource("StandardMaterial3D_yu1ia")
+mesh = SubResource("CylinderMesh_yf786")

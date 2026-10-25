@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_painted.tres" id="1_fu0wf"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6ejmi"]
+size = Vector3(0.3, 0.02, 0.22)
+
+[node name="MetalPlate" type="Node3D" unique_id=499785080]
+
+[node name="Plate" type="MeshInstance3D" parent="." unique_id=395713457]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+material_override = ExtResource("1_fu0wf")
+mesh = SubResource("BoxMesh_6ejmi")

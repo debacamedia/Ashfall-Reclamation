@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_g5iw1"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_1sj7n"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="3_7nfih"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="4_y4bm3"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_flxbq"]
+
+[resource]
+script = ExtResource("5_flxbq")
+id = &"pistol_ammo_hand"
+display_name = "Pistol Ammo (by hand)"
+category = 2
+inputs = Dictionary[ExtResource("1_g5iw1"), int]({
+ExtResource("2_1sj7n"): 1,
+ExtResource("3_7nfih"): 1
+})
+output = ExtResource("4_y4bm3")
+output_quantity = 6
+craft_time = 3.0

@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/salvage_pile.gd" id="1_neghy"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_6ojun"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="3_38p5h"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_ju2fp"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="5_jf0h6"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="6_kfnfv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2dv6p"]
+size = Vector3(1, 0.6, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sr4vb"]
+size = Vector3(0.9, 0.04, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i8maq"]
+size = Vector3(0.05, 0.6, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_n3viy"]
+size = Vector3(0.05, 0.6, 0.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yqn7i"]
+size = Vector3(0.4, 0.04, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pmo6q"]
+size = Vector3(0.2, 0.03, 0.04)
+
+[node name="BrokenFurniture" type="Area3D" unique_id=1855720208]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_neghy")
+yields = Dictionary[ExtResource("2_6ojun"), int]({
+ExtResource("3_38p5h"): 2,
+ExtResource("4_ju2fp"): 1
+})
+pile_name = "Broken Furniture"
+focus_offset = Vector3(0, 0.36, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1436344988]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("BoxShape3D_2dv6p")
+
+[node name="Model" type="Node3D" parent="." unique_id=467131301]
+
+[node name="Tabletop" type="MeshInstance3D" parent="Model" unique_id=293137227]
+transform = Transform3D(0.93660784, -0.30432233, 0.17364818, 0.309017, 0.95105654, 0, -0.16514924, 0.05366024, 0.9848077, 0, 0.18, 0)
+material_override = ExtResource("5_jf0h6")
+mesh = SubResource("BoxMesh_sr4vb")
+
+[node name="Leg1" type="MeshInstance3D" parent="Model" unique_id=966965539]
+transform = Transform3D(0.34202015, -0.9396926, 0, 0.9396926, 0.34202015, 0, 0, 0, 1, -0.3, 0.3, 0.2)
+material_override = ExtResource("5_jf0h6")
+mesh = SubResource("BoxMesh_i8maq")
+
+[node name="Leg2" type="MeshInstance3D" parent="Model" unique_id=1972828048]
+transform = Transform3D(0.8660254, 0.5, -2.1855694e-08, 0, -4.371139e-08, -1, -0.5, 0.8660254, -3.7855173e-08, 0.25, 0.05, -0.2)
+material_override = ExtResource("5_jf0h6")
+mesh = SubResource("BoxMesh_n3viy")
+
+[node name="ChairSeat" type="MeshInstance3D" parent="Model" unique_id=844631211]
+transform = Transform3D(0.76604444, 0.27165377, 0.58256334, 0, 0.90630776, -0.42261827, -0.6427876, 0.3237444, 0.69427204, 0.3, 0.4, 0.15)
+material_override = ExtResource("5_jf0h6")
+mesh = SubResource("BoxMesh_yqn7i")
+
+[node name="Bracket" type="MeshInstance3D" parent="Model" unique_id=802940286]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.25, -0.15)
+material_override = ExtResource("6_kfnfv")
+mesh = SubResource("BoxMesh_pmo6q")
