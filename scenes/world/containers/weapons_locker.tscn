@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="4_eiato"]
 [ext_resource type="AudioStream" path="res://assets/audio/locker_open.wav" id="5_uirpw"]
 [ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="6_37rfw"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/ladder_step.tres" id="7_eiuno"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_t08np"]
 size = Vector3(0.72, 1.92, 0.62)
@@ -151,4 +152,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 stream = ExtResource("6_37rfw")
 volume_db = -3.0
 unit_size = 4.0
+bus = &"SFX"
+
+[node name="CloseSound" type="AudioStreamPlayer3D" parent="." unique_id=890066778]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("7_eiuno")
+volume_db = 2.0
+unit_size = 5.0
 bus = &"SFX"

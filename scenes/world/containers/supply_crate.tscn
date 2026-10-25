@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="5_lftjx"]
 [ext_resource type="AudioStream" path="res://assets/audio/crate_open.wav" id="6_q14oe"]
 [ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="7_m7wni"]
+[ext_resource type="AudioStream" path="res://assets/audio/crate_close.wav" id="8_t5avd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_agrwx"]
 size = Vector3(1.12, 0.72, 0.72)
@@ -113,4 +114,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 stream = ExtResource("7_m7wni")
 volume_db = -3.0
 unit_size = 4.0
+bus = &"SFX"
+
+[node name="CloseSound" type="AudioStreamPlayer3D" parent="." unique_id=1275758227]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+stream = ExtResource("8_t5avd")
+volume_db = -2.0
+unit_size = 5.0
 bus = &"SFX"

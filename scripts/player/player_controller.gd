@@ -140,6 +140,7 @@ var current_container: SalvageContainer = null
 
 func _ready() -> void:
 	add_to_group("players")
+	add_to_group("persist")
 	_current_height = stand_height
 	_apply_height(stand_height)
 	_base_fov = camera.fov
@@ -459,6 +460,51 @@ func _can_transfer() -> bool:
 	return not is_dead() and inventory != null and current_container != null \
 		and is_instance_valid(current_container) and current_container.users.has(self) \
 		and current_container.is_within_reach(head.global_position)
+
+
+# ---------------------------------------------------------------- saving
+
+## Plain data for SaveManager: where you are, where you're looking, health,
+## inventory and the rounds in the magazine.
+func save_state() -> Dictionary:
+	var p := global_position
+	return {
+		"position": [p.x, p.y, p.z],
+		"yaw": rotation.y,
+		"pitch": head.rotation.x,
+		"health": health.current_health,
+		"inventory": inventory.to_data() if inventory != null else [],
+		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
+	}
+
+
+## Restores save_state() data. Anything missing or malformed keeps its
+## current value; the player always ends up alive with at least 1 health.
+func load_state(data: Dictionary) -> void:
+	var pos := global_position
+	var raw_pos: Variant = data.get("position")
+	if raw_pos is Array and raw_pos.size() == 3 and raw_pos.all(func(v: Variant) -> bool: return v is float or v is int):
+		pos = Vector3(raw_pos[0], raw_pos[1], raw_pos[2])
+	var yaw := _number(data.get("yaw"), rotation.y)
+	# respawn_at resets everything transient: death camera, ladder, crouch...
+	close_container()
+	cancel_item_use()
+	ladder = null
+	respawn_at(Transform3D(Basis(Vector3.UP, yaw), pos))
+	var limit := deg_to_rad(max_pitch_degrees)
+	head.rotation.x = clampf(_number(data.get("pitch"), 0.0), -limit, limit)
+	if inventory != null and data.get("inventory") is Array:
+		inventory.from_data(data["inventory"])
+	if weapon != null:
+		weapon.cancel_reload()
+		weapon.ammo_in_magazine = clampi(int(_number(data.get("magazine"), weapon.ammo_in_magazine)), 0, weapon.definition.magazine_size)
+		weapon.ammo_changed.emit(weapon.ammo_in_magazine, weapon.reserve_ammo)
+	var hp := _number(data.get("health"), health.max_health)
+	health.revive(clampf(hp, 1.0, health.max_health) / health.max_health)
+
+
+static func _number(value: Variant, fallback: float) -> float:
+	return float(value) if (value is float or value is int) and is_finite(float(value)) else fallback
 
 
 # ---------------------------------------------------------------- walking

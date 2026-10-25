@@ -31,6 +31,7 @@ var _highlight_material: StandardMaterial3D
 func _ready() -> void:
 	action_name = "Pick up"
 	add_to_group("pickups")
+	add_to_group("persist")
 	_refresh()
 
 
@@ -102,3 +103,32 @@ static func spawn(parent: Node, definition: ItemDefinition, amount: int, positio
 	pickup.position = position
 	parent.add_child(pickup)
 	return pickup
+
+
+# ---------------------------------------------------------------- saving
+
+func save_state() -> Dictionary:
+	var p := global_position
+	return {"item": String(item.id) if item != null else "", "quantity": quantity,
+		"position": [p.x, p.y, p.z], "yaw": rotation.y}
+
+
+func load_state(data: Dictionary) -> void:
+	var def := ItemDatabase.get_item(StringName(str(data.get("item", ""))))
+	var qty: Variant = data.get("quantity")
+	if def == null or not (qty is float or qty is int) or int(qty) <= 0:
+		queue_free()  # nothing valid to show
+		return
+	item = def
+	quantity = int(qty)
+	var raw: Variant = data.get("position")
+	if raw is Array and raw.size() == 3 and raw.all(func(v: Variant) -> bool: return v is float or v is int):
+		global_position = Vector3(raw[0], raw[1], raw[2])
+	var yaw: Variant = data.get("yaw")
+	if yaw is float or yaw is int:
+		rotation.y = float(yaw)
+
+
+## Pickups can disappear (taken), so a save that doesn't list one removes it.
+func is_save_removable() -> bool:
+	return true

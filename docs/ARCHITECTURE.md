@@ -48,13 +48,13 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 | Inventory UI | Grid UI bound to an `InventoryComponent` | `Control` scene | 6 ✅ |
 | Aiming and ladders | ADS (zoom, spread, recoil, speed) simulated from `InputFrame.aim`; `Ladder` scene found by group, `CLIMBING` state | PlayerController + Resource fields + scene | 6.5 ✅ |
 | Salvage containers | Interactable containers with their own inventory and loot tables; two-sided transfer screen; validated take/store | Scene + `LootTable` Resource | 7 ✅ |
-| **SaveManager** | Save/load player, inventories and container state to `user://saves/`, versioned JSON | Autoload | 8 |
+| **SaveManager** | Save/load player, inventories, container state and ground loot to `user://saves/`, versioned JSON; `persist` group contract | Autoload | 8 ✅ |
 
 **Planned for later milestones, with hooks left in place now:** WorldManager (day and night, weather, ticks), BuildingManager, SettlementManager, ResourceManager, EconomyManager (Marks), MilitaryManager, FactionManager, QuestManager, NetworkManager.
 
 ### Autoloads (planned)
 Only systems that genuinely need global access:
-- `SaveManager` (Increment 8). Collects state from nodes in the `persist` group, which implement `save_state()` and `load_state()`.
+- `SaveManager` (Increment 8 ✅). Collects state from nodes in the `persist` group, which implement `save_state()` and `load_state()` (and `is_save_removable()` for things that can disappear).
 - `NetworkManager` (Milestone 2). Owns `ENetMultiplayerPeer`, peers, permissions and `is_authority()`.
 - `WorldManager` (Milestone 2). Day and night clock and the world tick signal.
 
@@ -162,7 +162,7 @@ res://
 | 6 ✅ | Inventory (data + UI) + stored medkits / quick-heal | Open the inventory, see stacks and weight; heal with H |
 | 6.5 ✅ | Aim down sights + ladders | Aim through a red-dot sight; climb the guard towers |
 | 7 ✅ | Salvage containers | Search crates and transfer loot |
-| 8 | SaveManager | Save and load the player, inventory and opened containers |
+| 8 ✅ | SaveManager | Save and load the player, inventory and opened containers |
 
 Each increment adds a guide in `docs/increments/` and tests in `tests/`.
 

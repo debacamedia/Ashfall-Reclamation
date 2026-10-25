@@ -500,6 +500,33 @@ def rummage() -> np.ndarray:
     return out
 
 
+def soft_step(seed: int) -> np.ndarray:
+    """Player/raider footstep on packed dirt: a soft heel thud with a little
+    grit. Quieter and duller than footstep(), which is kept for landings."""
+    rng = np.random.default_rng(seed)
+    out = silence(0.25)
+    thud = lp(noise(0.07, rng), 220 + seed % 5 * 15) * decay(int(0.07 * SR), 0.022, attack=0.004)
+    place(out, thud, 0.0, 1.0)
+    grit = np.zeros(int(0.12 * SR))
+    for _ in range(10):
+        i = rng.integers(0, len(grit) - 300)
+        g = bp(noise(0.005, rng), 900, 3200)
+        grit[i:i + len(g)] += g * rng.uniform(0.05, 0.3)
+    grit *= decay(len(grit), 0.03, attack=0.008)
+    place(out, grit, 0.01, 0.35)
+    return lp(out, 5000)
+
+
+def crate_close() -> np.ndarray:
+    """Wooden lid dropping shut: a dull knock."""
+    rng = np.random.default_rng(730)
+    out = silence(0.4)
+    place(out, lp(noise(0.08, rng), 500) * decay(int(0.08 * SR), 0.025), 0.0, 1.0)
+    place(out, sine_glide(0.12, 140, 80) * decay(int(0.12 * SR), 0.04), 0.0, 0.7)
+    place(out, bp(noise(0.03, rng), 1200, 3000) * decay(int(0.03 * SR), 0.01), 0.0, 0.2)
+    return out
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
     print("Writing to", os.path.abspath(OUT))
@@ -515,8 +542,8 @@ def main() -> None:
         write(f"impact_flesh_{i + 1}", impact_flesh(220 + i), -3)
     for i in range(2):
         write(f"target_ping_{i + 1}", target_ping(i), -4)
-    for i in range(4):
-        write(f"footstep_gravel_{i + 1}", footstep(300 + i), -6)
+    for i in range(6):
+        write(f"footstep_gravel_{i + 1}", soft_step(300 + i), -6)
     write("land", land(), -3)
     for i in range(2):
         write(f"player_hurt_{i + 1}", player_hurt(400 + i), -3)
@@ -545,6 +572,7 @@ def main() -> None:
     write("crate_open", crate_open(), -5)
     write("locker_open", locker_open(), -5)
     write("rummage", rummage(), -8)
+    write("crate_close", crate_close(), -6)
 
 
 if __name__ == "__main__":

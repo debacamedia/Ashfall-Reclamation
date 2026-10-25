@@ -56,6 +56,13 @@ func _ready() -> void:
 	_bar_width = _health_fill.size.x
 	_death_screen.visible = false
 	_damage_vignette.modulate.a = 0.0
+	var saves := get_node_or_null("/root/SaveManager")
+	if saves != null:
+		saves.saved.connect(func(_path: String) -> void: show_notice("Game saved", Color(0.7, 0.95, 0.7)))
+		saves.loaded.connect(func(_path: String) -> void: show_notice("Game loaded", Color(0.7, 0.95, 0.7)))
+		saves.failed.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
 
 
 func _process(delta: float) -> void:
@@ -253,14 +260,18 @@ func _update_item_use() -> void:
 
 
 func _on_item_received(item: ItemDefinition, quantity: int) -> void:
-	var text := "+%d %s" % [quantity, item.display_name]
+	show_notice("+%d %s" % [quantity, item.display_name])
+
+
+## Short message in the notice column (right side), fading after 2.5 s.
+func show_notice(text: String, color := Color(0.95, 0.85, 0.55)) -> void:
 	var notice := Label.new()
 	notice.text = text
 	notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	notice.add_theme_font_size_override("font_size", 20)
 	notice.add_theme_constant_override("outline_size", 5)
 	notice.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
-	notice.add_theme_color_override("font_color", Color(0.95, 0.85, 0.55))
+	notice.add_theme_color_override("font_color", color)
 	notice.set_meta("time_left", 2.5)
 	_notices.add_child(notice)
 	while _notices.get_child_count() > 5:

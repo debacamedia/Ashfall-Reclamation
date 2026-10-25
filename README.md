@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Milestone 1, Increment 7
+## Current state: Milestone 1 complete (Increment 8)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -11,13 +11,14 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 6:** **inventory** (Tab / I): 24 slots, stacking, 30 kg carry weight, item icons, drag to move or drop. Medkits are stored and used with **H** (2 s quick-heal). Rifle ammo is an inventory item.
 - **Increment 6.5:** **aim down sights** (right-click or Q to toggle: red-dot sight, 1.4× zoom, tighter spread, less recoil) and **ladders**: all four guard towers can be climbed.
 - **Increment 7:** **salvage containers**: 11 crates, footlockers, weapons lockers, a tool chest and wasteland stashes. Hold E to search (loot is rolled once), then move items with a two-sided transfer screen (double-click, drag, Take All with R).
+- **Increment 8:** **save and load**: F5 quick save, F9 quick load (fn+F5 / fn+F9 on Mac). Saves the player, inventory, every container and the loot on the ground as versioned JSON. Also quieter footsteps and clanging lockers.
 
 ## Run it
 1. Install Godot 4.7 (standard, not .NET).
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
 3. Press **F5**.
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · R reload · E interact · Tab/I inventory · H use medkit · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · R reload · E interact · Tab/I inventory · H use medkit · F5 quick save · F9 quick load · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
 
 ## After pulling an update — important
 Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.

@@ -78,7 +78,9 @@ func test_footsteps_follow_walking_distance() -> void:
 	var f := InputFrame.new()
 	f.move = Vector2(0, -1)
 	await _drive(p, f, 120)  # 2 s of walking ≈ 8.5 m
-	check_between(audio.footstep_count, 8, 15, "footsteps over ~8.5 m of walking")
+	# 1.3 m strides: a natural ~3.5 steps a second, not a machine-gun patter
+	check_between(audio.footstep_count, 6, 8, "footsteps over ~8.5 m of walking (%d)" % audio.footstep_count)
+	check(audio.footstep_count <= 2 * 4, "no more than ~4 steps a second")
 	var before := audio.footstep_count
 	await _drive(p, InputFrame.new(), 60)
 	check(audio.footstep_count - before <= 1, "no footsteps standing still")

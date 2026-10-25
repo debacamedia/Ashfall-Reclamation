@@ -386,3 +386,27 @@ func test_close_keys() -> void:
 		release.pressed = false
 		Input.parse_input_event(release)
 		await wait_physics(1)
+
+
+func test_lockers_clang_shut() -> void:
+	var clang := load("res://assets/audio/sets/ladder_step.tres")
+	for path in ["res://scenes/world/containers/weapons_locker.tscn", "res://scenes/world/containers/footlocker.tscn"]:
+		var c := (load(path) as PackedScene).instantiate() as SalvageContainer
+		c.position = Vector3(15, 0, 15)
+		add_child(c)
+		check((c.get_node("%CloseSound") as AudioStreamPlayer3D).stream == clang, "%s closes with the ladder clang" % path.get_file())
+	var crate := CRATE.instantiate() as SalvageContainer
+	crate.position = Vector3(-15, 0, 15)
+	add_child(crate)
+	check((crate.get_node("%CloseSound") as AudioStreamPlayer3D).stream == load("res://assets/audio/crate_close.wav"), "crates close with a wooden thud")
+	var r: Array = await _setup()
+	var p: PlayerController = r[0]
+	var c: SalvageContainer = r[1]
+	var shut := [0]
+	c.lid_closed.connect(func() -> void: shut[0] += 1)
+	await _search(p, c)
+	await wait_physics(30)
+	check(shut[0] == 0, "no close sound while open")
+	p.close_container()
+	await wait_physics(40)
+	check(shut[0] == 1, "close sound once the lid has shut")

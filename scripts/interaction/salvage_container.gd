@@ -13,11 +13,14 @@ extends Interactable
 ##
 ## Scenes: res://scenes/world/containers/*.tscn
 ## Root (this Area3D, layer 5) → Shape, Body (StaticBody3D, layer 2), %Lid
-## (optional pivot), %Inventory (InventoryComponent), %OpenSound, %SearchSound.
+## (optional pivot), %Inventory (InventoryComponent), %OpenSound, %SearchSound,
+## %CloseSound (clang/thud when the lid or door shuts).
 
 signal searched(container: SalvageContainer)
 signal opened(by: Node3D)
 signal closed(by: Node3D)
+## The lid/door finished swinging shut (the close clang plays here).
+signal lid_closed
 
 ## Name in prompts and on the transfer screen.
 @export var container_name := "Supply Crate"
@@ -46,6 +49,7 @@ var _lid_tween: Tween
 @onready var _lid: Node3D = get_node_or_null("%Lid")
 @onready var _open_sound: AudioStreamPlayer3D = get_node_or_null("%OpenSound")
 @onready var _search_sound: AudioStreamPlayer3D = get_node_or_null("%SearchSound")
+@onready var _close_sound: AudioStreamPlayer3D = get_node_or_null("%CloseSound")
 
 
 func _ready() -> void:
@@ -159,6 +163,14 @@ func _animate_lid(open: bool) -> void:
 	_lid_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_lid_tween.tween_property(_lid, "rotation_degrees",
 		_lid_closed_rotation + lid_open_rotation if open else _lid_closed_rotation, 0.35)
+	if not open:
+		_lid_tween.tween_callback(_on_lid_shut)
+
+
+func _on_lid_shut() -> void:
+	if _close_sound != null:
+		_close_sound.play()
+	lid_closed.emit()
 
 
 # ---------------------------------------------------------------- saving

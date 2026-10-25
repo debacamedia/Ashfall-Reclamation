@@ -7,8 +7,9 @@ extends Node3D
 ##
 ## Child of the Player scene; its sound players are child nodes.
 
-## Metres between footsteps when walking (sprinting adds 25%).
-@export var step_length := 0.75
+## Metres between footsteps when walking (sprinting adds 25%). At walk speed
+## (4.5 m/s) 1.3 m gives ~3.5 steps a second.
+@export var step_length := 1.3
 ## Health fraction at or below which the heartbeat plays.
 @export var heartbeat_threshold := 0.3
 
@@ -61,7 +62,7 @@ func _physics_process(delta: float) -> void:
 		var stride := step_length * (1.25 if _player.movement_state == PlayerController.MovementState.SPRINTING else 1.0)
 		if _distance >= stride:
 			_distance = 0.0
-			_footsteps.volume_db = -10.0 if _player.is_crouching else -4.0
+			_footsteps.volume_db = -17.0 if _player.is_crouching else -10.0
 			_footsteps.play()
 			footstep_count += 1
 	else:
