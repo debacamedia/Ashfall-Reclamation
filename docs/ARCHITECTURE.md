@@ -22,7 +22,7 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
  ───────────────────────         ─────────────────────────────────        ──────────
  PlayerInput.gather()  ──frame──▶ PlayerController.simulate(frame)  ──▶  position / state
  "Pick up item" button ─request─▶ InventoryManager.request_add(...)  ──▶  inventory_changed signal
- "Place wall"          ─request─▶ BuildingManager.request_place(...) ──▶  structure_spawned signal
+ "Place wall"          ─request─▶ PlayerController.request_place_structure(...) ──▶  structure_placed signal
 ```
 
 - **Movement:** `PlayerInput` turns keyboard and mouse into an `InputFrame` each physics tick. `PlayerController.simulate(frame, delta)` is the *only* code that moves a player. Later, guests send frames to the host, which runs the same `simulate()` (with client-side prediction for the local player).
@@ -50,7 +50,9 @@ Scope: the Milestone 1 vertical slice at **Outpost 17**, built in small incremen
 | Salvage containers | Interactable containers with their own inventory and loot tables; two-sided transfer screen; validated take/store | Scene + `LootTable` Resource | 7 ✅ |
 | **SaveManager** | Save/load player, inventories, container state and ground loot to `user://saves/`, versioned JSON; `persist` group contract | Autoload | 8 ✅ |
 
-**Planned for later milestones, with hooks left in place now:** WorldManager (day and night, weather, ticks), BuildingManager, SettlementManager, ResourceManager, EconomyManager (Marks), MilitaryManager, FactionManager, QuestManager, NetworkManager.
+**Construction (Increment 13 ✅)** is player-side: kits are items, `ConstructionRules` validates, `PlayerController.request_place_structure` / `request_repair_structure` / `request_dismantle_structure` apply, and `NavRebaker` updates the level's navmesh.
+
+**Planned for later milestones, with hooks left in place now:** WorldManager day and night, weather and ticks; SettlementManager, ResourceManager, EconomyManager (Marks), MilitaryManager, FactionManager, QuestManager, NetworkManager.
 
 ### Autoloads (planned)
 Only systems that genuinely need global access:
