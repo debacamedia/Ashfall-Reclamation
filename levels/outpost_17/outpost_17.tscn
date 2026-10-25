@@ -74,6 +74,21 @@
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v1/audio/metal_clank.wav" id="72_e4xjc"]
 [ext_resource type="Script" path="res://scripts/world/random_sound_emitter.gd" id="73_h1q64"]
 [ext_resource type="AudioStream" path="res://assets/audio/loops/distant_wind_loop.wav" id="74_wak0s"]
+[ext_resource type="Material" path="res://assets/materials/signs/pack2_water_purification.tres" id="75_e4xjc"]
+[ext_resource type="Material" path="res://assets/materials/signs/pack2_radio_signal.tres" id="76_h1q64"]
+[ext_resource type="Material" path="res://assets/materials/signs/pack2_checkpoint_17.tres" id="77_wak0s"]
+[ext_resource type="Material" path="res://assets/materials/signs/pack2_medical_triage.tres" id="78_w7s1h"]
+[ext_resource type="Material" path="res://assets/materials/signs/pack2_danger_mines.tres" id="79_wysvy"]
+[ext_resource type="Material" path="res://assets/materials/signs/pack2_bullet_holes.tres" id="80_m66i5"]
+[ext_resource type="Material" path="res://assets/materials/signs/pack2_rust_streaks.tres" id="81_6gm2m"]
+[ext_resource type="PackedScene" path="res://assets/ashfall_pack_v2/scenes/water_storage_tank.tscn" id="82_edr30"]
+[ext_resource type="PackedScene" path="res://assets/ashfall_pack_v2/scenes/portable_generator.tscn" id="83_yxgp0"]
+[ext_resource type="PackedScene" path="res://assets/ashfall_pack_v2/scenes/field_radio.tscn" id="84_2via0"]
+[ext_resource type="PackedScene" path="res://assets/ashfall_pack_v2/scenes/salvage_toolbox.tscn" id="85_1niq0"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v2/audio/power_generator_loop.wav" id="86_y8rl4"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v2/audio/radio_chatter_static.wav" id="87_kwv4x"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v2/audio/metal_gate_rattle.wav" id="88_qlidl"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v2/audio/distant_industry.wav" id="89_5g4yo"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -161,6 +176,27 @@ size = Vector2(3.2, 1.6)
 
 [sub_resource type="QuadMesh" id="QuadMesh_6gm2m"]
 size = Vector2(1.2, 0.6)
+
+[sub_resource type="QuadMesh" id="QuadMesh_d0vjb"]
+size = Vector2(2.2, 1.1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_rdhwg"]
+size = Vector2(1.6, 0.8)
+
+[sub_resource type="QuadMesh" id="QuadMesh_xo2fx"]
+size = Vector2(1.6, 0.8)
+
+[sub_resource type="QuadMesh" id="QuadMesh_4leby"]
+size = Vector2(1.6, 0.8)
+
+[sub_resource type="QuadMesh" id="QuadMesh_noudb"]
+size = Vector2(1.2, 0.6)
+
+[sub_resource type="QuadMesh" id="QuadMesh_vin8p"]
+size = Vector2(2.4, 2.4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_35yf0"]
+size = Vector2(2.4, 2.4)
 
 [node name="Outpost17" type="Node3D" unique_id=1417219746]
 metadata/region_name = "Outpost 17"
@@ -1929,7 +1965,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -3)
 material_override = ExtResource("22_hlbef")
 
 [node name="FireLight" parent="Props/BurningBarrelYard" index="3" unique_id=1817345526]
-light_energy = 1.8573554
+light_energy = 1.817611
 
 [node name="FireSound" parent="Props/BurningBarrelYard" index="5" unique_id=1072601748]
 stream_paused = true
@@ -1941,7 +1977,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 5)
 material_override = ExtResource("22_hlbef")
 
 [node name="FireLight" parent="Props/BurningBarrelMotorPool" index="3" unique_id=1817345526]
-light_energy = 1.6004484
+light_energy = 1.7278832
 
 [node name="FireSound" parent="Props/BurningBarrelMotorPool" index="5" unique_id=1072601748]
 stream_paused = true
@@ -2640,6 +2676,7 @@ stream = ExtResource("70_0gtjb")
 volume_db = -6.0
 unit_size = 3.0
 autoplay = true
+stream_paused = true
 max_distance = 35.0
 bus = &"SFX"
 
@@ -2649,6 +2686,7 @@ stream = ExtResource("71_7oji5")
 volume_db = -10.0
 unit_size = 1.5
 autoplay = true
+stream_paused = true
 max_distance = 14.0
 bus = &"SFX"
 
@@ -2666,6 +2704,120 @@ stream = ExtResource("74_wak0s")
 volume_db = -14.0
 autoplay = true
 stream_paused = true
+bus = &"Ambience"
+
+[node name="Pack2" type="Node3D" parent="." unique_id=1114610650]
+
+[node name="Signs" type="Node3D" parent="Pack2" unique_id=2071430780]
+
+[node name="WaterPoint" type="MeshInstance3D" parent="Pack2/Signs" unique_id=801437127]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -31.694, 2.55, -14.6)
+material_override = ExtResource("75_e4xjc")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_d0vjb")
+
+[node name="RadioRelay" type="MeshInstance3D" parent="Pack2/Signs" unique_id=764955282]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.6, 2.65, -12.869)
+material_override = ExtResource("76_h1q64")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_rdhwg")
+
+[node name="Checkpoint17" type="MeshInstance3D" parent="Pack2/Signs" unique_id=75137350]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 5.194, 1.75, 26.9)
+material_override = ExtResource("77_wak0s")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_xo2fx")
+
+[node name="MedicalTriage" type="MeshInstance3D" parent="Pack2/Signs" unique_id=244013237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.4, 2.65, -12.869)
+material_override = ExtResource("78_w7s1h")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_4leby")
+
+[node name="UnstableGround" type="MeshInstance3D" parent="Pack2/Signs" unique_id=833954383]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4, 1.05, -2.994)
+material_override = ExtResource("79_wysvy")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_noudb")
+
+[node name="Overlays" type="Node3D" parent="Pack2" unique_id=328096509]
+
+[node name="GateBulletHoles" type="MeshInstance3D" parent="Pack2/Overlays" unique_id=153780840]
+transform = Transform3D(1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, 1, -10, 1.5, 24.654)
+material_override = ExtResource("80_m66i5")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_vin8p")
+
+[node name="MotorPoolRust" type="MeshInstance3D" parent="Pack2/Overlays" unique_id=685510863]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 31.696001, 2, 12)
+material_override = ExtResource("81_6gm2m")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_35yf0")
+
+[node name="Props" type="Node3D" parent="Pack2" unique_id=851561529 groups=["navigation_geometry"]]
+
+[node name="WaterTank" type="StaticBody3D" parent="Pack2/Props" unique_id=1446466063 instance=ExtResource("82_edr30")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.45, 0, -14.6)
+collision_layer = 2
+collision_mask = 0
+
+[node name="WaterPumpGenerator" type="StaticBody3D" parent="Pack2/Props" unique_id=1038577114 instance=ExtResource("83_yxgp0")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -30.5, 0, -12.2)
+collision_layer = 2
+collision_mask = 0
+
+[node name="FieldRadio" type="StaticBody3D" parent="Pack2/Props" unique_id=1031509073 instance=ExtResource("84_2via0")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.6, 0, -15.6)
+collision_layer = 2
+collision_mask = 0
+
+[node name="SalvageToolbox" type="StaticBody3D" parent="Pack2/Props" unique_id=405559507 instance=ExtResource("85_1niq0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.2, 0, 0.62)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Sounds" type="Node3D" parent="Pack2" unique_id=124607752]
+
+[node name="WaterPumpHum" type="AudioStreamPlayer3D" parent="Pack2/Sounds" unique_id=1524657428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.5, 0.6, -12.2)
+stream = ExtResource("86_y8rl4")
+volume_db = -6.0
+unit_size = 2.5
+autoplay = true
+max_distance = 25.0
+bus = &"SFX"
+
+[node name="RadioChatter" type="AudioStreamPlayer3D" parent="Pack2/Sounds" unique_id=1152427837]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 0.8, -15.6)
+stream = ExtResource("87_kwv4x")
+volume_db = -6.0
+unit_size = 1.5
+max_distance = 16.0
+bus = &"SFX"
+script = ExtResource("73_h1q64")
+min_interval = 6.0
+max_interval = 16.0
+pitch_variation = 0.05
+
+[node name="GateRattle" type="AudioStreamPlayer3D" parent="Pack2/Sounds" unique_id=2136129429]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 1.2, 24.5)
+stream = ExtResource("88_qlidl")
+volume_db = -6.0
+unit_size = 3.0
+max_distance = 32.0
+bus = &"SFX"
+script = ExtResource("73_h1q64")
+min_interval = 14.0
+max_interval = 38.0
+pitch_variation = 0.1
+
+[node name="DistantIndustry" type="AudioStreamPlayer3D" parent="Pack2/Sounds" unique_id=110355219]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 6, -95)
+stream = ExtResource("89_5g4yo")
+volume_db = -4.0
+unit_size = 25.0
+autoplay = true
+max_distance = 220.0
 bus = &"Ambience"
 
 [editable path="Perimeter/NorthWall"]

@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v2/decals/bullet_holes.png" id="1_cycty"]
+
+[resource]
+resource_name = "Overlay bullet_holes"
+transparency = 1
+albedo_texture = ExtResource("1_cycty")
+roughness = 0.9
+texture_filter = 5
