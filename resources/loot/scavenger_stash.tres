@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_4tuds"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="2_c8f0y"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="3_bub3v"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="4_rkwqf"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_qe5jl"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="6_krrew"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="7_ian25"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="8_onqjp"]
+
+[sub_resource type="Resource" id="Resource_tlqu8"]
+script = ExtResource("1_4tuds")
+item = ExtResource("2_c8f0y")
+weight = 3.0
+min_quantity = 20
+max_quantity = 40
+
+[sub_resource type="Resource" id="Resource_ojl0o"]
+script = ExtResource("1_4tuds")
+item = ExtResource("3_bub3v")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_f1gqb"]
+script = ExtResource("1_4tuds")
+item = ExtResource("4_rkwqf")
+weight = 2.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_rjvsb"]
+script = ExtResource("1_4tuds")
+item = ExtResource("5_qe5jl")
+weight = 2.0
+min_quantity = 3
+max_quantity = 6
+
+[sub_resource type="Resource" id="Resource_tnrqw"]
+script = ExtResource("1_4tuds")
+item = ExtResource("6_krrew")
+weight = 2.0
+
+[sub_resource type="Resource" id="Resource_l3km2"]
+script = ExtResource("1_4tuds")
+item = ExtResource("7_ian25")
+min_quantity = 2
+max_quantity = 4
+
+[resource]
+script = ExtResource("8_onqjp")
+entries = Array[ExtResource("1_4tuds")]([SubResource("Resource_tlqu8"), SubResource("Resource_ojl0o"), SubResource("Resource_f1gqb"), SubResource("Resource_rjvsb"), SubResource("Resource_tnrqw"), SubResource("Resource_l3km2")])
+min_rolls = 3
+max_rolls = 5

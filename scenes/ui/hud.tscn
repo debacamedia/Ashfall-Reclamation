@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/ui/crosshair.gd" id="2_hqnrr"]
 [ext_resource type="Script" path="res://scripts/ui/damage_indicator.gd" id="3_bo48s"]
 [ext_resource type="Script" path="res://scripts/ui/inventory_screen.gd" id="4_8qguk"]
+[ext_resource type="Script" path="res://scripts/ui/container_screen.gd" id="5_136eg"]
 
 [sub_resource type="Gradient" id="Gradient_8qguk"]
 offsets = PackedFloat32Array(0, 0.55, 1)
@@ -84,6 +85,22 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.35, 0.33, 0.28, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0h1do"]
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+bg_color = Color(0.07, 0.07, 0.065, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.4, 0.3, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -551,6 +568,165 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.53, 0.48, 1)
 theme_override_font_sizes/font_size = 13
 text = "Tab / I / Esc to close"
+
+[node name="ContainerScreen" type="Control" parent="Root" unique_id=396050309]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("5_136eg")
+
+[node name="Dim" type="ColorRect" parent="Root/ContainerScreen" unique_id=1557251549]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="Window" type="PanelContainer" parent="Root/ContainerScreen" unique_id=990126830]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -560.0
+offset_top = -280.0
+offset_right = 560.0
+offset_bottom = 280.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_0h1do")
+
+[node name="Layout" type="VBoxContainer" parent="Root/ContainerScreen/Window" unique_id=155058105]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root/ContainerScreen/Window/Layout" unique_id=1941686763]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Root/ContainerScreen/Window/Layout/Header" unique_id=707397124]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.8, 0.45, 1)
+theme_override_font_sizes/font_size = 26
+text = "SUPPLY CRATE"
+
+[node name="Spacer" type="Control" parent="Root/ContainerScreen/Window/Layout/Header" unique_id=877547269]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WeightTitle" type="Label" parent="Root/ContainerScreen/Window/Layout/Header" unique_id=1251936163]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.68, 0.6, 1)
+theme_override_font_sizes/font_size = 15
+text = "CARRY WEIGHT  "
+
+[node name="CarryLabel" type="Label" parent="Root/ContainerScreen/Window/Layout/Header" unique_id=742481798]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.9, 0.84, 1)
+theme_override_font_sizes/font_size = 17
+text = "0 / 30 kg"
+
+[node name="CarryBar" type="ProgressBar" parent="Root/ContainerScreen/Window/Layout/Header" unique_id=1015744217]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 14)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_kicr4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_mj13f")
+show_percentage = false
+
+[node name="Body" type="HBoxContainer" parent="Root/ContainerScreen/Window/Layout" unique_id=1945645095]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 22
+
+[node name="PlayerSide" type="VBoxContainer" parent="Root/ContainerScreen/Window/Layout/Body" unique_id=309044156]
+layout_mode = 2
+
+[node name="PlayerTitle" type="Label" parent="Root/ContainerScreen/Window/Layout/Body/PlayerSide" unique_id=559769130]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.68, 0.6, 1)
+theme_override_font_sizes/font_size = 15
+text = "YOUR GEAR"
+
+[node name="PlayerGrid" type="GridContainer" parent="Root/ContainerScreen/Window/Layout/Body/PlayerSide" unique_id=1326280865]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 6
+
+[node name="Buttons" type="VBoxContainer" parent="Root/ContainerScreen/Window/Layout/Body" unique_id=1422739806]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TakeButton" type="Button" parent="Root/ContainerScreen/Window/Layout/Body/Buttons" unique_id=951258272]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+focus_mode = 0
+text = "◀  Take"
+
+[node name="StoreButton" type="Button" parent="Root/ContainerScreen/Window/Layout/Body/Buttons" unique_id=371059178]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+focus_mode = 0
+text = "Store  ▶"
+
+[node name="TakeAllButton" type="Button" parent="Root/ContainerScreen/Window/Layout/Body/Buttons" unique_id=855222340]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+focus_mode = 0
+text = "Take All  [R]"
+
+[node name="ContainerSide" type="VBoxContainer" parent="Root/ContainerScreen/Window/Layout/Body" unique_id=1874520135]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ContentsTitle" type="Label" parent="Root/ContainerScreen/Window/Layout/Body/ContainerSide" unique_id=374217435]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.68, 0.6, 1)
+theme_override_font_sizes/font_size = 15
+text = "CONTENTS"
+
+[node name="ContainerGrid" type="GridContainer" parent="Root/ContainerScreen/Window/Layout/Body/ContainerSide" unique_id=888618959]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
+
+[node name="EmptyLabel" type="Label" parent="Root/ContainerScreen/Window/Layout/Body/ContainerSide" unique_id=1354627293]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.58, 0.52, 1)
+theme_override_font_sizes/font_size = 16
+text = "Empty"
+
+[node name="DetailLabel" type="Label" parent="Root/ContainerScreen/Window/Layout" unique_id=536301570]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.83, 0.76, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="MessageLabel" type="Label" parent="Root/ContainerScreen/Window/Layout" unique_id=1822335118]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.35, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="Footer" type="Label" parent="Root/ContainerScreen/Window/Layout" unique_id=784917301]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.53, 0.48, 1)
+theme_override_font_sizes/font_size = 13
+text = "E / Tab / Esc to close"
 
 [node name="UISound" type="AudioStreamPlayer" parent="." unique_id=1091512968]
 unique_name_in_owner = true

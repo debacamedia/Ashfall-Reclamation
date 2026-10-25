@@ -34,6 +34,7 @@ extends CanvasLayer
 @onready var _use_label: Label = %UseLabel
 @onready var _use_bar: ProgressBar = %UseBar
 @onready var inventory_screen: InventoryScreen = %InventoryScreen
+@onready var container_screen: ContainerScreen = get_node_or_null("%ContainerScreen")
 @onready var _ui_sound: AudioStreamPlayer = %UISound
 
 const SOUND_HIT := preload("res://assets/audio/ui_hit.wav")
@@ -72,7 +73,10 @@ func _process(delta: float) -> void:
 	if _player_signals_bound != player:
 		_player_signals_bound = player
 		player.item_use_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
+		player.transfer_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		inventory_screen.player = player
+		if container_screen != null:
+			container_screen.player = player
 	_update_prompt()
 	_update_item_use()
 	_update_notices(delta)
@@ -200,7 +204,7 @@ func _bind_interactor(interactor: PlayerInteractor) -> void:
 
 func _update_prompt() -> void:
 	var target := _interactor.focused if _interactor != null else null
-	if target == null or not is_instance_valid(target) or player.is_dead():
+	if target == null or not is_instance_valid(target) or player.is_dead() or player.current_container != null:
 		_prompt_label.visible = false
 		_prompt_reason.visible = false
 		_hold_bar.visible = false

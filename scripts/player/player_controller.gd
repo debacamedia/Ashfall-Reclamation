@@ -36,6 +36,11 @@ signal ladder_grabbed(ladder: Ladder)
 signal ladder_released
 ## Emitted every `ladder_step_distance` metres climbed (for sound).
 signal ladder_step
+## A salvage container was opened / closed (the HUD shows the transfer screen).
+signal container_opened(container: SalvageContainer)
+signal container_closed(container: SalvageContainer)
+## A take/store was refused ("Too heavy", "Inventory full", "Container full").
+signal transfer_refused(reason: String)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
 
@@ -118,6 +123,8 @@ var is_aiming := false
 var _base_fov := 75.0
 var _ladder_cooldown := 0.0
 var _climb_distance := 0.0
+## The salvage container whose contents are open, or null.
+var current_container: SalvageContainer = null
 
 @onready var collision_shape: CollisionShape3D = %CollisionShape
 @onready var head: Node3D = %Head
@@ -205,6 +212,11 @@ func simulate(frame: InputFrame, delta: float) -> void:
 
 	if interactor != null:
 		interactor.tick(delta, frame.interact, self)
+
+	# Walked away from an open container
+	if current_container != null and (not is_instance_valid(current_container)
+			or not current_container.is_within_reach(head.global_position)):
+		close_container()
 
 
 ## Brings the player back to life at `spawn` with full health. Called by
@@ -366,6 +378,89 @@ func _finish_item_use() -> void:
 	item_use_finished.emit(item)
 
 
+# ---------------------------------------------------------------- containers
+
+## Called by SalvageContainer after a validated interaction.
+func open_container(container: SalvageContainer) -> void:
+	if container == current_container or container == null:
+		return
+	close_container()
+	cancel_item_use()
+	current_container = container
+	container_opened.emit(container)
+
+
+func close_container() -> void:
+	if current_container == null:
+		return
+	var c := current_container
+	current_container = null
+	if is_instance_valid(c):
+		c.release(self)
+	container_closed.emit(c)
+
+
+## Moves (part of) a container slot into the player's inventory. Validated:
+## the container must be open by this player and in reach. Returns the
+## number moved; a refusal emits transfer_refused.
+func request_take(slot: int, quantity: int = -1) -> int:
+	if not _can_transfer():
+		return 0
+	var c := current_container
+	var item := c.inventory.get_slot_item(slot)
+	if item == null:
+		return 0
+	var want := c.inventory.get_slot_quantity(slot) if quantity < 0 else mini(quantity, c.inventory.get_slot_quantity(slot))
+	var moved := c.inventory.transfer_slot_to(slot, inventory, want)
+	if moved < want:
+		var reason := inventory.get_refusal_reason(item, want - moved)
+		transfer_refused.emit(reason if reason != "" else "Inventory full")
+	return moved
+
+
+## Moves (part of) a player inventory slot into the open container.
+func request_store(slot: int, quantity: int = -1) -> int:
+	if not _can_transfer():
+		return 0
+	var c := current_container
+	var item := inventory.get_slot_item(slot)
+	if item == null:
+		return 0
+	var want := inventory.get_slot_quantity(slot) if quantity < 0 else mini(quantity, inventory.get_slot_quantity(slot))
+	var moved := inventory.transfer_slot_to(slot, c.inventory, want)
+	if moved < want:
+		transfer_refused.emit("Container full")
+	return moved
+
+
+## Takes everything that fits. Returns the number of items moved.
+func request_take_all() -> int:
+	if not _can_transfer():
+		return 0
+	var total := 0
+	var refusal := ""
+	for i in current_container.inventory.slot_count:
+		var item := current_container.inventory.get_slot_item(i)
+		if item == null:
+			continue
+		var want := current_container.inventory.get_slot_quantity(i)
+		var moved := current_container.inventory.transfer_slot_to(i, inventory, want)
+		total += moved
+		if moved < want and refusal == "":
+			refusal = inventory.get_refusal_reason(item, want - moved)
+			if refusal == "":
+				refusal = "Inventory full"
+	if refusal != "":
+		transfer_refused.emit(refusal)
+	return total
+
+
+func _can_transfer() -> bool:
+	return not is_dead() and inventory != null and current_container != null \
+		and is_instance_valid(current_container) and current_container.users.has(self) \
+		and current_container.is_within_reach(head.global_position)
+
+
 # ---------------------------------------------------------------- walking
 
 func _simulate_walking(frame: InputFrame, delta: float) -> void:
@@ -524,6 +619,7 @@ func _on_landed(impact_speed: float) -> void:
 
 func _on_health_died(info: DamageInfo) -> void:
 	cancel_item_use()
+	close_container()
 	if ladder != null:
 		_release_ladder()
 	aim_amount = 0.0

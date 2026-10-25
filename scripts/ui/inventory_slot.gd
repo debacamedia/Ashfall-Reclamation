@@ -1,15 +1,22 @@
 class_name InventorySlot
 extends PanelContainer
-## One cell of the inventory grid: icon, quantity, selection border.
-## Supports drag and drop: drag onto another slot to move, merge or swap;
-## drag outside the inventory panel to drop the stack on the ground.
+## One cell of an inventory grid: icon, quantity, selection border.
+## Used by the InventoryScreen and both sides of the ContainerScreen.
+## Drag and drop: the owning screen decides what a drop means (move within
+## one inventory, transfer between two, drop on the ground) in
+## handle_slot_drop(data, target_slot).
 ##
-## Scene: res://scenes/ui/inventory_slot.tscn (created by InventoryScreen).
+## Scene: res://scenes/ui/inventory_slot.tscn (created by the screens).
 
 signal clicked(index: int, button: MouseButton)
+## Double-click (left button).
+signal activated(index: int)
 
 var index := -1
-var screen: InventoryScreen
+## The inventory this cell shows.
+var inventory: InventoryComponent
+## The screen that owns this cell; must have handle_slot_drop(data, slot).
+var screen: Control
 
 var _style_normal: StyleBoxFlat
 var _style_selected: StyleBoxFlat
@@ -48,12 +55,16 @@ func show_stack(item: ItemDefinition, quantity: int, selected: bool) -> void:
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
-		clicked.emit(index, (event as InputEventMouseButton).button_index)
+		var mb := event as InputEventMouseButton
+		if mb.double_click and mb.button_index == MOUSE_BUTTON_LEFT:
+			activated.emit(index)
+		else:
+			clicked.emit(index, mb.button_index)
 		accept_event()
 
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
-	if screen == null or screen.get_inventory() == null or screen.get_inventory().is_slot_empty(index):
+	if inventory == null or inventory.is_slot_empty(index):
 		return null
 	var preview := TextureRect.new()
 	preview.texture = _icon.texture
@@ -62,7 +73,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	preview.modulate = Color(1, 1, 1, 0.8)
 	set_drag_preview(preview)
-	return {"inventory_slot": index}
+	return {"inventory_slot": index, "inventory": inventory}
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
@@ -70,4 +81,5 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
-	screen.request_move(int(data["inventory_slot"]), index)
+	if screen != null and screen.has_method("handle_slot_drop"):
+		screen.call("handle_slot_drop", data, self)

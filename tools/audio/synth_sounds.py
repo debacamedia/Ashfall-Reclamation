@@ -455,6 +455,51 @@ def aim_in() -> np.ndarray:
     return out
 
 
+def crate_open() -> np.ndarray:
+    """Wooden lid: a creaking hinge then a hollow thunk as it falls open."""
+    rng = np.random.default_rng(700)
+    out = silence(0.9)
+    t = t_axis(0.35)
+    creak_f = 180 + 90 * np.sin(2 * np.pi * 3.0 * t) + 60 * t
+    phase = 2 * np.pi * np.cumsum(creak_f) / SR
+    creak = np.sign(np.sin(phase)) * 0.3 + np.sin(phase * 2.01) * 0.3
+    creak = bp(creak, 400, 2500) * decay(len(t), 0.25, attack=0.05)
+    place(out, creak, 0.0, 0.5)
+    thunk = lp(noise(0.12, rng), 400) * decay(int(0.12 * SR), 0.03)
+    place(out, thunk, 0.38, 1.0)
+    place(out, sine_glide(0.15, 120, 70) * decay(int(0.15 * SR), 0.05), 0.38, 0.6)
+    return out
+
+
+def locker_open() -> np.ndarray:
+    """Metal locker: latch click, then a door swinging with a tinny rattle."""
+    rng = np.random.default_rng(710)
+    out = silence(0.9)
+    place(out, hp(noise(0.01, rng), 2500) * decay(int(0.01 * SR), 0.002), 0.0, 1.0)
+    place(out, metal(0.4, [(1800, 0.4, 0.05), (2900, 0.3, 0.04)], rng), 0.005, 0.4)
+    rattle = metal(0.7, [(310, 0.5, 0.25), (734, 0.35, 0.2), (1210, 0.2, 0.15), (1890, 0.1, 0.1)], rng)
+    rattle *= decay(len(rattle), 0.3, attack=0.08)
+    place(out, rattle, 0.12, 0.45)
+    return out
+
+
+def rummage() -> np.ndarray:
+    """Searching through a container: shuffled objects and cloth, ~1.2 s."""
+    rng = np.random.default_rng(720)
+    out = silence(1.3)
+    for i in range(14):
+        at = rng.uniform(0.0, 1.15)
+        kind = rng.integers(0, 3)
+        if kind == 0:
+            g = bp(noise(0.08, rng), 700, 4000) * decay(int(0.08 * SR), 0.03, attack=0.01)
+        elif kind == 1:
+            g = lp(noise(0.04, rng), 900) * decay(int(0.04 * SR), 0.01)
+        else:
+            g = metal(0.12, [(rng.uniform(900, 2400), 0.4, 0.03)], rng) * 0.5
+        place(out, g, at, rng.uniform(0.25, 0.7))
+    return out
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
     print("Writing to", os.path.abspath(OUT))
@@ -497,6 +542,9 @@ def main() -> None:
     for i in range(3):
         write(f"ladder_step_{i + 1}", ladder_step(600 + i), -6)
     write("aim_in", aim_in(), -12)
+    write("crate_open", crate_open(), -5)
+    write("locker_open", locker_open(), -5)
+    write("rummage", rummage(), -8)
 
 
 if __name__ == "__main__":

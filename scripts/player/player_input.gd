@@ -26,6 +26,9 @@ var _fire_blocked_until_release := false
 ## Toggle-aim state: true while the sights are "clicked up".
 var _aim_latched := false
 var _aim_was_held := false
+## After a menu closes, ignore Interact until the key is released (the E
+## press that closed a container must not reopen it).
+var _interact_blocked_until_release := false
 ## Ignore the aim press that recaptured the mouse.
 var _aim_blocked_until_release := false
 
@@ -83,7 +86,12 @@ func gather() -> InputFrame:
 		fire_held = false
 	frame.fire = fire_held
 	frame.reload = Input.is_action_just_pressed("reload")
-	frame.interact = Input.is_action_pressed("interact")
+	var interact_held := Input.is_action_pressed("interact")
+	if _interact_blocked_until_release:
+		if not interact_held:
+			_interact_blocked_until_release = false
+		interact_held = false
+	frame.interact = interact_held
 	frame.use_heal = Input.is_action_just_pressed("use_medkit")
 	var aim_held := Input.is_action_pressed("aim")
 	if _aim_blocked_until_release:
@@ -141,5 +149,6 @@ func set_ui_open(open: bool) -> void:
 		release_mouse()
 	else:
 		capture_mouse()
-		# Don't treat the click that closed the menu as a trigger pull
+		# Don't treat the click or key that closed the menu as gameplay input
 		_fire_blocked_until_release = true
+		_interact_blocked_until_release = true

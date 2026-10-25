@@ -76,7 +76,7 @@ func toggle() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if player == null or not player.controlled_locally:
+	if player == null or not player.controlled_locally or player.current_container != null:
 		return
 	if event.is_action_pressed("inventory"):
 		toggle()
@@ -115,11 +115,17 @@ func request_drop(index: int) -> void:
 		_refresh()
 
 
+## A slot was dropped onto another slot of this screen: move/merge/swap.
+func handle_slot_drop(data: Dictionary, target: InventorySlot) -> void:
+	if data.get("inventory") == get_inventory():
+		request_move(int(data["inventory_slot"]), target.index)
+
+
 # ---------------------------------------------------------------- dropping onto the background
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	# Anywhere outside the window counts as "drop on the ground"
-	return data is Dictionary and data.has("inventory_slot") \
+	return data is Dictionary and data.has("inventory_slot") and data.get("inventory") == get_inventory() \
 		and not _window.get_global_rect().has_point(get_global_transform() * at_position)
 
 
@@ -144,7 +150,9 @@ func _bind() -> void:
 		var slot := slot_scene.instantiate() as InventorySlot
 		slot.index = i
 		slot.screen = self
+		slot.inventory = inv
 		slot.clicked.connect(_on_slot_clicked)
+		slot.activated.connect(request_use)
 		_grid.add_child(slot)
 		_slots.append(slot)
 	_refresh()

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_hhy8j"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="2_8gt4a"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="3_j83ng"]
+
+[sub_resource type="Resource" id="Resource_ftx32"]
+script = ExtResource("1_hhy8j")
+item = ExtResource("2_8gt4a")
+min_quantity = 30
+max_quantity = 60
+
+[sub_resource type="Resource" id="Resource_1apj8"]
+script = ExtResource("1_hhy8j")
+item = ExtResource("2_8gt4a")
+min_quantity = 30
+max_quantity = 30
+
+[resource]
+script = ExtResource("3_j83ng")
+guaranteed = Array[ExtResource("1_hhy8j")]([SubResource("Resource_1apj8")])
+entries = Array[ExtResource("1_hhy8j")]([SubResource("Resource_ftx32")])
+max_rolls = 2

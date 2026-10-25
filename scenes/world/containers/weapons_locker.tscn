@@ -1,0 +1,154 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/salvage_container.gd" id="1_gjcje"]
+[ext_resource type="Resource" path="res://resources/loot/weapons_locker.tres" id="2_eiuno"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_bhvfn"]
+[ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="4_eiato"]
+[ext_resource type="AudioStream" path="res://assets/audio/locker_open.wav" id="5_uirpw"]
+[ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="6_37rfw"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_t08np"]
+size = Vector3(0.72, 1.92, 0.62)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nsmaw"]
+size = Vector3(0.6, 1.8, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_50x6b"]
+albedo_color = Color(0.25, 0.29, 0.24, 1)
+metallic = 0.35
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_w7wbf"]
+size = Vector3(0.6, 1.8, 0.03)
+
+[sub_resource type="BoxMesh" id="BoxMesh_l67xb"]
+size = Vector3(0.03, 1.8, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jktks"]
+size = Vector3(0.03, 1.8, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_td5lq"]
+size = Vector3(0.6, 0.03, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yiysx"]
+size = Vector3(0.6, 0.08, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_om6q7"]
+size = Vector3(0.54, 0.03, 0.47)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h52ak"]
+size = Vector3(0.6, 1.6999999, 0.025)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lq42v"]
+size = Vector3(0.36, 0.02, 0.01)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vdlel"]
+size = Vector3(0.36, 0.02, 0.01)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tsf0a"]
+size = Vector3(0.36, 0.02, 0.01)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ga8j3"]
+size = Vector3(0.03, 0.14, 0.03)
+
+[node name="WeaponsLocker" type="Area3D" unique_id=597602749]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_gjcje")
+container_name = "Weapons Locker"
+loot_table = ExtResource("2_eiuno")
+lid_open_rotation = Vector3(0, -110, 0)
+focus_offset = Vector3(0, 0.98999995, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2087560553]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("BoxShape3D_t08np")
+
+[node name="Body" type="StaticBody3D" parent="." unique_id=859304531]
+collision_layer = 2
+collision_mask = 0
+
+[node name="BodyShape" type="CollisionShape3D" parent="Body" unique_id=350688118]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("BoxShape3D_nsmaw")
+
+[node name="Back" type="MeshInstance3D" parent="Body" unique_id=110563424]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -0.235)
+material_override = SubResource("StandardMaterial3D_50x6b")
+mesh = SubResource("BoxMesh_w7wbf")
+
+[node name="Left" type="MeshInstance3D" parent="Body" unique_id=1508085068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.28500003, 0.9, 0)
+material_override = SubResource("StandardMaterial3D_50x6b")
+mesh = SubResource("BoxMesh_l67xb")
+
+[node name="Right" type="MeshInstance3D" parent="Body" unique_id=1524342212]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28500003, 0.9, 0)
+material_override = SubResource("StandardMaterial3D_50x6b")
+mesh = SubResource("BoxMesh_jktks")
+
+[node name="Top" type="MeshInstance3D" parent="Body" unique_id=2081264720]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.785, 0)
+material_override = SubResource("StandardMaterial3D_50x6b")
+mesh = SubResource("BoxMesh_td5lq")
+
+[node name="Bottom" type="MeshInstance3D" parent="Body" unique_id=1405051858]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+material_override = ExtResource("3_bhvfn")
+mesh = SubResource("BoxMesh_yiysx")
+
+[node name="Shelf" type="MeshInstance3D" parent="Body" unique_id=1120397868]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.26, 0)
+material_override = SubResource("StandardMaterial3D_50x6b")
+mesh = SubResource("BoxMesh_om6q7")
+
+[node name="Lid" type="Node3D" parent="." unique_id=581937660]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0, 0.25)
+
+[node name="Door" type="MeshInstance3D" parent="Lid" unique_id=558207888]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.94, 0.0125)
+material_override = SubResource("StandardMaterial3D_50x6b")
+mesh = SubResource("BoxMesh_h52ak")
+
+[node name="Vent0" type="MeshInstance3D" parent="Lid" unique_id=1881705479]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.4399999, 0.03)
+material_override = ExtResource("3_bhvfn")
+mesh = SubResource("BoxMesh_lq42v")
+
+[node name="Vent1" type="MeshInstance3D" parent="Lid" unique_id=545649802]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.49, 0.03)
+material_override = ExtResource("3_bhvfn")
+mesh = SubResource("BoxMesh_vdlel")
+
+[node name="Vent2" type="MeshInstance3D" parent="Lid" unique_id=323774863]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.54, 0.03)
+material_override = ExtResource("3_bhvfn")
+mesh = SubResource("BoxMesh_tsf0a")
+
+[node name="Handle" type="MeshInstance3D" parent="Lid" unique_id=225845518]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.52000004, 0.98999995, 0.04)
+material_override = ExtResource("3_bhvfn")
+mesh = SubResource("BoxMesh_ga8j3")
+
+[node name="Inventory" type="Node" parent="." unique_id=1112447729]
+unique_name_in_owner = true
+script = ExtResource("4_eiato")
+slot_count = 12
+max_weight = 0.0
+
+[node name="OpenSound" type="AudioStreamPlayer3D" parent="." unique_id=1821404978]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("5_uirpw")
+unit_size = 5.0
+bus = &"SFX"
+
+[node name="SearchSound" type="AudioStreamPlayer3D" parent="." unique_id=105462385]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("6_37rfw")
+volume_db = -3.0
+unit_size = 4.0
+bus = &"SFX"

@@ -346,3 +346,54 @@ func test_every_guard_tower_can_be_climbed() -> void:
 		check(_player.global_position.y > 4.5 and _player.is_on_floor() and flat.length() < 1.6,
 			"%s: climbed onto the platform (y %.2f, %.2f m from centre)" % [tower.name, _player.global_position.y, flat.length()])
 		check_near(_player.health.current_health, 100.0, 0.01, "%s: unhurt" % tower.name)
+
+
+func test_salvage_containers_placed_clear_of_geometry() -> void:
+	await _load_level()
+	var containers := _level.get_node("SalvageContainers").get_children()
+	check(containers.size() >= 10, "at least 10 salvage containers (%d)" % containers.size())
+	var space := _level.get_world_3d().direct_space_state
+	var ids := {}
+	for c: SalvageContainer in containers:
+		check(not ids.has(c.get_id()), "%s has a unique id" % c.name)
+		ids[c.get_id()] = true
+		check(c.loot_table != null, "%s has a loot table" % c.name)
+		var body := c.get_node("Body") as StaticBody3D
+		var shape := (body.get_node("BodyShape") as CollisionShape3D)
+		var box := (shape.shape as BoxShape3D).duplicate() as BoxShape3D
+		box.size -= Vector3(0.06, 0.06, 0.06)
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = box
+		q.transform = shape.global_transform
+		q.collision_mask = PhysicsLayers.WORLD_SOLID
+		q.exclude = [body.get_rid()]
+		var hits := space.intersect_shape(q, 4)
+		var names := hits.map(func(h: Dictionary) -> String: return str((h["collider"] as Node).name))
+		check(hits.is_empty(), "%s is clear of walls and props (overlaps %s)" % [c.name, names])
+		var down := PhysicsRayQueryParameters3D.create(c.global_position + Vector3.UP * 0.2, c.global_position + Vector3.DOWN * 0.5, PhysicsLayers.WORLD_SOLID, [body.get_rid()])
+		check(not space.intersect_ray(down).is_empty(), "%s stands on the ground" % c.name)
+
+
+func test_every_container_can_be_searched_from_the_front() -> void:
+	await _load_level()
+	for c: SalvageContainer in _level.get_node("SalvageContainers").get_children():
+		_player.close_container()
+		_player.health.revive(1.0)
+		var front := c.global_basis.z
+		front.y = 0.0
+		var stand := c.global_position + front.normalized() * 1.3 + Vector3.UP * 0.05
+		await _teleport(stand, 0)
+		var eye := _player.head.global_position
+		var target := c.get_focus_point()
+		var flat := Vector3(target.x - eye.x, 0, target.z - eye.z)
+		_player.rotation.y = atan2(-flat.x, -flat.z)
+		_player.head.rotation.x = atan2(target.y - eye.y, flat.length())
+		await _walk(Vector2.ZERO, 2)
+		check(_player.interactor.focused == c, "%s: focused from the front (got %s)" % [c.name, _player.interactor.focused])
+		var f := InputFrame.new()
+		f.interact = true
+		for i in ceili(c.search_time * 60.0) + 4:
+			await get_tree().physics_frame
+			_player.simulate(f, DT)
+		check(c.is_searched and _player.current_container == c, "%s: searched and opened with a held E" % c.name)
+	_player.close_container()

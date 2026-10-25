@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_ntd00"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="2_udaoi"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="3_ywtaq"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="4_3152r"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_pesx1"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="6_l7n8s"]
+
+[sub_resource type="Resource" id="Resource_e3tyn"]
+script = ExtResource("1_ntd00")
+item = ExtResource("2_udaoi")
+weight = 3.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_ewq3e"]
+script = ExtResource("1_ntd00")
+item = ExtResource("3_ywtaq")
+weight = 2.0
+
+[sub_resource type="Resource" id="Resource_n73gs"]
+script = ExtResource("1_ntd00")
+item = ExtResource("4_3152r")
+weight = 2.0
+min_quantity = 10
+max_quantity = 20
+
+[sub_resource type="Resource" id="Resource_yxmoy"]
+script = ExtResource("1_ntd00")
+item = ExtResource("5_pesx1")
+max_quantity = 2
+
+[resource]
+script = ExtResource("6_l7n8s")
+entries = Array[ExtResource("1_ntd00")]([SubResource("Resource_e3tyn"), SubResource("Resource_ewq3e"), SubResource("Resource_n73gs"), SubResource("Resource_yxmoy")])
+empty_chance = 0.1
