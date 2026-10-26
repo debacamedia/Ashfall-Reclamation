@@ -179,5 +179,6 @@ Each increment adds a guide in `docs/increments/` and tests in `tests/`.
 | Gun crafting + attachments ✅ (Inc 11) | Start with a machete and craft a pipe pistol; build gun parts and assemble guns at the weapons bench; fit attachments (red dot, 4× scope, suppressor, extended magazine, foregrip) |
 | First new region ✅ (Inc 12: Halden's Crossing) | Travel by road to a ruined town with a raider camp, close-quarters buildings and long sightlines; region state saved per level |
 | Construction ✅ (Inc 13) | Craft structure kits, place barricades, walls, gates, spike traps, storage crates and field workbenches with a validated ghost; raiders path around them (runtime navmesh rebakes) and break through when walled out; structures saved per region |
+| Fort building ✅ (Inc 14) | Snapping (wall ends at any angle, platform tiles, stairs/ladders on edges), wall variants, platforms with support, stairs, ladders, chain-link fence; level props movable/scrappable; 1,000 per region with merged meshes |
 
 Then co-op networking (`NetworkManager`, Milestone 3), settlements and the economy, with more regions added along the way.

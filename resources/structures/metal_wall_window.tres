@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_nopfj"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="2_ul47a"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="3_6fxc3"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_6gxn6"]
+
+[resource]
+script = ExtResource("4_6gxn6")
+id = &"metal_wall_window"
+display_name = "Metal Wall"
+scene_path = "res://scenes/structures/metal_wall_window.tscn"
+max_health = 900.0
+footprint = Vector3(2.4, 2.6, 0.3)
+repair_cost = Dictionary[ExtResource("1_nopfj"), int]({
+ExtResource("2_ul47a"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_nopfj"), int]({
+ExtResource("2_ul47a"): 2,
+ExtResource("3_6fxc3"): 1
+})
+snap = 1
+variant_name = "Window"

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_h6fmj"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_8oug1"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_4l8hr"]
+[ext_resource type="Resource" path="res://resources/items/kits/ladder_kit.tres" id="4_udq58"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_3nghx"]
+
+[resource]
+script = ExtResource("5_3nghx")
+id = &"kit_ladder"
+category = 6
+inputs = Dictionary[ExtResource("1_h6fmj"), int]({
+ExtResource("2_8oug1"): 3,
+ExtResource("3_4l8hr"): 1
+})
+output = ExtResource("4_udq58")
+craft_time = 4.0

@@ -10,7 +10,7 @@
 script = ExtResource("2_vvjq6")
 id = &"wooden_wall_kit"
 display_name = "Wooden Wall Kit"
-description = "A 2.4 m section of plank wall. Build it with B."
+description = "A 2.4 m section of plank wall. Solid, with a window, or a doorway (V when placing). Solid, with a window, or a doorway (V when placing). Build it with B."
 category = 8
 icon = ExtResource("1_vvjq6")
 max_stack = 5

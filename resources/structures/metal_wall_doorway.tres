@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_7463u"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="2_do6mc"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="3_uohwl"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_6x1li"]
+
+[resource]
+script = ExtResource("4_6x1li")
+id = &"metal_wall_doorway"
+display_name = "Metal Wall"
+scene_path = "res://scenes/structures/metal_wall_doorway.tscn"
+max_health = 900.0
+footprint = Vector3(2.4, 2.6, 0.3)
+repair_cost = Dictionary[ExtResource("1_7463u"), int]({
+ExtResource("2_do6mc"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_7463u"), int]({
+ExtResource("2_do6mc"): 2,
+ExtResource("3_uohwl"): 1
+})
+snap = 1
+variant_name = "Doorway"

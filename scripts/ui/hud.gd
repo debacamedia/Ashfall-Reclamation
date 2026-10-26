@@ -102,7 +102,7 @@ func _process(delta: float) -> void:
 		player.structure_repaired.connect(func(st: Structure) -> void:
 			show_notice("Repaired " + st.definition.display_name, Color(0.8, 0.95, 0.7)))
 		player.structure_dismantled.connect(func(def: StructureDefinition) -> void:
-			show_notice("Dismantled " + def.display_name, Color(0.8, 0.95, 0.7)))
+			show_notice(("Scrapped " if def.is_level_prop else "Dismantled ") + def.display_name, Color(0.8, 0.95, 0.7)))
 		player.structure_moved.connect(func(st: Structure) -> void:
 			show_notice("Moved " + st.definition.display_name, Color(0.8, 0.95, 0.7)))
 		player.build_refused.connect(func(reason: String) -> void:

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_s54wc"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_0nlxw"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="3_k5vu6"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_rouxg"]
+
+[resource]
+script = ExtResource("4_rouxg")
+id = &"water_storage_tank"
+display_name = "Water Tank"
+scene_path = "res://assets/ashfall_pack_v2/scenes/water_storage_tank.tscn"
+max_health = 1000.0
+footprint = Vector3(1.3, 1.8, 1.3)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_s54wc"), int]({
+ExtResource("2_0nlxw"): 6,
+ExtResource("3_k5vu6"): 2
+})
+is_level_prop = true

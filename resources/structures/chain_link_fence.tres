@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_hfjsx"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="2_u24rb"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_akcqc"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_31hf2"]
+
+[resource]
+script = ExtResource("4_31hf2")
+id = &"chain_link_fence"
+display_name = "Chain-Link Fence"
+scene_path = "res://scenes/structures/chain_link_fence.tscn"
+max_health = 350.0
+footprint = Vector3(2.4, 2.4, 0.12)
+repair_cost = Dictionary[ExtResource("1_hfjsx"), int]({
+ExtResource("3_akcqc"): 2
+})
+dismantle_return = Dictionary[ExtResource("1_hfjsx"), int]({
+ExtResource("2_u24rb"): 1,
+ExtResource("3_akcqc"): 2
+})
+snap = 1

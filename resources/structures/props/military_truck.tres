@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_6yvwo"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_j40xf"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_yer3l"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="4_fw1gs"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="5_fbbhi"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="6_kmdv8"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="7_dl6fk"]
+
+[resource]
+script = ExtResource("7_dl6fk")
+id = &"military_truck"
+display_name = "Military Truck"
+scene_path = "res://scenes/vehicles/military_truck.tscn"
+max_health = 1000.0
+footprint = Vector3(2.4, 2.8, 7)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_6yvwo"), int]({
+ExtResource("2_j40xf"): 12,
+ExtResource("3_yer3l"): 2,
+ExtResource("4_fw1gs"): 2,
+ExtResource("5_fbbhi"): 2,
+ExtResource("6_kmdv8"): 1
+})
+is_level_prop = true
+movable = false

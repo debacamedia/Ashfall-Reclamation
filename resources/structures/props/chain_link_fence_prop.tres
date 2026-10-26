@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_v88ys"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_6813h"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="3_umsmh"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_qxwq1"]
+
+[resource]
+script = ExtResource("4_qxwq1")
+id = &"chain_link_fence_prop"
+display_name = "Chain-Link Fence"
+scene_path = "res://scenes/world/props/chain_link_fence.tscn"
+max_health = 1000.0
+footprint = Vector3(3, 2.4, 0.1)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_v88ys"), int]({
+ExtResource("2_6813h"): 3,
+ExtResource("3_umsmh"): 1
+})
+is_level_prop = true

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_mcfwf"]
+[ext_resource type="Texture2D" path="res://assets/icons/ladder_kit.png" id="1_rd6s0"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_rd6s0"]
+[ext_resource type="Resource" path="res://resources/structures/ladder.tres" id="3_ugybp"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/ladder_kit.tscn" id="4_t3vtw"]
+
+[resource]
+script = ExtResource("2_rd6s0")
+id = &"ladder_kit"
+display_name = "Ladder Kit"
+description = "A ladder to a platform: 2.6 m or 5.2 m (V when placing). Raiders can't climb ladders. Build it with B."
+category = 8
+icon = ExtResource("1_rd6s0")
+max_stack = 5
+weight = 1.5
+base_value = 12
+world_model = ExtResource("4_t3vtw")
+pickup_sound = ExtResource("1_mcfwf")
+structure = ExtResource("3_ugybp")

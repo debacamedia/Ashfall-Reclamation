@@ -34,12 +34,16 @@ var _rng := RandomNumberGenerator.new()
 func _ready() -> void:
 	add_to_group("structures")
 	add_to_group("persist")
+	_init_common()
+	if definition != null and definition.blocks_navigation:
+		NavRebaker.request(self)
+
+
+func _init_common() -> void:
 	if health < 0.0:
 		health = definition.max_health if definition != null else 100.0
 	_rng.randomize()
 	_hit_sound = get_node_or_null("%HitSound")
-	if definition != null and definition.blocks_navigation:
-		NavRebaker.request(self)
 
 
 func _exit_tree() -> void:
@@ -81,13 +85,23 @@ func repair_full() -> void:
 	repaired.emit()
 
 
-## Breaks apart: plays the crash where it stood and removes it.
+## Breaks apart: plays the crash where it stood and removes it. Anything
+## built on top of it (a wall on a platform) comes down with it.
 func destroy() -> void:
 	if is_queued_for_deletion():
 		return
+	var on_top := ConstructionRules.resting_on(self)
 	health = 0.0
 	destroyed.emit(self)
 	_one_shot(load("res://assets/audio/structure_break.wav"))
+	queue_free()
+	for s in on_top:
+		s.destroy.call_deferred()
+
+
+## Removed by a player (dismantled or scrapped). Built structures are freed;
+## level props override this to stay in the save as "scrapped".
+func take_down() -> void:
 	queue_free()
 
 
@@ -112,6 +126,9 @@ func can_undo() -> bool:
 ## Every collision object of this structure (to leave it out of checks).
 func get_collision_rids() -> Array[RID]:
 	var out: Array[RID] = []
+	var me: Node = self
+	if me is CollisionObject3D:
+		out.append((me as CollisionObject3D).get_rid())
 	for c in find_children("*", "CollisionObject3D", true, false):
 		out.append((c as CollisionObject3D).get_rid())
 	return out

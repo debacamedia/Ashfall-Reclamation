@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_cu15l"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_dkre8"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_cai6j"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_xckdw"]
+
+[resource]
+script = ExtResource("4_xckdw")
+id = &"salvage_toolbox"
+display_name = "Toolbox"
+scene_path = "res://assets/ashfall_pack_v2/scenes/salvage_toolbox.tscn"
+max_health = 1000.0
+footprint = Vector3(0.82, 0.36, 0.38)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_cu15l"), int]({
+ExtResource("2_dkre8"): 3,
+ExtResource("3_cai6j"): 1
+})
+is_level_prop = true

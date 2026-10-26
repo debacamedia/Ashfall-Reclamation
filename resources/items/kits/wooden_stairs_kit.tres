@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_5g7cs"]
+[ext_resource type="Texture2D" path="res://assets/icons/wooden_stairs_kit.png" id="1_tcc7c"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_tcc7c"]
+[ext_resource type="Resource" path="res://resources/structures/wooden_stairs.tres" id="3_lab6u"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/wooden_stairs_kit.tscn" id="4_0nywh"]
+
+[resource]
+script = ExtResource("2_tcc7c")
+id = &"wooden_stairs_kit"
+display_name = "Wooden Stairs Kit"
+description = "Stairs up to a platform (2.6 m). Raiders can climb them too. Build it with B."
+category = 8
+icon = ExtResource("1_tcc7c")
+max_stack = 5
+weight = 3.5
+base_value = 28
+world_model = ExtResource("4_0nywh")
+pickup_sound = ExtResource("1_5g7cs")
+structure = ExtResource("3_lab6u")

@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_ij4ya"]
 [ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_r2omk"]
 [ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_a0b3q"]
+[ext_resource type="Resource" path="res://resources/structures/wooden_wall_window.tres" id="4_a0b3q"]
+[ext_resource type="Resource" path="res://resources/structures/wooden_wall_doorway.tres" id="5_8xgho"]
 
 [resource]
 script = ExtResource("3_a0b3q")
@@ -17,3 +19,6 @@ ExtResource("2_r2omk"): 2
 dismantle_return = Dictionary[ExtResource("1_ij4ya"), int]({
 ExtResource("2_r2omk"): 3
 })
+snap = 1
+variants = Array[ExtResource("3_a0b3q")]([ExtResource("4_a0b3q"), ExtResource("5_8xgho")])
+variant_name = "Solid"

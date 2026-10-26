@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 13 (construction)
+## Current state: Increment 14 (fort building)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -17,13 +17,14 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 11:** **gun crafting and attachments**: you now start with only a **machete** (slot 5) and craft a **pipe pistol** by hand. Gun parts (barrel, receiver, stock, trigger group, magazine) are made at the weapons bench and assembled into the pistol, shotgun, service rifle and marksman rifle. **Attachments** (red dot, 4× scope, suppressor, extended magazine, foregrip) are fitted on the bench's **Modify Weapons** tab and show on the gun. Every gun has iron sights.
 - **Increment 12:** **a second region, Halden's Crossing**: follow the road south out of Outpost 17 and hold E at the road sign. A ruined town with enterable shops, a two-storey hotel and a burned church, rooftop and water-tower sightlines, and a walled raider camp held by tougher **Raider Veterans**. 21 containers, scrap heaps and appliance piles for crafting materials in bulk. You carry your gear between regions, each region remembers what you looted, and saves include every region.
 - **Increment 13:** **construction**: craft structure kits (K → Structures), press **B** for build mode and place them with a green/red ghost: sandbag and wooden barricades, wooden and metal walls, a gate you open with E, spike traps, storage crates and a field workbench. Rotate with R, choose with the mouse wheel, move what you've built with F, repair with E and dismantle with X (within 30 s of placing, you get the kit back). Raiders path around what you build and **hack through** walls when you've shut them out. Everything you build is saved, per region.
+- **Increment 14:** **fort building**: walls, fences and barricades **snap end to end** at any angle (R sets the joint: 45°, 90°…); wall kits place as **solid, window or doorway** (V); **platforms** you can stack and build on, reached by **stairs** (raiders follow) or **ladders** (they can't); a craftable **chain-link fence**; the gate opens with E anywhere on it. The outpost's own **props can be moved (F) or scrapped (X)** for materials (trucks scrap only). Up to 1,000 structures per region, with merged meshes for speed.
 
 ## Run it
 1. Install Godot 4.7 (standard, not .NET).
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
 3. Press **F5**.
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, R rotate, F move, E repair, X dismantle) · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
 
 ## After pulling an update — important
 Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.

@@ -1,6 +1,8 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scripts/construction/level_prop.gd" id="1_unqnp"]
 [ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="1_vwe5r"]
+[ext_resource type="Resource" path="res://resources/structures/props/fuel_drums.tres" id="2_d3fwd"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="2_oyssf"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_unqnp"]
@@ -63,6 +65,8 @@ size = Vector3(1.25, 0.9, 1.15)
 [node name="FuelDrums" type="StaticBody3D" unique_id=1482630216]
 collision_layer = 2
 collision_mask = 0
+script = ExtResource("1_unqnp")
+definition = ExtResource("2_d3fwd")
 
 [node name="Drum" type="MeshInstance3D" parent="." unique_id=471724129]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32, 0.45, -0.2)

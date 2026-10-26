@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://scripts/crafting/crafting_station.gd" id="4_gcxpm"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/structure_hit.tres" id="5_2luqm"]
 
-[node name="FieldWorkbench" type="Node3D" unique_id=988197409]
+[node name="FieldWorkbench" type="Node3D" unique_id=1137497302]
 script = ExtResource("1_5i16p")
 definition = ExtResource("2_hey0y")
 
@@ -18,7 +18,7 @@ monitoring = false
 script = ExtResource("4_gcxpm")
 focus_offset = Vector3(0, 0.95, 0)
 
-[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=1904566317]
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=753805503]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 stream = ExtResource("5_2luqm")

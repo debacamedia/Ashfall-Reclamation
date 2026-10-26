@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_1n6sq"]
+[ext_resource type="Texture2D" path="res://assets/icons/wooden_platform_kit.png" id="1_ogmay"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_ogmay"]
+[ext_resource type="Resource" path="res://resources/structures/wooden_platform.tres" id="3_hvi3v"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/kits/wooden_platform_kit.tscn" id="4_g63ou"]
+
+[resource]
+script = ExtResource("2_ogmay")
+id = &"wooden_platform_kit"
+display_name = "Wooden Platform Kit"
+description = "A 2.4 m square deck at wall height on four posts. Build walls and more platforms on top; reach it with stairs or a ladder. Build it with B."
+category = 8
+icon = ExtResource("1_ogmay")
+max_stack = 5
+weight = 5.5
+base_value = 44
+world_model = ExtResource("4_g63ou")
+pickup_sound = ExtResource("1_1n6sq")
+structure = ExtResource("3_hvi3v")

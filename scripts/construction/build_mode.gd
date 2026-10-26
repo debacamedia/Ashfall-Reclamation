@@ -4,7 +4,10 @@ extends Node
 ##
 ##   Left click        place the selected structure where the ghost is
 ##   Mouse wheel / [ ] choose which kit to place (only kits you carry)
-##   R                 rotate 15° (Shift+R the other way)
+##   R                 rotate 15° (Shift+R the other way). When the ghost has
+##                     snapped onto a wall's end, this is the angle of the
+##                     joint: 0° straight on, 45°, 90°...
+##   V                 choose the variant (wall / window / doorway, ladder height)
 ##   F                 pick up the structure you're looking at and move it
 ##                     (click to put it down, F again to cancel)
 ##   E                 repair the structure you're looking at
@@ -17,7 +20,12 @@ extends Node
 ## shows its health and the move/repair/dismantle keys instead.
 ##
 ## You can enter build mode with kits to place, or with none to move, repair
-## or dismantle what's already built.
+## or dismantle what's already built. The level's own props (barrels,
+## fences, trucks...) can be moved (F) and scrapped (X) the same way.
+##
+## Snapping: walls, fences and barricades hinge onto the end of one already
+## built; platforms join edge to edge (or stack); stairs and ladders go
+## against a platform's edge. See ConstructionRules.snap_to_built.
 ##
 ## This is the client side only: placing, moving, repairing and dismantling
 ## all go through PlayerController.request_* (validated, host-side in co-op).
@@ -35,6 +43,10 @@ var yaw := 0.0
 var target: Structure = null
 ## The structure being moved (picked up with F), or null.
 var moving: Structure = null
+## What the ghost has snapped onto this frame (or null).
+var snapped_to: Structure = null
+## Chosen variant index per kit (V).
+var _variant := {}
 var ghost_transform := Transform3D.IDENTITY
 var ghost_reason := "Look at the ground"
 var ghost_valid := false
@@ -75,7 +87,7 @@ func enter() -> bool:
 		return false
 	refresh_kits()
 	var root := ConstructionRules.structures_root(player.get_parent())
-	if kits.is_empty() and (root == null or root.get_child_count() == 0):
+	if kits.is_empty() and (root == null or root.get_child_count() == 0) and not _level_has_props():
 		player.build_refused.emit("No structure kits: craft one first (K)")
 		return false
 	active = true
@@ -86,6 +98,13 @@ func enter() -> bool:
 	update_preview()
 	changed.emit()
 	return true
+
+
+func _level_has_props() -> bool:
+	for n in get_tree().get_nodes_in_group("level_props"):
+		if player.get_parent().is_ancestor_of(n):
+			return true
+	return false
 
 
 func exit() -> void:
@@ -109,6 +128,7 @@ func select(direction: int) -> void:
 	if kits.is_empty() or moving != null:
 		return
 	selected = wrapi(selected + direction, 0, kits.size())
+	yaw = 0.0
 	_rebuild_ghost()
 	update_preview()
 	changed.emit()
@@ -116,6 +136,26 @@ func select(direction: int) -> void:
 
 func rotate(steps: int = 1) -> void:
 	yaw = wrapf(yaw + steps * ConstructionRules.ROTATE_STEP, 0.0, 360.0)
+	update_preview()
+	changed.emit()
+
+
+## The variant of the selected kit that will be placed (or null).
+func current_variant() -> StructureDefinition:
+	var kit := current_kit()
+	if kit == null or kit.structure == null:
+		return null
+	var vs := kit.structure.get_variants()
+	return vs[clampi(int(_variant.get(kit, 0)), 0, vs.size() - 1)]
+
+
+## Next variant of the selected kit (V).
+func cycle_variant() -> void:
+	var kit := current_kit()
+	if kit == null or moving != null or kit.structure.get_variants().size() < 2:
+		return
+	_variant[kit] = wrapi(int(_variant.get(kit, 0)) + 1, 0, kit.structure.get_variants().size())
+	_rebuild_ghost()
 	update_preview()
 	changed.emit()
 
@@ -136,7 +176,7 @@ func place() -> Structure:
 	var kit := current_kit()
 	if kit == null or target != null:
 		return null
-	var s := player.request_place_structure(kit, ghost_transform)
+	var s := player.request_place_structure(kit, ghost_transform, current_variant())
 	refresh_kits()
 	if kits.is_empty():
 		exit()
@@ -152,7 +192,7 @@ func place() -> Structure:
 func start_move() -> bool:
 	if not active or moving != null or target == null:
 		return false
-	var reason := target.move_block_reason()
+	var reason := "Can't move that" if target.definition == null or not target.definition.movable else target.move_block_reason()
 	if reason != "":
 		player.build_refused.emit(reason)
 		return false
@@ -225,8 +265,7 @@ func refresh_kits() -> void:
 func ghost_definition() -> StructureDefinition:
 	if moving != null:
 		return moving.definition
-	var kit := current_kit()
-	return kit.structure if kit != null else null
+	return current_variant()
 
 
 ## Works out what's under the crosshair and where the ghost goes.
@@ -278,11 +317,17 @@ func update_preview() -> void:
 	var gy := _ground_y(space, xform.origin, exclude)
 	if not is_nan(gy):
 		xform.origin.y = gy
+	# Join onto what's already built nearby (R then sets the joint's angle)
+	snapped_to = null
+	var snap := ConstructionRules.snap_to_built(ConstructionRules.structures_root(player.get_parent()), def, point, yaw, moving)
+	if not snap.is_empty():
+		xform = snap["xform"]
+		snapped_to = snap["to"]
 	ghost_transform = xform
 	if moving != null:
 		ghost_reason = player.move_refusal_reason(moving, xform)
 	else:
-		ghost_reason = player.place_refusal_reason(current_kit(), xform)
+		ghost_reason = player.place_refusal_reason(current_kit(), xform, current_variant())
 	ghost_valid = ghost_reason == ""
 	_show_ghost(true)
 
@@ -351,17 +396,29 @@ func title_text() -> String:
 	if moving != null:
 		return "Moving " + moving.definition.display_name
 	if target != null:
+		if target is LevelProp:
+			return target.definition.display_name
 		return "%s  ·  %d%%" % [target.definition.display_name, roundi(target.get_health_fraction() * 100.0)]
 	var kit := current_kit()
 	if kit == null:
 		return "No kits"
-	return "%s ×%d%s" % [kit.structure.display_name, player.inventory.count_of(kit.id), "   (%d/%d)" % [selected + 1, kits.size()] if kits.size() > 1 else ""]
+	var v := current_variant()
+	var variant := ""
+	if kit.structure.get_variants().size() > 1:
+		variant = "  ·  %s [V]" % v.variant_name
+	return "%s ×%d%s%s" % [kit.structure.display_name, player.inventory.count_of(kit.id), variant, "   (%d/%d)" % [selected + 1, kits.size()] if kits.size() > 1 else ""]
 
 
 ## The second line: what's possible here, or why not.
 func status_text() -> String:
 	if moving != null:
 		return ("Click to put it here" if ghost_valid else ghost_reason) + "   [F] Cancel"
+	if target is LevelProp:
+		var prop: PackedStringArray = []
+		if target.definition.movable:
+			prop.append("[F] Move")
+		prop.append("[X] Scrap (get %s)" % StructureDefinition.cost_text(target.definition.dismantle_return))
+		return "   ".join(prop)
 	if target != null:
 		var parts: PackedStringArray = ["[F] Move"]
 		if target.is_damaged():
@@ -373,7 +430,9 @@ func status_text() -> String:
 		return "   ".join(parts)
 	if current_kit() == null:
 		return "Look at something you've built"
-	return "Click to build" if ghost_valid else ghost_reason
+	if not ghost_valid:
+		return ghost_reason
+	return "Click to build" + ("  (joined)" if snapped_to != null else "")
 
 
 # ---------------------------------------------------------------- input
@@ -412,6 +471,8 @@ func _input(event: InputEvent) -> void:
 		select(-1)
 	elif event.is_action_pressed("build_rotate"):
 		rotate(-1 if (event as InputEventWithModifiers).shift_pressed else 1)
+	elif event.is_action_pressed("build_variant"):
+		cycle_variant()
 	elif event.is_action_pressed("build_move"):
 		if moving != null:
 			cancel_move()

@@ -19,3 +19,4 @@ dismantle_return = Dictionary[ExtResource("1_k5i5g"), int]({
 ExtResource("2_4ukeu"): 3,
 ExtResource("3_5qtls"): 1
 })
+snap = 1

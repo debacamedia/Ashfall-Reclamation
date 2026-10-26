@@ -89,6 +89,11 @@
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v2/audio/radio_chatter_static.wav" id="87_kwv4x"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v2/audio/metal_gate_rattle.wav" id="88_qlidl"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v2/audio/distant_industry.wav" id="89_5g4yo"]
+[ext_resource type="Script" path="res://scripts/construction/level_prop.gd" id="inc14_prop_script"]
+[ext_resource type="Resource" path="res://resources/structures/props/water_storage_tank.tres" id="inc14_water_storage_tank"]
+[ext_resource type="Resource" path="res://resources/structures/props/portable_generator.tres" id="inc14_portable_generator"]
+[ext_resource type="Resource" path="res://resources/structures/props/field_radio.tres" id="inc14_field_radio"]
+[ext_resource type="Resource" path="res://resources/structures/props/salvage_toolbox.tres" id="inc14_salvage_toolbox"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -2757,21 +2762,29 @@ mesh = SubResource("QuadMesh_35yf0")
 [node name="Props" type="Node3D" parent="Pack2" unique_id=851561529 groups=["navigation_geometry"]]
 
 [node name="WaterTank" type="StaticBody3D" parent="Pack2/Props" unique_id=1446466063 instance=ExtResource("82_edr30")]
+script = ExtResource("inc14_prop_script")
+definition = ExtResource("inc14_water_storage_tank")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.45, 0, -14.6)
 collision_layer = 2
 collision_mask = 0
 
 [node name="WaterPumpGenerator" type="StaticBody3D" parent="Pack2/Props" unique_id=1038577114 instance=ExtResource("83_yxgp0")]
+script = ExtResource("inc14_prop_script")
+definition = ExtResource("inc14_portable_generator")
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -30.5, 0, -12.2)
 collision_layer = 2
 collision_mask = 0
 
 [node name="FieldRadio" type="StaticBody3D" parent="Pack2/Props" unique_id=1031509073 instance=ExtResource("84_2via0")]
+script = ExtResource("inc14_prop_script")
+definition = ExtResource("inc14_field_radio")
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.6, 0, -15.6)
 collision_layer = 2
 collision_mask = 0
 
 [node name="SalvageToolbox" type="StaticBody3D" parent="Pack2/Props" unique_id=405559507 instance=ExtResource("85_1niq0")]
+script = ExtResource("inc14_prop_script")
+definition = ExtResource("inc14_salvage_toolbox")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.2, 0, 0.62)
 collision_layer = 2
 collision_mask = 0

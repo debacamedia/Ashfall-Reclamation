@@ -160,11 +160,13 @@ func test_saves_from_before_pack2_still_load() -> void:
 	var data: Dictionary = json.data
 	check(saves.validate(data) == "", "save made before Pack 2 is valid")
 	var lvl := await _load_level()
-	# Pack 2 adds nothing to the save: same persist nodes as before
+	# Pack 2 adds nothing to the save but its props, which (Increment 14)
+	# can be moved and scrapped
 	var now: Dictionary = saves.build_save_data(lvl)
 	var before_paths := (data["nodes"] as Array).map(func(e: Dictionary) -> String: return str(e["path"]))
 	var now_paths := (now["nodes"] as Array).map(func(e: Dictionary) -> String: return str(e["path"]))
-	check(now_paths.filter(func(p: String) -> bool: return p.begins_with("Pack2")).is_empty(), "no Pack 2 node is saved")
+	for p: String in now_paths.filter(func(p: String) -> bool: return p.begins_with("Pack2")):
+		check(lvl.get_node(p) is LevelProp, "only movable props are saved from Pack 2 (%s)" % p)
 	for p in before_paths:
 		check(now_paths.has(p), "%s still exists to load into" % p)
 	saves.apply_save_data(data, lvl)
@@ -174,5 +176,9 @@ func test_saves_from_before_pack2_still_load() -> void:
 	var crate := lvl.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
 	check(crate.is_searched, "searched crate restored")
 	check(lvl.get_node("Loot").get_child_count() == before_paths.filter(func(p: String) -> bool: return p.begins_with("Loot/")).size(), "taken pickup stays gone")
+	# The old save doesn't mention props: they all stay, in place
+	for prop in get_tree().get_nodes_in_group("level_props"):
+		if lvl.is_ancestor_of(prop):
+			check(not (prop as LevelProp).scrapped and (prop as Node3D).visible, "%s untouched by an old save" % prop.name)
 	remove_child(lvl)
 	lvl.free()

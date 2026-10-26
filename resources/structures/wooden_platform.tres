@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_whedq"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_55bf0"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_c20y2"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_t5jcw"]
+
+[resource]
+script = ExtResource("4_t5jcw")
+id = &"wooden_platform"
+display_name = "Wooden Platform"
+scene_path = "res://scenes/structures/wooden_platform.tscn"
+max_health = 500.0
+footprint = Vector3(2.4, 2.6, 2.4)
+repair_cost = Dictionary[ExtResource("1_whedq"), int]({
+ExtResource("2_55bf0"): 2
+})
+dismantle_return = Dictionary[ExtResource("1_whedq"), int]({
+ExtResource("2_55bf0"): 4,
+ExtResource("3_c20y2"): 1
+})
+snap = 2
+supports_building = true

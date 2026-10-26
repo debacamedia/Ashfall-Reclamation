@@ -1,6 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Material" path="res://assets/materials/sandbag.tres" id="1_pe2m3"]
+[ext_resource type="Script" path="res://scripts/construction/level_prop.gd" id="1_wxw5d"]
+[ext_resource type="Resource" path="res://resources/structures/props/sandbag_wall.tres" id="2_6q5e6"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_mls7m"]
 size = Vector3(0.6, 0.24, 0.38)
@@ -62,6 +64,8 @@ size = Vector3(3, 0.96, 0.45)
 [node name="SandbagWall" type="StaticBody3D" unique_id=992725299]
 collision_layer = 2
 collision_mask = 0
+script = ExtResource("1_wxw5d")
+definition = ExtResource("2_6q5e6")
 
 [node name="Bag" type="MeshInstance3D" parent="." unique_id=400698941]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0.12, 0)

@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://scripts/interaction/salvage_container.gd" id="4_4ppww"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/structure_hit.tres" id="5_a8g21"]
 
-[node name="StorageCrate" type="Node3D" unique_id=830571151]
+[node name="StorageCrate" type="Node3D" unique_id=1342915620]
 script = ExtResource("1_kcbsk")
 definition = ExtResource("2_87ubl")
 
@@ -20,7 +20,7 @@ container_name = "Storage Crate"
 object_name = "Storage Crate"
 focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=232002906]
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=1872576784]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 stream = ExtResource("5_a8g21")

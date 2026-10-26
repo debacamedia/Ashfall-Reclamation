@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_dnhfx"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_ksnl1"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_u88dk"]
+
+[resource]
+script = ExtResource("3_u88dk")
+id = &"wooden_stairs"
+display_name = "Wooden Stairs"
+scene_path = "res://scenes/structures/wooden_stairs.tscn"
+footprint = Vector3(1.2, 2.6, 3.4)
+repair_cost = Dictionary[ExtResource("1_dnhfx"), int]({
+ExtResource("2_ksnl1"): 2
+})
+dismantle_return = Dictionary[ExtResource("1_dnhfx"), int]({
+ExtResource("2_ksnl1"): 3
+})
+snap = 3

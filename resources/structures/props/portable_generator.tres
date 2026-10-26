@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_muapb"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_rmm73"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="3_20peb"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="4_8wii5"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="5_wi4w1"]
+
+[resource]
+script = ExtResource("5_wi4w1")
+id = &"portable_generator"
+display_name = "Generator"
+scene_path = "res://assets/ashfall_pack_v2/scenes/portable_generator.tscn"
+max_health = 1000.0
+footprint = Vector3(1.25, 0.8, 0.71)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_muapb"), int]({
+ExtResource("2_rmm73"): 4,
+ExtResource("3_20peb"): 2,
+ExtResource("4_8wii5"): 1
+})
+is_level_prop = true

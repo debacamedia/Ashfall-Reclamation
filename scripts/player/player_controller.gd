@@ -595,25 +595,29 @@ func weapon_refusal_reason(def: WeaponDefinition) -> String:
 
 # ---------------------------------------------------------------- construction
 
-## "" if `kit` can be placed at `xform`, otherwise why not.
-func place_refusal_reason(kit: ItemDefinition, xform: Transform3D) -> String:
+## "" if `kit` can be placed at `xform` (as `variant`, one of the kit's
+## variants; null = the kit's own structure), otherwise why not.
+func place_refusal_reason(kit: ItemDefinition, xform: Transform3D, variant: StructureDefinition = null) -> String:
 	if kit == null or kit.structure == null:
+		return "That can't be built"
+	if variant != null and not kit.structure.get_variants().has(variant):
 		return "That can't be built"
 	if inventory == null or inventory.count_of(kit.id) <= 0:
 		return "You don't have a " + kit.display_name
-	return ConstructionRules.refusal_reason(self, kit.structure, xform)
+	return ConstructionRules.refusal_reason(self, variant if variant != null else kit.structure, xform)
 
 
 ## Uses one kit from the inventory and builds its structure (validated).
-func request_place_structure(kit: ItemDefinition, xform: Transform3D) -> Structure:
-	var reason := place_refusal_reason(kit, xform)
+func request_place_structure(kit: ItemDefinition, xform: Transform3D, variant: StructureDefinition = null) -> Structure:
+	var reason := place_refusal_reason(kit, xform, variant)
 	if reason != "":
 		build_refused.emit(reason)
 		return null
+	var def := variant if variant != null else kit.structure
 	var root := ConstructionRules.structures_root(get_parent())
 	inventory.remove_item(kit.id, 1)
-	var s := (load(kit.structure.scene_path) as PackedScene).instantiate() as Structure
-	s.name = "%s_%d" % [kit.structure.id, Time.get_ticks_usec() % 100000000]
+	var s := (load(def.scene_path) as PackedScene).instantiate() as Structure
+	s.name = "%s_%d" % [def.id, Time.get_ticks_usec() % 100000000]
 	s.transform = root.global_transform.affine_inverse() * xform
 	s.kit = kit
 	s.placed_msec = Time.get_ticks_msec()
@@ -627,7 +631,7 @@ func request_place_structure(kit: ItemDefinition, xform: Transform3D) -> Structu
 func repair_refusal_reason(s: Structure) -> String:
 	if is_dead() or inventory == null or s == null or not is_instance_valid(s) or s.is_queued_for_deletion():
 		return "Can't do that now"
-	if head.global_position.distance_to(s.global_position + Vector3.UP) > ConstructionRules.REACH:
+	if not _within_build_reach(s):
 		return "Too far away"
 	if not s.is_damaged():
 		return "Not damaged"
@@ -656,11 +660,15 @@ func request_repair_structure(s: Structure) -> bool:
 func dismantle_refusal_reason(s: Structure) -> String:
 	if is_dead() or inventory == null or s == null or not is_instance_valid(s) or s.is_queued_for_deletion():
 		return "Can't do that now"
-	if head.global_position.distance_to(s.global_position + Vector3.UP) > ConstructionRules.REACH:
+	if not _within_build_reach(s):
 		return "Too far away"
+	if s is LevelProp and (s as LevelProp).scrapped:
+		return "Can't do that now"
 	var blocked := s.dismantle_block_reason()
 	if blocked != "":
 		return blocked
+	if not ConstructionRules.resting_on(s).is_empty():
+		return "Take down what's built on it first"
 	if s.can_undo():
 		return "" if inventory.can_add(s.kit, 1) >= 1 else "No room for " + s.kit.display_name
 	for item: ItemDefinition in s.definition.dismantle_return:
@@ -682,20 +690,33 @@ func request_dismantle_structure(s: Structure) -> bool:
 		for item: ItemDefinition in def.dismantle_return:
 			inventory.receive(item, def.dismantle_return[item])
 	s._one_shot(load("res://assets/audio/build_place.wav"))
-	s.queue_free()
+	s.take_down()
 	structure_dismantled.emit(def)
 	return true
+
+
+## Close enough to work on `s` (big things like trucks: measured to their
+## nearer end, roughly).
+func _within_build_reach(s: Structure) -> bool:
+	var extra := 0.0
+	if s.definition != null:
+		extra = maxf(s.definition.footprint.x, s.definition.footprint.z) * 0.5 - 0.5
+	return head.global_position.distance_to(s.global_position + Vector3.UP) <= ConstructionRules.REACH + maxf(extra, 0.0)
 
 
 ## "" if `s` can be moved to `xform` now, otherwise why not.
 func move_refusal_reason(s: Structure, xform: Transform3D) -> String:
 	if is_dead() or s == null or not is_instance_valid(s) or s.is_queued_for_deletion() or not s.is_inside_tree():
 		return "Can't do that now"
-	if ConstructionRules.structures_root(get_parent()) != s.get_parent():
+	if s.definition == null or not s.definition.movable or not get_parent().is_ancestor_of(s):
 		return "Can't move that"
+	if s is LevelProp and (s as LevelProp).scrapped:
+		return "Can't do that now"
 	var blocked := s.move_block_reason()
 	if blocked != "":
 		return blocked
+	if not ConstructionRules.resting_on(s).is_empty():
+		return "Take down what's built on it first"
 	return ConstructionRules.refusal_reason(self, s.definition, xform, s)
 
 

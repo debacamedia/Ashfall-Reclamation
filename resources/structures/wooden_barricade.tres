@@ -17,3 +17,4 @@ ExtResource("2_fo2bi"): 1
 dismantle_return = Dictionary[ExtResource("1_yqkjb"), int]({
 ExtResource("2_fo2bi"): 1
 })
+snap = 1

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_evys4"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_i28sh"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_8rvrm"]
+
+[resource]
+script = ExtResource("3_8rvrm")
+id = &"wooden_wall_doorway"
+display_name = "Wooden Wall"
+scene_path = "res://scenes/structures/wooden_wall_doorway.tscn"
+max_health = 400.0
+footprint = Vector3(2.4, 2.6, 0.3)
+repair_cost = Dictionary[ExtResource("1_evys4"), int]({
+ExtResource("2_i28sh"): 2
+})
+dismantle_return = Dictionary[ExtResource("1_evys4"), int]({
+ExtResource("2_i28sh"): 3
+})
+snap = 1
+variant_name = "Doorway"

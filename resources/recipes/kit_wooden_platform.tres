@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_6a4gy"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_bw0a8"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_4mjib"]
+[ext_resource type="Resource" path="res://resources/items/kits/wooden_platform_kit.tres" id="4_e6aeu"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_budhy"]
+
+[resource]
+script = ExtResource("5_budhy")
+id = &"kit_wooden_platform"
+category = 6
+station = 1
+inputs = Dictionary[ExtResource("1_6a4gy"), int]({
+ExtResource("2_bw0a8"): 8,
+ExtResource("3_4mjib"): 4
+})
+output = ExtResource("4_e6aeu")
+craft_time = 10.0

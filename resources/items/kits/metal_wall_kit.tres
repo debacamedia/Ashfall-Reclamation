@@ -10,7 +10,7 @@
 script = ExtResource("2_7i30h")
 id = &"metal_wall_kit"
 display_name = "Metal Wall Kit"
-description = "A 2.4 m section of sheet-metal wall. More than twice as tough as wood. Build it with B."
+description = "A 2.4 m section of sheet-metal wall. More than twice as tough as wood. Solid, with a window, or a doorway (V when placing). Solid, with a window, or a doorway (V when placing). Build it with B."
 category = 8
 icon = ExtResource("1_7i30h")
 max_stack = 5

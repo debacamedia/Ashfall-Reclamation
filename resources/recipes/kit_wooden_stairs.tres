@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_jeoj5"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_3k8ys"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_n1hpt"]
+[ext_resource type="Resource" path="res://resources/items/kits/wooden_stairs_kit.tres" id="4_qsko8"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_4hubi"]
+
+[resource]
+script = ExtResource("5_4hubi")
+id = &"kit_wooden_stairs"
+category = 6
+station = 1
+inputs = Dictionary[ExtResource("1_jeoj5"), int]({
+ExtResource("2_3k8ys"): 6,
+ExtResource("3_n1hpt"): 2
+})
+output = ExtResource("4_qsko8")
+craft_time = 8.0

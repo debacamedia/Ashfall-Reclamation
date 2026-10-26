@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_i3s10"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="2_1tavb"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_6y6v7"]
+
+[resource]
+script = ExtResource("3_6y6v7")
+id = &"wood_crate"
+display_name = "Wooden Crate"
+scene_path = "res://scenes/world/props/wood_crate.tscn"
+max_health = 1000.0
+footprint = Vector3(1, 1, 1)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_i3s10"), int]({
+ExtResource("2_1tavb"): 3
+})
+is_level_prop = true

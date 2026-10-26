@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_3u4jm"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_webhe"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_8c7sx"]
+[ext_resource type="Resource" path="res://resources/structures/ladder_tall.tres" id="4_webhe"]
+
+[resource]
+script = ExtResource("3_8c7sx")
+id = &"ladder"
+display_name = "Ladder"
+scene_path = "res://scenes/structures/ladder.tscn"
+max_health = 120.0
+footprint = Vector3(0.7, 2.6, 0.3)
+blocks_navigation = false
+repair_cost = Dictionary[ExtResource("1_3u4jm"), int]({
+ExtResource("2_webhe"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_3u4jm"), int]({
+ExtResource("2_webhe"): 1
+})
+snap = 3
+variants = Array[ExtResource("3_8c7sx")]([ExtResource("4_webhe")])
+variant_name = "2.6 m (one level)"

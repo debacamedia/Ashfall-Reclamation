@@ -1,5 +1,5 @@
 extends "res://tests/test_case.gd"
-## Increment 13: construction. Kits and recipes, placement rules (every
+## Increments 13 and 14: construction. Kits and recipes, placement rules (every
 ## refusal), placing / repairing / dismantling, gates, storage crates, spike
 ## traps, navmesh rebakes, raiders breaking through, saving (per region) and
 ## build mode's ghost and HUD panel.
@@ -9,8 +9,10 @@ const RAIDER := preload("res://scenes/enemies/raider.tscn")
 const OUTPOST_PATH := "res://levels/outpost_17/outpost_17.tscn"
 const DT := 1.0 / 60.0
 const IDS := ["sandbag_barricade", "wooden_barricade", "wooden_wall", "metal_wall",
-	"wooden_gate", "spike_trap", "storage_crate", "field_workbench"]
-const AT_BENCH := ["wooden_wall", "metal_wall", "wooden_gate", "storage_crate"]
+	"wooden_gate", "spike_trap", "storage_crate", "field_workbench",
+	"wooden_platform", "wooden_stairs", "ladder", "chain_link_fence"]
+const AT_BENCH := ["wooden_wall", "metal_wall", "wooden_gate", "storage_crate",
+	"wooden_platform", "wooden_stairs", "chain_link_fence"]
 
 var SCRAP: ItemDefinition = load("res://resources/items/scrap_metal.tres")
 var PLANK: ItemDefinition = load("res://resources/items/wood_plank.tres")
@@ -25,9 +27,11 @@ func _kit(id: String) -> ItemDefinition:
 
 ## A flat 40 m floor in a "Navigation" region that bakes like the real
 ## levels (navigation_geometry group), plus a Structures node.
+## (Only a baked world is named "Navigation", so building in an unbaked one
+## doesn't start rebakes that outlive the test.)
 func _world(bake := false) -> NavigationRegion3D:
 	var region := NavigationRegion3D.new()
-	region.name = "Navigation"
+	region.name = "Navigation" if bake else "NoNavigation"
 	var nm := NavigationMesh.new()
 	nm.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
 	nm.geometry_collision_mask = PhysicsLayers.WORLD_SOLID
@@ -91,7 +95,7 @@ func _wait_rebake(region: NavigationRegion3D) -> void:
 	for i in 600:
 		await get_tree().process_frame
 		var rb := _rebaker(region)
-		if rb != null and not rb.is_busy():
+		if (rb != null and not rb.is_busy()) or (rb == null and i > 20):
 			break
 	await wait_physics(4)
 
@@ -146,6 +150,7 @@ func test_kits_structures_and_recipes_are_valid() -> void:
 				check(def.dismantle_return[item] <= found.inputs.get(item, 0), "%s: dismantle returns no more %s than the recipe used" % [id, item.id])
 	var trap: StructureDefinition = load("res://resources/structures/spike_trap.tres")
 	check(not trap.blocks_navigation and not trap.breakable, "spike trap: raiders walk into it")
+	check(ConstructionRules.MAX_PER_REGION == 1000, "1000 structures per region")
 
 
 func test_hand_crafting_a_kit() -> void:
@@ -459,6 +464,7 @@ func test_raider_breaks_in_when_walled_off() -> void:
 			break
 	check(not is_instance_valid(damaged), "wall broken")
 	check(not hits.is_empty(), "came through and hit the player")
+	await _wait_rebake(region)
 
 
 # ---------------------------------------------------------------- saving
@@ -789,3 +795,399 @@ func test_dismantle_soon_after_placing_gives_the_kit_back() -> void:
 	# Loaded from a save: built earlier, so no undo
 	var fresh := _build("wooden_barricade", Vector3(4, 0, -3))
 	check(not fresh.can_undo(), "no undo for structures not placed this session")
+
+
+
+# ================================================================ Increment 14
+
+const PLATFORM := "wooden_platform"
+
+func _def(id: String) -> StructureDefinition:
+	return load("res://resources/structures/%s.tres" % id)
+
+
+func _deck_top(p: Structure) -> float:
+	return p.global_position.y + p.definition.footprint.y
+
+
+func test_variants_and_merged_meshes() -> void:
+	for kind in ["wooden", "metal"]:
+		var kit := _kit(kind + "_wall")
+		var vs := kit.structure.get_variants()
+		check(vs.size() == 3 and vs[0] == kit.structure, "%s wall kit: 3 variants, solid first" % kind)
+		check(vs.map(func(v: StructureDefinition) -> String: return v.variant_name) == ["Solid", "Window", "Doorway"], "%s variant names" % kind)
+		for v in vs:
+			var sc := (load(v.scene_path) as PackedScene).instantiate() as Structure
+			check(sc.definition == v and v.snap == StructureDefinition.Snap.EDGE, "%s: scene and snapping" % v.id)
+			sc.free()
+	var lad := _kit("ladder").structure.get_variants()
+	check(lad.size() == 2 and is_equal_approx(lad[1].footprint.y, 5.2), "ladder: 2.6 m and 5.2 m")
+	# Rendering: each structure is one mesh per material, not dozens of pieces
+	for f in DirAccess.get_files_at("res://scenes/structures/"):
+		if not f.ends_with(".tscn"):
+			continue
+		var root := (load("res://scenes/structures/" + f) as PackedScene).instantiate()
+		var own := root.find_children("*", "MeshInstance3D", true, false).filter(func(n: Node) -> bool: return n.owner == root)
+		check(own.size() <= 2, "%s: merged (%d mesh nodes)" % [f, own.size()])
+		for mi in own:
+			check((mi as MeshInstance3D).visibility_range_end > 0.0, "%s: fades out far away" % f)
+		root.free()
+
+
+func test_wall_variants_place_and_doorways_let_raiders_through() -> void:
+	var region := await _world(true)
+	var p := _player(Vector3(0, 0.05, 4))
+	var kit := _kit("wooden_wall")
+	p.inventory.add_item(kit, 3)
+	await _run(p, 3)
+	var door := _def("wooden_wall_doorway")
+	check(p.place_refusal_reason(kit, ConstructionRules.snap(Vector3(0, 0, 0), 0), _def("metal_wall_window")) == "That can't be built", "only the kit's own variants")
+	var mid := p.request_place_structure(kit, ConstructionRules.snap(Vector3(0, 0, 0), 0), door)
+	check(mid != null and mid.scene_file_path.ends_with("wooden_wall_doorway.tscn"), "doorway placed")
+	_build("metal_wall", Vector3(-2.4, 0, 0))
+	_build("metal_wall", Vector3(2.4, 0, 0))
+	_build("metal_wall", Vector3(-4.8, 0, 0))
+	_build("metal_wall", Vector3(4.8, 0, 0))
+	await _wait_rebake(region)
+	var widest := 0.0
+	for pt in _path(region, Vector3(0, 0, 6), Vector3(0, 0, -6)):
+		widest = maxf(widest, absf(pt.x))
+	check(widest < 0.7, "raiders path through the doorway (%.2f m out)" % widest)
+	# Saved and loaded as the doorway
+	var data: Dictionary = get_node("/root/SaveManager").build_save_data(self)
+	var json: Variant = JSON.parse_string(JSON.stringify(data))
+	mid.get_parent().remove_child(mid)
+	mid.free()
+	get_node("/root/SaveManager").apply_save_data(json, self)
+	await wait_physics(2)
+	var back := structures.get_children().filter(func(n: Node) -> bool: return (n as Structure).definition == door)
+	check(back.size() == 1, "doorway comes back as a doorway")
+
+
+func test_build_mode_v_cycles_variants() -> void:
+	await _world()
+	var p := _player()
+	var bm := p.get_node("%BuildMode") as BuildMode
+	p.inventory.add_item(_kit("wooden_wall"), 2)
+	await _run(p, 3)
+	check(bm.enter(), "build mode")
+	_look_at(p, Vector3(0, 0, -3.5))
+	check(bm.current_variant().variant_name == "Solid" and bm.title_text().contains("Solid [V]"), "solid first: %s" % bm.title_text())
+	bm.cycle_variant()
+	check(bm.current_variant().variant_name == "Window" and bm.title_text().contains("Window [V]"), "V: window")
+	check(bm.ghost_definition() == _def("wooden_wall_window"), "ghost shows the window wall")
+	var s := bm.place()
+	check(s != null and s.definition == _def("wooden_wall_window"), "placed the window wall")
+	bm.cycle_variant()
+	bm.cycle_variant()
+	check(bm.current_variant().variant_name == "Solid", "wraps round")
+	bm.exit()
+
+
+func test_walls_hinge_onto_wall_ends_at_any_angle() -> void:
+	await _world()
+	var p := _player(Vector3(0, 0.05, 3))
+	await _run(p, 3)
+	var a := _build("wooden_wall", Vector3(0, 0, 0))
+	await wait_physics(2)
+	var def := _def("wooden_wall")
+	var end := Vector3(1.2, 0, 0)
+	for angle in [0.0, 45.0, 90.0, -90.0, 30.0]:
+		var snap := ConstructionRules.snap_to_built(structures, def, end + Vector3(1.0, 0, 0).rotated(Vector3.UP, deg_to_rad(angle)), angle)
+		check(not snap.is_empty() and snap["to"] == a, "%d°: snapped to the wall" % angle)
+		if snap.is_empty():
+			continue
+		var x: Transform3D = snap["xform"]
+		var ends := ConstructionRules.ends_of(def, x)
+		check(ends[0].distance_to(end) < 0.01 or ends[1].distance_to(end) < 0.01, "%d°: shares the end" % angle)
+		var turn := rad_to_deg(absf(angle_difference(x.basis.get_euler().y, 0.0)))
+		check(absf(turn - absf(angle)) < 0.5 or absf(turn - (180.0 - absf(angle))) < 0.5, "%d°: at that angle (%.0f)" % [angle, turn])
+		check(p.place_refusal_reason(_kit("wooden_wall"), x) == "You don't have a Wooden Wall Kit", "%d°: only the kit missing" % angle)
+		p.inventory.add_item(_kit("wooden_wall"), 1)
+		check(p.place_refusal_reason(_kit("wooden_wall"), x) == "", "%d°: a corner's overlap is fine: %s" % [angle, p.place_refusal_reason(_kit("wooden_wall"), x)])
+		p.inventory.remove_item(_kit("wooden_wall").id, 1)
+	# Folding back over it is still in the way
+	var back := ConstructionRules.snap_to_built(structures, def, end + Vector3(-1.0, 0, 0), 180.0)
+	p.inventory.add_item(_kit("wooden_wall"), 1)
+	check(not back.is_empty() and p.place_refusal_reason(_kit("wooden_wall"), back["xform"]) == "Something's in the way", "can't fold back onto it")
+	# Far from any end: no snap
+	check(ConstructionRules.snap_to_built(structures, def, Vector3(0, 0, -4), 0.0).is_empty(), "nothing to snap to out there")
+	# Build mode uses it: aim just past the end
+	var bm := p.get_node("%BuildMode") as BuildMode
+	p.inventory.add_item(_kit("wooden_wall"), 1)
+	check(bm.enter(), "build mode")
+	bm.yaw = -90.0
+	_look_at(p, Vector3(1.3, 0, 1.1))
+	bm.update_preview()
+	check(bm.snapped_to == a and bm.status_text() == "Click to build  (joined)", "ghost joins on: %s" % bm.status_text())
+	var placed := bm.place()
+	check(placed != null and ConstructionRules.snap_partners(structures, placed.definition, placed.global_transform).has(a), "placed joined at the corner")
+	bm.exit()
+
+
+func test_platforms_tile_stack_and_carry_walls() -> void:
+	var region := await _world(true)
+	var p := _player(Vector3(0, 0.05, 5))
+	await _run(p, 3)
+	var pdef := _def(PLATFORM)
+	var a := _build(PLATFORM, Vector3(0, 0, 0))
+	await wait_physics(2)
+	var kit := _kit(PLATFORM)
+	p.inventory.add_item(kit, 3)
+	# Next to it: snaps edge to edge
+	var snap := ConstructionRules.snap_to_built(structures, pdef, Vector3(2.0, 0, 0.3), 0.0)
+	check(not snap.is_empty() and (snap["xform"] as Transform3D).origin.distance_to(Vector3(2.4, 0, 0)) < 0.01, "tiles beside it")
+	var b := p.request_place_structure(kit, snap["xform"])
+	check(b != null, "second platform placed: %s" % p.place_refusal_reason(kit, snap["xform"]))
+	# On top: a second storey
+	var up := ConstructionRules.snap_to_built(structures, pdef, Vector3(0, 2.7, 0), 0.0)
+	check(not up.is_empty() and absf((up["xform"] as Transform3D).origin.y - _deck_top(a)) < 0.01, "stacks on top")
+	p.global_position = Vector3(0, 2.65, 2.0)
+	await _run(p, 5)
+	var c := p.request_place_structure(kit, up["xform"])
+	check(c != null, "upper storey placed: %s" % p.place_refusal_reason(kit, up["xform"]))
+	# A wall along a platform's edge, on the deck
+	var wdef := _def("wooden_wall")
+	var w := ConstructionRules.snap_to_built(structures, wdef, Vector3(3.6, 2.6, 0.2), 0.0)
+	check(not w.is_empty() and absf((w["xform"] as Transform3D).origin.y - _deck_top(b)) < 0.01, "wall lines up on the deck edge")
+	p.inventory.add_item(_kit("wooden_wall"), 1)
+	var wall := p.request_place_structure(_kit("wooden_wall"), w["xform"])
+	check(wall != null, "wall on the platform: %s" % p.place_refusal_reason(_kit("wooden_wall"), w["xform"]))
+	# Not on top of a wall
+	p.inventory.add_item(_kit("wooden_barricade"), 1)
+	check(p.place_refusal_reason(_kit("wooden_barricade"), Transform3D(Basis(), Vector3(-0.3, 2.6 + 2.6, -1.2))) != "", "not on a wall top")
+	# Standing on the deck
+	p.global_position = Vector3(2.4, 2.7, 0)
+	await _run(p, 20)
+	check(p.is_on_floor() and absf(p.global_position.y - 2.6) < 0.1, "you can stand on the deck (y %.2f)" % p.global_position.y)
+	# Support: can't take out what holds things up; breaking it brings them down
+	check(ConstructionRules.resting_on(b).has(wall), "the wall rests on platform b")
+	check(p.dismantle_refusal_reason(b) == "Take down what's built on it first", "can't dismantle under a wall")
+	check(p.move_refusal_reason(b, Transform3D(Basis(), Vector3(8, 0, 0))) == "Take down what's built on it first", "can't move it either")
+	check(ConstructionRules.resting_on(a).has(c), "upper storey rests on a")
+	a.destroy()
+	await wait_physics(3)
+	check(not is_instance_valid(c), "the storey on it came down too")
+	check(is_instance_valid(b) and is_instance_valid(wall), "the other platform and its wall stand")
+	await _wait_rebake(region)
+
+
+func test_stairs_and_ladders_reach_the_deck() -> void:
+	var region := await _world(true)
+	var p := _player(Vector3(6, 0.05, 6))
+	await _run(p, 3)
+	var plat := _build(PLATFORM, Vector3(0, 0, 0))
+	await wait_physics(2)
+	# Stairs snap against an edge, facing out, high end at the deck
+	var sdef := _def("wooden_stairs")
+	var s := ConstructionRules.snap_to_built(structures, sdef, Vector3(0, 0, 3.0), 0.0)
+	check(not s.is_empty(), "stairs snap to the platform")
+	var sx: Transform3D = s["xform"]
+	check(absf(sx.origin.z - (1.2 + 1.7 + 0.02)) < 0.05 and absf(sx.origin.x) < 0.7, "against the +Z edge (%s)" % sx.origin)
+	p.inventory.add_item(_kit("wooden_stairs"), 1)
+	p.global_position = Vector3(2.5, 0.05, 3.0)
+	await _run(p, 3)
+	var stairs := p.request_place_structure(_kit("wooden_stairs"), sx)
+	check(stairs != null, "stairs placed: %s" % p.place_refusal_reason(_kit("wooden_stairs"), sx))
+	await _wait_rebake(region)
+	# Raiders can walk up them
+	var path := _path(region, Vector3(0, 0, 8), Vector3(0, 2.6, 0))
+	check(path.size() > 0 and path[path.size() - 1].y > 2.3, "a path up the stairs to the deck")
+	# So can you: walk up them
+	var bottom := sx * Vector3(0, 0.05, 1.5)
+	p.global_position = bottom + Vector3.UP * 0.1
+	p.rotation.y = atan2(-(-sx.basis.z.x), -(-sx.basis.z.z))
+	var f := InputFrame.new()
+	f.move = Vector2(0, -1)
+	for i in 240:
+		await get_tree().physics_frame
+		p.simulate(f, DT)
+		if p.global_position.y > 2.4 and absf(p.global_position.z) < 1.0:
+			break
+	check(p.global_position.y > 2.4, "walked up onto the deck (y %.2f)" % p.global_position.y)
+	# A ladder on another edge
+	var ldef := _def("ladder")
+	var l := ConstructionRules.snap_to_built(structures, ldef, Vector3(-2.0, 0, 0), 0.0)
+	check(not l.is_empty(), "ladder snaps to the platform")
+	p.global_position = Vector3(-3.5, 0.05, 2.0)
+	p.inventory.add_item(_kit("ladder"), 1)
+	await _run(p, 3)
+	var lad := p.request_place_structure(_kit("ladder"), l["xform"])
+	check(lad != null, "ladder placed: %s" % p.place_refusal_reason(_kit("ladder"), l["xform"]))
+	if lad == null:
+		return
+	var climb := lad.get_node("Ladder") as Ladder
+	check(absf(climb.get_top_y() - _deck_top(plat)) < 0.05, "ladder top level with the deck")
+	# Climb it
+	p.global_position = climb.global_position + climb.get_outward() * 1.2 + Vector3(0, 0.05, 0)
+	var out := climb.get_outward()
+	p.rotation.y = atan2(out.x, out.z)
+	p.head.rotation.x = 0.0
+	await _run(p, 3)
+	for i in 360:
+		await get_tree().physics_frame
+		p.simulate(f, DT)
+		if p.ladder == null and p.global_position.y > 2.4 and p.is_on_floor():
+			break
+	check(p.global_position.y > 2.4 and p.ladder == null, "climbed the ladder onto the deck (y %.2f)" % p.global_position.y)
+	# The tall ladder is a variant of the same kit
+	check(_kit("ladder").structure.get_variants()[1] == _def("ladder_tall"), "5.2 m ladder via V")
+	check(ConstructionRules.snap_to_built(structures, _def("ladder_tall"), Vector3(-2.0, 0, 0), 0.0).is_empty(), "a 5.2 m ladder doesn't snap to a one-storey deck")
+
+
+func test_ladder_only_fort_keeps_raiders_off() -> void:
+	var region := await _world(true)
+	_build(PLATFORM, Vector3(0, 0, 0))
+	var l := ConstructionRules.snap_to_built(structures, _def("ladder"), Vector3(0, 0, 2.0), 0.0)
+	var lad := _build("ladder", Vector3.ZERO)
+	lad.global_transform = l["xform"]
+	await _wait_rebake(region)
+	var path := _path(region, Vector3(0, 0, 8), Vector3(0, 2.6, 0))
+	check(path.size() == 0 or path[path.size() - 1].y < 1.0, "no raider path up a ladder")
+
+
+func test_chain_link_fence_joins_walls() -> void:
+	await _world()
+	var p := _player(Vector3(0, 0.05, 3))
+	await _run(p, 3)
+	var w := _build("metal_wall", Vector3(0, 0, 0))
+	await wait_physics(2)
+	var fdef := _def("chain_link_fence")
+	var s := ConstructionRules.snap_to_built(structures, fdef, Vector3(2.4, 0, 0), 0.0)
+	check(not s.is_empty() and s["to"] == w, "fence snaps onto a wall end")
+	p.inventory.add_item(_kit("chain_link_fence"), 1)
+	var f := p.request_place_structure(_kit("chain_link_fence"), s["xform"])
+	check(f != null and f.global_position.distance_to(Vector3(2.4, 0, 0)) < 0.01, "placed in line")
+	check(f != null and (f.get_node("Body") as StaticBody3D).collision_layer == PhysicsLayers.STRUCTURES, "solid to raiders")
+
+
+func test_gate_opens_from_anywhere_on_it() -> void:
+	await _world()
+	var p := _player(Vector3(0, 0.05, 2))
+	var g := _build("wooden_gate", Vector3(0, 0, 0)) as GateStructure
+	await _run(p, 5)
+	for spot in [Vector3(-1.1, 1.0, 0), Vector3(1.1, 2.0, 0), Vector3(0, 2.5, 0), Vector3(0.3, 0.6, 0), Vector3(-0.6, 1.8, 0)]:
+		_look_at(p, spot)
+		await _run(p, 2)
+		check(p.interactor.focused != null and p.interactor.focused.get_prompt(p).ends_with("Wooden Gate"), "E works looking at %s" % spot)
+	_look_at(p, Vector3(0.5, 1.2, 0))
+	var f := InputFrame.new()
+	f.interact = true
+	await get_tree().physics_frame
+	p.simulate(f, DT)
+	check(g.is_open, "opened by looking at the middle of the door")
+
+
+# ---------------------------------------------------------------- level props
+
+func _outpost() -> Node3D:
+	var lvl := (load(OUTPOST_PATH) as PackedScene).instantiate() as Node3D
+	for sp in lvl.get_children():
+		if sp is EnemySpawner:
+			(sp as EnemySpawner).enabled = false
+	(lvl.get_node("Player") as PlayerController).controlled_locally = false
+	add_child(lvl)
+	await wait_physics(10)
+	return lvl
+
+
+func _near(lvl: Node3D, def_id: String) -> LevelProp:
+	for n in get_tree().get_nodes_in_group("level_props"):
+		if lvl.is_ancestor_of(n) and (n as LevelProp).definition.id == StringName(def_id):
+			return n as LevelProp
+	return null
+
+
+func test_outpost_props_move_scrap_and_save() -> void:
+	var lvl := await _outpost()
+	var p := lvl.get_node("Player") as PlayerController
+	var kinds := {}
+	for n in get_tree().get_nodes_in_group("level_props"):
+		if lvl.is_ancestor_of(n):
+			kinds[String((n as LevelProp).definition.id)] = true
+	for k in ["fuel_drums", "wood_crate", "sandbag_wall", "jersey_barrier", "chain_link_fence_prop", "military_truck", "portable_generator", "field_radio"]:
+		check(kinds.has(k), "%s can be moved/scrapped" % k)
+	# Scrap the fuel drums: materials, gone (no collision), out of the navmesh
+	var drums := _near(lvl, "fuel_drums")
+	p.global_position = drums.global_position + Vector3(0, 0.05, 2.0)
+	await _run(p, 5)
+	var scrap0 := p.inventory.count_of(SCRAP.id)
+	check(p.dismantle_refusal_reason(drums) == "", "can scrap the drums: %s" % p.dismantle_refusal_reason(drums))
+	check(p.request_dismantle_structure(drums), "scrapped")
+	check(drums.scrapped and not drums.visible and (drums as Node as CollisionObject3D).collision_layer == 0, "gone, no collision")
+	check(p.inventory.count_of(SCRAP.id) == scrap0 + 3 and p.inventory.count_of(&"fuel") >= 1, "3 scrap and fuel")
+	check(p.dismantle_refusal_reason(drums) != "", "can't scrap it twice")
+	# Move a jersey barrier
+	var jb := _near(lvl, "jersey_barrier")
+	p.global_position = jb.global_position + Vector3(0, 0.05, 2.5)
+	await _run(p, 5)
+	var to := Transform3D.IDENTITY
+	var found := false
+	for off in [Vector3(0, 0, 3.5), Vector3(3.5, 0, 0), Vector3(-3.5, 0, 0), Vector3(0, 0, -3.5), Vector3(0, 0, 1.5)]:
+		var at: Vector3 = jb.global_position + off
+		var gy := ConstructionRules.ground_y(lvl.get_world_3d().direct_space_state, at)
+		if is_nan(gy):
+			continue
+		at.y = gy
+		var xf := Transform3D(Basis(Vector3.UP, deg_to_rad(30)), at)
+		if p.move_refusal_reason(jb, xf) == "":
+			to = xf
+			found = true
+			break
+	check(found, "found somewhere to move the barrier")
+	if found:
+		check(p.request_move_structure(jb, to) and jb.global_transform.is_equal_approx(to), "barrier moved")
+	# Trucks: scrap only
+	var truck := _near(lvl, "military_truck")
+	check(p.move_refusal_reason(truck, truck.global_transform) == "Can't move that", "trucks don't move")
+	# Save, then a fresh copy of the level
+	var saves := get_node("/root/SaveManager")
+	var data: Variant = JSON.parse_string(JSON.stringify(saves.build_save_data(lvl)))
+	var drums_path := lvl.get_path_to(drums)
+	var jb_path := lvl.get_path_to(jb)
+	await _settle(lvl)
+	remove_child(lvl)
+	lvl.free()
+	var lvl2 := await _outpost()
+	saves.apply_save_data(data, lvl2)
+	await wait_physics(2)
+	var d2 := lvl2.get_node(drums_path) as LevelProp
+	check(d2.scrapped and not d2.visible, "drums still scrapped after loading")
+	if found:
+		check((lvl2.get_node(jb_path) as Node3D).global_transform.is_equal_approx(to), "barrier where you moved it")
+	# Loading a save from before scrapping brings it back
+	var before: Dictionary = (data as Dictionary).duplicate(true)
+	for e in before["nodes"]:
+		if str(e["path"]) == str(drums_path):
+			e["data"]["scrapped"] = false
+	saves.apply_save_data(before, lvl2)
+	check(not d2.scrapped and d2.visible and (d2 as Node as CollisionObject3D).collision_layer != 0, "un-scrapped by an older save")
+	await _settle(lvl2)
+	remove_child(lvl2)
+	lvl2.free()
+
+
+## Lets a level's pending navmesh rebake finish before it's freed.
+func _settle(lvl: Node3D) -> void:
+	await _wait_rebake(lvl.get_node("Navigation") as NavigationRegion3D)
+
+
+func test_build_mode_targets_props() -> void:
+	var lvl := await _outpost()
+	var p := lvl.get_node("Player") as PlayerController
+	var truck := _near(lvl, "military_truck")
+	p.global_position = truck.global_position + truck.global_basis.x * 3.5 + Vector3(0, 0.05, 0)
+	await _run(p, 5)
+	_look_at(p, truck.global_position + Vector3.UP * 1.4)
+	var bm := p.get_node("%BuildMode") as BuildMode
+	check(bm.enter(), "build mode with no kits")
+	bm.update_preview()
+	check(bm.target == truck, "targets the truck")
+	check(bm.title_text() == "Military Truck" and not bm.status_text().contains("[F] Move") and bm.status_text().contains("[X] Scrap"), "scrap only: %s" % bm.status_text())
+	check(not bm.start_move(), "F refuses to move a truck")
+	check(bm.dismantle() and truck.scrapped, "X scraps it")
+	check(p.inventory.count_of(SCRAP.id) >= 12, "a big haul of scrap")
+	bm.exit()
+	await _settle(lvl)
+	remove_child(lvl)
+	lvl.free()

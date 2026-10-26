@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_yjwmc"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="2_hqdr8"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_j5y2i"]
+[ext_resource type="Resource" path="res://resources/items/kits/chain_link_fence_kit.tres" id="4_fjqf2"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_5s7vm"]
+
+[resource]
+script = ExtResource("5_5s7vm")
+id = &"kit_chain_link_fence"
+category = 6
+station = 1
+inputs = Dictionary[ExtResource("1_yjwmc"), int]({
+ExtResource("2_hqdr8"): 2,
+ExtResource("3_j5y2i"): 4
+})
+output = ExtResource("4_fjqf2")
+craft_time = 6.0
