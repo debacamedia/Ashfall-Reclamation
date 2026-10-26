@@ -35,6 +35,7 @@ var _interact_blocked_until_release := false
 ## Mouse-wheel weapon cycling waiting for the next tick (+1 / -1).
 var _pending_cycle := 0
 var _last_cycle_msec := -10000
+var _scroll := ScrollStepper.new()
 ## Ignore wheel events closer together than this (a Magic Mouse swipe sends
 ## many) so one swipe moves one weapon.
 @export var wheel_cooldown_msec := 180
@@ -56,6 +57,24 @@ func _ready() -> void:
 			player.weapon_slots.switch_started.connect(func(_slot: int) -> void: cancel_aim())
 
 
+## Magic Mouse / trackpad swipes arrive as pan gestures, which the GUI
+## would otherwise swallow before _unhandled_input: catch them here. (In
+## build mode BuildMode uses them to choose kits instead.)
+func _input(event: InputEvent) -> void:
+	if ui_open or build_mode or not event is InputEventPanGesture or not is_mouse_captured():
+		return
+	_cycle_from_scroll(event)
+	get_viewport().set_input_as_handled()
+
+
+func _cycle_from_scroll(event: InputEvent) -> void:
+	_scroll.cooldown_msec = wheel_cooldown_msec
+	var step := _scroll.feed(event)
+	if step != 0:
+		_last_cycle_msec = Time.get_ticks_msec()
+		_pending_cycle = step
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if ui_open:
 		return
@@ -74,10 +93,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif crouch_toggle and event.is_action_pressed("crouch") and is_mouse_captured():
 		_crouch_latched = not _crouch_latched
-	elif event is InputEventMouseButton and event.is_pressed() and is_mouse_captured():
-		var wheel := (event as InputEventMouseButton).button_index
-		if wheel == MOUSE_BUTTON_WHEEL_DOWN or wheel == MOUSE_BUTTON_WHEEL_UP:
-			queue_cycle(1 if wheel == MOUSE_BUTTON_WHEEL_DOWN else -1)
+	elif ScrollStepper.is_scroll(event) and is_mouse_captured():
+		_cycle_from_scroll(event)  # mouse wheel: one weapon per notch
 
 
 ## Called by PlayerController once per physics tick.

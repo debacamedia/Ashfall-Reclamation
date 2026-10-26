@@ -149,14 +149,30 @@ func _one_shot(stream: AudioStream) -> void:
 	p.play()
 
 
-## The Structure a physics collider belongs to (or null).
+## The Structure a physics collider belongs to (or null). A node can also
+## stand in for one with the "structure_proxy" meta (salvage containers:
+## see ContainerProp).
 static func from_collider(collider: Object) -> Structure:
 	var node := collider as Node
 	while node != null:
 		if node is Structure:
 			return node as Structure
+		if node.has_meta("structure_proxy"):
+			var proxy: Variant = node.get_meta("structure_proxy")
+			if is_instance_valid(proxy) and proxy is Structure:
+				return proxy as Structure
 		node = node.get_parent()
 	return null
+
+
+## The node that moves and shows: this one, or what a proxy stands for.
+func get_visual_root() -> Node3D:
+	return self
+
+
+## Moves it (PlayerController.request_move_structure).
+func apply_transform(xform: Transform3D) -> void:
+	get_visual_root().global_transform = xform
 
 
 # ---------------------------------------------------------------- saving

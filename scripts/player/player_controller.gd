@@ -726,7 +726,7 @@ func request_move_structure(s: Structure, xform: Transform3D) -> bool:
 	if reason != "":
 		build_refused.emit(reason)
 		return false
-	s.global_transform = xform
+	s.apply_transform(xform)
 	if s.definition.blocks_navigation:
 		NavRebaker.request(s)
 	s._one_shot(load("res://assets/audio/build_place.wav"))

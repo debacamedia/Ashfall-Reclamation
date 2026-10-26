@@ -8,6 +8,8 @@
 [ext_resource type="AudioStream" path="res://assets/audio/locker_open.wav" id="6_bbix5"]
 [ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="7_aa58c"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/ladder_step.tres" id="8_sa1y2"]
+[ext_resource type="Script" path="res://scripts/construction/container_prop.gd" id="cp_script"]
+[ext_resource type="Resource" path="res://resources/structures/props/footlocker.tres" id="cp_def"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tlxpb"]
 size = Vector3(0.92, 0.53999996, 0.57)
@@ -123,3 +125,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
 stream = ExtResource("8_sa1y2")
 unit_size = 5.0
 bus = &"SFX"
+
+[node name="Prop" type="Node3D" parent="."]
+script = ExtResource("cp_script")
+definition = ExtResource("cp_def")

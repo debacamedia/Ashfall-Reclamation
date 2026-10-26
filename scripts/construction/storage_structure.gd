@@ -11,6 +11,12 @@ extends Structure
 
 func _ready() -> void:
 	super._ready()
+	# It's a Structure itself: the crate scene's own move/scrap stand-in goes
+	var proxy := storage.get_node_or_null("Prop")
+	if proxy != null:
+		storage.remove_meta("structure_proxy")
+		storage.remove_child(proxy)
+		proxy.queue_free()
 	if not storage.is_searched:
 		storage.is_searched = true  # nothing to search: it's yours
 		storage.inventory.max_weight = 0.0

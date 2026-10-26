@@ -7,6 +7,8 @@
 [ext_resource type="AudioStream" path="res://assets/audio/locker_open.wav" id="5_uirpw"]
 [ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="6_37rfw"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/ladder_step.tres" id="7_eiuno"]
+[ext_resource type="Script" path="res://scripts/construction/container_prop.gd" id="cp_script"]
+[ext_resource type="Resource" path="res://resources/structures/props/weapons_locker.tres" id="cp_def"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_t08np"]
 size = Vector3(0.72, 1.92, 0.62)
@@ -161,3 +163,7 @@ stream = ExtResource("7_eiuno")
 volume_db = 2.0
 unit_size = 5.0
 bus = &"SFX"
+
+[node name="Prop" type="Node3D" parent="."]
+script = ExtResource("cp_script")
+definition = ExtResource("cp_def")

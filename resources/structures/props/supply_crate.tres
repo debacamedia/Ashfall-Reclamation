@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_e85ka"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="2_fgo43"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_b2wyy"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_t165k"]
+
+[resource]
+script = ExtResource("4_t165k")
+id = &"supply_crate"
+display_name = "Supply Crate"
+scene_path = "res://scenes/world/containers/supply_crate.tscn"
+max_health = 1000.0
+footprint = Vector3(1, 0.6, 0.6)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_e85ka"), int]({
+ExtResource("2_fgo43"): 2,
+ExtResource("3_b2wyy"): 1
+})
+is_level_prop = true

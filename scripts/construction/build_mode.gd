@@ -55,7 +55,7 @@ var _ghost: Node3D
 var _ghost_def: StructureDefinition
 var _mat_ok: StandardMaterial3D
 var _mat_bad: StandardMaterial3D
-var _last_wheel_msec := -1000
+var _scroll := ScrollStepper.new()
 
 
 func _ready() -> void:
@@ -200,7 +200,7 @@ func start_move() -> bool:
 	target = null
 	# Keep its facing: the ghost yaw is relative to the way you look
 	yaw = wrapf(snappedf(rad_to_deg(moving.global_rotation.y - player.rotation.y), ConstructionRules.ROTATE_STEP), 0.0, 360.0)
-	moving.visible = false
+	moving.get_visual_root().visible = false
 	_rebuild_ghost()
 	update_preview()
 	changed.emit()
@@ -217,7 +217,7 @@ func cancel_move() -> void:
 
 func _end_move() -> void:
 	if is_instance_valid(moving):
-		moving.visible = true
+		moving.get_visual_root().visible = true
 	moving = null
 	yaw = 0.0
 	_rebuild_ghost()
@@ -458,12 +458,11 @@ func _input(event: InputEvent) -> void:
 		return
 	if not active or not player.player_input.is_mouse_captured():
 		return
-	if event is InputEventMouseButton and event.pressed and \
-			(event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
-		var now := Time.get_ticks_msec()
-		if now - _last_wheel_msec > 180:  # a Magic Mouse swipe is one step
-			_last_wheel_msec = now
-			select(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
+	if ScrollStepper.is_scroll(event):
+		# Mouse wheel or Magic Mouse / trackpad swipe: one kit per swipe
+		var step := _scroll.feed(event)
+		if step != 0:
+			select(step)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("build_next"):
 		select(1)

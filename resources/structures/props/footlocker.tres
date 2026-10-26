@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_67rgt"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="2_3d2kf"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_u5cy8"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="4_6motn"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="5_7no45"]
+
+[resource]
+script = ExtResource("5_7no45")
+id = &"footlocker"
+display_name = "Footlocker"
+scene_path = "res://scenes/world/containers/footlocker.tscn"
+max_health = 1000.0
+footprint = Vector3(0.8, 0.42, 0.45)
+breakable = false
+dismantle_return = Dictionary[ExtResource("1_67rgt"), int]({
+ExtResource("2_3d2kf"): 2,
+ExtResource("3_u5cy8"): 1,
+ExtResource("4_6motn"): 1
+})
+is_level_prop = true

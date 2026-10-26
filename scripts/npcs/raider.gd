@@ -89,6 +89,9 @@ var _rng := RandomNumberGenerator.new()
 ## and how long we've been stuck trying to reach the target.
 var break_target: Structure = null
 var _stuck_time := 0.0
+## Spike traps slow raiders down while they wade through (slow_down).
+var _slow_factor := 1.0
+var _slow_time := 0.0
 var _arm_tween: Tween
 
 @onready var health: HealthComponent = %HealthComponent
@@ -131,6 +134,10 @@ func _physics_process(delta: float) -> void:
 
 	_state_time += delta
 	_attack_cooldown -= delta
+	if _slow_time > 0.0:
+		_slow_time -= delta
+		if _slow_time <= 0.0:
+			_slow_factor = 1.0
 	_time_since_seen += delta
 	_repath_timer -= delta
 	_sense_timer -= delta
@@ -401,7 +408,19 @@ func _update_perception() -> void:
 # ---------------------------------------------------------------- movement
 
 ## Walks toward `point` along the navigation mesh. Returns true on arrival.
+## Moves at `factor` of normal speed for the next `duration` seconds (spike
+## traps call this every tick a raider is in them).
+func slow_down(factor: float, duration := 0.2) -> void:
+	_slow_factor = minf(_slow_factor if _slow_time > 0.0 else 1.0, clampf(factor, 0.0, 1.0))
+	_slow_time = maxf(_slow_time, duration)
+
+
+func get_speed_factor() -> float:
+	return _slow_factor if _slow_time > 0.0 else 1.0
+
+
 func _move_to(point: Vector3, speed: float, delta: float) -> bool:
+	speed *= get_speed_factor()
 	if _repath_timer <= 0.0 or agent.target_position.distance_to(point) > 1.0:
 		agent.target_position = point
 		_repath_timer = 0.25

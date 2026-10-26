@@ -1,6 +1,11 @@
 # Milestone 2, Increment 14 — Fort building
 
-**Status:** complete. 277 automated tests pass in headless Godot 4.7, 11 of them new in `tests/test_construction.gd`.
+**Status:** complete. 281 automated tests pass in headless Godot 4.7, 15 of them new in `tests/test_construction.gd`.
+
+**Update (follow-ups):**
+- **Loot containers can be moved and scrapped too:** supply crates, footlockers and weapons lockers. F moves one with its loot inside. X scraps it, but only once it's been searched and emptied, so no loot is lost: a supply crate gives 2 wood and 1 scrap, a footlocker 2 wood, 1 scrap and 1 cloth, a weapons locker 4 scrap and 1 plate. Saved and remembered per region like the other props.
+- **Spike traps slow raiders to a quarter of their speed** while they wade through, as well as hurting them. Measured in the test: about 1.2 m/s in the trap against 4.9 m/s outside.
+- **Scrolling with a Magic Mouse or trackpad now works**, both for choosing build kits and for switching weapons. On a Mac these swipes don't arrive as mouse-wheel clicks but as "pan gestures", which nothing listened for, and Godot's UI took them before the weapon code. Now one swipe = one step, momentum included, and a normal wheel still works one notch at a time. Checked in a real window with simulated swipes: three swipes stepped kits 0 → 1 → 2 → 1, and a swipe outside build mode switched pistol → machete.
 
 Two real-window runs at Outpost 17, with injected key and mouse input, checked the loop:
 - **V** switched the wooden wall ghost to "Window".
@@ -46,6 +51,9 @@ The tests caught several problems, all fixed:
 | Chain-Link Fence | ✓ | 3 scrap, 1 pipe |
 | Water Tank, Generator, Field Radio, Toolbox (Pack 2) | ✓ | scrap, plates, electronics, springs |
 | Military Truck | ✗ (driving comes later) | 12 scrap, 2 springs, 2 electronics, 2 pipes, 1 fuel |
+| Supply Crate (loot) | ✓ (loot inside) | 2 wood, 1 scrap (searched and empty) |
+| Footlocker (loot) | ✓ | 2 wood, 1 scrap, 1 cloth |
+| Weapons Locker (loot) | ✓ | 4 scrap, 1 metal plate |
 
   Scrapped props stay gone and moved props stay moved: saved, and remembered per region. Burning barrels and shipping containers stay fixed for now: they already run their own scripts.
 
@@ -79,6 +87,11 @@ The tests caught several problems, all fixed:
 | `scripts/construction/construction_rules.gd` | Limit 1000. Support points (thin walls: centre line). Building on decks. `snap_to_built`, `snap_partners`, `ends_of`, `resting_on` |
 | `scripts/construction/structure.gd` | `destroy()` brings down what rests on it; `take_down()`; `get_collision_rids()` includes the root body |
 | `scripts/construction/level_prop.gd` | **New.** `LevelProp` (extends Structure): a level prop you can move/scrap; scrapped = hidden, no collision, saved |
+| `scripts/construction/container_prop.gd` | **New.** `ContainerProp` (extends LevelProp): a `Prop` child of each salvage container that stands in for it (`structure_proxy` meta), moving/hiding the container; scrap needs it searched and empty |
+| `scenes/world/containers/{supply_crate, footlocker, weapons_locker}.tscn` | A `Prop` node (ContainerProp + definition) |
+| `scripts/player/scroll_stepper.gd` | **New.** `ScrollStepper`: wheel notches and pan-gesture swipes → one step each |
+| `scripts/player/player_input.gd` | Weapon cycling through ScrollStepper; pan gestures caught in `_input` (before the GUI takes them) |
+| `scripts/npcs/raider.gd`, `scripts/construction/spike_trap.gd` | `slow_down(factor, duration)` / `get_speed_factor()`; traps slow raiders in them to `slow_factor` (0.25) |
 | `scripts/construction/build_mode.gd` | V variants, snapping (`snapped_to`), props (Move / Scrap text), entering with no kits when there are props |
 | `scripts/player/player_controller.gd` | `request_place_structure(kit, xform, variant)`; support checks for dismantle/move; props: movable flag, reach for big props |
 | `scripts/ui/hud.gd`, `scenes/ui/hud.tscn` | "Scrapped …" notice; [V] Variant in the key line |
@@ -189,6 +202,13 @@ No new signals. `structure_dismantled(definition)` also fires for scrapped props
   - After save → fresh level → load, the drums are still scrapped and the barrier is where it was moved. An older save brings the drums back.
   - Build mode with no kits targets a truck, shows Scrap only, refuses F, and X gives 12+ scrap.
 - **Pack 2** (updated): only movable props are saved from Pack 2, and an old save leaves every prop untouched.
+- **Scrolling:** wheel notches step once per cooldown; a 40-event Magic Mouse swipe with momentum steps once; a pause, then the next swipe steps again; the reverse swipe steps back; a resting finger does nothing.
+- **Traps slow raiders:** a raider chasing across a trap moves at under 35% of its free speed inside, is back to full speed after, and still gets through.
+- **Loot containers:**
+  - The warehouse crate is targetable and refuses scrapping until searched and emptied.
+  - It moves with the same loot and stays searched; once emptied, it scraps for 2 wood with its collision off.
+  - It stays scrapped after save and load, and other containers are untouched.
+  - A built storage crate is still its own structure.
 
 **Manually:**
 1. Craft two platforms, stairs, a ladder and walls (workbench; ladder by hand).

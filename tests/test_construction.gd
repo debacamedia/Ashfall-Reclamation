@@ -1191,3 +1191,127 @@ func test_build_mode_targets_props() -> void:
 	await _settle(lvl)
 	remove_child(lvl)
 	lvl.free()
+
+
+# ================================================================ Increment 14 follow-ups
+
+func _pan(dy: float) -> InputEventPanGesture:
+	var e := InputEventPanGesture.new()
+	e.delta = Vector2(0, dy)
+	return e
+
+
+func _wheel(down: bool) -> InputEventMouseButton:
+	var e := InputEventMouseButton.new()
+	e.button_index = MOUSE_BUTTON_WHEEL_DOWN if down else MOUSE_BUTTON_WHEEL_UP
+	e.pressed = true
+	return e
+
+
+func test_scroll_steps_once_per_notch_or_swipe() -> void:
+	var s := ScrollStepper.new()
+	# Wheel: one step per notch, but not faster than the cooldown
+	check(s.feed(_wheel(true), 1000) == 1 and s.feed(_wheel(true), 1050) == 0 and s.feed(_wheel(false), 1300) == -1, "wheel notches")
+	# Magic Mouse swipe: a stream of pan events with momentum = one step
+	var steps := 0
+	var t := 5000
+	for i in 40:
+		steps += absi(s.feed(_pan(0.4 if i < 10 else 0.1), t))
+		t += 16
+	check(steps == 1, "one step per swipe (%d)" % steps)
+	check(s.feed(_pan(0.5), t + 400) == 1, "next swipe after a pause steps again")
+	check(s.feed(_pan(-0.5), t + 1000) == -1, "swipe the other way: back")
+	check(s.feed(_pan(0.01), t + 1600) == 0, "a resting finger does nothing")
+
+
+func test_spike_trap_slows_raiders_to_a_quarter() -> void:
+	await make_nav_floor()
+	structures = Node3D.new()
+	structures.name = "Structures"
+	add_child(structures)
+	var trap := _build("spike_trap", Vector3(0, 0, 0)) as SpikeTrap
+	check(is_equal_approx(trap.slow_factor, 0.25), "a quarter speed")
+	var p := _player(Vector3(0, 0.05, -14))
+	var r := RAIDER.instantiate() as Raider
+	r.position = Vector3(0, 0.1, 8)
+	add_child(r)
+	await wait_physics(3)
+	r.alert_to(p)
+	var free_speed := 0.0
+	var trap_speed := 0.0
+	var in_trap := 0
+	for i in 600:
+		await _run(p, 1)
+		var v := Vector2(r.get_real_velocity().x, r.get_real_velocity().z).length()
+		if r.global_position.z > 3.0:
+			free_speed = maxf(free_speed, v)
+		elif absf(r.global_position.z) < 0.4:
+			trap_speed = maxf(trap_speed, v)
+			in_trap += 1
+		if r.global_position.z < -2.5:
+			break
+	check(r.get_speed_factor() == 1.0, "full speed again once out")
+	check(in_trap > 0 and trap_speed < free_speed * 0.35, "wades through at ~1/4 speed (%.2f vs %.2f m/s)" % [trap_speed, free_speed])
+	check(r.global_position.z < -2.5, "still gets through")
+
+
+func test_salvage_containers_move_and_scrap() -> void:
+	var lvl := await _outpost()
+	var p := lvl.get_node("Player") as PlayerController
+	var crate := lvl.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
+	var prop := crate.get_node("Prop") as ContainerProp
+	check(prop != null and Structure.from_collider(crate.get_node("Body")) == prop, "build mode can target the crate")
+	p.global_position = crate.global_position + crate.global_basis.z * 1.8 + Vector3(0, 0.05, 0)
+	await _run(p, 5)
+	check(p.dismantle_refusal_reason(prop) == "Search it first", "unsearched: search it first")
+	crate.search()
+	var loot := str(crate.inventory.to_data())
+	if crate.inventory.get_free_slot_count() < crate.inventory.slot_count:
+		check(p.dismantle_refusal_reason(prop) == "Empty it first", "loot inside: empty it first")
+	# Move it, loot and all
+	var to := Transform3D.IDENTITY
+	var found := false
+	for off in [Vector3(1.5, 0, 0), Vector3(-1.5, 0, 0), Vector3(0, 0, 1.5), Vector3(1.0, 0, 1.0)]:
+		var at: Vector3 = crate.global_position + off
+		var xf := Transform3D(Basis(Vector3.UP, deg_to_rad(90)), at)
+		if p.move_refusal_reason(prop, xf) == "":
+			to = xf
+			found = true
+			break
+	check(found, "somewhere to move it")
+	if found:
+		check(p.request_move_structure(prop, to) and crate.global_transform.is_equal_approx(to), "the crate moved")
+		check(str(crate.inventory.to_data()) == loot and crate.is_searched, "same loot, still searched")
+	# Empty it and scrap it
+	p.inventory.max_weight = 999.0
+	for i in crate.inventory.slot_count:
+		crate.inventory.transfer_slot_to(i, p.inventory)
+	var wood0 := p.inventory.count_of(&"wood")
+	check(p.dismantle_refusal_reason(prop) == "", "empty: can scrap: %s" % p.dismantle_refusal_reason(prop))
+	check(p.request_dismantle_structure(prop), "scrapped")
+	check(prop.scrapped and not crate.visible and crate.collision_layer == 0 and (crate.get_node("Body") as StaticBody3D).collision_layer == 0, "gone, can't be searched or bumped into")
+	check(p.inventory.count_of(&"wood") == wood0 + 2, "2 wood back")
+	# Saved
+	var saves := get_node("/root/SaveManager")
+	var data: Variant = JSON.parse_string(JSON.stringify(saves.build_save_data(lvl)))
+	await _settle(lvl)
+	remove_child(lvl)
+	lvl.free()
+	var lvl2 := await _outpost()
+	saves.apply_save_data(data, lvl2)
+	await wait_physics(2)
+	var crate2 := lvl2.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
+	check((crate2.get_node("Prop") as ContainerProp).scrapped and not crate2.visible, "still scrapped after loading")
+	var other := lvl2.get_node("SalvageContainers/BarracksLocker") as SalvageContainer
+	check(other.visible and not (other.get_node("Prop") as ContainerProp).scrapped, "others untouched")
+	await _settle(lvl2)
+	remove_child(lvl2)
+	lvl2.free()
+
+
+func test_built_storage_crate_is_not_a_level_prop() -> void:
+	await _world()
+	var crate := _build("storage_crate", Vector3(0, 0, -3)) as StorageStructure
+	await wait_physics(2)
+	check(crate.storage.get_node_or_null("Prop") == null, "the crate scene's stand-in is removed")
+	check(Structure.from_collider(crate.storage.get_node("Body")) == crate, "targets the storage crate itself")

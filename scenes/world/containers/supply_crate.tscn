@@ -8,6 +8,8 @@
 [ext_resource type="AudioStream" path="res://assets/audio/crate_open.wav" id="6_q14oe"]
 [ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="7_m7wni"]
 [ext_resource type="AudioStream" path="res://assets/audio/crate_close.wav" id="8_t5avd"]
+[ext_resource type="Script" path="res://scripts/construction/container_prop.gd" id="cp_script"]
+[ext_resource type="Resource" path="res://resources/structures/props/supply_crate.tres" id="cp_def"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_agrwx"]
 size = Vector3(1.12, 0.72, 0.72)
@@ -123,3 +125,7 @@ stream = ExtResource("8_t5avd")
 volume_db = -2.0
 unit_size = 5.0
 bus = &"SFX"
+
+[node name="Prop" type="Node3D" parent="."]
+script = ExtResource("cp_script")
+definition = ExtResource("cp_def")

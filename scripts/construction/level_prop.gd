@@ -47,7 +47,7 @@ func scrap() -> void:
 	if scrapped:
 		return
 	scrapped = true
-	visible = false
+	get_visual_root().visible = false
 	for c in _collision_objects():
 		_layers[c] = c.collision_layer
 		c.collision_layer = 0
@@ -57,7 +57,7 @@ func scrap() -> void:
 
 func _restore() -> void:
 	scrapped = false
-	visible = true
+	get_visual_root().visible = true
 	for c in _layers:
 		if is_instance_valid(c):
 			(c as CollisionObject3D).collision_layer = _layers[c]
@@ -68,11 +68,18 @@ func _restore() -> void:
 
 func _collision_objects() -> Array[CollisionObject3D]:
 	var out: Array[CollisionObject3D] = []
-	var me: Node = self
-	if me is CollisionObject3D:
-		out.append(me as CollisionObject3D)
-	for c in find_children("*", "CollisionObject3D", true, false):
+	var root: Node = get_visual_root()
+	if root is CollisionObject3D:
+		out.append(root as CollisionObject3D)
+	for c in root.find_children("*", "CollisionObject3D", true, false):
 		out.append(c as CollisionObject3D)
+	return out
+
+
+func get_collision_rids() -> Array[RID]:
+	var out: Array[RID] = []
+	for c in _collision_objects():
+		out.append(c.get_rid())
 	return out
 
 
@@ -81,7 +88,7 @@ func is_save_removable() -> bool:
 
 
 func save_state() -> Dictionary:
-	var data := super.save_state()
+	var data := super.save_state()  # (this node's transform = the target's: it sits at its origin)
 	data["scrapped"] = scrapped
 	return data
 
@@ -98,6 +105,6 @@ func load_state(data: Dictionary) -> void:
 			and (o as Array).all(_is_number) and (b as Array).all(_is_number):
 		var basis := Basis(Vector3(b[0], b[1], b[2]), Vector3(b[3], b[4], b[5]), Vector3(b[6], b[7], b[8])).orthonormalized()
 		var t := Transform3D(basis, Vector3(o[0], o[1], o[2]))
-		if not t.is_equal_approx(global_transform):
-			global_transform = t
+		if not t.is_equal_approx(get_visual_root().global_transform):
+			apply_transform(t)
 			NavRebaker.request(self)

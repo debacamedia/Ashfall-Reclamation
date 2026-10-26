@@ -1,9 +1,10 @@
 class_name SpikeTrap
 extends Structure
 ## Sharpened stakes on a frame. Raiders who step in take damage (once a
-## second while they stay in it); each hit wears the trap down, so it breaks
-## after about ten. Your own traps don't hurt you. Not an obstacle: raiders
-## don't know to avoid it.
+## second while they stay in it) and wade through at a quarter of their
+## speed; each hit wears the trap down, so it breaks after about ten. Your
+## own traps don't hurt or slow you. Not an obstacle: raiders don't know to
+## avoid it.
 ##
 ## Scene: res://scenes/structures/spike_trap.tscn. Root → %Spikes (Area3D,
 ## mask NPCS) + meshes, %HitSound.
@@ -11,6 +12,8 @@ extends Structure
 @export var damage := 25.0
 @export var wear_per_hit := 10.0
 @export var interval := 1.0
+## Raiders' speed while in it (fraction of normal).
+@export var slow_factor := 0.25
 
 var _cooldowns := {}  # body -> seconds until it can be hurt again
 
@@ -25,6 +28,8 @@ func _physics_process(delta: float) -> void:
 	if health <= 0.0:
 		return
 	for body in _spikes.get_overlapping_bodies():
+		if body.is_in_group("enemies") and body.has_method("slow_down"):
+			body.call("slow_down", slow_factor, 0.2)
 		if _cooldowns.has(body) or not body.is_in_group("enemies"):
 			continue
 		var h := body.get_node_or_null("%HealthComponent") as HealthComponent
