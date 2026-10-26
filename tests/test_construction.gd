@@ -92,10 +92,20 @@ func _rebaker(region: NavigationRegion3D) -> NavRebaker:
 
 
 func _wait_rebake(region: NavigationRegion3D) -> void:
+	var map := region.get_world_3d().navigation_map
+	var iter := NavigationServer3D.map_get_iteration_id(map)
+	var saw_bake := false
 	for i in 600:
 		await get_tree().process_frame
 		var rb := _rebaker(region)
+		if rb != null and rb.is_busy():
+			saw_bake = true
 		if (rb != null and not rb.is_busy()) or (rb == null and i > 20):
+			break
+	# The new navmesh reaches the map on a later sync: wait for it
+	for i in 30:
+		await get_tree().physics_frame
+		if not saw_bake or NavigationServer3D.map_get_iteration_id(map) > iter:
 			break
 	await wait_physics(4)
 
@@ -1315,3 +1325,65 @@ func test_built_storage_crate_is_not_a_level_prop() -> void:
 	await wait_physics(2)
 	check(crate.storage.get_node_or_null("Prop") == null, "the crate scene's stand-in is removed")
 	check(Structure.from_collider(crate.storage.get_node("Body")) == crate, "targets the storage crate itself")
+
+
+func test_raiders_walk_through_an_open_gate() -> void:
+	var region := await _world(true)
+	# A long wall with a gate in the middle
+	var gate := _build("wooden_gate", Vector3(0, 0, 0)) as GateStructure
+	for x in [-2.4, 2.4, -4.8, 4.8, -7.2, 7.2, -9.6, 9.6, -12.0, 12.0]:
+		_build("metal_wall", Vector3(x, 0, 0))
+	await _wait_rebake(region)
+	var widest := func() -> float:
+		var w := 0.0
+		var path := _path(region, Vector3(0, 0, 6), Vector3(0, 0, -6))
+		for pt in path:
+			w = maxf(w, absf(pt.x))
+		return w if path.size() > 0 else 99.0
+	check(widest.call() > 5.0, "closed: the way through is blocked (%.1f m out)" % widest.call())
+	gate.set_open(true)
+	await get_tree().create_timer(0.7).timeout  # the door swings (0.45 s), then the rebake
+	await _wait_rebake(region)
+	check(widest.call() < 1.2, "open: raiders path straight through (%.2f m out)" % widest.call())
+	# A raider chasing you walks through instead of hacking at it
+	var p := _player(Vector3(0, 0.05, -8))
+	var r := RAIDER.instantiate() as Raider
+	r.position = Vector3(0, 0.1, 8)
+	add_child(r)
+	await wait_physics(3)
+	r.alert_to(p)
+	var went_through := false
+	for i in 600:
+		await _run(p, 1)
+		if r.global_position.z < -1.0:
+			went_through = true
+			break
+	check(went_through, "the raider came through the open gate")
+	check(not gate.is_damaged(), "and didn't attack it")
+	gate.set_open(false, false)
+	await _wait_rebake(region)
+	check(widest.call() > 5.0, "closed again: blocked")
+
+
+func test_modify_weapons_opens_on_the_gun_in_hand() -> void:
+	await _world()
+	var p := _player()
+	await _run(p, 3)
+	var hud := (load("res://scenes/ui/hud.tscn") as PackedScene).instantiate() as HUD
+	hud.player = p
+	add_child(hud)
+	await get_tree().process_frame
+	var bench := (load("res://scenes/world/stations/weapons_bench.tscn") as PackedScene).instantiate() as CraftingStation
+	bench.position = Vector3(0, 0, -1.5)
+	add_child(bench)
+	await wait_physics(2)
+	p.current_station = bench
+	p.weapon_slots.equip_immediately(1)  # the rifle (pistol is slot 2)
+	var rifle_slot := p.weapon.base_definition.slot
+	var screen := hud.find_child("CraftingScreen", true, false)
+	screen.call("open")
+	screen.call("show_gunsmith", true)
+	var gs := screen.get_node("%GunsmithPanel") as GunsmithPanel
+	check(gs.selected_slot == rifle_slot, "the rifle in your hand is selected (slot %d, got %d)" % [rifle_slot, gs.selected_slot])
+	screen.call("close")
+	p.current_station = null

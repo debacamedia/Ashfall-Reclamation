@@ -1,6 +1,10 @@
 # Milestone 2, Increment 14 — Fort building
 
-**Status:** complete. 281 automated tests pass in headless Godot 4.7, 15 of them new in `tests/test_construction.gd`.
+**Status:** complete. 283 automated tests pass in headless Godot 4.7, 17 of them new in `tests/test_construction.gd`.
+
+**Fixes (playtest feedback):**
+- **Raiders now walk through an open gate** instead of hacking at it. Opening or closing a gate didn't update the raiders' navmesh, so an open gate still counted as a wall. It now rebakes once the door finishes swinging. Tested with a gate in a 26 m wall: closed, the path goes round the end; open, straight through; and a chasing raider comes through without hitting it.
+- **Extended magazine on the service rifle:** the Modify Weapons tab always opened on your lowest-numbered gun, the pistol. The pistol takes the extended magazine too, so "Fit Extended Magazine" put it on the pistol and the rifle stayed at 30. It now opens on the gun in your hand. Checked through the real bench screen: Fit → Esc → R loads 45/45 on the rifle.
 
 **Update (follow-ups):**
 - **Loot containers can be moved and scrapped too:** supply crates, footlockers and weapons lockers. F moves one with its loot inside. X scraps it, but only once it's been searched and emptied, so no loot is lost: a supply crate gives 2 wood and 1 scrap, a footlocker 2 wood, 1 scrap and 1 cloth, a weapons locker 4 scrap and 1 plate. Saved and remembered per region like the other props.

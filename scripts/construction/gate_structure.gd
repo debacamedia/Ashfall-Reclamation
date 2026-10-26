@@ -1,7 +1,8 @@
 class_name GateStructure
 extends Structure
-## A wooden gate: E on its handle opens or closes it. Raiders can't open
-## gates, so a closed gate in a wall is something they have to break.
+## A wooden gate: E anywhere on it opens or closes it. Raiders can't open
+## gates, so a closed gate in a wall is something they have to break; an
+## open one they walk through (the navmesh is rebaked when it swings).
 ##
 ## Scene: res://scenes/structures/wooden_gate.tscn. Root → Posts (Body),
 ## %Door (pivot at the hinge) → DoorBody (StaticBody3D) + planks, %Handle
@@ -30,6 +31,13 @@ func set_open(open: bool, animate := true) -> void:
 			_swing_sound.play()
 	else:
 		_door.rotation = target
+	# Open: a way through for raiders. Closed: a wall again. (Rebaked once the
+	# door has finished swinging.)
+	if is_inside_tree() and definition != null and definition.blocks_navigation:
+		if _tween != null and _tween.is_running():
+			_tween.finished.connect(func() -> void: NavRebaker.request(self), CONNECT_ONE_SHOT)
+		else:
+			NavRebaker.request(self)
 
 
 func toggle() -> void:
