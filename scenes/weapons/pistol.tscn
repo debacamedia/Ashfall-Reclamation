@@ -4,8 +4,8 @@
 [ext_resource type="Resource" path="res://resources/items/weapons/pistol.tres" id="2_red3f"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_c5u5x"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/pistol_shot.tres" id="4_nb08m"]
-[ext_resource type="AudioStream" path="res://assets/audio/pistol_reload.wav" id="5_5sf3v"]
-[ext_resource type="AudioStream" path="res://assets/audio/rifle_dry_fire.wav" id="6_8on4r"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/pistol_reload.wav" id="5_5sf3v"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/dry_fire.tres" id="6_8on4r"]
 
 [sub_resource type="Gradient" id="Gradient_8x7y0"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)

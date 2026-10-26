@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_h00gf"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_h00gf"]
 [ext_resource type="Texture2D" path="res://assets/icons/chain_link_fence_kit.png" id="1_wab2o"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_wab2o"]
 [ext_resource type="Resource" path="res://resources/structures/chain_link_fence.tres" id="3_l8t56"]

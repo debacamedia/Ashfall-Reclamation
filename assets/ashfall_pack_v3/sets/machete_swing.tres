@@ -1,0 +1,13 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/machete_swing_1.wav" id="1_d3q1c"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/machete_swing_2.wav" id="2_2viob"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/machete_swing_3.wav" id="3_4ril5"]
+
+[resource]
+random_pitch = 1.08
+random_volume_offset_db = 1.0
+streams_count = 3
+stream_0/stream = ExtResource("1_d3q1c")
+stream_1/stream = ExtResource("2_2viob")
+stream_2/stream = ExtResource("3_4ril5")

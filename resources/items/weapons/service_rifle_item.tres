@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/icons/service_rifle.png" id="1_l2x2e"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_weapon.wav" id="1_uhf7x"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_weapon.tres" id="1_uhf7x"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_l2x2e"]
 [ext_resource type="Resource" path="res://resources/items/weapons/service_rifle.tres" id="3_g4vce"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/service_rifle_world.tscn" id="4_ftyfq"]

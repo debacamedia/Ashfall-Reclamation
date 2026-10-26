@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/decals/decal_blood_1.png" id="1_lxtr4"]
+
+[resource]
+resource_name = "AF3 decal decal_blood_1"
+transparency = 1
+albedo_texture = ExtResource("1_lxtr4")
+roughness = 0.9
+texture_filter = 5

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/icons/gun_receiver.png" id="1_7s5g4"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_miqvt"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_metal.tres" id="1_miqvt"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_7s5g4"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/gun_receiver.tscn" id="3_8imw1"]
 

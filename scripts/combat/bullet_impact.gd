@@ -9,6 +9,8 @@ extends Node3D
 @export var lifetime := 12.0
 ## Set by the weapon before the impact enters the tree.
 var hard_surface := false
+## What was hit (SurfaceSounds): picks the sound. Empty = the scene's own.
+var surface := &""
 
 
 func _ready() -> void:
@@ -18,5 +20,7 @@ func _ready() -> void:
 		dust.restart()
 	var sound := get_node_or_null("%HardSound" if hard_surface else "%DirtSound") as AudioStreamPlayer3D
 	if sound != null:
+		if surface != &"":
+			sound.stream = SurfaceSounds.impact(surface)
 		sound.play()
 	get_tree().create_timer(lifetime).timeout.connect(queue_free)

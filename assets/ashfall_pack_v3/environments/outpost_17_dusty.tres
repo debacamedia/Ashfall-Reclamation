@@ -1,0 +1,27 @@
+[gd_resource type="Environment" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/derived/sky_dusty_afternoon_nosun.png" id="1_26y0a"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_waaso"]
+panorama = ExtResource("1_26y0a")
+
+[sub_resource type="Sky" id="Sky_ehtk8"]
+sky_material = SubResource("PanoramaSkyMaterial_waaso")
+
+[resource]
+resource_name = "Pack 3 sky: outpost_17_dusty.tres"
+background_mode = 2
+sky = SubResource("Sky_ehtk8")
+ambient_light_source = 3
+ambient_light_energy = 0.7
+reflected_light_source = 2
+tonemap_mode = 3
+ssao_enabled = true
+ssao_radius = 1.2
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.62, 0.62, 0.6, 1)
+fog_density = 0.0035
+fog_aerial_perspective = 0.4
+adjustment_enabled = true
+adjustment_saturation = 0.85

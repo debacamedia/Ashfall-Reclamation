@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_t1n7w"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_t1n7w"]
 [ext_resource type="Texture2D" path="res://assets/icons/sandbag_barricade_kit.png" id="1_y062k"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_y062k"]
 [ext_resource type="Resource" path="res://resources/structures/sandbag_barricade.tres" id="3_gn40f"]

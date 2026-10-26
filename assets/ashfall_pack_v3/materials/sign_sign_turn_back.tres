@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/signs/sign_turn_back.png" id="1_v7pux"]
+
+[resource]
+resource_name = "AF3 sign sign_turn_back"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_v7pux")
+roughness = 0.85
+uv1_scale = Vector3(0.845, 0.6, 1)
+uv1_offset = Vector3(0.078, 0.195, 0)
+texture_filter = 5

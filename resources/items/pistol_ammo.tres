@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/icons/pistol_ammo.png" id="1_r1hhu"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_ammo.wav" id="2_va1ip"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_ammo.tres" id="2_va1ip"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_kqtk1"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/pistol_ammo_box.tscn" id="4_x2l4x"]
 

@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/asphalt_cracked/albedo.png" id="1_82kbu"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/asphalt_cracked/normal.png" id="2_bdqlr"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/asphalt_cracked/roughness.png" id="3_fpsvc"]
+
+[resource]
+resource_name = "AF3_asphalt_cracked"
+albedo_color = Color(0.72, 0.72, 0.72, 1)
+albedo_texture = ExtResource("1_82kbu")
+roughness_texture = ExtResource("3_fpsvc")
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("2_bdqlr")
+uv1_scale = Vector3(0.33333334, 0.33333334, 0.33333334)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

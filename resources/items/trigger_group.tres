@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="1_1wphp"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_metal.tres" id="1_1wphp"]
 [ext_resource type="Texture2D" path="res://assets/icons/trigger_group.png" id="1_ngwti"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_ngwti"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/trigger_group.tscn" id="3_7xfl1"]

@@ -1,0 +1,318 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_general_store.tres" id="1_fj0c3"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_hotel.tres" id="2_qd1ah"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_clinic.tres" id="3_xjbip"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_diner.tres" id="4_see3p"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_bank.tres" id="5_na4ii"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_feed_supply.tres" id="6_i0mce"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_gas.tres" id="7_1opb0"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_keep_out.tres" id="8_u3d6k"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/sign_sign_turn_back.tres" id="9_ak5kc"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/graffiti_graffiti_raider_1.tres" id="10_nmdud"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/graffiti_graffiti_raider_2.tres" id="11_lp6og"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/graffiti_graffiti_raider_3.tres" id="12_flrhp"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_oil_stain_1.tres" id="13_fj0c3"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_oil_stain_2.tres" id="14_qd1ah"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_oil_stain_3.tres" id="15_xjbip"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_tyre_tracks.tres" id="16_see3p"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_scorch_1.tres" id="17_na4ii"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_scorch_2.tres" id="18_i0mce"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_blood_1.tres" id="19_1opb0"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_blood_2.tres" id="20_u3d6k"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_cracks.tres" id="21_ak5kc"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_poster_1.tres" id="22_nmdud"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_poster_2.tres" id="23_lp6og"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_water_stain_80.tres" id="24_flrhp"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/amb_town_ruins.wav" id="25_xvifj"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/amb_distant_gunfire.wav" id="26_e57nc"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/derived/amb_insects_loop.wav" id="27_v4tvo"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_fj0c3"]
+size = Vector2(2.15, 0.8413556)
+
+[sub_resource type="QuadMesh" id="QuadMesh_qd1ah"]
+size = Vector2(2.15, 0.8413556)
+
+[sub_resource type="QuadMesh" id="QuadMesh_xjbip"]
+size = Vector2(2, 0.78265643)
+
+[sub_resource type="QuadMesh" id="QuadMesh_see3p"]
+size = Vector2(1.12, 0.4382876)
+
+[sub_resource type="QuadMesh" id="QuadMesh_na4ii"]
+size = Vector2(2.15, 0.8413556)
+
+[sub_resource type="QuadMesh" id="QuadMesh_i0mce"]
+size = Vector2(1.26, 0.49307355)
+
+[sub_resource type="QuadMesh" id="QuadMesh_1opb0"]
+size = Vector2(2, 0.78265643)
+
+[sub_resource type="QuadMesh" id="QuadMesh_u3d6k"]
+size = Vector2(2, 0.71005917)
+
+[sub_resource type="QuadMesh" id="QuadMesh_ak5kc"]
+size = Vector2(2, 0.71005917)
+
+[sub_resource type="QuadMesh" id="QuadMesh_nmdud"]
+size = Vector2(2, 0.71005917)
+
+[sub_resource type="QuadMesh" id="QuadMesh_lp6og"]
+size = Vector2(2.2, 1.1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_flrhp"]
+size = Vector2(2.2, 1.1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_jo0n4"]
+size = Vector2(1.8, 0.9)
+
+[sub_resource type="QuadMesh" id="QuadMesh_xrw2t"]
+size = Vector2(2.4, 2.4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_nctok"]
+size = Vector2(2, 2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_opw5m"]
+size = Vector2(2.2, 2.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_t6bsk"]
+size = Vector2(4, 4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_trdj7"]
+size = Vector2(4, 4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_uyqfu"]
+size = Vector2(3, 3)
+
+[sub_resource type="QuadMesh" id="QuadMesh_80441"]
+size = Vector2(3, 3)
+
+[sub_resource type="QuadMesh" id="QuadMesh_b5c58"]
+size = Vector2(4, 4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_mkbey"]
+size = Vector2(1.6, 1.6)
+
+[sub_resource type="QuadMesh" id="QuadMesh_ubq51"]
+size = Vector2(1.4, 1.4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_v0fdx"]
+size = Vector2(3.5, 3.5)
+
+[sub_resource type="QuadMesh" id="QuadMesh_xvifj"]
+size = Vector2(3.5, 3.5)
+
+[sub_resource type="QuadMesh" id="QuadMesh_e57nc"]
+size = Vector2(1.1, 1.1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_v4tvo"]
+size = Vector2(1.1, 1.1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_yhqe2"]
+size = Vector2(2.2, 2.2)
+
+[node name="Pack3Dressing" type="Node3D" unique_id=1953351172]
+
+[node name="Signs" type="Node3D" parent="." unique_id=476707924]
+
+[node name="SignGeneralStore" type="MeshInstance3D" parent="Signs" unique_id=186714575]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -7.9919996, 2.86, -60)
+material_override = ExtResource("1_fj0c3")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_fj0c3")
+
+[node name="SignHotel" type="MeshInstance3D" parent="Signs" unique_id=182713494]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -7.9919996, 2.86, -22)
+material_override = ExtResource("2_qd1ah")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_qd1ah")
+
+[node name="SignClinic" type="MeshInstance3D" parent="Signs" unique_id=2033944957]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 2.86, -9.992)
+material_override = ExtResource("3_xjbip")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_xjbip")
+
+[node name="SignDiner" type="MeshInstance3D" parent="Signs" unique_id=1494861064]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.9919996, 2.5800002, -40)
+material_override = ExtResource("4_see3p")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_see3p")
+
+[node name="SignBank" type="MeshInstance3D" parent="Signs" unique_id=679697474]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.9919996, 2.86, -21)
+material_override = ExtResource("5_na4ii")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_na4ii")
+
+[node name="SignFeedSupply" type="MeshInstance3D" parent="Signs" unique_id=1034547188]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.4, 2.66, -10.992)
+material_override = ExtResource("6_i0mce")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_i0mce")
+
+[node name="SignGas" type="MeshInstance3D" parent="Signs" unique_id=572054635]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 9.992, 2.86, 27)
+material_override = ExtResource("7_1opb0")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_1opb0")
+
+[node name="SignKeepOutNorth" type="MeshInstance3D" parent="Signs" unique_id=1665934948]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 31, 1.4, 10.572)
+material_override = ExtResource("8_u3d6k")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_u3d6k")
+
+[node name="SignTurnBackNorth" type="MeshInstance3D" parent="Signs" unique_id=532645469]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 46.5, 1.4, 10.572)
+material_override = ExtResource("9_ak5kc")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_ak5kc")
+
+[node name="SignKeepOutWest" type="MeshInstance3D" parent="Signs" unique_id=1243104388]
+transform = Transform3D(4.371139e-08, 0, -1, 0, 1, 0, 1, 0, 4.371139e-08, 24.571999, 1.4, 35)
+material_override = ExtResource("8_u3d6k")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_nmdud")
+
+[node name="Graffiti" type="Node3D" parent="." unique_id=733503128]
+
+[node name="GraffitiSkull" type="MeshInstance3D" parent="Graffiti" unique_id=1843067232]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 53.3, 1.3, 10.576)
+material_override = ExtResource("10_nmdud")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_lp6og")
+
+[node name="GraffitiCross" type="MeshInstance3D" parent="Graffiti" unique_id=250696864]
+transform = Transform3D(4.371139e-08, 0, -1, 0, 1, 0, 1, 0, 4.371139e-08, 24.575998, 1.3, 42)
+material_override = ExtResource("11_lp6og")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_flrhp")
+
+[node name="GraffitiRaid" type="MeshInstance3D" parent="Graffiti" unique_id=1207545853]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 2.8, -15.996)
+material_override = ExtResource("12_flrhp")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_jo0n4")
+
+[node name="Decals" type="Node3D" parent="." unique_id=1222231596]
+
+[node name="OilGarage" type="MeshInstance3D" parent="Decals" unique_id=976215957]
+transform = Transform3D(0.9396926, -0.34202012, -1.4950174e-08, 0, -4.371139e-08, 1, -0.34202012, -0.9396926, -4.1075268e-08, 9.5, 0.04, -58)
+material_override = ExtResource("13_fj0c3")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_xrw2t")
+
+[node name="OilGarageStreet" type="MeshInstance3D" parent="Decals" unique_id=281400118]
+transform = Transform3D(0.34202015, -0.9396926, -4.1075268e-08, 0, -4.371139e-08, 1, -0.9396926, -0.34202015, -1.4950176e-08, 6, 0.04, -56)
+material_override = ExtResource("14_qd1ah")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_nctok")
+
+[node name="OilPumps" type="MeshInstance3D" parent="Decals" unique_id=930874443]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 14, 0.04, 17.5)
+material_override = ExtResource("15_xjbip")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_opw5m")
+
+[node name="TracksWestGate" type="MeshInstance3D" parent="Decals" unique_id=474521433]
+transform = Transform3D(-4.371139e-08, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 4.371139e-08, 1.9106855e-15, 21, 0.04, 28.5)
+material_override = ExtResource("16_see3p")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_t6bsk")
+
+[node name="TracksNorthGate" type="MeshInstance3D" parent="Decals" unique_id=2093725986]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 40.5, 0.04, 9)
+material_override = ExtResource("16_see3p")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_trdj7")
+
+[node name="ScorchBarrelA" type="MeshInstance3D" parent="Decals" unique_id=1656154681]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.04, 30)
+material_override = ExtResource("17_na4ii")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_uyqfu")
+
+[node name="ScorchBarrelB" type="MeshInstance3D" parent="Decals" unique_id=262472106]
+transform = Transform3D(0.76604444, -0.6427876, -2.8097137e-08, 0, -4.371139e-08, 1, -0.6427876, -0.76604444, -3.3484866e-08, 31, 0.04, 31.5)
+material_override = ExtResource("18_i0mce")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_80441")
+
+[node name="ScorchChurch" type="MeshInstance3D" parent="Decals" unique_id=1509860575]
+transform = Transform3D(0.9659258, -0.25881904, -1.131334e-08, 0, -4.371139e-08, 1, -0.25881904, -0.9659258, -4.222196e-08, -17, 0.04, 20)
+material_override = ExtResource("17_na4ii")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_b5c58")
+
+[node name="BloodCamp" type="MeshInstance3D" parent="Decals" unique_id=1897170273]
+transform = Transform3D(0.8660254, -0.5, -2.1855694e-08, 0, -4.371139e-08, 1, -0.5, -0.8660254, -3.7855173e-08, 37, 0.04, 25)
+material_override = ExtResource("19_1opb0")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_mkbey")
+
+[node name="BloodClinic" type="MeshInstance3D" parent="Decals" unique_id=1848004041]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -41, 0.04, -16.5)
+material_override = ExtResource("20_u3d6k")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_ubq51")
+
+[node name="CracksMain" type="MeshInstance3D" parent="Decals" unique_id=1275889701]
+transform = Transform3D(0.9848077, -0.17364818, -7.590403e-09, 0, -4.371139e-08, 1, -0.17364818, -0.9848077, -4.304731e-08, 0.5, 0.04, -30)
+material_override = ExtResource("21_ak5kc")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_v0fdx")
+
+[node name="CracksCross" type="MeshInstance3D" parent="Decals" unique_id=590690263]
+transform = Transform3D(0.17364822, -0.9848077, -4.304731e-08, 0, -4.371139e-08, 1, -0.9848077, -0.17364822, -7.590405e-09, 22, 0.04, 0.5)
+material_override = ExtResource("21_ak5kc")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_xvifj")
+
+[node name="PosterWanted" type="MeshInstance3D" parent="Decals" unique_id=854681799]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -7.9949994, 1.6, -63.8)
+material_override = ExtResource("22_nmdud")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_e57nc")
+
+[node name="PosterCitizens" type="MeshInstance3D" parent="Decals" unique_id=1089948305]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.9949994, 1.6, -37.4)
+material_override = ExtResource("23_lp6og")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_v4tvo")
+
+[node name="WaterStainHotel" type="MeshInstance3D" parent="Decals" unique_id=318475190]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -7.9949994, 4.6, -26.8)
+material_override = ExtResource("24_flrhp")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_yhqe2")
+
+[node name="Sounds" type="Node3D" parent="." unique_id=1053862969]
+
+[node name="TownRuins" type="AudioStreamPlayer3D" parent="Sounds" unique_id=701532602]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, -20)
+stream = ExtResource("25_xvifj")
+volume_db = 2.0
+unit_size = 40.0
+autoplay = true
+max_distance = 400.0
+bus = &"Ambience"
+
+[node name="DistantGunfire" type="AudioStreamPlayer3D" parent="Sounds" unique_id=1176769493]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -120, 10, 110)
+stream = ExtResource("26_e57nc")
+volume_db = 6.0
+unit_size = 80.0
+autoplay = true
+max_distance = 600.0
+bus = &"Ambience"
+
+[node name="Insects" type="AudioStreamPlayer3D" parent="Sounds" unique_id=1390537836]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 1, -62)
+stream = ExtResource("27_v4tvo")
+volume_db = -8.0
+unit_size = 6.0
+autoplay = true
+max_distance = 40.0
+bus = &"Ambience"

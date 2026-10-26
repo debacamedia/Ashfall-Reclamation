@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/desert_sand/albedo.png" id="1_d16wf"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/desert_sand/normal.png" id="2_jgvbs"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/desert_sand/roughness.png" id="3_bh8hb"]
+
+[resource]
+resource_name = "AF3_desert_sand"
+albedo_texture = ExtResource("1_d16wf")
+roughness_texture = ExtResource("3_bh8hb")
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = ExtResource("2_jgvbs")
+uv1_scale = Vector3(0.33333334, 0.33333334, 0.33333334)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

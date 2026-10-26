@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/signs/sign_clinic.png" id="1_7ym54"]
+
+[resource]
+resource_name = "AF3 sign sign_clinic"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_7ym54")
+roughness = 0.85
+uv1_scale = Vector3(0.911, 0.713, 1)
+uv1_offset = Vector3(0.045, 0.145, 0)
+texture_filter = 5

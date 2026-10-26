@@ -541,6 +541,9 @@ func _update_footsteps(delta: float) -> void:
 	_step_distance += speed * delta
 	if _step_distance >= step_length:
 		_step_distance = 0.0
+		if _footstep_sound != null:
+			var under := SurfaceSounds.floor_collider(self)
+			_footstep_sound.stream = SurfaceSounds.footstep(SurfaceSounds.of(under) if under != null else &"gravel")
 		_play(_footstep_sound)
 
 

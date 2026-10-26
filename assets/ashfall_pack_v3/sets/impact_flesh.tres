@@ -1,0 +1,13 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/impact_flesh_1.wav" id="1_rh5vo"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/impact_flesh_2.wav" id="2_674xv"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/impact_flesh_3.wav" id="3_nbvg6"]
+
+[resource]
+random_pitch = 1.08
+random_volume_offset_db = 1.0
+streams_count = 3
+stream_0/stream = ExtResource("1_rh5vo")
+stream_1/stream = ExtResource("2_674xv")
+stream_2/stream = ExtResource("3_nbvg6")

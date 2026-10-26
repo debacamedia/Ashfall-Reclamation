@@ -1,8 +1,9 @@
 class_name PlayerAudio
 extends Node3D
-## The player's own sounds: footsteps (by distance walked), landing, getting
-## hurt, a heartbeat at low health, the death sting, pickup and item-use
-## sounds, ladder rungs and raising the sights.
+## The player's own sounds: footsteps (by distance walked, by what's
+## underfoot), landing, getting hurt, a heartbeat at low health, the death
+## sting, pickup and item-use sounds, ladder rungs, raising the sights, and
+## tools at work while crafting (saw, hammer, file: Resource Pack 3).
 ## Purely presentation: reads the player, never changes game state.
 ##
 ## Child of the Player scene; its sound players are child nodes.
@@ -24,9 +25,23 @@ extends Node3D
 @onready var _aim: AudioStreamPlayer = get_node_or_null("%AimSound")
 @onready var _draw: AudioStreamPlayer = get_node_or_null("%DrawSound")
 
+const CRAFT_SAW := preload("res://assets/ashfall_pack_v3/sets/craft_saw.tres")
+const CRAFT_HAMMER := preload("res://assets/ashfall_pack_v3/sets/craft_hammer.tres")
+const CRAFT_FILE := preload("res://assets/ashfall_pack_v3/sets/craft_file.tres")
+const CRAFT_RUMMAGE := preload("res://assets/ashfall_pack_v3/sets/rummage.tres")
+const CRAFT_DONE := preload("res://assets/ashfall_pack_v3/audio/craft_complete.wav")
+
 var _distance := 0.0
+var _craft: AudioStreamPlayer
+var _craft_tools: Array[AudioStream] = []
+var _craft_next := 0.0
+var _craft_turn := 0
+## Tool sounds played while crafting (used by tests).
+var craft_sound_count := 0
 ## How many footstep sounds have played (used by tests).
 var footstep_count := 0
+## What the last footstep was on (&"gravel", &"concrete", &"metal", &"wood").
+var last_surface := &"gravel"
 
 
 func _ready() -> void:
@@ -55,6 +70,19 @@ func _ready() -> void:
 		if item != null and item.pickup_sound != null:
 			_pickup.stream = item.pickup_sound
 			_pickup.play())
+	_craft = AudioStreamPlayer.new()
+	_craft.name = "CraftSound"
+	_craft.bus = &"SFX"
+	_craft.volume_db = -9.0
+	add_child(_craft)
+	_player.crafting_started.connect(func(recipe: RecipeDefinition, _d: float) -> void:
+		_craft_tools = tools_for(recipe)
+		_craft_next = 0.15)
+	_player.crafting_finished.connect(func(_r: RecipeDefinition) -> void:
+		_craft_tools = []
+		_craft.stream = CRAFT_DONE
+		_craft.play())
+	_player.crafting_cancelled.connect(func(_r: RecipeDefinition) -> void: _craft_tools = [])
 	_player.item_use_finished.connect(func(item: ItemDefinition) -> void:
 		if item.use_sound != null:
 			_pickup.stream = item.use_sound
@@ -71,16 +99,43 @@ func _physics_process(delta: float) -> void:
 		if _distance >= stride:
 			_distance = 0.0
 			_footsteps.volume_db = -17.0 if _player.is_crouching else -10.0
+			# Gravel, concrete, metal or wood, by what's underfoot
+			var under := SurfaceSounds.floor_collider(_player)
+			last_surface = SurfaceSounds.of(under) if under != null else &"gravel"
+			_footsteps.stream = SurfaceSounds.footstep(last_surface)
 			_footsteps.play()
 			footstep_count += 1
 	else:
 		_distance = step_length * 0.6  # first step comes quickly when starting to move
+
+	# Tools at work while a craft runs (it keeps going between items of a batch)
+	if not _craft_tools.is_empty() and _player.get_crafting_progress() >= 0.0:
+		_craft_next -= delta
+		if _craft_next <= 0.0:
+			_craft.stream = _craft_tools[_craft_turn % _craft_tools.size()]
+			_craft.play()
+			_craft_turn += 1
+			craft_sound_count += 1
+			_craft_next = randf_range(0.35, 0.6)
 
 	var low := _player.health.get_fraction() <= heartbeat_threshold and not _player.is_dead()
 	if low and not _heartbeat.playing:
 		_heartbeat.play()
 	elif not low and _heartbeat.playing:
 		_heartbeat.stop()
+
+
+## The tools you hear making a recipe: sawing and hammering for wood and
+## structures, filing and hammering for gun parts and ammo, rummaging for
+## medical supplies.
+static func tools_for(recipe: RecipeDefinition) -> Array[AudioStream]:
+	match recipe.category:
+		RecipeDefinition.Category.MATERIALS, RecipeDefinition.Category.STRUCTURES:
+			return [CRAFT_SAW, CRAFT_HAMMER, CRAFT_SAW]
+		RecipeDefinition.Category.MEDICAL:
+			return [CRAFT_RUMMAGE]
+		_:
+			return [CRAFT_FILE, CRAFT_HAMMER]
 
 
 func _on_landed(impact_speed: float) -> void:

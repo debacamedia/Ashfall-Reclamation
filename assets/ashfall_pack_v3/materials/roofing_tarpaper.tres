@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/roofing_tarpaper/albedo.png" id="1_xdxqj"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/roofing_tarpaper/normal.png" id="2_0iajx"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/roofing_tarpaper/roughness.png" id="3_mvutm"]
+
+[resource]
+resource_name = "AF3_roofing_tarpaper"
+albedo_texture = ExtResource("1_xdxqj")
+roughness_texture = ExtResource("3_mvutm")
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("2_0iajx")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

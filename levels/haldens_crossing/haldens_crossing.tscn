@@ -3,12 +3,12 @@
 [ext_resource type="Environment" path="res://levels/haldens_crossing/haldens_crossing_environment.tres" id="1_hufkb"]
 [ext_resource type="Material" path="res://assets/materials/ground_dirt.tres" id="2_aveli"]
 [ext_resource type="Material" path="res://assets/materials/earth_berm.tres" id="3_4rc82"]
-[ext_resource type="Material" path="res://assets/materials/asphalt.tres" id="4_r33ec"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/asphalt_cracked.tres" id="4_r33ec"]
 [ext_resource type="Material" path="res://assets/materials/concrete.tres" id="5_xgc8n"]
 [ext_resource type="Material" path="res://assets/materials/gravel.tres" id="6_8da64"]
 [ext_resource type="Material" path="res://assets/materials/concrete_stained.tres" id="7_gnrge"]
 [ext_resource type="Material" path="res://assets/materials/hazard_yellow.tres" id="8_wcid7"]
-[ext_resource type="Material" path="res://assets/materials/brick.tres" id="9_pa0bt"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/brick_weathered.tres" id="9_pa0bt"]
 [ext_resource type="Material" path="res://assets/materials/plaster.tres" id="10_dd8uw"]
 [ext_resource type="Material" path="res://assets/materials/soot.tres" id="11_5vees"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/ladder.tscn" id="12_42xm2"]
@@ -27,7 +27,7 @@
 [ext_resource type="Script" path="res://scripts/world/shipping_container.gd" id="25_xxrau"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/jersey_barrier.tscn" id="26_chua0"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/sandbag_wall.tscn" id="27_xgfy5"]
-[ext_resource type="Material" path="res://assets/materials/tent_canvas.tres" id="28_gts8s"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/canvas_tent.tres" id="28_gts8s"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/military_truck.tscn" id="29_fh7tr"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/fuel_drums.tscn" id="30_kouya"]
 [ext_resource type="PackedScene" path="res://scenes/world/props/wood_crate.tscn" id="31_l564q"]
@@ -83,6 +83,8 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/raider.tscn" id="81_5xdtl"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/raider_veteran.tscn" id="82_32p2e"]
 [ext_resource type="AudioStream" path="res://assets/audio/wind_loop.wav" id="83_ii8w6"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/roofing_tarpaper.tres" id="pack3_roofing"]
+[ext_resource type="PackedScene" path="res://levels/haldens_crossing/pack3_dressing.tscn" id="pack3_dressing"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ihkbq"]
 size = Vector2(400, 400)
@@ -5316,7 +5318,7 @@ mesh = SubResource("BoxMesh_mv31s")
 
 [node name="Roof" type="MeshInstance3D" parent="Buildings/GeneralStore" unique_id=1166354428]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.295, 0)
-material_override = ExtResource("7_gnrge")
+material_override = ExtResource("pack3_roofing")
 mesh = SubResource("BoxMesh_tplg3")
 
 [node name="RoofCol" type="CollisionShape3D" parent="Buildings/GeneralStore" unique_id=1349925514]
@@ -6459,7 +6461,7 @@ material = ExtResource("14_grlmi")
 
 [node name="Roof" type="MeshInstance3D" parent="Buildings/Hotel" unique_id=1337055087]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.595, 0)
-material_override = ExtResource("7_gnrge")
+material_override = ExtResource("pack3_roofing")
 mesh = SubResource("BoxMesh_b62yl")
 
 [node name="RoofCol" type="CollisionShape3D" parent="Buildings/Hotel" unique_id=1669372451]
@@ -6782,7 +6784,7 @@ mesh = SubResource("BoxMesh_ivie3")
 
 [node name="Roof" type="MeshInstance3D" parent="Buildings/Clinic" unique_id=1392079508]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.295, 0)
-material_override = ExtResource("7_gnrge")
+material_override = ExtResource("pack3_roofing")
 mesh = SubResource("BoxMesh_s4njc")
 
 [node name="RoofCol" type="CollisionShape3D" parent="Buildings/Clinic" unique_id=2001099356]
@@ -7991,7 +7993,7 @@ mesh = SubResource("BoxMesh_633ae")
 
 [node name="Roof" type="MeshInstance3D" parent="Buildings/HouseWest" unique_id=36956531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.295, 0)
-material_override = ExtResource("7_gnrge")
+material_override = ExtResource("pack3_roofing")
 mesh = SubResource("BoxMesh_tkk0n")
 
 [node name="RoofCol" type="CollisionShape3D" parent="Buildings/HouseWest" unique_id=207380045]
@@ -9119,7 +9121,7 @@ mesh = SubResource("BoxMesh_2v0kb")
 
 [node name="Roof" type="MeshInstance3D" parent="Buildings/Bank" unique_id=1243442082]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.295, 0)
-material_override = ExtResource("7_gnrge")
+material_override = ExtResource("pack3_roofing")
 mesh = SubResource("BoxMesh_cmpop")
 
 [node name="RoofCol" type="CollisionShape3D" parent="Buildings/Bank" unique_id=826473851]
@@ -10049,7 +10051,7 @@ mesh = SubResource("BoxMesh_cyf32")
 
 [node name="Roof" type="MeshInstance3D" parent="Buildings/RelayShack" unique_id=1117688887]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.295, 0)
-material_override = ExtResource("7_gnrge")
+material_override = ExtResource("pack3_roofing")
 mesh = SubResource("BoxMesh_rljbe")
 
 [node name="RoofCol" type="CollisionShape3D" parent="Buildings/RelayShack" unique_id=675046299]
@@ -10257,7 +10259,7 @@ mesh = SubResource("BoxMesh_ljwxg")
 
 [node name="Roof" type="MeshInstance3D" parent="Buildings/GasKiosk" unique_id=626921453]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.295, 0)
-material_override = ExtResource("7_gnrge")
+material_override = ExtResource("pack3_roofing")
 mesh = SubResource("BoxMesh_xkh7a")
 
 [node name="RoofCol" type="CollisionShape3D" parent="Buildings/GasKiosk" unique_id=476057596]
@@ -13150,3 +13152,5 @@ stream_paused = true
 bus = &"Ambience"
 
 [node name="Structures" type="Node3D" parent="." unique_id=1217411422 groups=["navigation_geometry"]]
+
+[node name="Pack3Dressing" parent="." instance=ExtResource("pack3_dressing")]
