@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_hjldp"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="2_lio5d"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="3_csali"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="4_wq648"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="5_aytav"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="6_ygh7c"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_wv6o2"]
+
+[sub_resource type="Resource" id="Resource_4kgb1"]
+script = ExtResource("1_hjldp")
+item = ExtResource("2_lio5d")
+weight = 3.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_t7udd"]
+script = ExtResource("1_hjldp")
+item = ExtResource("3_csali")
+weight = 3.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_0nas1"]
+script = ExtResource("1_hjldp")
+item = ExtResource("4_wq648")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_fxsid"]
+script = ExtResource("1_hjldp")
+item = ExtResource("5_aytav")
+
+[sub_resource type="Resource" id="Resource_q741g"]
+script = ExtResource("1_hjldp")
+item = ExtResource("6_ygh7c")
+
+[resource]
+script = ExtResource("7_wv6o2")
+entries = Array[ExtResource("1_hjldp")]([SubResource("Resource_4kgb1"), SubResource("Resource_t7udd"), SubResource("Resource_0nas1"), SubResource("Resource_fxsid"), SubResource("Resource_q741g")])
+min_rolls = 2

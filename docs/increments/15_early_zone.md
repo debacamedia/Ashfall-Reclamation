@@ -46,6 +46,7 @@ The tests and the playtest caught several problems, all fixed:
 | Northwatch Outpost | Far north | **Blockout:** a small walled post with a watchtower, radio mast and dish |
 
   The blockouts are solid shapes at the right size and place, so you can judge distances and sightlines. You can't go inside, and they have no loot or raiders yet. Each one is a single scene file that the real place will replace.
+  *Since Increment 16 all five are real places: see [`16_places.md`](16_places.md).*
 
 - **Roads and the railway:**
   - **Main road (asphalt):** from the outpost gate to Halden's Main Street, past Ash Creek.

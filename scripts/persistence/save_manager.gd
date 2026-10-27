@@ -46,7 +46,7 @@ signal loaded(path: String)
 signal failed(reason: String)
 
 const FORMAT := "ashfall_save"
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 const QUICK_SLOT := "quicksave"
 ## The level the old Outpost 17 / Halden's Crossing levels became part of.
 const ZONE_LEVEL := "res://levels/early_zone/early_zone.tscn"
@@ -57,6 +57,10 @@ const SITE_MIGRATION := {
 }
 
 ## Where saves go. Tests point this somewhere else.
+## Places built out in Increment 16 (blockouts with nothing to save before):
+## a version 3 save leaves everything in them as it is.
+const PLACES_ADDED_V4 := ["SaintMercyClinic", "AshCreekFarms", "SmugglersGulch", "BlackRidgeMine", "NorthwatchOutpost"]
+
 var save_dir := "user://saves"
 
 
@@ -268,6 +272,26 @@ func _migrate(data: Dictionary) -> Dictionary:
 	if int(data.get("version", 2)) < 3:
 		data = migrate_to_zone(data)
 		data["version"] = 3
+	if int(data.get("version", 3)) < 4:
+		data = mark_new_places_untouched(data)
+		data["version"] = 4
+	return data
+
+
+## A save from before the five places were built knows nothing of their
+## loot, so loading it must not clear them (Increment 16).
+static func mark_new_places_untouched(data: Dictionary) -> Dictionary:
+	var untouched: Array = data.get("untouched", []) if data.get("untouched") is Array else []
+	for place in PLACES_ADDED_V4:
+		var saved_any := false
+		if data.get("nodes") is Array:
+			for e in data["nodes"]:
+				if e is Dictionary and str(e.get("path", "")).begins_with(place + "/"):
+					saved_any = true
+					break
+		if not saved_any and not untouched.has(place):
+			untouched.append(place)
+	data["untouched"] = untouched
 	return data
 
 

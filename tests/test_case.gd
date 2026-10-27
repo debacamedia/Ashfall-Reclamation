@@ -6,7 +6,7 @@ extends Node
 var failures: PackedStringArray = []
 
 ## The early zone (Increment 15): Outpost 17 at the origin, Halden's
-## Crossing at HALDENS_AT, five blockout places, the ash-storm edge.
+## Crossing at HALDENS_AT, five more places, the ash-storm edge.
 const ZONE_PATH := "res://levels/early_zone/early_zone.tscn"
 const HALDENS_AT := Vector3(450, 0, -275)
 

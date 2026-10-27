@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_0s4x6"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="2_7uxap"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="3_socfn"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="4_ldhf7"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="5_hl85t"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="6_n3m5f"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_vmjda"]
+
+[sub_resource type="Resource" id="Resource_j5dqi"]
+script = ExtResource("1_0s4x6")
+item = ExtResource("2_7uxap")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_b7g0a"]
+script = ExtResource("1_0s4x6")
+item = ExtResource("3_socfn")
+weight = 2.0
+min_quantity = 6
+max_quantity = 12
+
+[sub_resource type="Resource" id="Resource_uf3a1"]
+script = ExtResource("1_0s4x6")
+item = ExtResource("4_ldhf7")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_2v8yf"]
+script = ExtResource("1_0s4x6")
+item = ExtResource("5_hl85t")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_1bdym"]
+script = ExtResource("1_0s4x6")
+item = ExtResource("6_n3m5f")
+
+[resource]
+script = ExtResource("7_vmjda")
+entries = Array[ExtResource("1_0s4x6")]([SubResource("Resource_j5dqi"), SubResource("Resource_b7g0a"), SubResource("Resource_uf3a1"), SubResource("Resource_2v8yf"), SubResource("Resource_1bdym")])

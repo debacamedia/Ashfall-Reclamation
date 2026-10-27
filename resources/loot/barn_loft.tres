@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_8rtko"]
+[ext_resource type="Resource" path="res://resources/items/gun_stock.tres" id="2_v7fpi"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_qct34"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="4_w838v"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="5_anhsk"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="6_ahlxt"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_5hlc7"]
+
+[sub_resource type="Resource" id="Resource_8viaw"]
+script = ExtResource("1_8rtko")
+item = ExtResource("2_v7fpi")
+
+[sub_resource type="Resource" id="Resource_pwq88"]
+script = ExtResource("1_8rtko")
+item = ExtResource("3_qct34")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_qny7p"]
+script = ExtResource("1_8rtko")
+item = ExtResource("4_w838v")
+
+[sub_resource type="Resource" id="Resource_mpu5w"]
+script = ExtResource("1_8rtko")
+item = ExtResource("5_anhsk")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_4frx8"]
+script = ExtResource("1_8rtko")
+item = ExtResource("6_ahlxt")
+min_quantity = 6
+max_quantity = 12
+
+[resource]
+script = ExtResource("7_5hlc7")
+guaranteed = Array[ExtResource("1_8rtko")]([SubResource("Resource_4frx8")])
+entries = Array[ExtResource("1_8rtko")]([SubResource("Resource_8viaw"), SubResource("Resource_pwq88"), SubResource("Resource_qny7p"), SubResource("Resource_mpu5w")])

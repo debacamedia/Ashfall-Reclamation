@@ -168,7 +168,7 @@ func test_saves_from_before_pack2_still_load() -> void:
 	check(saves.validate(data) == "", "save made before Pack 2 is valid")
 	# It's for the old Outpost 17 level: it moves into the zone (version 3)
 	data = saves._migrate(data)
-	check(data["level"] == ZONE_PATH and int(data["version"]) == 3, "moved into the early zone")
+	check(data["level"] == ZONE_PATH and int(data["version"]) == 4, "moved into the early zone")
 	var lvl := await _load_level()
 	# Pack 2 adds nothing to the save but its props, which (Increment 14)
 	# can be moved and scrapped

@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_s0ws8"]
+[ext_resource type="Resource" path="res://resources/items/scope_4x.tres" id="2_heefj"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_uyq7x"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="4_swgsv"]
+[ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="5_78ln7"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="6_fs88m"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_k4lnk"]
+
+[sub_resource type="Resource" id="Resource_rdpgg"]
+script = ExtResource("1_s0ws8")
+item = ExtResource("2_heefj")
+
+[sub_resource type="Resource" id="Resource_ho5bp"]
+script = ExtResource("1_s0ws8")
+item = ExtResource("3_uyq7x")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_bhrw5"]
+script = ExtResource("1_s0ws8")
+item = ExtResource("4_swgsv")
+
+[sub_resource type="Resource" id="Resource_4lt25"]
+script = ExtResource("1_s0ws8")
+item = ExtResource("5_78ln7")
+min_quantity = 5
+max_quantity = 10
+
+[sub_resource type="Resource" id="Resource_bcis6"]
+script = ExtResource("1_s0ws8")
+item = ExtResource("6_fs88m")
+min_quantity = 2
+max_quantity = 3
+
+[resource]
+script = ExtResource("7_k4lnk")
+guaranteed = Array[ExtResource("1_s0ws8")]([SubResource("Resource_bcis6")])
+entries = Array[ExtResource("1_s0ws8")]([SubResource("Resource_rdpgg"), SubResource("Resource_ho5bp"), SubResource("Resource_bhrw5"), SubResource("Resource_4lt25")])
+max_rolls = 2

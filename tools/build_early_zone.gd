@@ -15,11 +15,11 @@ extends SceneTree
 ##   rocks.scn                  hills and outcrops (solid), scattered stones
 ##   navigation.scn             the navmesh in 100 m tiles
 ## (the big generated parts are binary .scn: smaller and quicker to load)
-##   sites/*.tscn               blockouts of the places not built yet
 ##   materials/*.tres
-## The two built places are the existing site scenes, placed as they are:
+## The places are site scenes, placed as they are:
 ##   Outpost 17         levels/outpost_17/outpost_17.tscn at the origin
 ##   Halden's Crossing  levels/haldens_crossing/haldens_crossing.tscn
+##   the other five     levels/<place>/<place>.tscn, built by tools/build_sites.gd
 ##
 ## SCALE: 1 px of the concept map = 1.1 m, with Outpost 17 at the origin.
 ## World x = east, -z = north.
@@ -101,7 +101,6 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT + "sites"))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT + "materials"))
 	_noise.seed = 1717
 	_noise.frequency = 0.0045
@@ -118,11 +117,6 @@ func _run() -> void:
 	_save(_terrain(), "terrain.scn")
 	_save(_roads(), "roads.scn")
 	_save(_rocks(), "rocks.scn")
-	_save(_saint_mercy(), "sites/saint_mercy_clinic.tscn")
-	_save(_ash_creek(), "sites/ash_creek_farms.tscn")
-	_save(_smugglers_gulch(), "sites/smugglers_gulch.tscn")
-	_save(_black_ridge(), "sites/black_ridge_mine.tscn")
-	_save(_northwatch(), "sites/northwatch_outpost.tscn")
 	ResourceSaver.save(_environment(), OUT + "early_zone_environment.tres")
 	await _zone()
 	_boundary.free()
@@ -941,255 +935,6 @@ func _scatter() -> Node3D:
 	return root
 
 
-# ================================================================ blockouts
-# Places that aren't built yet: solid, recognisable shapes at the right spot
-# and scale, so the layout and the distances can be judged in game. Each
-# file is replaced by the real place when it's built.
-
-func _site_root(key: String) -> Node3D:
-	var root := Node3D.new()
-	root.name = key
-	root.set_meta("region_name", PLACES[key][0])
-	root.set_meta("blockout", true)
-	return root
-
-
-func _saint_mercy() -> Node3D:
-	var root := _site_root("SaintMercyClinic")
-	var b := _solid_body("Blockout")
-	root.add_child(b)
-	# Main block (front faces east, toward the road), with a wing behind
-	_box(b, "Main", Vector3(14, 7.5, 32), Vector3(0, 3.75, 0), "paint_white")
-	_box(b, "Wing", Vector3(12, 4.2, 12), Vector3(-12, 2.1, -12), "concrete_stained")
-	_box(b, "Annex", Vector3(9, 3.6, 10), Vector3(-10.5, 1.8, 11), "plaster")
-	for floor_y in [2.2, 5.4]:
-		for i in 6:
-			var z := -12.0 + i * 4.8
-			if absf(z) < 2.0:
-				continue
-			_box(b, "Window", Vector3(0.1, 1.3, 1.8), Vector3(7.05, floor_y, z), "opening", 0.0, false)
-	_box(b, "Door", Vector3(0.1, 2.6, 3.0), Vector3(7.05, 1.3, 0), "opening", 0.0, false)
-	_box(b, "Canopy", Vector3(3.2, 0.25, 6.5), Vector3(8.6, 3.2, 0), "concrete")
-	_box(b, "PillarN", Vector3(0.3, 3.1, 0.3), Vector3(10.0, 1.55, -3.0), "concrete")
-	_box(b, "PillarS", Vector3(0.3, 3.1, 0.3), Vector3(10.0, 1.55, 3.0), "concrete")
-	_box(b, "CrossV", Vector3(0.1, 2.2, 0.6), Vector3(7.08, 6.1, 0), "red_cross", 0.0, false)
-	_box(b, "CrossH", Vector3(0.1, 0.6, 2.2), Vector3(7.08, 6.1, 0), "red_cross", 0.0, false)
-	_box(b, "RoofCrossA", Vector3(6.0, 0.06, 1.6), Vector3(0, 7.53, 0), "red_cross", 0.0, false)
-	_box(b, "RoofCrossB", Vector3(1.6, 0.06, 6.0), Vector3(0, 7.53, 0), "red_cross", 0.0, false)
-	# A broken boundary wall, and a wrecked ambulance by the door
-	for seg in [[Vector3(22, 0, -24), 18.0, 90.0], [Vector3(22, 0, 20), 10.0, 90.0], [Vector3(4, 0, -32), 26.0, 0.0],
-			[Vector3(-14, 0, -32), 6.0, 0.0], [Vector3(2, 0, 30), 30.0, 0.0], [Vector3(-24, 0, 6), 22.0, 90.0]]:
-		var p: Vector3 = seg[0]
-		_box(b, "Wall", Vector3(seg[1], 1.1, 0.4), p + Vector3(0, 0.55, 0), "concrete", seg[2])
-	_box(b, "Ambulance", Vector3(2.3, 2.3, 5.4), Vector3(15, 1.3, 9), "paint_white", 24.0)
-	_box(b, "AmbulanceCab", Vector3(2.2, 1.6, 1.8), Vector3(16.5, 0.95, 12.2), "paint_white", 24.0)
-	_box(b, "AmbulanceStripe", Vector3(2.32, 0.3, 5.42), Vector3(15, 1.6, 9), "red_cross", 24.0, false)
-	return root
-
-
-func _ash_creek() -> Node3D:
-	var root := _site_root("AshCreekFarms")
-	var b := _solid_body("Blockout")
-	root.add_child(b)
-	# Barn, farmhouse, silo, water tower round a yard
-	_box(b, "Barn", Vector3(12, 6, 16), Vector3(14, 3, -14), "barn_red")
-	_roof(b, "BarnRoof", Vector3(13, 4, 17), Vector3(14, 8, -14), "roofing")
-	_box(b, "BarnDoor", Vector3(5, 4.5, 0.1), Vector3(14, 2.25, -5.94), "opening", 0.0, false)
-	_box(b, "House", Vector3(10, 4, 8), Vector3(-8, 2, 8), "plaster")
-	_roof(b, "HouseRoof", Vector3(11, 3, 9), Vector3(-8, 5.5, 8), "roofing", 90.0)
-	_box(b, "Porch", Vector3(10, 0.25, 2.5), Vector3(-8, 0.12, 13.2), "wood")
-	_cylinder(b, "Silo", 3.0, 12.0, Vector3(26, 6, -24), "corrugated")
-	var cap := _cylinder(b, "SiloCap", 3.1, 1.6, Vector3(26, 12.8, -24), "rust", false)
-	(cap.mesh as CylinderMesh).top_radius = 0.5
-	for leg in [Vector3(-1.8, 0, -1.8), Vector3(1.8, 0, -1.8), Vector3(-1.8, 0, 1.8), Vector3(1.8, 0, 1.8)]:
-		_box(b, "TowerLeg", Vector3(0.3, 8.0, 0.3), Vector3(2, 4, 24) + leg, "wood")
-	_cylinder(b, "Tank", 2.6, 3.4, Vector3(2, 9.7, 24), "wood")
-	_box(b, "Trough", Vector3(4, 0.7, 1.2), Vector3(6, 0.35, 18), "metal_dark")
-	_box(b, "TractorBody", Vector3(1.8, 1.6, 3.4), Vector3(-2, 1.0, -6), "rust", 35.0)
-	_cylinder(b, "HayA", 0.9, 1.2, Vector3(4, 0.9, -24), "crop")
-	_cylinder(b, "HayB", 0.9, 1.2, Vector3(6.2, 0.9, -24.5), "crop")
-	_cylinder(b, "HayC", 0.9, 1.2, Vector3(5.1, 2.6, -24.2), "crop")
-	# Fields: tilled plots with rows of dry and green crops
-	var plots := [[Vector2(-34, -24), Vector2(26, 30), "crop"], [Vector2(-34, 22), Vector2(26, 24), "crop_green"],
-		[Vector2(37, 2), Vector2(18, 40), "crop"], [Vector2(8, -50), Vector2(48, 16), "crop_green"]]
-	var fields := Node3D.new()
-	fields.name = "Fields"
-	root.add_child(fields)
-	for pl in plots:
-		var c: Vector2 = pl[0]
-		var s: Vector2 = pl[1]
-		var soil := MeshInstance3D.new()
-		soil.name = "Soil"
-		var pm := PlaneMesh.new()
-		pm.size = s
-		soil.mesh = pm
-		soil.material_override = M["field_soil"]
-		soil.position = Vector3(c.x, 0.012, c.y)
-		fields.add_child(soil)
-		var plant := CylinderMesh.new()
-		plant.top_radius = 0.04
-		plant.bottom_radius = 0.28
-		plant.height = 0.9
-		plant.radial_segments = 5
-		plant.rings = 0
-		plant.cap_top = false
-		plant.cap_bottom = false  # never seen: keeps the merged mesh small
-		var xf: Array[Transform3D] = []
-		var row := -s.x * 0.5 + 1.0
-		while row < s.x * 0.5 - 0.5:
-			var along := -s.y * 0.5 + 1.0
-			while along < s.y * 0.5 - 0.5:
-				if _rng.randf() < 0.82:
-					var h := _rng.randf_range(0.5, 1.2)
-					xf.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(1, h, 1)), Vector3(c.x + row + _rng.randf_range(-0.15, 0.15), 0.45 * h, c.y + along)))
-				along += 0.7
-			row += 1.3
-		var crops := _merged("Crops", plant, xf, M[pl[2]], 1000.0, 220.0)
-		crops.name = "Crops%d" % fields.get_child_count()
-		fields.add_child(crops)
-	# Fence along the lane
-	for side in [-1.0, 1.0]:
-		_box(b, "FenceRail", Vector3(0.1, 0.12, 22), Vector3(side * 4.0 - 4, 0.95, 32), "wood")
-		_box(b, "FenceRailLow", Vector3(0.1, 0.12, 22), Vector3(side * 4.0 - 4, 0.5, 32), "wood")
-	return root
-
-
-func _smugglers_gulch() -> Node3D:
-	var root := _site_root("SmugglersGulch")
-	# Red rock walls in a ring, open to the south-east where the trail comes in
-	var walls := Node3D.new()
-	walls.name = "RockWalls"
-	root.add_child(walls)
-	var gap := atan2(23.0, 10.0)
-	var k := 0
-	var a := 0.0
-	while a < TAU:
-		var off := wrapf(a - gap, -PI, PI)
-		if absf(off) > 0.42:
-			var r := _rng.randf_range(50.0, 60.0)
-			var w := _rng.randf_range(16.0, 24.0)
-			var h := _rng.randf_range(12.0, 19.0)
-			var body := _solid_body("Wall%d" % k)
-			body.position = Vector3(cos(a) * r, 0, sin(a) * r)
-			body.rotation.y = -a
-			var shape: Array = _rock_mesh("mesa", k % 8)
-			var mi := MeshInstance3D.new()
-			mi.name = "Mesh"
-			mi.mesh = shape[0]
-			mi.material_override = M["rock_red"]
-			mi.scale = Vector3(w * 0.35, h / 0.42, w * 0.5)
-			mi.set_meta("no_draw_distance", true)
-			mi.visibility_range_end = 750.0
-			body.add_child(mi)
-			var cs := CollisionShape3D.new()
-			cs.name = "Shape"
-			var convex := ConvexPolygonShape3D.new()
-			var pts := PackedVector3Array()
-			for v: Vector3 in shape[1]:
-				pts.append(v * mi.scale)
-			convex.points = pts
-			cs.shape = convex
-			body.add_child(cs)
-			walls.add_child(body)
-			k += 1
-		a += 0.33
-	var b := _solid_body("Blockout")
-	root.add_child(b)
-	# Shacks, containers and tents in the hollow
-	for s in [[Vector3(-14, 0, -12), 20.0], [Vector3(10, 0, -20), -15.0], [Vector3(-22, 0, 10), 70.0]]:
-		var p: Vector3 = s[0]
-		_box(b, "Shack", Vector3(5, 3, 4), p + Vector3(0, 1.5, 0), "wood", s[1])
-		_box(b, "ShackRoof", Vector3(5.6, 0.15, 4.8), p + Vector3(0, 3.15, 0), "corrugated", s[1], false)
-	_box(b, "ContainerA", Vector3(2.44, 2.6, 6.06), Vector3(14, 1.3, 6), "container_red", 80.0)
-	_box(b, "ContainerB", Vector3(2.44, 2.6, 6.06), Vector3(17, 1.3, 1), "container_blue", 75.0)
-	_box(b, "ContainerC", Vector3(2.44, 2.6, 6.06), Vector3(15.5, 3.9, 3.5), "container_olive", 78.0)
-	_box(b, "ContainerD", Vector3(2.44, 2.6, 6.06), Vector3(-4, 1.3, 22), "container_red", 10.0)
-	for t in [Vector3(0, 0, 4), Vector3(-6, 0, -2), Vector3(4, 0, -6)]:
-		_roof(b, "Tent", Vector3(3.6, 2.2, 4.6), t + Vector3(0, 1.1, 0), "canvas", _rng.randf_range(0, 180))
-	_cylinder(b, "FirePit", 1.1, 0.4, Vector3(-1, 0.2, 10), "metal_dark", false)
-	for leg in [Vector3(-1.5, 0, -1.5), Vector3(1.5, 0, -1.5), Vector3(-1.5, 0, 1.5), Vector3(1.5, 0, 1.5)]:
-		_box(b, "LookoutLeg", Vector3(0.25, 5, 0.25), Vector3(24, 2.5, 22) + leg, "wood")
-	_box(b, "LookoutDeck", Vector3(3.6, 0.25, 3.6), Vector3(24, 5.1, 22), "wood")
-	return root
-
-
-func _black_ridge() -> Node3D:
-	var root := _site_root("BlackRidgeMine")
-	var b := _solid_body("Blockout")
-	root.add_child(b)
-	# Headframe over the shaft
-	for leg in [Vector3(-2.5, 0, -2.5), Vector3(2.5, 0, -2.5), Vector3(-2.5, 0, 2.5), Vector3(2.5, 0, 2.5)]:
-		_box(b, "HeadframeLeg", Vector3(0.5, 18, 0.5), leg + Vector3(0, 9, 0), "rust")
-	for y in [6.0, 12.0]:
-		_box(b, "BraceX", Vector3(5.5, 0.35, 0.35), Vector3(0, y, -2.5), "rust", 0.0, false)
-		_box(b, "BraceX", Vector3(5.5, 0.35, 0.35), Vector3(0, y, 2.5), "rust", 0.0, false)
-		_box(b, "BraceZ", Vector3(0.35, 0.35, 5.5), Vector3(-2.5, y, 0), "rust", 0.0, false)
-		_box(b, "BraceZ", Vector3(0.35, 0.35, 5.5), Vector3(2.5, y, 0), "rust", 0.0, false)
-	_box(b, "Platform", Vector3(7, 0.5, 7), Vector3(0, 18.25, 0), "metal_dark")
-	var wheel := _cylinder(b, "Sheave", 2.3, 0.4, Vector3(0, 20.4, 0), "metal_dark", false, 16)
-	wheel.rotation.x = PI / 2.0
-	var stay := _box(b, "BackStay", Vector3(0.5, 20, 0.5), Vector3(7.5, 9, 0), "rust", 0.0, false)
-	stay.rotation.z = deg_to_rad(28)
-	_box(b, "ShaftCollar", Vector3(6, 0.6, 6), Vector3(0, 0.3, 0), "concrete")
-	# Hoist house, sheds, conveyor, spoil heap
-	_box(b, "HoistHouse", Vector3(8, 5, 10), Vector3(15, 2.5, 0), "corrugated")
-	_roof(b, "HoistRoof", Vector3(8.6, 2, 10.6), Vector3(15, 6, 0), "rust", 90.0)
-	_box(b, "ShedA", Vector3(10, 4, 6), Vector3(-6, 2, 18), "corrugated", 10.0)
-	_box(b, "ShedB", Vector3(6, 3.5, 6), Vector3(10, 1.75, 20), "corrugated", -8.0)
-	var conveyor := _box(b, "Conveyor", Vector3(2, 0.8, 24), Vector3(-10, 5, -6), "metal_dark", 30.0, false)
-	conveyor.rotation.x = deg_to_rad(-18)
-	_box(b, "Hopper", Vector3(4, 4, 4), Vector3(-16, 2, -16), "rust", 30.0)
-	var spoil: Array = _rock_mesh("hill", 2)
-	var heap := MeshInstance3D.new()
-	heap.name = "SpoilHeap"
-	heap.mesh = spoil[0]
-	heap.material_override = M["rock_dark"]
-	heap.scale = Vector3(9, 7, 8)
-	heap.position = Vector3(-22, -0.3, 4)
-	b.add_child(heap)
-	var cs := CollisionShape3D.new()
-	cs.name = "SpoilHeapCol"
-	var convex := ConvexPolygonShape3D.new()
-	var pts := PackedVector3Array()
-	for v: Vector3 in spoil[1]:
-		pts.append(v * heap.scale + heap.position)
-	convex.points = pts
-	cs.shape = convex
-	b.add_child(cs)
-	# A mine-cart track to the shaft
-	_box(b, "TrackL", Vector3(0.12, 0.1, 18), Vector3(-0.6, 0.05, 12), "rust", 0.0, false)
-	_box(b, "TrackR", Vector3(0.12, 0.1, 18), Vector3(0.6, 0.05, 12), "rust", 0.0, false)
-	_box(b, "Cart", Vector3(1.6, 1.2, 2.2), Vector3(0, 0.75, 14), "rust")
-	return root
-
-
-func _northwatch() -> Node3D:
-	var root := _site_root("NorthwatchOutpost")
-	var b := _solid_body("Blockout")
-	root.add_child(b)
-	# A small walled post, its gate facing the road from the south
-	_box(b, "WallN", Vector3(36, 3.2, 0.6), Vector3(0, 1.6, -18), "concrete")
-	_box(b, "WallW", Vector3(0.6, 3.2, 36), Vector3(-18, 1.6, 0), "concrete")
-	_box(b, "WallE", Vector3(0.6, 3.2, 36), Vector3(18, 1.6, 0), "concrete")
-	_box(b, "WallSW", Vector3(15, 3.2, 0.6), Vector3(-10.5, 1.6, 18), "concrete")
-	_box(b, "WallSE", Vector3(15, 3.2, 0.6), Vector3(10.5, 1.6, 18), "concrete")
-	_box(b, "GatePostW", Vector3(0.8, 4, 0.8), Vector3(-3.2, 2, 18), "concrete_stained")
-	_box(b, "GatePostE", Vector3(0.8, 4, 0.8), Vector3(3.2, 2, 18), "concrete_stained")
-	_box(b, "Barrier", Vector3(6, 0.15, 0.15), Vector3(0, 1.1, 18.6), "hazard", 0.0, false)
-	for leg in [Vector3(-1.8, 0, -1.8), Vector3(1.8, 0, -1.8), Vector3(-1.8, 0, 1.8), Vector3(1.8, 0, 1.8)]:
-		_box(b, "TowerLeg", Vector3(0.35, 11, 0.35), Vector3(12, 5.5, -12) + leg, "metal_dark")
-	_box(b, "TowerCabin", Vector3(4.2, 2.6, 4.2), Vector3(12, 12.3, -12), "olive")
-	_box(b, "TowerRoof", Vector3(5, 0.25, 5), Vector3(12, 13.75, -12), "corrugated", 0.0, false)
-	_cylinder(b, "Mast", 0.25, 30, Vector3(-11, 15, -11), "metal_dark", true, 8)
-	var dish := _cylinder(b, "Dish", 1.6, 0.25, Vector3(-11, 24, -10), "metal_dark", false, 16)
-	dish.rotation.x = deg_to_rad(60)
-	_box(b, "Barracks", Vector3(12, 3.6, 6), Vector3(-6, 1.8, 8), "concrete_stained")
-	_box(b, "Command", Vector3(7, 3.4, 7), Vector3(8, 1.7, 6), "concrete_stained")
-	_box(b, "SandbagsW", Vector3(3.5, 1.0, 1.0), Vector3(-6, 0.5, 21), "sandbag")
-	_box(b, "SandbagsE", Vector3(3.5, 1.0, 1.0), Vector3(6, 0.5, 21), "sandbag")
-	return root
-
-
 # ================================================================ the zone
 
 const TILE := 100.0
@@ -1266,10 +1011,11 @@ func _zone() -> void:
 	haldens.name = "HaldensCrossing"
 	haldens.position = HALDENS_AT
 	zone.add_child(haldens)
+	# The other five places (Increment 16: tools/build_sites.gd builds them)
 	for pair in [["SaintMercyClinic", "saint_mercy_clinic"], ["AshCreekFarms", "ash_creek_farms"],
 			["SmugglersGulch", "smugglers_gulch"], ["BlackRidgeMine", "black_ridge_mine"],
 			["NorthwatchOutpost", "northwatch_outpost"]]:
-		var site := (load(OUT + "sites/" + pair[1] + ".tscn") as PackedScene).instantiate() as Node3D
+		var site := (load("res://levels/%s/%s.tscn" % [pair[1], pair[1]]) as PackedScene).instantiate() as Node3D
 		site.name = pair[0]
 		var c: Vector2 = PLACES[pair[0]][1]
 		site.position = Vector3(c.x, 0, c.y)

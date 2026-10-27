@@ -1,7 +1,7 @@
 extends "res://tests/test_case.gd"
 ## Increment 15: the early zone. Laid out from the Regional Buildout Map
 ## (Outpost 17 on the coast, Halden's Crossing to the north-east, five
-## blockout places), walkable end to end, an ash-storm edge instead of
+## more places, built out in Increment 16), walkable end to end, an ash-storm edge instead of
 ## border walls, the compass and place names, sleeping spawners, navmesh
 ## tiles, and saves from the old levels moved into the zone.
 
@@ -70,7 +70,7 @@ func test_places_where_the_map_puts_them() -> void:
 		var l := marks.get_node_or_null(key) as Landmark
 		check(l != null and Vector2(l.position.x, l.position.z).distance_to(PLACES[key]) < 1.0 and l.display_name != "", "%s landmark" % key)
 		if site != null and key != "Outpost17" and key != "HaldensCrossing":
-			check(site.get_meta("blockout", false), "%s is a blockout for now" % key)
+			check(not site.get_meta("blockout", false), "%s is a real place now (Increment 16)" % key)
 			check(site.find_children("*", "StaticBody3D", true, false).size() > 0, "%s is solid" % key)
 	# The map's directions: north is -z, east is +x
 	var h: Vector2 = PLACES["HaldensCrossing"]
@@ -129,7 +129,7 @@ func test_every_place_reachable_on_foot() -> void:
 		if key == "Outpost17":
 			continue
 		var c: Vector2 = PLACES[key]
-		# The edge of the place, toward the outpost (blockouts are solid inside)
+		# The edge of the place, toward the outpost (30 m out, clear of the buildings)
 		var r := 30.0 if key != "HaldensCrossing" else 0.0
 		var goal := Vector3(c.x, 0, c.y) + Vector3(-c.x, 0, -c.y).normalized() * r
 		goal = NavigationServer3D.map_get_closest_point(map, goal)
@@ -408,7 +408,7 @@ func test_old_saves_move_into_the_zone() -> void:
 	var old := _v2_save_in_town()
 	check(saves.validate(old) == "", "a version 2 save is still valid")
 	var data: Dictionary = saves._migrate(old.duplicate(true))
-	check(int(data["version"]) == 3 and data["level"] == ZONE_PATH, "now a version 3 save of the zone")
+	check(int(data["version"]) == 4 and data["level"] == ZONE_PATH, "now a version 4 save of the zone")
 	check((data["regions"] as Dictionary).is_empty(), "both old levels are part of the zone now")
 	var by_path := {}
 	for e: Dictionary in data["nodes"]:
@@ -474,7 +474,7 @@ func test_save_and_load_across_the_zone() -> void:
 	await _teleport(p, HALDENS_AT + Vector3(-20, 0.05, 10))
 	check(saves.save_game("zone_test", zone) == OK, "saved in the town")
 	var data: Dictionary = saves.read_save_file(saves.slot_path("zone_test"))
-	check(int(data["version"]) == 3 and data["level"] == ZONE_PATH and not data.has("untouched"), "one level, version 3")
+	check(int(data["version"]) == 4 and data["level"] == ZONE_PATH and not data.has("untouched"), "one level, version 4")
 	await _free(zone)
 	var zone2 := await load_zone()
 	check(saves.load_game("zone_test", zone2) == OK, "loaded into a fresh zone")

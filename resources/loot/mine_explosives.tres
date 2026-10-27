@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_o5gae"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="2_3get4"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="3_hyylc"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="4_yncss"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="5_6ovml"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="6_smj8h"]
+
+[sub_resource type="Resource" id="Resource_ae1l2"]
+script = ExtResource("1_o5gae")
+item = ExtResource("2_3get4")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_4m722"]
+script = ExtResource("1_o5gae")
+item = ExtResource("3_hyylc")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_885vj"]
+script = ExtResource("1_o5gae")
+item = ExtResource("4_yncss")
+
+[sub_resource type="Resource" id="Resource_k3ynj"]
+script = ExtResource("1_o5gae")
+item = ExtResource("5_6ovml")
+min_quantity = 3
+max_quantity = 5
+
+[resource]
+script = ExtResource("6_smj8h")
+guaranteed = Array[ExtResource("1_o5gae")]([SubResource("Resource_k3ynj")])
+entries = Array[ExtResource("1_o5gae")]([SubResource("Resource_ae1l2"), SubResource("Resource_4m722"), SubResource("Resource_885vj")])
+max_rolls = 2

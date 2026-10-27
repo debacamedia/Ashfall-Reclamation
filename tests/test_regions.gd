@@ -265,7 +265,7 @@ func test_save_and_load_remembers_the_other_region() -> void:
 	await _teleport(p, Vector3(-12, 0.05, 2))
 	check(_sm().save_game("regions_test", b) == OK, "saved in B")
 	var data: Dictionary = _sm().read_save_file(_sm().slot_path("regions_test"))
-	check(int(data.get("version")) == 3 and data.get("level") == REGION_B, "version 3, B's level")
+	check(int(data.get("version")) == 4 and data.get("level") == REGION_B, "version 4, B's level")
 	check((data.get("regions") as Dictionary).has(REGION_A), "A's state is in the save")
 	# Forget everything, then load
 	_wm().reset()
@@ -281,7 +281,7 @@ func test_save_and_load_remembers_the_other_region() -> void:
 	# A version-1 save still loads (no regions)
 	var v1 := {"format": "ashfall_save", "version": 1, "level": REGION_A, "nodes": []}
 	check(_sm().validate(v1) == "", "v1 accepted")
-	check(_sm()._migrate(v1).get("regions") == {} and int(v1["version"]) == 3, "v1 migrated")
+	check(_sm()._migrate(v1).get("regions") == {} and int(v1["version"]) == 4, "v1 migrated")
 	_sm().delete_save("regions_test")
 	_sm().save_dir = "user://saves"
 	_wm().reset()
