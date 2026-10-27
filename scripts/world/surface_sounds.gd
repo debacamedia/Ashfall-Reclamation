@@ -1,7 +1,7 @@
 class_name SurfaceSounds
 extends RefCounted
-## What something is made of, for footsteps and bullet impacts (Resource
-## Pack 3 sound sets): &"gravel", &"concrete", &"metal" or &"wood".
+## What something is made of, for bullet impacts (Resource Pack 3 sound
+## sets): &"gravel", &"concrete", &"metal" or &"wood".
 ##
 ## A node can say for itself with the metadata "surface" (on it or a parent
 ## up to three levels). Otherwise:
@@ -14,12 +14,6 @@ extends RefCounted
 ##   - the ground (terrain layer) → gravel
 ##   - anything else solid (buildings, walls, floors) → concrete
 
-const FOOTSTEPS := {
-	&"gravel": preload("res://assets/ashfall_pack_v3/sets/footstep_gravel.tres"),
-	&"concrete": preload("res://assets/ashfall_pack_v3/sets/footstep_concrete.tres"),
-	&"metal": preload("res://assets/ashfall_pack_v3/sets/footstep_metal.tres"),
-	&"wood": preload("res://assets/ashfall_pack_v3/sets/footstep_wood.tres"),
-}
 const IMPACTS := {
 	&"gravel": preload("res://assets/ashfall_pack_v3/sets/impact_dirt.tres"),
 	&"concrete": preload("res://assets/ashfall_pack_v3/sets/impact_concrete.tres"),
@@ -70,23 +64,8 @@ static func of(collider: Object) -> StringName:
 	return &"concrete"
 
 
-static func footstep(surface: StringName) -> AudioStream:
-	return FOOTSTEPS.get(surface, FOOTSTEPS[&"gravel"])
-
-
 static func impact(surface: StringName) -> AudioStream:
 	return IMPACTS.get(surface, IMPACTS[&"concrete"])
-
-
-## The floor a CharacterBody3D is standing on (or null).
-static func floor_collider(body: CharacterBody3D) -> Object:
-	if not body.is_on_floor():
-		return null
-	for i in body.get_slide_collision_count():
-		var c := body.get_slide_collision(i)
-		if c.get_normal().y > 0.6:
-			return c.get_collider()
-	return null
 
 
 static func _has_any(text: String, words: Array) -> bool:

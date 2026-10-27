@@ -21,7 +21,7 @@
 [ext_resource type="AudioStream" path="res://assets/audio/sets/raider_death.tres" id="18_jd5go"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/machete_swing.tres" id="19_rqjxy"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/impact_flesh.tres" id="20_iunrb"]
-[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/footstep_gravel.tres" id="21_ipnhw"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/footstep_gravel.tres" id="21_ipnhw"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cbrhk"]
 radius = 0.35

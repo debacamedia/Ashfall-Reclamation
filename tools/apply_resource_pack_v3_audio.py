@@ -6,8 +6,8 @@ makes the sets):
 
     python3 tools/apply_resource_pack_v3_audio.py
 
-Left as they are (the pack's versions measured badly; see
-docs/art/ashfall_pack_v3/INTEGRATION.md): gunshots, raider voices, the
+Left as they are (see docs/art/ashfall_pack_v3/INTEGRATION.md): footsteps
+(reverted after playtesting), gunshots, raider voices, the
 player's hurt grunts, the heartbeat, the death sting, wind, the marksman
 reload, target pings. Re-running is safe.
 """
@@ -61,7 +61,6 @@ GENERAL = {
     A + "pistol_reload.wav": P3 + "audio/pistol_reload.wav",
     A + "sets/impact_flesh.tres": P3 + "sets/impact_flesh.tres",
     A + "sets/impact_dirt.tres": P3 + "sets/impact_dirt.tres",
-    A + "sets/footstep_gravel.tres": P3 + "sets/footstep_gravel.tres",
 }
 
 EXT = re.compile(r'^(\[ext_resource [^\]]*?)( uid="[^"]*")?( path=")([^"]+)(")', re.M)

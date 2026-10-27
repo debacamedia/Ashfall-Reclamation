@@ -1,7 +1,8 @@
 extends "res://tests/test_case.gd"
 ## Resource Pack 3.0: installed as shipped, sound sets and materials built,
 ## signs/graffiti/decals placed on real surfaces in both levels, no new
-## collision or save data, surface-aware footsteps and impacts, crafting and
+## collision or save data, surface-aware impacts (footsteps keep the original
+## sounds: the pack's were reverted after playtesting), crafting and
 ## salvage sounds, weathered container paint, seamless derived loops and sky.
 
 const PACK := "res://assets/ashfall_pack_v3/"
@@ -181,7 +182,10 @@ func test_surfaces() -> void:
 	check(SurfaceSounds.of(tagged) == &"metal", "a node can tag itself")
 
 
-func test_footsteps_follow_the_floor() -> void:
+func test_footsteps_keep_the_original_sound() -> void:
+	# The pack's footsteps were reverted after playtesting: the player and
+	# both raiders keep the original set, whatever they walk on.
+	var orig := load("res://assets/audio/sets/footstep_gravel.tres")
 	make_static_box(Vector3(40, 1, 40), Vector3(0, -0.5, 0), PhysicsLayers.TERRAIN)
 	var deck := (load("res://scenes/structures/wooden_platform.tscn") as PackedScene).instantiate() as Node3D
 	deck.position = Vector3(6, 0, 0)
@@ -189,7 +193,7 @@ func test_footsteps_follow_the_floor() -> void:
 	var p := PLAYER_SCENE.instantiate() as PlayerController
 	p.controlled_locally = false
 	p.head_bob_enabled = false
-	p.position = Vector3(0, 0.05, 0)
+	p.position = Vector3(6, 2.7, 0)
 	add_child(p)
 	var audio := _audio(p)
 	var f := InputFrame.new()
@@ -197,16 +201,15 @@ func test_footsteps_follow_the_floor() -> void:
 	for i in 90:
 		await get_tree().physics_frame
 		p.simulate(f, DT)
-	check(audio.footstep_count > 0 and audio.last_surface == &"gravel", "walking on the ground: gravel (%s)" % audio.last_surface)
-	check((p.get_node("%Footsteps") as AudioStreamPlayer3D).stream == SurfaceSounds.footstep(&"gravel"), "gravel footstep set")
-	p.global_position = Vector3(6, 2.7, 0)
-	var n0 := audio.footstep_count
-	for i in 90:
-		await get_tree().physics_frame
-		p.simulate(f, DT)
 		if p.global_position.z < -0.9:
 			p.global_position.z = 0.9
-	check(audio.footstep_count > n0 and audio.last_surface == &"wood", "on a wooden deck: wood (%s)" % audio.last_surface)
+	check(audio.footstep_count > 0, "footsteps play")
+	check((p.get_node("%Footsteps") as AudioStreamPlayer3D).stream == orig, "player: original footsteps, even on wood")
+	for scene in ["res://scenes/enemies/raider.tscn", "res://scenes/enemies/raider_veteran.tscn"]:
+		var r := (load(scene) as PackedScene).instantiate()
+		check((r.get_node("%FootstepSound") as AudioStreamPlayer3D).stream == orig, "%s: original footsteps" % scene.get_file())
+		r.free()
+	check(not ResourceLoader.exists(PACK + "sets/footstep_gravel.tres"), "no pack footstep sets built")
 
 
 func test_bullets_sound_like_what_they_hit() -> void:

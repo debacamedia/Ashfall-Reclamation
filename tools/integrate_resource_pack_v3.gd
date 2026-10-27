@@ -52,10 +52,6 @@ func _run() -> void:
 
 ## name → [file prefix, count, pitch variation, volume variation dB]
 const SET_SPECS := {
-	"footstep_concrete": ["footstep_concrete_", 6, 1.06, 1.5],
-	"footstep_gravel": ["footstep_gravel_", 6, 1.06, 1.5],
-	"footstep_metal": ["footstep_metal_", 6, 1.05, 1.5],
-	"footstep_wood": ["footstep_wood_", 6, 1.06, 1.5],
 	"impact_concrete": ["impact_concrete_", 3, 1.1, 1.0],
 	"impact_dirt": ["impact_dirt_", 3, 1.1, 1.0],
 	"impact_flesh": ["impact_flesh_", 3, 1.08, 1.0],

@@ -7,7 +7,7 @@ The pack is in `assets/ashfall_pack_v3/` exactly as shipped: 253 files, byte-ide
 | Folder | Contents |
 |---|---|
 | `derived/` | Fixed copies: seamless fire and insect loops, and the dusty sky with its seam removed |
-| `sets/` | 26 sound sets. Each one picks a random take and varies its pitch a little |
+| `sets/` | 22 sound sets. Each one picks a random take and varies its pitch a little |
 | `materials/` | 37 materials for textures, signs, graffiti and decals |
 | `environments/` | Sky environments, built but not used |
 
@@ -15,7 +15,7 @@ No existing material, script, scene, sound or texture was overwritten. Existing 
 
 ## Integrated vs only imported
 
-**155 of the pack's 251 asset files are used in the game. The other 96 are imported only.** Imported-only files are in the project and load, but nothing uses them. `tests/test_art_pack3.gd` checks what's placed in each level.
+**131 of the pack's 251 asset files are used in the game. The other 120 are imported only.** Imported-only files are in the project and load, but nothing uses them. `tests/test_art_pack3.gd` checks what's placed in each level.
 
 ### Textures (13 sets)
 
@@ -62,14 +62,14 @@ These are flat textured quads rather than Godot `Decal` nodes. `Decal` nodes don
 
 ### Sound (145 files)
 
-**Integrated (110 files):**
+**Integrated (86 files):**
 
-- **Surface footsteps** (gravel, concrete, metal, wood) for both the player and raiders, picked by what's underfoot:
+- **Bullet impacts** picked by the surface hit: dirt, concrete or metal.
   - Built structures and props go by their type.
-  - Ground is gravel.
+  - Ground is dirt.
   - Buildings are concrete.
   - A node can override this with the `surface` metadata.
-- **Bullet impacts** chosen the same way: dirt, concrete or metal. Wood keeps the existing structure-hit sound, since the pack has no wood impact.
+  - Wood keeps the existing structure-hit sound, since the pack has no wood impact.
 - **Bodies and the machete:** flesh impacts, plus the machete's swing and its own hit sound.
 - **Movement:** jumping and landing, ladder steps.
 - **Weapons:**
@@ -88,10 +88,11 @@ These are flat textured quads rather than Godot `Decal` nodes. `Decal` nodes don
   - Halden's: town ruins, distant gunfire, and insects at the farmhouse.
   - The burning barrels' fire loop.
 
-**Imported only (36 files):**
+**Imported only (60 files):**
 
 | Files | Why not |
 |---|---|
+| Footsteps: gravel, concrete, metal, wood (24) | **Reverted after your playtest: they sounded bad.** The player and raiders use the original footsteps again |
 | Every gunshot: pistol, rifle, shotgun, marksman, pipe pistol, both suppressed (21) | The pistol, rifle and shotgun shots are thinner than the current ones. The marksman, pipe-pistol and suppressed shots measure as mostly hiss. **Listen for yourself; I can swap any of them in.** |
 | Raider alert, pain and death (9) | The takes in each group sound nearly identical. The current voices vary more |
 | Player hurt (3) | The current ones read better against gunfire |
@@ -143,8 +144,7 @@ All are **imported only.**
 | Script | Change |
 |---|---|
 | `scripts/world/surface_sounds.gd` | New: decides what a surface is made of |
-| `player_audio.gd` | Surface footsteps; crafting tool sounds |
-| `raider.gd` | Surface footsteps |
+| `player_audio.gd` | Crafting tool sounds |
 | `bullet_impact.gd`, `hitscan_weapon.gd` | Impact sound follows the surface hit |
 | `salvage_pile.gd` | Tearing sounds while held, break sound |
 | `shipping_container.gd` | Pack paint, keeping each container's colour |
@@ -181,7 +181,7 @@ All four are safe to re-run.
   | Halden's dressing | 13 signs and graffiti, 15 decals, looping ambience, nothing saved |
   | Outpost dressing | 9 decals, and an old save still loads |
   | Surfaces | Each surface is classified correctly |
-  | Footsteps | They follow the floor underfoot |
+  | Footsteps | The player and both raider types keep the original sound |
   | Bullet impacts | They match what was hit |
   | Crafting and salvage | The right sounds play |
   | Containers | They keep their paint colour |

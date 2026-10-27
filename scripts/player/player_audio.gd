@@ -1,7 +1,6 @@
 class_name PlayerAudio
 extends Node3D
-## The player's own sounds: footsteps (by distance walked, by what's
-## underfoot), landing, getting hurt, a heartbeat at low health, the death
+## The player's own sounds: footsteps (by distance walked), landing, getting hurt, a heartbeat at low health, the death
 ## sting, pickup and item-use sounds, ladder rungs, raising the sights, and
 ## tools at work while crafting (saw, hammer, file: Resource Pack 3).
 ## Purely presentation: reads the player, never changes game state.
@@ -40,8 +39,6 @@ var _craft_turn := 0
 var craft_sound_count := 0
 ## How many footstep sounds have played (used by tests).
 var footstep_count := 0
-## What the last footstep was on (&"gravel", &"concrete", &"metal", &"wood").
-var last_surface := &"gravel"
 
 
 func _ready() -> void:
@@ -99,10 +96,6 @@ func _physics_process(delta: float) -> void:
 		if _distance >= stride:
 			_distance = 0.0
 			_footsteps.volume_db = -17.0 if _player.is_crouching else -10.0
-			# Gravel, concrete, metal or wood, by what's underfoot
-			var under := SurfaceSounds.floor_collider(_player)
-			last_surface = SurfaceSounds.of(under) if under != null else &"gravel"
-			_footsteps.stream = SurfaceSounds.footstep(last_surface)
 			_footsteps.play()
 			footstep_count += 1
 	else:
