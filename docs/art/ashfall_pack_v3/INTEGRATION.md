@@ -1,6 +1,6 @@
 # ASHFALL Resource Pack 3.0: integration
 
-Branch `art/ashfall-pack-v3`, from `main`. **Not merged. It's waiting for your review.**
+Merged into `main` in PR #15 (26 Oct 2026), after a playtest. The pack's footsteps were reverted at that review.
 
 The pack is in `assets/ashfall_pack_v3/` exactly as shipped: 253 files, byte-identical to the ZIP, with its own README and manifest. Files I made from it live beside it, in clearly named folders:
 
