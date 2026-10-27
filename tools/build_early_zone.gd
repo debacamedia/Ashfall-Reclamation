@@ -998,7 +998,10 @@ func _zone() -> void:
 	sun.light_color = Color(1, 0.93, 0.83)
 	sun.light_energy = 1.2
 	sun.shadow_enabled = true
-	sun.directional_shadow_max_distance = 150.0
+	# Two cascades to 120 m: each cascade draws every shadow caster again, and
+	# past 120 m the haze softens everything anyway (Increment 16.5)
+	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
+	sun.directional_shadow_max_distance = 120.0
 	lighting.add_child(sun)
 	# Ground, roads, rocks
 	for part in ["terrain", "roads", "rocks"]:

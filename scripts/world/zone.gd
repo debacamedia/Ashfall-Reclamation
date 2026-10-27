@@ -5,7 +5,9 @@ extends Node3D
 ## edge (ZoneBoundary). See levels/early_zone/.
 ##
 ## On load it gives every small thing a draw distance, so a town 500 m away
-## costs only its big shapes: the haze hides it anyway.
+## costs only its big shapes: the haze hides it anyway. Before that, each
+## site's plain building meshes are merged and its interiors culled early
+## (StaticBatcher, Increment 16.5).
 
 ## Draw distances (m) by the size of the thing.
 const SMALL := 2.5     ## props, loot, signs: under this size
@@ -16,10 +18,28 @@ const LARGE_RANGE := 750.0
 
 ## How many meshes were given a draw distance (read by tests).
 var ranged := 0
+## Per site: what StaticBatcher did (read by tests and the benchmark).
+var batch_stats := {}
+## Off to compare before and after (the benchmark's --no-batch).
+@export var batch_sites := true
 
 
 func _ready() -> void:
+	if batch_sites:
+		var t0 := Time.get_ticks_msec()
+		for site in sites():
+			batch_stats[site.name] = StaticBatcher.batch(site)
+		batch_stats["_ms"] = Time.get_ticks_msec() - t0
 	apply_draw_distances(self)
+
+
+## The places in the zone: each is its own level scene instanced here.
+func sites() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	for c in get_children():
+		if c is Node3D and c.scene_file_path.begins_with("res://levels/") and c.has_meta("region_name"):
+			out.append(c)
+	return out
 
 
 func apply_draw_distances(root: Node) -> void:

@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 16 (the five places, built out)
+## Current state: Increment 16.5 (performance pass)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -20,6 +20,7 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 14:** **fort building**: walls, fences and barricades **snap end to end** at any angle (R sets the joint: 45°, 90°…); wall kits place as **solid, window or doorway** (V); **platforms** you can stack and build on, reached by **stairs** (raiders follow) or **ladders** (they can't); a craftable **chain-link fence**; the gate opens with E anywhere on it. The outpost's own **props and loot containers can be moved (F) or scrapped (X)** for materials (trucks scrap only; containers once emptied). **Spike traps slow raiders to 1/4 speed.** Magic Mouse / trackpad swipes choose kits and weapons. Up to 1,000 structures per region, with merged meshes for speed.
 - **Increment 15:** **the early zone**: Outpost 17 and Halden's Crossing are now one walkable zone laid out from the Regional Buildout Map. The outpost is on the west coast, Halden's ~530 m north-east up a new main road, with five more places marked out: Saint Mercy Clinic, Ash Creek Farms, Smuggler's Gulch, Black Ridge Mine and Northwatch Outpost. Roads, a railway and signposts join them, and a **compass** shows where everything is. The old border berms are gone: the zone's edge is an **ash storm** (it warns, then hurts, then stops you) and the coast. Raiders only appear near you. Old saves move into the zone automatically.
 - **Increment 16:** **the five places, built out**: Saint Mercy Clinic (a two-storey hospital with wards, a pharmacy and a rooftop), Ash Creek Farms (barn and hayloft, farmhouse, a water tower to climb), Smuggler's Gulch (a den in a ring of red rock, held by Raider Veterans), Black Ridge Mine (headframe, mine office with a safe, a tunnel into the ridge) and Northwatch Outpost (a walled military post with an armory and guard towers). 21 buildings to go into, 45 containers with 9 new loot tables, 42 salvage piles, 31 pickups, 8 ladders, 3 crafting stations, raiders at every place, and lamp-lit interiors. See [`docs/increments/16_places.md`](docs/increments/16_places.md).
+- **Increment 16.5:** **performance pass**: buildings merge into a few meshes per place when the zone loads; interiors are drawn only within 70 m; the sun's shadows use two cascades; buildings hide what's behind them (occlusion culling). About 60% fewer draw calls for the same picture. F3 now shows fps and draw calls, and `tools/benchmark.gd` measures a fixed route. See [`docs/increments/16_5_performance.md`](docs/increments/16_5_performance.md).
 - **Resource Pack 3:** weathered brick, cracked asphalt, tar-paper roofs and painted containers; shop signs, raider graffiti and decals across Halden's Crossing and Outpost 17; bullet impacts that sound like the surface; crafting, salvage, pickup, reload and container sounds; town ambience. See [`docs/art/ashfall_pack_v3/INTEGRATION.md`](docs/art/ashfall_pack_v3/INTEGRATION.md) for what's integrated and what's only imported.
 
 ## Run it
@@ -27,7 +28,7 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
 3. Press **F5**.
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug (fps, draw calls).
 
 ## After pulling an update — important
 Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.

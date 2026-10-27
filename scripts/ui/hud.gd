@@ -144,11 +144,16 @@ func _process(delta: float) -> void:
 	_update_death_screen()
 
 	if _debug_label.visible:
-		_debug_label.text = "%s\n%.1f m/s\npos %s\nHP %.1f" % [
+		_debug_label.text = "%s\n%.1f m/s\npos %s\nHP %.1f\n%d fps (%.1f ms a frame)\n%d objects, %d draw calls, %dk triangles" % [
 			player.get_state_name(),
 			player.get_horizontal_speed(),
 			player.global_position.snappedf(0.1),
 			player.health.current_health,
+			Engine.get_frames_per_second(),
+			1000.0 / maxf(Engine.get_frames_per_second(), 1.0),
+			Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME),
+			Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
+			Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME) / 1000.0,
 		]
 
 

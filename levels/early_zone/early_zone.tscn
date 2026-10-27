@@ -92,7 +92,8 @@ transform = Transform3D(0.81915206, 0.35312894, -0.45198444, 0, 0.7880108, 0.615
 light_color = Color(1, 0.93, 0.83, 1)
 light_energy = 1.2
 shadow_enabled = true
-directional_shadow_max_distance = 150.0
+directional_shadow_mode = 1
+directional_shadow_max_distance = 120.0
 
 [node name="Terrain" type="Node3D" parent="." unique_id=738818456 instance=ExtResource("3_jc4ue")]
 

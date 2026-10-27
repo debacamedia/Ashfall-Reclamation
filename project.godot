@@ -202,4 +202,6 @@ build_variant={
 
 [rendering]
 
+occlusion_culling/use_occlusion_culling=true
+
 anti_aliasing/quality/msaa_3d=2
