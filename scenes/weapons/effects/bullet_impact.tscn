@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/combat/bullet_impact.gd" id="1_ok1st"]
-[ext_resource type="AudioStream" path="res://assets/audio/sets/impact_dirt.tres" id="2_ms4iy"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/impact_dirt.tres" id="2_ms4iy"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/impact_hard.tres" id="3_h8a0g"]
 
 [sub_resource type="Gradient" id="Gradient_3q4p5"]

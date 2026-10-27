@@ -3,7 +3,7 @@
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_yxw30"]
 [ext_resource type="Script" path="res://scripts/world/flicker_light.gd" id="2_j5r5i"]
 [ext_resource type="Script" path="res://scripts/combat/damage_zone.gd" id="3_34ec5"]
-[ext_resource type="AudioStream" path="res://assets/audio/fire_loop.wav" id="4_j5r5i"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/derived/amb_fire_barrel_loop.wav" id="4_j5r5i"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_7f6su"]
 top_radius = 0.29

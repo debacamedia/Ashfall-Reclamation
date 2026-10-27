@@ -325,7 +325,7 @@ func _resolve_hit(result: Dictionary, origin: Vector3, direction: Vector3, shoot
 	# Characters and targets make their own hit sounds; no decal on them
 	if spawn_impact_effects and _impact_scene != null and health == null:
 		var hard := collider is CollisionObject3D and (collider as CollisionObject3D).collision_layer & PhysicsLayers.STRUCTURES != 0
-		_spawn_impact(position, normal, hard)
+		_spawn_impact(position, normal, hard, SurfaceSounds.of(collider))
 
 	var zone_multiplier := _zone_multiplier(collider, result["shape"])
 	if health == null or zone_multiplier <= 0.0:
@@ -383,12 +383,13 @@ func _finish_reload() -> void:
 	ammo_changed.emit(ammo_in_magazine, reserve_ammo)
 
 
-func _spawn_impact(position: Vector3, normal: Vector3, hard_surface: bool) -> void:
+func _spawn_impact(position: Vector3, normal: Vector3, hard_surface: bool, surface := &"") -> void:
 	var impacts := get_tree().get_nodes_in_group("bullet_impacts")
 	if impacts.size() >= MAX_IMPACT_EFFECTS:
 		impacts[0].queue_free()
 	var impact := _impact_scene.instantiate() as Node3D
 	impact.set("hard_surface", hard_surface)
+	impact.set("surface", surface)
 	var parent := get_tree().current_scene if get_tree().current_scene != null else get_tree().root
 	parent.add_child(impact)
 	impact.global_position = position + normal * 0.005

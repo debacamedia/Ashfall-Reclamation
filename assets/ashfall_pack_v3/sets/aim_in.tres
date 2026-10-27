@@ -1,0 +1,13 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/aim_in_1.wav" id="1_qow5g"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/aim_in_2.wav" id="2_d4o2n"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/aim_in_3.wav" id="3_gfws1"]
+
+[resource]
+random_pitch = 1.04
+random_volume_offset_db = 1.0
+streams_count = 3
+stream_0/stream = ExtResource("1_qow5g")
+stream_1/stream = ExtResource("2_d4o2n")
+stream_2/stream = ExtResource("3_gfws1")

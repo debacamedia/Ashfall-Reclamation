@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="Resource" path="res://resources/items/attachments/scope_4x_def.tres" id="1_es78u"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="2_e7634"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_metal.tres" id="2_e7634"]
 [ext_resource type="Texture2D" path="res://assets/icons/scope_4x.png" id="2_nyv1e"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_nyv1e"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/scope_4x_item.tscn" id="4_ia4sp"]

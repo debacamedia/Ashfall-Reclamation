@@ -1,0 +1,15 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/ladder_step_1.wav" id="1_amm4o"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/ladder_step_2.wav" id="2_fmjdq"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/ladder_step_3.wav" id="3_u64nw"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/ladder_step_4.wav" id="4_u7ckd"]
+
+[resource]
+random_pitch = 1.06
+random_volume_offset_db = 1.0
+streams_count = 4
+stream_0/stream = ExtResource("1_amm4o")
+stream_1/stream = ExtResource("2_fmjdq")
+stream_2/stream = ExtResource("3_u64nw")
+stream_3/stream = ExtResource("4_u7ckd")

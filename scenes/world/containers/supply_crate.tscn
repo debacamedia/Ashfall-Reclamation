@@ -5,9 +5,9 @@
 [ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="3_qivqp"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="4_oretm"]
 [ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="5_lftjx"]
-[ext_resource type="AudioStream" path="res://assets/audio/crate_open.wav" id="6_q14oe"]
-[ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="7_m7wni"]
-[ext_resource type="AudioStream" path="res://assets/audio/crate_close.wav" id="8_t5avd"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/crate_open.wav" id="6_q14oe"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/rummage.tres" id="7_m7wni"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/crate_close.wav" id="8_t5avd"]
 [ext_resource type="Script" path="res://scripts/construction/container_prop.gd" id="cp_script"]
 [ext_resource type="Resource" path="res://resources/structures/props/supply_crate.tres" id="cp_def"]
 

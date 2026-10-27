@@ -389,16 +389,17 @@ func test_close_keys() -> void:
 
 
 func test_lockers_clang_shut() -> void:
-	var clang := load("res://assets/audio/sets/ladder_step.tres")
+	# Resource Pack 3: lockers clang shut, crates thud
+	var clang := load("res://assets/ashfall_pack_v3/audio/locker_close.wav")
 	for path in ["res://scenes/world/containers/weapons_locker.tscn", "res://scenes/world/containers/footlocker.tscn"]:
 		var c := (load(path) as PackedScene).instantiate() as SalvageContainer
 		c.position = Vector3(15, 0, 15)
 		add_child(c)
-		check((c.get_node("%CloseSound") as AudioStreamPlayer3D).stream == clang, "%s closes with the ladder clang" % path.get_file())
+		check((c.get_node("%CloseSound") as AudioStreamPlayer3D).stream == clang, "%s closes with a metal clang" % path.get_file())
 	var crate := CRATE.instantiate() as SalvageContainer
 	crate.position = Vector3(-15, 0, 15)
 	add_child(crate)
-	check((crate.get_node("%CloseSound") as AudioStreamPlayer3D).stream == load("res://assets/audio/crate_close.wav"), "crates close with a wooden thud")
+	check((crate.get_node("%CloseSound") as AudioStreamPlayer3D).stream == load("res://assets/ashfall_pack_v3/audio/crate_close.wav"), "crates close with a wooden thud")
 	var r: Array = await _setup()
 	var p: PlayerController = r[0]
 	var c: SalvageContainer = r[1]

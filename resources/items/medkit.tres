@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
-[ext_resource type="AudioStream" path="res://assets/audio/heal.wav" id="1_3kx6o"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/heal_medkit.wav" id="1_3kx6o"]
 [ext_resource type="Texture2D" path="res://assets/icons/medkit.png" id="1_c3uck"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_7q60m"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="2_8jc5w"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="2_8jc5w"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/medkit.tscn" id="3_c3uck"]
 
 [resource]

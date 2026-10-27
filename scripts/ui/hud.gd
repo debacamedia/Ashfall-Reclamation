@@ -44,9 +44,9 @@ extends CanvasLayer
 @onready var _scope: Control = get_node_or_null("%ScopeOverlay")
 @onready var _ui_sound: AudioStreamPlayer = %UISound
 
-const SOUND_HIT := preload("res://assets/audio/ui_hit.wav")
-const SOUND_KILL := preload("res://assets/audio/ui_kill.wav")
-const SOUND_DENIED := preload("res://assets/audio/ui_denied.wav")
+const SOUND_HIT := preload("res://assets/ashfall_pack_v3/audio/ui_hitmarker.wav")
+const SOUND_KILL := preload("res://assets/ashfall_pack_v3/audio/ui_kill_confirm.wav")
+const SOUND_DENIED := preload("res://assets/ashfall_pack_v3/audio/ui_denied.wav")
 
 var _weapon: HitscanWeapon
 var _health: HealthComponent

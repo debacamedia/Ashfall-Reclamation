@@ -94,6 +94,7 @@
 [ext_resource type="Resource" path="res://resources/structures/props/portable_generator.tres" id="inc14_portable_generator"]
 [ext_resource type="Resource" path="res://resources/structures/props/field_radio.tres" id="inc14_field_radio"]
 [ext_resource type="Resource" path="res://resources/structures/props/salvage_toolbox.tres" id="inc14_salvage_toolbox"]
+[ext_resource type="PackedScene" path="res://levels/outpost_17/pack3_dressing.tscn" id="pack3_dressing"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
 size = Vector2(400, 400)
@@ -2951,3 +2952,5 @@ bus = &"Ambience"
 [editable path="FiringRange/FiringLineS"]
 
 [node name="Structures" type="Node3D" parent="." unique_id=22512389 groups=["navigation_geometry"]]
+
+[node name="Pack3Dressing" parent="." instance=ExtResource("pack3_dressing")]

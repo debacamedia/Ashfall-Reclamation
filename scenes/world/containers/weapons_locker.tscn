@@ -4,9 +4,9 @@
 [ext_resource type="Resource" path="res://resources/loot/weapons_locker.tres" id="2_eiuno"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_bhvfn"]
 [ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="4_eiato"]
-[ext_resource type="AudioStream" path="res://assets/audio/locker_open.wav" id="5_uirpw"]
-[ext_resource type="AudioStream" path="res://assets/audio/rummage.wav" id="6_37rfw"]
-[ext_resource type="AudioStream" path="res://assets/audio/sets/ladder_step.tres" id="7_eiuno"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/locker_open.wav" id="5_uirpw"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/rummage.tres" id="6_37rfw"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/locker_close.wav" id="7_eiuno"]
 [ext_resource type="Script" path="res://scripts/construction/container_prop.gd" id="cp_script"]
 [ext_resource type="Resource" path="res://resources/structures/props/weapons_locker.tres" id="cp_def"]
 

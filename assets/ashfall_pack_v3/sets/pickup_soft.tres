@@ -1,0 +1,13 @@
+[gd_resource type="AudioStreamRandomizer" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/pickup_soft_1.wav" id="1_qdt2f"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/pickup_soft_2.wav" id="2_6rmd5"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/pickup_soft_3.wav" id="3_naikk"]
+
+[resource]
+random_pitch = 1.05
+random_volume_offset_db = 1.0
+streams_count = 3
+stream_0/stream = ExtResource("1_qdt2f")
+stream_1/stream = ExtResource("2_6rmd5")
+stream_2/stream = ExtResource("3_naikk")

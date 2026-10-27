@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_oil_stain_1.tres" id="1_5fca5"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_oil_stain_2.tres" id="2_e4oj8"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_tyre_tracks.tres" id="3_m083n"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_scorch_1.tres" id="4_x3fok"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_scorch_2.tres" id="5_4a3lb"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_cracks.tres" id="6_kgfq6"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_poster_2.tres" id="7_xq2y3"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/decal_decal_poster_1.tres" id="8_s28jc"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_8n0ix"]
+size = Vector2(2.2, 2.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_5fca5"]
+size = Vector2(2.2, 2.2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_e4oj8"]
+size = Vector2(4, 4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_m083n"]
+size = Vector2(4, 4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_x3fok"]
+size = Vector2(3, 3)
+
+[sub_resource type="QuadMesh" id="QuadMesh_4a3lb"]
+size = Vector2(3, 3)
+
+[sub_resource type="QuadMesh" id="QuadMesh_kgfq6"]
+size = Vector2(3, 3)
+
+[sub_resource type="QuadMesh" id="QuadMesh_xq2y3"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_s28jc"]
+
+[node name="Pack3Dressing" type="Node3D" unique_id=1876693312]
+
+[node name="Decals" type="Node3D" parent="." unique_id=897135864]
+
+[node name="OilTruck0" type="MeshInstance3D" parent="Decals" unique_id=1563427952]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 17, 0.04, 9.5)
+material_override = ExtResource("1_5fca5")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_8n0ix")
+
+[node name="OilTruck1" type="MeshInstance3D" parent="Decals" unique_id=1503042333]
+transform = Transform3D(0.8660254, -0.5, -2.1855694e-08, 0, -4.371139e-08, 1, -0.5, -0.8660254, -3.7855173e-08, 22.290857, 0.04, 8.175491)
+material_override = ExtResource("2_e4oj8")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_5fca5")
+
+[node name="TracksGate" type="MeshInstance3D" parent="Decals" unique_id=1203477010]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.04, 18.5)
+material_override = ExtResource("3_m083n")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_e4oj8")
+
+[node name="TracksYard" type="MeshInstance3D" parent="Decals" unique_id=272852817]
+transform = Transform3D(0.99026805, -0.1391731, -6.0834497e-09, 0, -4.371139e-08, 1, -0.1391731, -0.99026805, -4.328599e-08, 0, 0.04, 13.5)
+material_override = ExtResource("3_m083n")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_m083n")
+
+[node name="ScorchYard" type="MeshInstance3D" parent="Decals" unique_id=514827537]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -2.5, 0.04, -3)
+material_override = ExtResource("4_x3fok")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_x3fok")
+
+[node name="ScorchMotorPool" type="MeshInstance3D" parent="Decals" unique_id=958315198]
+transform = Transform3D(0.49999997, -0.86602545, -3.7855173e-08, 0, -4.371139e-08, 1, -0.86602545, -0.49999997, -2.1855692e-08, 27, 0.04, 5)
+material_override = ExtResource("5_4a3lb")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_4a3lb")
+
+[node name="CracksYard" type="MeshInstance3D" parent="Decals" unique_id=162358558]
+transform = Transform3D(0.90630776, -0.42261827, -1.8473232e-08, 0, -4.371139e-08, 1, -0.42261827, -0.90630776, -3.961597e-08, -4, 0.04, 6)
+material_override = ExtResource("6_kgfq6")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_kgfq6")
+
+[node name="PosterCommandPost" type="MeshInstance3D" parent="Decals" unique_id=785544797]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1.5, -12.87)
+material_override = ExtResource("7_xq2y3")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_xq2y3")
+
+[node name="PosterBarracks" type="MeshInstance3D" parent="Decals" unique_id=355397252]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.5, -18.87)
+material_override = ExtResource("8_s28jc")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_s28jc")

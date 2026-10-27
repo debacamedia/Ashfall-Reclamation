@@ -4,10 +4,10 @@
 [ext_resource type="Resource" path="res://resources/items/weapons/machete.tres" id="2_chyuk"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_1xabe"]
 [ext_resource type="Material" path="res://assets/materials/wood.tres" id="4_fvhcq"]
-[ext_resource type="AudioStream" path="res://assets/audio/melee_swing.wav" id="5_847op"]
-[ext_resource type="AudioStream" path="res://assets/audio/rifle_reload.wav" id="6_auh53"]
-[ext_resource type="AudioStream" path="res://assets/audio/rifle_dry_fire.wav" id="7_mihsx"]
-[ext_resource type="AudioStream" path="res://assets/audio/sets/impact_flesh.tres" id="8_7fb75"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/machete_swing.tres" id="5_847op"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/rifle_reload.wav" id="6_auh53"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/dry_fire.tres" id="7_mihsx"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/machete_hit.tres" id="8_7fb75"]
 
 [sub_resource type="Gradient" id="Gradient_8x7y0"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)

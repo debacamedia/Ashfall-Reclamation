@@ -21,8 +21,8 @@
 [ext_resource type="AudioStream" path="res://assets/audio/sets/raider_alert.tres" id="19_mwd86"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/raider_pain.tres" id="20_s8u5n"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/raider_death.tres" id="21_7ssbc"]
-[ext_resource type="AudioStream" path="res://assets/audio/melee_swing.wav" id="22_iigwe"]
-[ext_resource type="AudioStream" path="res://assets/audio/sets/impact_flesh.tres" id="23_nbmp7"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/machete_swing.tres" id="22_iigwe"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/impact_flesh.tres" id="23_nbmp7"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/footstep_gravel.tres" id="24_tpkfm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cbrhk"]

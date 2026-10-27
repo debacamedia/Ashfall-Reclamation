@@ -7,8 +7,8 @@
 [ext_resource type="Material" path="res://assets/materials/rubber.tres" id="5_1vof7"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/sniper_shot.tres" id="6_wpi40"]
 [ext_resource type="AudioStream" path="res://assets/audio/sniper_reload.wav" id="7_f6rbg"]
-[ext_resource type="AudioStream" path="res://assets/audio/rifle_dry_fire.wav" id="8_6eli6"]
-[ext_resource type="AudioStream" path="res://assets/audio/bolt_cycle.wav" id="9_txjyh"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/dry_fire.tres" id="8_6eli6"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/marksman_bolt_cycle.wav" id="9_txjyh"]
 
 [sub_resource type="Gradient" id="Gradient_8x7y0"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/icons/gun_stock.png" id="1_t841n"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_todff"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_todff"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_t841n"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/gun_stock.tscn" id="3_k006e"]
 

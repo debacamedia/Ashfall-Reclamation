@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/decals/decal_water_stain.png" id="1_fys28"]
+
+[resource]
+resource_name = "AF3 decal decal_water_stain"
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.8)
+albedo_texture = ExtResource("1_fys28")
+roughness = 0.9
+texture_filter = 5

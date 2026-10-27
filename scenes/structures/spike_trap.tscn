@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/construction/spike_trap.gd" id="1_enjay"]
 [ext_resource type="Resource" path="res://resources/structures/spike_trap.tres" id="2_3m5qv"]
 [ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="3_ryxyw"]
-[ext_resource type="AudioStream" path="res://assets/audio/sets/impact_flesh.tres" id="4_etx3f"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/impact_flesh.tres" id="4_etx3f"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_qv47g"]
 _surfaces = [{

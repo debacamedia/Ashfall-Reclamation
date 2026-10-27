@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/dirt_road/albedo.png" id="1_pdfmf"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/dirt_road/normal.png" id="2_3y6nn"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/dirt_road/roughness.png" id="3_hi5k4"]
+
+[resource]
+resource_name = "AF3_dirt_road"
+albedo_texture = ExtResource("1_pdfmf")
+roughness_texture = ExtResource("3_hi5k4")
+normal_enabled = true
+normal_scale = 0.7
+normal_texture = ExtResource("2_3y6nn")
+uv1_scale = Vector3(0.33333334, 0.33333334, 0.33333334)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

@@ -2,7 +2,7 @@
 
 [ext_resource type="Resource" path="res://resources/items/attachments/red_dot_def.tres" id="1_heuhn"]
 [ext_resource type="Texture2D" path="res://assets/icons/red_dot.png" id="2_awojv"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_metal.wav" id="2_otyo1"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_metal.tres" id="2_otyo1"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_awojv"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/red_dot_item.tscn" id="4_svt34"]
 

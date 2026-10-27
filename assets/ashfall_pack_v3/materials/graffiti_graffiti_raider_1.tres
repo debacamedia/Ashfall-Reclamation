@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/signs/graffiti_raider_1.png" id="1_makna"]
+
+[resource]
+resource_name = "AF3 graffiti graffiti_raider_1"
+transparency = 1
+albedo_texture = ExtResource("1_makna")
+roughness = 0.9
+texture_filter = 5

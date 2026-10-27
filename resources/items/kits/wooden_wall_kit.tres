@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/icons/wooden_wall_kit.png" id="1_vvjq6"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_soft.wav" id="1_xmep2"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_xmep2"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_vvjq6"]
 [ext_resource type="Resource" path="res://resources/structures/wooden_wall.tres" id="3_qcucl"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/kits/wooden_wall_kit.tscn" id="4_yk2f7"]

@@ -6,9 +6,9 @@
 [ext_resource type="Material" path="res://assets/materials/wood.tres" id="4_im8a1"]
 [ext_resource type="Material" path="res://assets/materials/rubber.tres" id="5_2oak7"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/shotgun_shot.tres" id="6_urmid"]
-[ext_resource type="AudioStream" path="res://assets/audio/shell_insert.wav" id="7_l8kom"]
-[ext_resource type="AudioStream" path="res://assets/audio/rifle_dry_fire.wav" id="8_t2wk7"]
-[ext_resource type="AudioStream" path="res://assets/audio/shotgun_pump.wav" id="9_y48pn"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/shell_insert.tres" id="7_l8kom"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/dry_fire.tres" id="8_t2wk7"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/shotgun_pump.wav" id="9_y48pn"]
 
 [sub_resource type="Gradient" id="Gradient_8x7y0"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)

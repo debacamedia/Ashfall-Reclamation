@@ -1,0 +1,1014 @@
+[
+  {
+    "path": "assets/ashfall_pack_v3/README.md",
+    "size_bytes": 2656
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/aim_in_1.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/aim_in_2.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/aim_in_3.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/amb_desert_wind.wav",
+    "size_bytes": 2293244
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/amb_distant_gunfire.wav",
+    "size_bytes": 2646044
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/amb_fire_barrel.wav",
+    "size_bytes": 1940444
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/amb_insects.wav",
+    "size_bytes": 2116844
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/amb_town_ruins.wav",
+    "size_bytes": 2469644
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_complete.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_file_1.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_file_2.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_file_3.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_hammer_1.wav",
+    "size_bytes": 5336
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_hammer_2.wav",
+    "size_bytes": 5336
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_hammer_3.wav",
+    "size_bytes": 5336
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_saw_1.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_saw_2.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/craft_saw_3.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/crate_close.wav",
+    "size_bytes": 8864
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/crate_open.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/dry_fire_click_1.wav",
+    "size_bytes": 2690
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/dry_fire_click_2.wav",
+    "size_bytes": 2690
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/dry_fire_click_3.wav",
+    "size_bytes": 2690
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_concrete_1.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_concrete_2.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_concrete_3.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_concrete_4.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_concrete_5.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_concrete_6.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_gravel_1.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_gravel_2.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_gravel_3.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_gravel_4.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_gravel_5.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_gravel_6.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_metal_1.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_metal_2.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_metal_3.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_metal_4.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_metal_5.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_metal_6.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_wood_1.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_wood_2.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_wood_3.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_wood_4.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_wood_5.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/footstep_wood_6.wav",
+    "size_bytes": 15920
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/heal_bandage.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/heal_medkit.wav",
+    "size_bytes": 30032
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/heartbeat_loop.wav",
+    "size_bytes": 352844
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_concrete_1.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_concrete_2.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_concrete_3.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_dirt_1.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_dirt_2.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_dirt_3.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_flesh_1.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_flesh_2.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_flesh_3.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_metal_1.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_metal_2.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/impact_metal_3.wav",
+    "size_bytes": 12392
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ladder_step_1.wav",
+    "size_bytes": 7100
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ladder_step_2.wav",
+    "size_bytes": 7100
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ladder_step_3.wav",
+    "size_bytes": 7100
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ladder_step_4.wav",
+    "size_bytes": 7100
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/land_jump_1.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/land_jump_2.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/land_jump_3.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/locker_close.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/locker_open.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/machete_hit_1.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/machete_hit_2.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/machete_hit_3.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/machete_swing_1.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/machete_swing_2.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/machete_swing_3.wav",
+    "size_bytes": 19448
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/marksman_bolt_cycle.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/marksman_shot_1.wav",
+    "size_bytes": 88244
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/marksman_shot_2.wav",
+    "size_bytes": 88244
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/marksman_shot_3.wav",
+    "size_bytes": 88244
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_ammo_1.wav",
+    "size_bytes": 3572
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_ammo_2.wav",
+    "size_bytes": 3572
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_ammo_3.wav",
+    "size_bytes": 3572
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_metal_1.wav",
+    "size_bytes": 4454
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_metal_2.wav",
+    "size_bytes": 4454
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_metal_3.wav",
+    "size_bytes": 4454
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_soft_1.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_soft_2.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_soft_3.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_weapon_1.wav",
+    "size_bytes": 8864
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_weapon_2.wav",
+    "size_bytes": 8864
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pickup_weapon_3.wav",
+    "size_bytes": 8864
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pipe_pistol_reload.wav",
+    "size_bytes": 27386
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pipe_pistol_shot_1.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pipe_pistol_shot_2.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pipe_pistol_shot_3.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pistol_reload.wav",
+    "size_bytes": 42380
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pistol_shot_1.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pistol_shot_2.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pistol_shot_3.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pistol_shot_suppressed_1.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pistol_shot_suppressed_2.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/pistol_shot_suppressed_3.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/player_hurt_1.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/player_hurt_2.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/player_hurt_3.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_alert_1.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_alert_2.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_alert_3.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_death_1.wav",
+    "size_bytes": 75014
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_death_2.wav",
+    "size_bytes": 75014
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_death_3.wav",
+    "size_bytes": 75014
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_pain_1.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_pain_2.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/raider_pain_3.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rifle_reload.wav",
+    "size_bytes": 54728
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rifle_shot_1.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rifle_shot_2.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rifle_shot_3.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rifle_shot_suppressed_1.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rifle_shot_suppressed_2.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rifle_shot_suppressed_3.wav",
+    "size_bytes": 24740
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rummage_1.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rummage_2.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/rummage_3.wav",
+    "size_bytes": 48554
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/salvage_metal_1.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/salvage_metal_2.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/salvage_metal_3.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/salvage_wood_break_1.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/salvage_wood_break_2.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/salvage_wood_break_3.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/shotgun_pump.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/shotgun_shell_insert_1.wav",
+    "size_bytes": 13274
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/shotgun_shell_insert_2.wav",
+    "size_bytes": 13274
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/shotgun_shell_insert_3.wav",
+    "size_bytes": 13274
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/shotgun_shot_1.wav",
+    "size_bytes": 61782
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/shotgun_shot_2.wav",
+    "size_bytes": 61782
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/shotgun_shot_3.wav",
+    "size_bytes": 61782
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ui_click.wav",
+    "size_bytes": 5336
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ui_denied.wav",
+    "size_bytes": 10628
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ui_hitmarker.wav",
+    "size_bytes": 2690
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/ui_kill_confirm.wav",
+    "size_bytes": 8864
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/weapon_draw_1.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/weapon_draw_2.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/audio/weapon_draw_3.wav",
+    "size_bytes": 14156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_blood_1.png",
+    "size_bytes": 116415
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_blood_2.png",
+    "size_bytes": 129495
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_cracks.png",
+    "size_bytes": 35041
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_oil_stain_1.png",
+    "size_bytes": 114296
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_oil_stain_2.png",
+    "size_bytes": 81495
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_oil_stain_3.png",
+    "size_bytes": 121792
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_poster_1.png",
+    "size_bytes": 16604
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_poster_2.png",
+    "size_bytes": 16522
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_scorch_1.png",
+    "size_bytes": 66341
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_scorch_2.png",
+    "size_bytes": 66341
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_tyre_tracks.png",
+    "size_bytes": 19552
+  },
+  {
+    "path": "assets/ashfall_pack_v3/decals/decal_water_stain.png",
+    "size_bytes": 29825
+  },
+  {
+    "path": "assets/ashfall_pack_v3/hud/bar_frame.png",
+    "size_bytes": 725
+  },
+  {
+    "path": "assets/ashfall_pack_v3/hud/crosshair.png",
+    "size_bytes": 203
+  },
+  {
+    "path": "assets/ashfall_pack_v3/hud/damage_arc.png",
+    "size_bytes": 18898
+  },
+  {
+    "path": "assets/ashfall_pack_v3/hud/hitmarker.png",
+    "size_bytes": 355
+  },
+  {
+    "path": "assets/ashfall_pack_v3/hud/map_background.png",
+    "size_bytes": 280166
+  },
+  {
+    "path": "assets/ashfall_pack_v3/hud/scope_reticle_4x.png",
+    "size_bytes": 27432
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/bandage.png",
+    "size_bytes": 995
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/chemicals.png",
+    "size_bytes": 1245
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/cloth.png",
+    "size_bytes": 1153
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/electronics.png",
+    "size_bytes": 1065
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/extended_mag.png",
+    "size_bytes": 1122
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/foregrip.png",
+    "size_bytes": 969
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/fuel.png",
+    "size_bytes": 1142
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/gun_barrel.png",
+    "size_bytes": 766
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/gun_magazine.png",
+    "size_bytes": 1122
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/gun_receiver.png",
+    "size_bytes": 903
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/gun_stock.png",
+    "size_bytes": 1333
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/gunpowder.png",
+    "size_bytes": 1206
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/machete.png",
+    "size_bytes": 1415
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/medkit.png",
+    "size_bytes": 1126
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/metal_pipe.png",
+    "size_bytes": 1155
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/metal_plate.png",
+    "size_bytes": 975
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/pipe_pistol.png",
+    "size_bytes": 978
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/pistol.png",
+    "size_bytes": 950
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/pistol_ammo.png",
+    "size_bytes": 935
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/red_dot.png",
+    "size_bytes": 1144
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/rifle_308.png",
+    "size_bytes": 944
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/rifle_ammo.png",
+    "size_bytes": 994
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/scope_4x.png",
+    "size_bytes": 1244
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/scoped_rifle.png",
+    "size_bytes": 1237
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/scrap_metal.png",
+    "size_bytes": 1399
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/service_rifle.png",
+    "size_bytes": 1035
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/shotgun.png",
+    "size_bytes": 856
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/shotgun_shells.png",
+    "size_bytes": 967
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/spring.png",
+    "size_bytes": 1313
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/suppressor.png",
+    "size_bytes": 1042
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/trigger_group.png",
+    "size_bytes": 921
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/wood.png",
+    "size_bytes": 897
+  },
+  {
+    "path": "assets/ashfall_pack_v3/icons/wood_plank.png",
+    "size_bytes": 1009
+  },
+  {
+    "path": "assets/ashfall_pack_v3/manifest.json",
+    "size_bytes": 24547
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/graffiti_raider_1.png",
+    "size_bytes": 8462
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/graffiti_raider_2.png",
+    "size_bytes": 10043
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/graffiti_raider_3.png",
+    "size_bytes": 16465
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_bank.png",
+    "size_bytes": 106202
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_clinic.png",
+    "size_bytes": 98663
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_diner.png",
+    "size_bytes": 90080
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_feed_supply.png",
+    "size_bytes": 114170
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_gas.png",
+    "size_bytes": 103610
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_general_store.png",
+    "size_bytes": 105001
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_hotel.png",
+    "size_bytes": 96546
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_keep_out.png",
+    "size_bytes": 104688
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_turn_back.png",
+    "size_bytes": 113486
+  },
+  {
+    "path": "assets/ashfall_pack_v3/signs/sign_welcome_haldens.png",
+    "size_bytes": 129784
+  },
+  {
+    "path": "assets/ashfall_pack_v3/sky/sky_dusty_afternoon.png",
+    "size_bytes": 322804
+  },
+  {
+    "path": "assets/ashfall_pack_v3/sky/sky_overcast.png",
+    "size_bytes": 389937
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/asphalt_cracked/albedo.png",
+    "size_bytes": 604224
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/asphalt_cracked/normal.png",
+    "size_bytes": 1019418
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/asphalt_cracked/roughness.png",
+    "size_bytes": 16913
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/brick_weathered/albedo.png",
+    "size_bytes": 495472
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/brick_weathered/normal.png",
+    "size_bytes": 844526
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/brick_weathered/roughness.png",
+    "size_bytes": 21991
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/canvas_tent/albedo.png",
+    "size_bytes": 389166
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/canvas_tent/normal.png",
+    "size_bytes": 101691
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/canvas_tent/roughness.png",
+    "size_bytes": 16913
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_blue/albedo.png",
+    "size_bytes": 272045
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_blue/normal.png",
+    "size_bytes": 685620
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_blue/roughness.png",
+    "size_bytes": 107618
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_olive/albedo.png",
+    "size_bytes": 250440
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_olive/normal.png",
+    "size_bytes": 718460
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_olive/roughness.png",
+    "size_bytes": 132524
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_red/albedo.png",
+    "size_bytes": 322635
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_red/normal.png",
+    "size_bytes": 668797
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/container_paint_red/roughness.png",
+    "size_bytes": 112874
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/corrugated_rusty/albedo.png",
+    "size_bytes": 357784
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/corrugated_rusty/normal.png",
+    "size_bytes": 52455
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/corrugated_rusty/roughness.png",
+    "size_bytes": 108720
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/desert_sand/albedo.png",
+    "size_bytes": 113279
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/desert_sand/normal.png",
+    "size_bytes": 128254
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/desert_sand/roughness.png",
+    "size_bytes": 39563
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/dirt_road/albedo.png",
+    "size_bytes": 132393
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/dirt_road/normal.png",
+    "size_bytes": 47754
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/dirt_road/roughness.png",
+    "size_bytes": 17000
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/floor_linoleum/albedo.png",
+    "size_bytes": 646657
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/floor_linoleum/normal.png",
+    "size_bytes": 729295
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/floor_linoleum/roughness.png",
+    "size_bytes": 386940
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/plaster_peeling/albedo.png",
+    "size_bytes": 705667
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/plaster_peeling/normal.png",
+    "size_bytes": 889562
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/plaster_peeling/roughness.png",
+    "size_bytes": 257373
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/roofing_tarpaper/albedo.png",
+    "size_bytes": 109263
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/roofing_tarpaper/normal.png",
+    "size_bytes": 50156
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/roofing_tarpaper/roughness.png",
+    "size_bytes": 17245
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/wood_charred/albedo.png",
+    "size_bytes": 640372
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/wood_charred/normal.png",
+    "size_bytes": 863028
+  },
+  {
+    "path": "assets/ashfall_pack_v3/textures/wood_charred/roughness.png",
+    "size_bytes": 236788
+  }
+]

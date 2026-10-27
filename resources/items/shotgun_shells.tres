@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/icons/shotgun_shells.png" id="1_mddk7"]
-[ext_resource type="AudioStream" path="res://assets/audio/pickup_ammo.wav" id="2_xpmck"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_ammo.tres" id="2_xpmck"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="3_k77s1"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/shell_box.tscn" id="4_4u2yr"]
 

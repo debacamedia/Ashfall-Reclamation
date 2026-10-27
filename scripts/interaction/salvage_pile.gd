@@ -47,6 +47,45 @@ func get_block_reason(interactor: Node3D) -> String:
 	return inv.get_refusal_reason(first, 1) if first != null else "Empty"
 
 
+const SOUND_WOOD := preload("res://assets/ashfall_pack_v3/sets/salvage_wood.tres")
+const SOUND_METAL := preload("res://assets/ashfall_pack_v3/sets/salvage_metal.tres")
+
+var _break_sound_left := 0.0
+
+
+## Wood or metal, by what it breaks down into (Resource Pack 3 sounds).
+func get_break_sound() -> AudioStream:
+	for item: ItemDefinition in yields:
+		if String(item.id).begins_with("wood"):
+			return SOUND_WOOD
+	return SOUND_METAL
+
+
+## Tearing sounds while someone holds E on it.
+func _process(delta: float) -> void:
+	_break_sound_left -= delta
+	if _break_sound_left > 0.0:
+		return
+	for p in get_tree().get_nodes_in_group("players"):
+		var it := (p as PlayerController).interactor
+		if it != null and it.focused == self and it.hold_progress > 0.0:
+			_break_sound()
+			_break_sound_left = randf_range(0.4, 0.6)
+			return
+
+
+func _break_sound() -> void:
+	var s := AudioStreamPlayer3D.new()
+	s.stream = get_break_sound()
+	s.bus = &"SFX"
+	s.unit_size = 3.0
+	s.volume_db = -4.0
+	get_parent().add_child(s)  # outlives the pile when it's used up
+	s.global_position = global_position + Vector3.UP * 0.4
+	s.finished.connect(s.queue_free)
+	s.play()
+
+
 func _perform(interactor: Node3D) -> void:
 	var inv := InventoryComponent.find_on(interactor)
 	if inv == null:
@@ -56,6 +95,7 @@ func _perform(interactor: Node3D) -> void:
 		remaining[item] -= got
 		if remaining[item] <= 0:
 			remaining.erase(item)
+	_break_sound()
 	if remaining.is_empty():
 		queue_free()
 

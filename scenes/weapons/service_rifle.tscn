@@ -5,8 +5,8 @@
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_i7nsr"]
 [ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="4_s6jbf"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/rifle_shot.tres" id="5_s6jbf"]
-[ext_resource type="AudioStream" path="res://assets/audio/rifle_reload.wav" id="6_gndac"]
-[ext_resource type="AudioStream" path="res://assets/audio/rifle_dry_fire.wav" id="7_6pja3"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/rifle_reload.wav" id="6_gndac"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/dry_fire.tres" id="7_6pja3"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gndac"]
 size = Vector3(0.05, 0.07, 0.28)
