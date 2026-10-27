@@ -120,9 +120,8 @@ func test_raider_alert_and_dummy_ping() -> void:
 
 
 func test_level_ambience_and_fire() -> void:
-	var level := (load("res://levels/outpost_17/outpost_17.tscn") as PackedScene).instantiate()
-	(level.get_node("RaiderSpawner") as EnemySpawner).enabled = false
+	var level := instance_zone()
 	add_child(level)
 	await wait_physics(5)
 	check((level.get_node("Ambience") as AudioStreamPlayer).playing, "wind ambience plays")
-	check((level.get_node("Props/BurningBarrelYard/FireSound") as AudioStreamPlayer3D).playing, "burning barrel crackles")
+	check((level.get_node("Outpost17/Props/BurningBarrelYard/FireSound") as AudioStreamPlayer3D).playing, "burning barrel crackles")

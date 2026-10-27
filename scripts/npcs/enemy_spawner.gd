@@ -4,6 +4,11 @@ extends Node3D
 ## spawn point (and becomes that enemy's home). When an enemy dies, a
 ## replacement spawns after `respawn_delay`, at a point no player is near.
 ##
+## In a big zone (Increment 15) a spawner can sleep: with `active_radius`
+## set, its enemies only exist while a player is that close to one of its
+## spawn points. When everyone's gone, enemies that aren't fighting are
+## removed; when someone comes back, the spawner fills up again.
+##
 ## AUTHORITY: spawning only happens where the game state lives (host).
 
 signal enemy_spawned(enemy: Node3D)
@@ -15,9 +20,18 @@ signal enemy_spawned(enemy: Node3D)
 @export var min_player_distance := 25.0
 ## Set false to keep the level empty (e.g. in tests, or a peaceful mode).
 @export var enabled := true
+## Only keep enemies while a player is within this distance (m) of a spawn
+## point. 0 = always.
+@export var active_radius := 0.0
+
+## True while no player is near enough (see active_radius).
+var dormant := false
 
 var _alive: Array[Node3D] = []
 var _rng := RandomNumberGenerator.new()
+var _check := 0.0
+## How often (s) to check for players nearby.
+const CHECK_INTERVAL := 1.0
 
 
 func _ready() -> void:
@@ -26,8 +40,47 @@ func _ready() -> void:
 		return
 	# Wait one frame so the level (players, navigation) is fully in the tree
 	await get_tree().process_frame
+	if active_radius > 0.0 and not player_near():
+		dormant = true
+		return
 	for i in max_alive:
 		spawn_one()
+
+
+func _process(delta: float) -> void:
+	if not enabled or active_radius <= 0.0:
+		return
+	_check -= delta
+	if _check > 0.0:
+		return
+	_check = CHECK_INTERVAL
+	var near := player_near()
+	if near and dormant:
+		dormant = false
+		for i in max_alive - get_alive().size():
+			spawn_one()
+	elif not near:
+		dormant = true
+		# Anyone still chasing someone stays until they give up
+		for e in get_alive():
+			if not is_fighting(e):
+				_alive.erase(e)
+				e.queue_free()
+
+
+## True if `enemy` is chasing or attacking someone.
+static func is_fighting(enemy: Node) -> bool:
+	var s: Variant = enemy.get("state")
+	return s != null and (s == Raider.State.CHASE or s == Raider.State.ATTACK)
+
+
+## True if a player is within active_radius of any spawn point.
+func player_near() -> bool:
+	for player: Node3D in get_tree().get_nodes_in_group("players"):
+		for p in get_spawn_points():
+			if player.global_position.distance_to(p.global_position) <= active_radius:
+				return true
+	return false
 
 
 func get_alive() -> Array[Node3D]:
@@ -53,14 +106,18 @@ func get_spawn_points() -> Array[Node3D]:
 
 ## Spawns one enemy at a suitable point. Returns it, or null if none fit.
 func spawn_one() -> Node3D:
-	if enemy_scene == null or get_alive().size() >= max_alive:
+	if enemy_scene == null or dormant or get_alive().size() >= max_alive:
 		return null
 	var point := _choose_point()
 	if point == null:
 		return null
 	var enemy := enemy_scene.instantiate() as Node3D
 	var offset := Vector3(_rng.randf_range(-1.5, 1.5), 0.0, _rng.randf_range(-1.5, 1.5))
-	enemy.position = point.global_position + offset
+	# Enemies join the spawner's parent: place them in its space (a site in a
+	# zone isn't at the origin)
+	var at := point.global_position + offset
+	var parent3d := get_parent() as Node3D
+	enemy.position = parent3d.to_local(at) if parent3d != null and parent3d.is_inside_tree() else at
 	enemy.rotation.y = _rng.randf() * TAU
 	if "home_position" in enemy:
 		enemy.set("home_position", point.global_position)

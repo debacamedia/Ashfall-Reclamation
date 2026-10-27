@@ -2,6 +2,8 @@ extends "res://tests/test_case.gd"
 ## ASHFALL Resource Pack 1.0 in Outpost 17: the pack loads, the level uses
 ## its materials through per-instance overrides (shared scenes and original
 ## materials untouched), the signs are visual only, and the new sounds loop.
+## Since Increment 15 the outpost is a site in the early zone: its ground and
+## its non-positional wind belong to the zone now.
 
 const LEVEL := preload("res://levels/outpost_17/outpost_17.tscn")
 const PACK := "res://assets/ashfall_pack_v1/"
@@ -42,18 +44,23 @@ func test_outpost_uses_the_pack() -> void:
 		if mat != null and mat.resource_path.begins_with(PACK):
 			var key := mat.resource_path.get_file().get_basename()
 			counts[key] = counts.get(key, 0) + 1
-	for key in ["concrete_weathered", "concrete_cracked", "asphalt_worn", "gravel_mixed", "dirt_dry", "rusted_steel",
+	for key in ["concrete_weathered", "concrete_cracked", "asphalt_worn", "gravel_mixed", "rusted_steel",
 			"corrugated_metal", "wood_weathered", "sandbag_canvas"]:
 		check(counts.get(key, 0) > 0, "Outpost 17 uses %s (%d meshes)" % [key, counts.get(key, 0)])
-	check(((lvl.get_node("Terrain/Ground") as MeshInstance3D).material_override as Resource).resource_path == PACK + "materials/dirt_dry.tres", "ground is dry dirt")
 	check(((lvl.get_node("Surfaces/MainRoad") as MeshInstance3D).material_override as Resource).resource_path == PACK + "materials/asphalt_worn.tres", "road is worn asphalt")
 	lvl.free()
+	# The whole zone's ground is the pack's dry dirt, in the zone's terrain shader
+	var zone := instance_zone()
+	var chunk := zone.get_node("Terrain/Mesh").get_child(0) as MeshInstance3D
+	var ground := chunk.material_override as ShaderMaterial
+	check(ground != null and (ground.get_shader_parameter("albedo_tex") as Resource).resource_path == PACK + "textures/dirt_dry/albedo.png", "ground is dry dirt")
+	zone.free()
 
 
 func test_signs_are_visual_only_and_sit_on_walls() -> void:
-	var lvl := LEVEL.instantiate() as Node3D
-	(lvl.get_node("RaiderSpawner") as EnemySpawner).enabled = false
-	add_child(lvl)
+	var zone := instance_zone()
+	add_child(zone)
+	var lvl := zone.get_node("Outpost17") as Node3D
 	await wait_physics(3)
 	var signs := lvl.get_node("Signage").get_children()
 	check(signs.size() == 4, "4 signs (%d)" % signs.size())
@@ -71,22 +78,23 @@ func test_signs_are_visual_only_and_sit_on_walls() -> void:
 		if not hit.is_empty():
 			var gap := s.global_position.distance_to(hit["position"])
 			check_between(gap, 0.002, 0.02, "%s sits just in front of the wall" % s.name)
-	remove_child(lvl)
-	lvl.free()
+	remove_child(zone)
+	zone.free()
 
 
 func test_soundscape() -> void:
-	var lvl := LEVEL.instantiate()
-	var s := lvl.get_node("Soundscape")
+	var zone := instance_zone()
+	var s := zone.get_node("Outpost17/Soundscape")
 	for name in ["GeneratorHum", "RadioStatic", "DistantWind"]:
-		var p := s.get_node(name)
+		# The distant wind plays everywhere, so the zone has it (once)
+		var p := zone.get_node("DistantWind") if name == "DistantWind" else s.get_node(name)
 		var stream := p.get("stream") as AudioStreamWAV
 		check(stream != null and stream.loop_mode == AudioStreamWAV.LOOP_FORWARD, "%s loops" % name)
 		check(p.get("autoplay") == true, "%s plays on its own" % name)
 	var clank := s.get_node("MotorPoolClank") as RandomSoundEmitter
 	check(clank != null and clank.stream != null and not clank.autoplay, "metal clank plays now and then")
 	check(clank.min_interval > 0.0 and clank.max_interval >= clank.min_interval, "clank interval sensible")
-	check((s.get_node("GeneratorHum") as AudioStreamPlayer3D).bus == &"SFX" and (s.get_node("DistantWind") as AudioStreamPlayer).bus == &"Ambience", "on the right buses")
+	check((s.get_node("GeneratorHum") as AudioStreamPlayer3D).bus == &"SFX" and (zone.get_node("DistantWind") as AudioStreamPlayer).bus == &"Ambience", "on the right buses")
 	# The original ambience is still there
-	check(lvl.get_node("%Ambience") != null and (lvl.get_node("%Ambience") as AudioStreamPlayer).stream.resource_path == "res://assets/audio/wind_loop.wav", "original wind ambience kept")
-	lvl.free()
+	check(zone.get_node("%Ambience") != null and (zone.get_node("%Ambience") as AudioStreamPlayer).stream.resource_path == "res://assets/audio/wind_loop.wav", "original wind ambience kept")
+	zone.free()

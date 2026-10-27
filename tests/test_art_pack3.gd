@@ -6,21 +6,22 @@ extends "res://tests/test_case.gd"
 ## salvage sounds, weathered container paint, seamless derived loops and sky.
 
 const PACK := "res://assets/ashfall_pack_v3/"
-const HALDENS := "res://levels/haldens_crossing/haldens_crossing.tscn"
-const OUTPOST := "res://levels/outpost_17/outpost_17.tscn"
+## The sites in the early zone (Increment 15)
+const HALDENS := "HaldensCrossing"
+const OUTPOST := "Outpost17"
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const DT := 1.0 / 60.0
 
 
-func _level(path: String) -> Node3D:
-	var lvl := (load(path) as PackedScene).instantiate() as Node3D
-	for sp in lvl.get_children():
-		if sp is EnemySpawner:
-			(sp as EnemySpawner).enabled = false
-	(lvl.get_node("Player") as PlayerController).controlled_locally = false
-	add_child(lvl)
+var _zone: Node3D
+
+
+## A site (Outpost17 / HaldensCrossing) in a fresh early zone (`_zone`).
+func _level(site: String) -> Node3D:
+	_zone = instance_zone()
+	add_child(_zone)
 	await wait_physics(6)
-	return lvl
+	return _zone.get_node(site) as Node3D
 
 
 func _audio(p: PlayerController) -> PlayerAudio:
@@ -30,9 +31,9 @@ func _audio(p: PlayerController) -> PlayerAudio:
 	return null
 
 
-func _free(lvl: Node3D) -> void:
-	remove_child(lvl)
-	lvl.free()
+func _free(_lvl: Node3D) -> void:
+	remove_child(_zone)
+	_zone.free()
 	await wait_physics(2)
 
 
@@ -142,9 +143,9 @@ func test_outpost_dressed_and_old_saves_load() -> void:
 	var f := FileAccess.open("res://tests/fixtures/outpost_save_before_pack2.json", FileAccess.READ)
 	var old: Dictionary = JSON.parse_string(f.get_as_text())
 	check(saves.validate(old) == "", "a save from before Packs 2 and 3 still validates")
-	saves.apply_save_data(old, lvl)
+	saves.apply_save_data(saves._migrate(old), _zone)
 	await wait_physics(2)
-	check((lvl.get_node("Player") as Node3D).global_position.distance_to(Vector3(-24.0, 0.05, -15.0)) < 0.3, "and loads")
+	check((_zone.get_node("Player") as Node3D).global_position.distance_to(Vector3(-24.0, 0.05, -15.0)) < 0.3, "and loads")
 	check(lvl.get_node_or_null("Pack3Dressing/Decals") != null, "dressing untouched by loading")
 	await _free(lvl)
 

@@ -2,8 +2,10 @@ extends Node
 ## Regions and travel between them.
 ##
 ## Autoload "WorldManager" (Project Settings → Globals). Each region is its own
-## level scene (Outpost 17, Halden's Crossing, …). Hold E on a RegionExit at a
-## map edge to travel: this region's state is kept, the next level opens, and
+## level scene: since Increment 15 a whole zone (the early zone holds Outpost
+## 17, Halden's Crossing and five more places; the mid and late zones come
+## later). Hold E on a RegionExit at a zone's edge to travel: this region's
+## state is kept, the next level opens, and
 ## the player arrives at the matching arrival marker with their health,
 ## inventory and loadout.
 ##

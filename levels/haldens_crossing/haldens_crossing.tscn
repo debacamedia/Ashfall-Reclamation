@@ -1,8 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Environment" path="res://levels/haldens_crossing/haldens_crossing_environment.tres" id="1_hufkb"]
-[ext_resource type="Material" path="res://assets/materials/ground_dirt.tres" id="2_aveli"]
-[ext_resource type="Material" path="res://assets/materials/earth_berm.tres" id="3_4rc82"]
 [ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/asphalt_cracked.tres" id="4_r33ec"]
 [ext_resource type="Material" path="res://assets/materials/concrete.tres" id="5_xgc8n"]
 [ext_resource type="Material" path="res://assets/materials/gravel.tres" id="6_8da64"]
@@ -71,50 +68,11 @@
 [ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="69_gc8u6"]
 [ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="70_u0h6g"]
 [ext_resource type="Resource" path="res://resources/items/bandage.tres" id="71_aiya1"]
-[ext_resource type="PackedScene" path="res://scenes/world/region_exit.tscn" id="72_dbepk"]
-[ext_resource type="Script" path="res://scripts/interaction/region_exit.gd" id="73_atlgh"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="74_r5aeq"]
-[ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="75_jpw07"]
-[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="76_nvsuy"]
-[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="77_3ae1n"]
-[ext_resource type="Script" path="res://scripts/core/game_mode.gd" id="78_0uo8s"]
-[ext_resource type="NavigationMesh" path="res://levels/haldens_crossing/haldens_crossing_navmesh.tres" id="79_wfua2"]
 [ext_resource type="Script" path="res://scripts/npcs/enemy_spawner.gd" id="80_yr7dq"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/raider.tscn" id="81_5xdtl"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/raider_veteran.tscn" id="82_32p2e"]
-[ext_resource type="AudioStream" path="res://assets/audio/wind_loop.wav" id="83_ii8w6"]
 [ext_resource type="Material" path="res://assets/ashfall_pack_v3/materials/roofing_tarpaper.tres" id="pack3_roofing"]
 [ext_resource type="PackedScene" path="res://levels/haldens_crossing/pack3_dressing.tscn" id="pack3_dressing"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_ihkbq"]
-size = Vector2(400, 400)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_2x0jk"]
-size = Vector3(400, 2, 400)
-
-[sub_resource type="BoxMesh" id="BoxMesh_sf3xf"]
-size = Vector3(214, 4, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ppf2r"]
-size = Vector3(214, 4, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_p02cs"]
-size = Vector3(214, 4, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_er1ii"]
-size = Vector3(214, 4, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_hav1p"]
-size = Vector3(4, 4, 214)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_61xhj"]
-size = Vector3(4, 4, 214)
-
-[sub_resource type="BoxMesh" id="BoxMesh_aknkp"]
-size = Vector3(4, 4, 214)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_s0l4b"]
-size = Vector3(4, 4, 214)
 
 [sub_resource type="BoxMesh" id="BoxMesh_eo02h"]
 size = Vector3(9, 0.02, 205)
@@ -4818,65 +4776,6 @@ size = Vector3(1.2759072, 0.52679056, 0.67994153)
 
 [node name="HaldensCrossing" type="Node3D" unique_id=1486766632]
 metadata/region_name = "Halden's Crossing"
-
-[node name="Lighting" type="Node3D" parent="." unique_id=1905581834]
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=729655180]
-environment = ExtResource("1_hufkb")
-
-[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=1887576146]
-transform = Transform3D(-0.57357645, -0.38456857, 0.7232683, 0, 0.88294756, 0.46947157, -0.819152, 0.26927784, -0.50643796, 0, 0, 0)
-light_color = Color(1, 0.86, 0.68, 1)
-light_energy = 1.15
-shadow_enabled = true
-directional_shadow_max_distance = 160.0
-
-[node name="Terrain" type="StaticBody3D" parent="." unique_id=1865413684 groups=["navigation_geometry"]]
-collision_mask = 0
-
-[node name="Ground" type="MeshInstance3D" parent="Terrain" unique_id=2139233792]
-material_override = ExtResource("2_aveli")
-mesh = SubResource("PlaneMesh_ihkbq")
-
-[node name="GroundCol" type="CollisionShape3D" parent="Terrain" unique_id=869831766]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-shape = SubResource("BoxShape3D_2x0jk")
-
-[node name="BermN" type="MeshInstance3D" parent="Terrain" unique_id=1021427423]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -105)
-material_override = ExtResource("3_4rc82")
-mesh = SubResource("BoxMesh_sf3xf")
-
-[node name="BermNCol" type="CollisionShape3D" parent="Terrain" unique_id=301776796]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -105)
-shape = SubResource("BoxShape3D_ppf2r")
-
-[node name="BermS" type="MeshInstance3D" parent="Terrain" unique_id=333213819]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 105)
-material_override = ExtResource("3_4rc82")
-mesh = SubResource("BoxMesh_p02cs")
-
-[node name="BermSCol" type="CollisionShape3D" parent="Terrain" unique_id=822547804]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 105)
-shape = SubResource("BoxShape3D_er1ii")
-
-[node name="BermW" type="MeshInstance3D" parent="Terrain" unique_id=2007915343]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -105, 2, 0)
-material_override = ExtResource("3_4rc82")
-mesh = SubResource("BoxMesh_hav1p")
-
-[node name="BermWCol" type="CollisionShape3D" parent="Terrain" unique_id=1682831154]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -105, 2, 0)
-shape = SubResource("BoxShape3D_61xhj")
-
-[node name="BermE" type="MeshInstance3D" parent="Terrain" unique_id=2107796016]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 2, 0)
-material_override = ExtResource("3_4rc82")
-mesh = SubResource("BoxMesh_aknkp")
-
-[node name="BermECol" type="CollisionShape3D" parent="Terrain" unique_id=448884032]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 2, 0)
-shape = SubResource("BoxShape3D_s0l4b")
 
 [node name="Surfaces" type="Node3D" parent="." unique_id=1850209859]
 
@@ -13059,54 +12958,9 @@ quantity = 2
 action_name = "Pick up"
 object_name = "Bandage ×2"
 
-[node name="Arrivals" type="Node3D" parent="." unique_id=1126508802]
-
-[node name="FromOutpost" type="Marker3D" parent="Arrivals" unique_id=317551085]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.05, -92)
-
-[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=1765136097]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.05, -92)
-
-[node name="Exits" type="Node3D" parent="." unique_id=1835507709]
-
-[node name="RoadToOutpost" type="Area3D" parent="Exits" unique_id=1471285466 instance=ExtResource("72_dbepk")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3.2, 0, -98.5)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("73_atlgh")
-target_level = "res://levels/outpost_17/outpost_17.tscn"
-arrival_id = &"FromHaldens"
-destination_name = "Outpost 17"
-action_name = "Follow the road to"
-object_name = "Outpost 17"
-hold_time = 1.0
-max_distance = 3.5
-focus_offset = Vector3(0, 1.4, 0)
-
-[node name="Player" type="CharacterBody3D" parent="." unique_id=1105365724 instance=ExtResource("74_r5aeq")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.00010676868, -92)
-collision_layer = 4
-collision_mask = 11
-floor_max_angle = 0.80285144
-floor_snap_length = 0.25
-script = ExtResource("75_jpw07")
-
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1842689081 node_paths=PackedStringArray("player", "game_mode") instance=ExtResource("76_nvsuy")]
-script = ExtResource("77_3ae1n")
-player = NodePath("../Player")
-game_mode = NodePath("../GameMode")
-
-[node name="GameMode" type="Node" parent="." unique_id=2144934409 node_paths=PackedStringArray("spawn_point", "players")]
-script = ExtResource("78_0uo8s")
-spawn_point = NodePath("../PlayerSpawn")
-players = [NodePath("../Player")]
-
-[node name="Navigation" type="NavigationRegion3D" parent="." unique_id=1537035287]
-navigation_mesh = ExtResource("79_wfua2")
-
 [node name="RaiderSpawner" type="Node3D" parent="." unique_id=952698245]
 script = ExtResource("80_yr7dq")
+active_radius = 230.0
 enemy_scene = ExtResource("81_5xdtl")
 respawn_delay = 45.0
 
@@ -13127,6 +12981,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0.1, 5)
 
 [node name="CampSpawner" type="Node3D" parent="." unique_id=1345779527]
 script = ExtResource("80_yr7dq")
+active_radius = 230.0
 enemy_scene = ExtResource("82_32p2e")
 max_alive = 4
 respawn_delay = 120.0
@@ -13143,14 +12998,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0.1, 19)
 
 [node name="CampSouth" type="Marker3D" parent="CampSpawner" unique_id=43451393]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0.1, 47)
-
-[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=1395199770]
-unique_name_in_owner = true
-stream = ExtResource("83_ii8w6")
-autoplay = true
-stream_paused = true
-bus = &"Ambience"
-
-[node name="Structures" type="Node3D" parent="." unique_id=1217411422 groups=["navigation_geometry"]]
 
 [node name="Pack3Dressing" parent="." instance=ExtResource("pack3_dressing")]

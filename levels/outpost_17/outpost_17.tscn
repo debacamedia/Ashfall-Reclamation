@@ -1,7 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Environment" path="res://levels/outpost_17/outpost_17_environment.tres" id="1_qku07"]
-[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/dirt_dry.tres" id="2_kfd1t"]
 [ext_resource type="Material" path="res://assets/materials/earth_berm.tres" id="3_a2oq6"]
 [ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/asphalt_worn.tres" id="4_ipiw7"]
 [ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/gravel_mixed.tres" id="5_gc22m"]
@@ -27,18 +25,13 @@
 [ext_resource type="PackedScene" path="res://scenes/world/props/chain_link_fence.tscn" id="19_so4bl"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/military_truck.tscn" id="20_78cal"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/drainage_culvert.tscn" id="21_xntxo"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="22_0486g"]
 [ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/rusted_steel.tres" id="22_hlbef"]
 [ext_resource type="Material" path="res://assets/materials/wood.tres" id="23_6fgd1"]
 [ext_resource type="PackedScene" path="res://scenes/world/range/target_dummy.tscn" id="24_a2oq6"]
-[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="24_ck1o8"]
 [ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="26_wmgfa"]
 [ext_resource type="PackedScene" path="res://scenes/world/structures/range_tower.tscn" id="27_wmgfa"]
-[ext_resource type="Script" path="res://scripts/core/game_mode.gd" id="28_ouv22"]
-[ext_resource type="NavigationMesh" path="res://levels/outpost_17/outpost_17_navmesh.tres" id="29_2tvmt"]
 [ext_resource type="Script" path="res://scripts/npcs/enemy_spawner.gd" id="30_iodjj"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/raider.tscn" id="31_j2khw"]
-[ext_resource type="AudioStream" path="res://assets/audio/wind_loop.wav" id="32_uf8n3"]
 [ext_resource type="PackedScene" path="res://scenes/items/pickup.tscn" id="33_ixxyf"]
 [ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="35_so4bl"]
 [ext_resource type="Resource" path="res://resources/items/electronics.tres" id="36_78cal"]
@@ -63,7 +56,6 @@
 [ext_resource type="PackedScene" path="res://scenes/world/stations/workbench.tscn" id="51_bkh55"]
 [ext_resource type="PackedScene" path="res://scenes/world/stations/weapons_bench.tscn" id="53_88d5v"]
 [ext_resource type="PackedScene" path="res://scenes/world/salvage/wood_pallet.tscn" id="54_ytx8q"]
-[ext_resource type="PackedScene" path="res://scenes/world/region_exit.tscn" id="58_cwwbh"]
 [ext_resource type="PackedScene" path="res://scenes/world/salvage/broken_furniture.tscn" id="58_k06fk"]
 [ext_resource type="Material" path="res://assets/materials/signs/sign_outpost_17.tres" id="66_stloa"]
 [ext_resource type="Material" path="res://assets/materials/signs/sign_restricted.tres" id="67_8knfx"]
@@ -73,7 +65,6 @@
 [ext_resource type="AudioStream" path="res://assets/audio/loops/radio_static_loop.wav" id="71_7oji5"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v1/audio/metal_clank.wav" id="72_e4xjc"]
 [ext_resource type="Script" path="res://scripts/world/random_sound_emitter.gd" id="73_h1q64"]
-[ext_resource type="AudioStream" path="res://assets/audio/loops/distant_wind_loop.wav" id="74_wak0s"]
 [ext_resource type="Material" path="res://assets/materials/signs/pack2_water_purification.tres" id="75_e4xjc"]
 [ext_resource type="Material" path="res://assets/materials/signs/pack2_radio_signal.tres" id="76_h1q64"]
 [ext_resource type="Material" path="res://assets/materials/signs/pack2_checkpoint_17.tres" id="77_wak0s"]
@@ -95,36 +86,6 @@
 [ext_resource type="Resource" path="res://resources/structures/props/field_radio.tres" id="inc14_field_radio"]
 [ext_resource type="Resource" path="res://resources/structures/props/salvage_toolbox.tres" id="inc14_salvage_toolbox"]
 [ext_resource type="PackedScene" path="res://levels/outpost_17/pack3_dressing.tscn" id="pack3_dressing"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_4fdvy"]
-size = Vector2(400, 400)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_5x06j"]
-size = Vector3(400, 2, 400)
-
-[sub_resource type="BoxMesh" id="BoxMesh_flnt2"]
-size = Vector3(152, 4, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_3ehoi"]
-size = Vector3(152, 4, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_dcipq"]
-size = Vector3(152, 4, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_tscnw"]
-size = Vector3(152, 4, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ssps7"]
-size = Vector3(4, 4, 152)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_4ia1j"]
-size = Vector3(4, 4, 152)
-
-[sub_resource type="BoxMesh" id="BoxMesh_bkh55"]
-size = Vector3(4, 4, 152)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_cwwbh"]
-size = Vector3(4, 4, 152)
 
 [sub_resource type="BoxMesh" id="BoxMesh_88d5v"]
 size = Vector3(5.5, 0.02, 80)
@@ -206,65 +167,6 @@ size = Vector2(2.4, 2.4)
 
 [node name="Outpost17" type="Node3D" unique_id=1417219746]
 metadata/region_name = "Outpost 17"
-
-[node name="Lighting" type="Node3D" parent="." unique_id=1817001427]
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=1429217729]
-environment = ExtResource("1_qku07")
-
-[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=1457818435]
-transform = Transform3D(0.81915206, 0.35312894, -0.45198444, 0, 0.7880108, 0.6156615, 0.57357645, -0.5043204, 0.64550066, 0, 0, 0)
-light_color = Color(1, 0.94, 0.85, 1)
-light_energy = 1.2
-shadow_enabled = true
-directional_shadow_max_distance = 150.0
-
-[node name="Terrain" type="StaticBody3D" parent="." unique_id=355777769 groups=["navigation_geometry"]]
-collision_mask = 0
-
-[node name="Ground" type="MeshInstance3D" parent="Terrain" unique_id=129602332]
-material_override = ExtResource("2_kfd1t")
-mesh = SubResource("PlaneMesh_4fdvy")
-
-[node name="GroundCol" type="CollisionShape3D" parent="Terrain" unique_id=738752397]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-shape = SubResource("BoxShape3D_5x06j")
-
-[node name="EdgeBerm" type="MeshInstance3D" parent="Terrain" unique_id=931229571]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -75)
-material_override = ExtResource("3_a2oq6")
-mesh = SubResource("BoxMesh_flnt2")
-
-[node name="EdgeBermCol" type="CollisionShape3D" parent="Terrain" unique_id=1579960003]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -75)
-shape = SubResource("BoxShape3D_3ehoi")
-
-[node name="EdgeBerm2" type="MeshInstance3D" parent="Terrain" unique_id=423414182]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 75)
-material_override = ExtResource("3_a2oq6")
-mesh = SubResource("BoxMesh_dcipq")
-
-[node name="EdgeBermCol2" type="CollisionShape3D" parent="Terrain" unique_id=453833073]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 75)
-shape = SubResource("BoxShape3D_tscnw")
-
-[node name="EdgeBerm3" type="MeshInstance3D" parent="Terrain" unique_id=957767736]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 2, 0)
-material_override = ExtResource("3_a2oq6")
-mesh = SubResource("BoxMesh_ssps7")
-
-[node name="EdgeBermCol3" type="CollisionShape3D" parent="Terrain" unique_id=1026760749]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 2, 0)
-shape = SubResource("BoxShape3D_4ia1j")
-
-[node name="EdgeBerm4" type="MeshInstance3D" parent="Terrain" unique_id=1270021812]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 2, 0)
-material_override = ExtResource("3_a2oq6")
-mesh = SubResource("BoxMesh_bkh55")
-
-[node name="EdgeBermCol4" type="CollisionShape3D" parent="Terrain" unique_id=1803212079]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 2, 0)
-shape = SubResource("BoxShape3D_cwwbh")
 
 [node name="Surfaces" type="Node3D" parent="." unique_id=1063267164]
 
@@ -1999,16 +1901,6 @@ transform = Transform3D(-0.9848077, 0, 0.1736483, 0, 1, 0, -0.1736483, 0, -0.984
 [node name="DrainageCulvert" parent="." unique_id=1635426294 groups=["navigation_geometry"] instance=ExtResource("21_xntxo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, -6)
 
-[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=688822765]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 14)
-
-[node name="Player" parent="." unique_id=1105365724 instance=ExtResource("22_0486g")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0010414589, 14)
-
-[node name="HUD" parent="." unique_id=1842689081 node_paths=PackedStringArray("player", "game_mode") instance=ExtResource("24_ck1o8")]
-player = NodePath("../Player")
-game_mode = NodePath("../GameMode")
-
 [node name="FiringRange" type="Node3D" parent="." unique_id=649963290 groups=["navigation_geometry"]]
 
 [node name="LaneGravel" type="MeshInstance3D" parent="FiringRange" unique_id=1304399243]
@@ -2245,16 +2137,9 @@ font_size = 48
 [node name="RangeTower" parent="FiringRange" unique_id=1758733183 instance=ExtResource("27_wmgfa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 47)
 
-[node name="GameMode" type="Node" parent="." unique_id=1547692427 node_paths=PackedStringArray("spawn_point", "players")]
-script = ExtResource("28_ouv22")
-spawn_point = NodePath("../PlayerSpawn")
-players = [NodePath("../Player")]
-
-[node name="Navigation" type="NavigationRegion3D" parent="." unique_id=378893162]
-navigation_mesh = ExtResource("29_2tvmt")
-
 [node name="RaiderSpawner" type="Node3D" parent="." unique_id=1843430352]
 script = ExtResource("30_iodjj")
+active_radius = 230.0
 enemy_scene = ExtResource("31_j2khw")
 
 [node name="SpawnSouthWest" type="Marker3D" parent="RaiderSpawner" unique_id=1936389027]
@@ -2268,14 +2153,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.1, 66)
 
 [node name="SpawnNorthWest" type="Marker3D" parent="RaiderSpawner" unique_id=41013368]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.1, -48)
-
-[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=472398606]
-unique_name_in_owner = true
-stream = ExtResource("32_uf8n3")
-volume_db = -2.0
-autoplay = true
-stream_paused = true
-bus = &"Ambience"
 
 [node name="Loot" type="Node3D" parent="." unique_id=466982758]
 
@@ -2633,21 +2510,6 @@ action_name = "Break down"
 object_name = "Broken Furniture"
 hold_time = 1.5
 
-[node name="Arrivals" type="Node3D" parent="." unique_id=40085770]
-
-[node name="FromHaldens" type="Marker3D" parent="Arrivals" unique_id=630674551]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 64)
-
-[node name="Exits" type="Node3D" parent="." unique_id=1562726423]
-
-[node name="RoadToHaldens" parent="Exits" unique_id=1471285466 instance=ExtResource("58_cwwbh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0, 69.5)
-target_level = "res://levels/haldens_crossing/haldens_crossing.tscn"
-arrival_id = &"FromOutpost"
-destination_name = "Halden's Crossing"
-action_name = "Follow the road to"
-object_name = "Halden's Crossing"
-
 [node name="Signage" type="Node3D" parent="." unique_id=378657225]
 
 [node name="GateOutpost17" type="MeshInstance3D" parent="Signage" unique_id=1992337438]
@@ -2704,13 +2566,6 @@ unit_size = 4.0
 max_distance = 45.0
 bus = &"SFX"
 script = ExtResource("73_h1q64")
-
-[node name="DistantWind" type="AudioStreamPlayer" parent="Soundscape" unique_id=875777305]
-stream = ExtResource("74_wak0s")
-volume_db = -14.0
-autoplay = true
-stream_paused = true
-bus = &"Ambience"
 
 [node name="Pack2" type="Node3D" parent="." unique_id=1114610650]
 
@@ -2950,7 +2805,5 @@ bus = &"Ambience"
 [editable path="Props/BurningBarrelMotorPool"]
 [editable path="FiringRange/FiringLineN"]
 [editable path="FiringRange/FiringLineS"]
-
-[node name="Structures" type="Node3D" parent="." unique_id=22512389 groups=["navigation_geometry"]]
 
 [node name="Pack3Dressing" parent="." instance=ExtResource("pack3_dressing")]

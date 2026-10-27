@@ -103,13 +103,15 @@ func _perform(interactor: Node3D) -> void:
 		queue_free()
 
 
-## Spawns a pickup into the world (used for loot drops).
+## Spawns a pickup into the world at `position` (world space; used for loot
+## drops). The parent may be a site that isn't at the origin.
 static func spawn(parent: Node, definition: ItemDefinition, amount: int, position: Vector3) -> Pickup:
 	var scene := load("res://scenes/items/pickup.tscn") as PackedScene
 	var pickup := scene.instantiate() as Pickup
 	pickup.item = definition
 	pickup.quantity = amount
-	pickup.position = position
+	var parent3d := parent as Node3D
+	pickup.position = parent3d.to_local(position) if parent3d != null and parent3d.is_inside_tree() else position
 	parent.add_child(pickup)
 	return pickup
 

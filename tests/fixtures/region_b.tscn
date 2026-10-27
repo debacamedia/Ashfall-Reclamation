@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
+[ext_resource type="Script" path="res://scripts/core/game_mode.gd" id="3_gm"]
+[ext_resource type="PackedScene" path="res://scenes/world/region_exit.tscn" id="4_exit"]
+[ext_resource type="PackedScene" path="res://scenes/items/pickup.tscn" id="5_pickup"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="6_scrap"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="7_cloth"]
+[ext_resource type="PackedScene" path="res://scenes/world/containers/supply_crate.tscn" id="8_crate"]
+[ext_resource type="PackedScene" path="res://scenes/world/salvage/wood_pallet.tscn" id="9_pallet"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(80, 2, 80)
+
+[node name="RegionB" type="Node3D"]
+metadata/region_name = "Region B"
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+shape = SubResource("BoxShape3D_ground")
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+
+[node name="HUD" parent="." node_paths=PackedStringArray("player", "game_mode") instance=ExtResource("2_hud")]
+player = NodePath("../Player")
+game_mode = NodePath("../GameMode")
+
+[node name="GameMode" type="Node" parent="." node_paths=PackedStringArray("spawn_point", "players")]
+script = ExtResource("3_gm")
+spawn_point = NodePath("../PlayerSpawn")
+players = [NodePath("../Player")]
+
+[node name="Arrivals" type="Node3D" parent="."]
+
+[node name="FromA" type="Marker3D" parent="Arrivals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -20)
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="RoadToA" parent="Exits" instance=ExtResource("4_exit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
+target_level = "res://tests/fixtures/region_a.tscn"
+arrival_id = &"FromB"
+destination_name = "Region A"
+object_name = "Region A"
+
+[node name="Loot" type="Node3D" parent="."]
+
+[node name="Scrap" parent="Loot" instance=ExtResource("5_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 4)
+item = ExtResource("6_scrap")
+quantity = 2
+
+[node name="Cloth" parent="Loot" instance=ExtResource("5_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 4)
+item = ExtResource("7_cloth")
+
+[node name="SalvageContainers" type="Node3D" parent="."]
+
+[node name="Crate" parent="SalvageContainers" instance=ExtResource("8_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -6)
+
+[node name="SalvagePiles" type="Node3D" parent="."]
+
+[node name="Pallet" parent="SalvagePiles" instance=ExtResource("9_pallet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -6)

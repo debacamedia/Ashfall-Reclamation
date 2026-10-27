@@ -6,7 +6,6 @@ extends "res://tests/test_case.gd"
 
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const RAIDER := preload("res://scenes/enemies/raider.tscn")
-const OUTPOST_PATH := "res://levels/outpost_17/outpost_17.tscn"
 const DT := 1.0 / 60.0
 const IDS := ["sandbag_barricade", "wooden_barricade", "wooden_wall", "metal_wall",
 	"wooden_gate", "spike_trap", "storage_crate", "field_workbench",
@@ -110,6 +109,15 @@ func _wait_rebake(region: NavigationRegion3D) -> void:
 	await wait_physics(4)
 
 
+## Waits for every tile rebake in a zone's Navigation node to finish.
+func _wait_rebake_zone(nav: Node) -> void:
+	for i in 900:
+		await get_tree().process_frame
+		if i > 10 and not NavRebaker.any_busy(nav):
+			break
+	await wait_physics(6)
+
+
 func _path(region: NavigationRegion3D, from: Vector3, to: Vector3) -> PackedVector3Array:
 	var map := region.get_world_3d().navigation_map
 	return NavigationServer3D.map_get_path(map, NavigationServer3D.map_get_closest_point(map, from),
@@ -160,7 +168,7 @@ func test_kits_structures_and_recipes_are_valid() -> void:
 				check(def.dismantle_return[item] <= found.inputs.get(item, 0), "%s: dismantle returns no more %s than the recipe used" % [id, item.id])
 	var trap: StructureDefinition = load("res://resources/structures/spike_trap.tres")
 	check(not trap.blocks_navigation and not trap.breakable, "spike trap: raiders walk into it")
-	check(ConstructionRules.MAX_PER_REGION == 1000, "1000 structures per region")
+	check(ConstructionRules.MAX_PER_REGION == 2000, "2000 structures per zone (1000 per old region)")
 
 
 func test_hand_crafting_a_kit() -> void:
@@ -523,45 +531,40 @@ func test_structures_save_and_load_with_contents() -> void:
 
 
 func test_structures_are_remembered_per_region() -> void:
+	# A zone is one region: one Structures node for all its places, kept when
+	# you leave the zone and put back when you return.
 	var wm := get_node("/root/WorldManager")
 	var old_states: Dictionary = (wm.get("region_states") as Dictionary).duplicate(true)
-	var lvl := (load(OUTPOST_PATH) as PackedScene).instantiate() as Node3D
-	for sp in lvl.get_children():
-		if sp is EnemySpawner:
-			(sp as EnemySpawner).enabled = false
-	(lvl.get_node("Player") as PlayerController).controlled_locally = false
-	add_child(lvl)
-	await wait_physics(10)
+	var lvl := await _outpost()
 	var root := ConstructionRules.structures_root(lvl)
-	check(root != null and root.is_in_group("navigation_geometry"), "Outpost 17 has a Structures node the navmesh sees")
+	check(root != null and root.is_in_group("navigation_geometry"), "the early zone has a Structures node the navmesh sees")
+	check(lvl.get_node("Outpost17").get_node_or_null("Structures") == null and lvl.get_node("HaldensCrossing").get_node_or_null("Structures") == null,
+		"one for the whole zone, not one per place")
 	var wall := _build("wooden_wall", Vector3(-6, 0, -8), 30, root)
+	var town_wall := _build("wooden_wall", HALDENS_AT + Vector3(-60, 0, 70), 0, root)
 	await wait_physics(2)
 	wall.apply_damage(50.0)
 	var xf := wall.global_transform
-	await _wait_rebake(lvl.get_node("Navigation") as NavigationRegion3D)
+	var town_xf := town_wall.global_transform
+	check(NavRebaker.regions_for(wall).size() >= 1 and NavRebaker.regions_for(town_wall) != NavRebaker.regions_for(wall),
+		"each wall rebakes only the navmesh tiles around it")
+	await _wait_rebake_zone(lvl.get_node("Navigation"))
 	wm.call("capture_region", lvl)
 	remove_child(lvl)
 	lvl.free()
 	await wait_physics(2)
-	var lvl2 := (load(OUTPOST_PATH) as PackedScene).instantiate() as Node3D
-	for sp in lvl2.get_children():
-		if sp is EnemySpawner:
-			(sp as EnemySpawner).enabled = false
-	(lvl2.get_node("Player") as PlayerController).controlled_locally = false
-	add_child(lvl2)
-	await wait_physics(10)
+	var lvl2 := await _outpost()
 	check(ConstructionRules.structures_root(lvl2).get_child_count() == 0, "a fresh copy has none")
-	wm.call("enter_region", lvl2, {}, &"FromHaldens")
+	wm.call("enter_region", lvl2, {}, &"")
 	await wait_physics(3)
 	var kids := ConstructionRules.structures_root(lvl2).get_children()
-	check(kids.size() == 1, "the wall is back on return")
-	if kids.size() == 1:
-		var w := kids[0] as Structure
-		check(w.global_transform.is_equal_approx(xf) and is_equal_approx(w.health, 350.0), "same place, same damage")
-	var town := (load("res://levels/haldens_crossing/haldens_crossing.tscn") as PackedScene).instantiate()
-	check(ConstructionRules.structures_root(town) != null, "Halden's Crossing has a Structures node too")
-	town.free()
-	await _wait_rebake(lvl2.get_node("Navigation") as NavigationRegion3D)
+	check(kids.size() == 2, "both walls are back on return (%d)" % kids.size())
+	var restored := kids.map(func(k: Node) -> Transform3D: return (k as Node3D).global_transform)
+	check(restored.any(func(x: Transform3D) -> bool: return x.is_equal_approx(xf)) and restored.any(func(x: Transform3D) -> bool: return x.is_equal_approx(town_xf)), "same places")
+	for k in kids:
+		if (k as Node3D).global_transform.is_equal_approx(xf):
+			check(is_equal_approx((k as Structure).health, 350.0), "same damage")
+	await _wait_rebake_zone(lvl2.get_node("Navigation"))
 	remove_child(lvl2)
 	lvl2.free()
 	wm.set("region_states", old_states)
@@ -1090,20 +1093,20 @@ func test_gate_opens_from_anywhere_on_it() -> void:
 
 # ---------------------------------------------------------------- level props
 
+## The early zone, raiders off (Outpost 17 is the site at its origin).
 func _outpost() -> Node3D:
-	var lvl := (load(OUTPOST_PATH) as PackedScene).instantiate() as Node3D
-	for sp in lvl.get_children():
-		if sp is EnemySpawner:
-			(sp as EnemySpawner).enabled = false
-	(lvl.get_node("Player") as PlayerController).controlled_locally = false
+	var lvl := instance_zone()
 	add_child(lvl)
 	await wait_physics(10)
 	return lvl
 
 
+## The first of Outpost 17's own props of this kind.
 func _near(lvl: Node3D, def_id: String) -> LevelProp:
+	var site := lvl.get_node_or_null("Outpost17")
+	var within: Node = site if site != null else lvl
 	for n in get_tree().get_nodes_in_group("level_props"):
-		if lvl.is_ancestor_of(n) and (n as LevelProp).definition.id == StringName(def_id):
+		if within.is_ancestor_of(n) and (n as LevelProp).definition.id == StringName(def_id):
 			return n as LevelProp
 	return null
 
@@ -1113,7 +1116,7 @@ func test_outpost_props_move_scrap_and_save() -> void:
 	var p := lvl.get_node("Player") as PlayerController
 	var kinds := {}
 	for n in get_tree().get_nodes_in_group("level_props"):
-		if lvl.is_ancestor_of(n):
+		if lvl.get_node("Outpost17").is_ancestor_of(n):
 			kinds[String((n as LevelProp).definition.id)] = true
 	for k in ["fuel_drums", "wood_crate", "sandbag_wall", "jersey_barrier", "chain_link_fence_prop", "military_truck", "portable_generator", "field_radio"]:
 		check(kinds.has(k), "%s can be moved/scrapped" % k)
@@ -1177,9 +1180,9 @@ func test_outpost_props_move_scrap_and_save() -> void:
 	lvl2.free()
 
 
-## Lets a level's pending navmesh rebake finish before it's freed.
+## Lets a level's pending navmesh rebakes finish before it's freed.
 func _settle(lvl: Node3D) -> void:
-	await _wait_rebake(lvl.get_node("Navigation") as NavigationRegion3D)
+	await _wait_rebake_zone(lvl.get_node("Navigation"))
 
 
 func test_build_mode_targets_props() -> void:
@@ -1268,7 +1271,7 @@ func test_spike_trap_slows_raiders_to_a_quarter() -> void:
 func test_salvage_containers_move_and_scrap() -> void:
 	var lvl := await _outpost()
 	var p := lvl.get_node("Player") as PlayerController
-	var crate := lvl.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
+	var crate := lvl.get_node("Outpost17/SalvageContainers/WarehouseCrateNorth") as SalvageContainer
 	var prop := crate.get_node("Prop") as ContainerProp
 	check(prop != null and Structure.from_collider(crate.get_node("Body")) == prop, "build mode can target the crate")
 	p.global_position = crate.global_position + crate.global_basis.z * 1.8 + Vector3(0, 0.05, 0)
@@ -1310,9 +1313,9 @@ func test_salvage_containers_move_and_scrap() -> void:
 	var lvl2 := await _outpost()
 	saves.apply_save_data(data, lvl2)
 	await wait_physics(2)
-	var crate2 := lvl2.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
+	var crate2 := lvl2.get_node("Outpost17/SalvageContainers/WarehouseCrateNorth") as SalvageContainer
 	check((crate2.get_node("Prop") as ContainerProp).scrapped and not crate2.visible, "still scrapped after loading")
-	var other := lvl2.get_node("SalvageContainers/BarracksLocker") as SalvageContainer
+	var other := lvl2.get_node("Outpost17/SalvageContainers/BarracksLocker") as SalvageContainer
 	check(other.visible and not (other.get_node("Prop") as ContainerProp).scrapped, "others untouched")
 	await _settle(lvl2)
 	remove_child(lvl2)

@@ -2,8 +2,9 @@ extends "res://tests/test_case.gd"
 ## ASHFALL Resource Pack 2.0 in Outpost 17: what is integrated vs only
 ## imported, props clear of routes and loot, signs on walls, 3D ambience,
 ## Pack 1 untouched, and saves made before Pack 2 still load.
+## Since Increment 15 the outpost is a site in the early zone (at its origin).
 
-const LEVEL_PATH := "res://levels/outpost_17/outpost_17.tscn"
+const LEVEL_PATH := "res://levels/outpost_17/outpost_17.tscn"  # the outpost site
 const PACK := "res://assets/ashfall_pack_v2/"
 const FIXTURE := "res://tests/fixtures/outpost_save_before_pack2.json"
 
@@ -22,12 +23,20 @@ const IMPORTED_ONLY := [
 ]
 
 
+var _zone: Node3D
+
+
+## The outpost site, in a fresh early zone (`_zone`).
 func _load_level() -> Node3D:
-	var lvl := (load(LEVEL_PATH) as PackedScene).instantiate() as Node3D
-	(lvl.get_node("RaiderSpawner") as EnemySpawner).enabled = false
-	add_child(lvl)
+	_zone = instance_zone()
+	add_child(_zone)
 	await wait_physics(3)
-	return lvl
+	return _zone.get_node("Outpost17") as Node3D
+
+
+func _unload_level() -> void:
+	remove_child(_zone)
+	_zone.free()
 
 
 ## Every pack resource the level uses, directly or through a material.
@@ -83,13 +92,13 @@ func test_props_clear_on_the_floor_and_navigable() -> void:
 		q.collision_mask = PhysicsLayers.WORLD_SOLID | PhysicsLayers.INTERACTABLES
 		q.collide_with_areas = true
 		q.exclude = [p.get_rid()]
-		var hits := space.intersect_shape(q, 8).filter(func(h: Dictionary) -> bool: return (h["collider"] as Node).name != "Terrain")
+		var hits := space.intersect_shape(q, 8).filter(func(h: Dictionary) -> bool: return (h["collider"] as CollisionObject3D).collision_layer != PhysicsLayers.TERRAIN)
 		check(hits.is_empty(), "%s clear of walls, props and loot (%s)" % [p.name, hits.map(func(h: Dictionary) -> String: return str((h["collider"] as Node).name))])
 		check(absf(p.global_position.y) < 0.01, "%s stands on the ground" % p.name)
 	# Every container and bench is still reachable on foot from the spawn
 	var map := lvl.get_world_3d().navigation_map
 	await wait_for_navigation(map)
-	var start := (lvl.get_node("PlayerSpawn") as Node3D).global_position
+	var start := (_zone.get_node("PlayerSpawn") as Node3D).global_position
 	var targets: Array[Node3D] = []
 	for c in lvl.get_node("SalvageContainers").get_children():
 		targets.append(c)
@@ -101,8 +110,7 @@ func test_props_clear_on_the_floor_and_navigable() -> void:
 		var goal := t.global_position + front.normalized() * 1.2
 		var path := NavigationServer3D.map_get_path(map, start, goal, true)
 		check(path.size() > 0 and path[path.size() - 1].distance_to(goal) < 1.0, "%s still reachable" % t.name)
-	remove_child(lvl)
-	lvl.free()
+	_unload_level()
 
 
 func test_signs_and_overlays_flat_on_walls() -> void:
@@ -129,8 +137,7 @@ func test_signs_and_overlays_flat_on_walls() -> void:
 			var box_a := a.global_transform * a.get_aabb()
 			var box_b := b.global_transform * b.get_aabb()
 			check(not box_a.abs().grow(0.003).intersects(box_b.abs().grow(0.003)), "%s doesn't overlap %s" % [a.name, b.name])
-	remove_child(lvl)
-	lvl.free()
+	_unload_level()
 
 
 func test_ambience_is_3d_and_loops() -> void:
@@ -147,9 +154,9 @@ func test_ambience_is_3d_and_loops() -> void:
 	var chatter := s.get_node("RadioChatter") as Node3D
 	check(chatter.global_position.distance_to((lvl.get_node("Pack2/Props/FieldRadio") as Node3D).global_position) < 1.0, "chatter comes from the radio")
 	# Pack 1 is untouched
-	check(lvl.get_node("Signage").get_child_count() == 4 and lvl.get_node("Soundscape").get_child_count() == 4, "Pack 1 signs and sounds still there")
-	remove_child(lvl)
-	lvl.free()
+	# (Pack 1's distant wind moved up to the zone: it plays everywhere)
+	check(lvl.get_node("Signage").get_child_count() == 4 and lvl.get_node("Soundscape").get_child_count() == 3 and _zone.get_node_or_null("DistantWind") != null, "Pack 1 signs and sounds still there")
+	_unload_level()
 
 
 func test_saves_from_before_pack2_still_load() -> void:
@@ -159,26 +166,30 @@ func test_saves_from_before_pack2_still_load() -> void:
 	check(json.parse(f.get_as_text()) == OK, "fixture parses")
 	var data: Dictionary = json.data
 	check(saves.validate(data) == "", "save made before Pack 2 is valid")
+	# It's for the old Outpost 17 level: it moves into the zone (version 3)
+	data = saves._migrate(data)
+	check(data["level"] == ZONE_PATH and int(data["version"]) == 3, "moved into the early zone")
 	var lvl := await _load_level()
 	# Pack 2 adds nothing to the save but its props, which (Increment 14)
 	# can be moved and scrapped
-	var now: Dictionary = saves.build_save_data(lvl)
+	var now: Dictionary = saves.build_save_data(_zone)
 	var before_paths := (data["nodes"] as Array).map(func(e: Dictionary) -> String: return str(e["path"]))
 	var now_paths := (now["nodes"] as Array).map(func(e: Dictionary) -> String: return str(e["path"]))
-	for p: String in now_paths.filter(func(p: String) -> bool: return p.begins_with("Pack2")):
-		check(lvl.get_node(p) is LevelProp, "only movable props are saved from Pack 2 (%s)" % p)
+	for p: String in now_paths.filter(func(p: String) -> bool: return p.begins_with("Outpost17/Pack2")):
+		check(_zone.get_node(p) is LevelProp, "only movable props are saved from Pack 2 (%s)" % p)
 	for p in before_paths:
 		check(now_paths.has(p), "%s still exists to load into" % p)
-	saves.apply_save_data(data, lvl)
+	var town_loot := _zone.get_node("HaldensCrossing/Loot").get_child_count()
+	saves.apply_save_data(data, _zone)
 	await wait_physics(2)
-	var player := lvl.get_node("Player") as Node3D
+	check(_zone.get_node("HaldensCrossing/Loot").get_child_count() == town_loot, "the town (not in the old save) keeps all its loot")
+	var player := _zone.get_node("Player") as Node3D
 	check(player.global_position.distance_to(Vector3(-24.0, 0.05, -15.0)) < 0.3, "player position restored")
 	var crate := lvl.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
 	check(crate.is_searched, "searched crate restored")
-	check(lvl.get_node("Loot").get_child_count() == before_paths.filter(func(p: String) -> bool: return p.begins_with("Loot/")).size(), "taken pickup stays gone")
+	check(lvl.get_node("Loot").get_child_count() == before_paths.filter(func(p: String) -> bool: return p.begins_with("Outpost17/Loot/")).size(), "taken pickup stays gone")
 	# The old save doesn't mention props: they all stay, in place
 	for prop in get_tree().get_nodes_in_group("level_props"):
 		if lvl.is_ancestor_of(prop):
 			check(not (prop as LevelProp).scrapped and (prop as Node3D).visible, "%s untouched by an old save" % prop.name)
-	remove_child(lvl)
-	lvl.free()
+	_unload_level()

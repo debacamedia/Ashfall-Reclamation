@@ -6,7 +6,6 @@ extends "res://tests/test_case.gd"
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const CRATE := preload("res://scenes/world/containers/supply_crate.tscn")
 const PICKUP := preload("res://scenes/items/pickup.tscn")
-const LEVEL := preload("res://levels/outpost_17/outpost_17.tscn")
 const DT := 1.0 / 60.0
 const TEST_DIR := "user://test_saves"
 
@@ -68,7 +67,7 @@ func _pickup(item: ItemDefinition, qty: int, at: Vector3, node_name: String) -> 
 
 func test_save_manager_autoload() -> void:
 	check(saves != null, "SaveManager autoload exists")
-	check(saves.SAVE_VERSION == 2, "save version 2 (regions, Increment 12)")
+	check(saves.SAVE_VERSION == 3, "save version 3 (the early zone, Increment 15)")
 	check(saves.slot_path("quicksave") == TEST_DIR + "/quicksave.json", "slot path: %s" % saves.slot_path("quicksave"))
 	check(InputMap.has_action("quick_save") and InputMap.has_action("quick_load"), "quick save / load actions")
 	var f5 := InputEventKey.new()
@@ -122,7 +121,7 @@ func test_file_format_and_version() -> void:
 	saves.save_game("fmt", self)
 	var data: Dictionary = saves.read_save_file(TEST_DIR + "/fmt.json")
 	check(data.get("format") == "ashfall_save", "format tag")
-	check(int(data.get("version", 0)) == 2 and data.get("regions") is Dictionary, "version field = 2, with regions")
+	check(int(data.get("version", 0)) == 3 and data.get("regions") is Dictionary, "version field = 3, with regions")
 	check(data.get("saved_at") is String and str(data["saved_at"]).length() >= 19, "timestamp: %s" % data.get("saved_at"))
 	check(data.has("level"), "level field")
 	var player_entry: Array = (data["nodes"] as Array).filter(func(e: Dictionary) -> bool: return e["path"] == "Player")
@@ -289,16 +288,14 @@ func test_quick_save_and_load_keys_with_hud_notice() -> void:
 
 
 func test_outpost_17_round_trip() -> void:
-	var level := LEVEL.instantiate() as Node3D
+	var level := instance_zone()
 	var p := level.get_node("Player") as PlayerController
-	p.controlled_locally = false
-	(level.get_node("RaiderSpawner") as EnemySpawner).enabled = false
 	add_child(level)
 	await wait_physics(10)
-	var crate := level.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
+	var crate := level.get_node("Outpost17/SalvageContainers/WarehouseCrateNorth") as SalvageContainer
 	crate.search()
 	var crate_data := str(crate.inventory.to_data())
-	var shelf := level.get_node("Loot/WarehouseShelfScrap")
+	var shelf := level.get_node("Outpost17/Loot/WarehouseShelfScrap")
 	shelf.get_parent().remove_child(shelf)
 	shelf.free()
 	p.global_position = Vector3(-17, 0.05, 11)
@@ -307,27 +304,25 @@ func test_outpost_17_round_trip() -> void:
 	var pos := p.global_position
 	check(saves.save_game("level", level) == OK, "level saved")
 	var data: Dictionary = saves.read_save_file(TEST_DIR + "/level.json")
-	check(data["level"] == "res://levels/outpost_17/outpost_17.tscn", "level path recorded")
+	check(data["level"] == "res://levels/early_zone/early_zone.tscn", "level path recorded")
 	var paths: Array = (data["nodes"] as Array).map(func(e: Dictionary) -> String: return e["path"])
-	check(paths.has("Player") and paths.has("SalvageContainers/WarehouseCrateNorth") and paths.has("Loot/GateMedkit"), "player, containers and loot saved")
-	check(not paths.has("Loot/WarehouseShelfScrap"), "taken loot not listed")
+	check(paths.has("Player") and paths.has("Outpost17/SalvageContainers/WarehouseCrateNorth") and paths.has("Outpost17/Loot/GateMedkit"), "player, containers and loot saved")
+	check(not paths.has("Outpost17/Loot/WarehouseShelfScrap"), "taken loot not listed")
 	level.queue_free()
 	await get_tree().process_frame
 	# A fresh copy of the level, as after restarting the game
-	var level2 := LEVEL.instantiate() as Node3D
+	var level2 := instance_zone()
 	var p2 := level2.get_node("Player") as PlayerController
-	p2.controlled_locally = false
-	(level2.get_node("RaiderSpawner") as EnemySpawner).enabled = false
 	add_child(level2)
 	await wait_physics(10)
 	check(saves.load_game("level", level2) == OK, "loaded into a fresh level")
 	await get_tree().process_frame
 	check(p2.global_position.distance_to(pos) < 0.05, "player back in the warehouse")
 	check(p2.inventory.count_of(&"fuel") == 1, "carrying the fuel can")
-	var crate2 := level2.get_node("SalvageContainers/WarehouseCrateNorth") as SalvageContainer
+	var crate2 := level2.get_node("Outpost17/SalvageContainers/WarehouseCrateNorth") as SalvageContainer
 	check(crate2.is_searched and str(crate2.inventory.to_data()) == crate_data, "crate searched with the same loot (not re-rolled)")
-	var shelf2 := level2.get_node_or_null("Loot/WarehouseShelfScrap")
+	var shelf2 := level2.get_node_or_null("Outpost17/Loot/WarehouseShelfScrap")
 	check(shelf2 == null or shelf2.is_queued_for_deletion(), "taken shelf scrap stays taken")
-	check(level2.get_node_or_null("Loot/GateMedkit") != null, "untouched loot still there")
-	var unsearched := level2.get_node("SalvageContainers/BarracksLocker") as SalvageContainer
+	check(level2.get_node_or_null("Outpost17/Loot/GateMedkit") != null, "untouched loot still there")
+	var unsearched := level2.get_node("Outpost17/SalvageContainers/BarracksLocker") as SalvageContainer
 	check(not unsearched.is_searched, "unsearched containers stay unsearched")

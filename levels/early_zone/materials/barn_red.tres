@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/albedo.png" id="1_0qlni"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/normal.png" id="2_k6l3p"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/roughness.png" id="3_ho7hr"]
+
+[resource]
+albedo_color = Color(0.62, 0.24, 0.18, 1)
+albedo_texture = ExtResource("1_0qlni")
+roughness = 0.95
+roughness_texture = ExtResource("3_ho7hr")
+normal_enabled = true
+normal_texture = ExtResource("2_k6l3p")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true

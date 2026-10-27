@@ -14,7 +14,7 @@ extends RefCounted
 const REACH := 6.0              ## eyes to the structure's centre (m)
 const GRID := 0.5               ## positions snap to this (m)
 const ROTATE_STEP := 15.0       ## degrees per R press
-const MAX_PER_REGION := 1000
+const MAX_PER_REGION := 2000  ## a zone holds what were two regions (1,000 each)
 const KEEP_CLEAR_RADIUS := 3.5  ## around spawns, arrivals and road signs (m)
 const GROUND_TOLERANCE := 0.35  ## max height difference under the footprint (m)
 const UNDO_SECONDS := 30.0      ## dismantle within this, undamaged: kit back

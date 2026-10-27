@@ -1,24 +1,23 @@
 extends "res://tests/test_case.gd"
 ## Level tests: Outpost 17 loads, the player spawns correctly, and key routes
 ## (gate, building door, culvert) are walkable at the intended stance.
+##
+## Since Increment 15 the outpost is a site in the early zone, standing at
+## the zone's origin, so its coordinates are unchanged. `_level` is the zone
+## (player, HUD, game mode), `_site` the outpost itself.
 
-const LEVEL := preload("res://levels/outpost_17/outpost_17.tscn")
 const DT := 1.0 / 60.0
 
 var _level: Node3D
+var _site: Node3D
 var _player: PlayerController
 
 
 ## Raiders are off by default so earlier tests aren't interrupted by attacks.
 func _load_level(raiders := false) -> void:
-	_level = LEVEL.instantiate() as Node3D
+	_level = await load_zone(["Outpost17"] if raiders else [])
+	_site = _level.get_node("Outpost17")
 	_player = _level.get_node("Player") as PlayerController
-	_player.controlled_locally = false
-	_player.head_bob_enabled = false
-	(_level.get_node("RaiderSpawner") as EnemySpawner).enabled = raiders
-	add_child(_level)
-	await wait_physics(30)
-	await wait_for_navigation(_level.get_world_3d().navigation_map)
 
 
 func _walk(move: Vector2, ticks: int, crouch := false) -> void:
@@ -89,7 +88,7 @@ func _arm_rifle() -> void:
 
 func test_firing_range_targets_take_damage() -> void:
 	await _load_level()
-	var dummy := _level.get_node("FiringRange/Target10mA") as TargetDummy
+	var dummy := _site.get_node("FiringRange/Target10mA") as TargetDummy
 	check(dummy != null, "10 m target exists")
 	await _arm_rifle()
 	# Stand at the firing line, aim at the torso of the 10 m target
@@ -132,7 +131,7 @@ func test_climb_range_tower_and_jump_off_takes_fall_damage() -> void:
 
 func test_burning_barrel_hurts_when_touched() -> void:
 	await _load_level()
-	var barrel := _level.get_node("Props/BurningBarrelYard") as Node3D
+	var barrel := _site.get_node("Props/BurningBarrelYard") as Node3D
 	await _teleport(barrel.global_position + Vector3(0.7, 0.05, 0), 0)
 	await _walk(Vector2.ZERO, 60)
 	check(_player.health.current_health < 100.0, "standing in the flames hurts")
@@ -203,7 +202,7 @@ func test_navmesh_culvert_too_low_for_raiders() -> void:
 func test_spawner_fills_outside_the_walls() -> void:
 	await _load_level(true)
 	await wait_physics(5)
-	var spawner := _level.get_node("RaiderSpawner") as EnemySpawner
+	var spawner := _site.get_node("RaiderSpawner") as EnemySpawner
 	var raiders := spawner.get_alive()
 	check(raiders.size() == 3, "3 raiders alive (got %d)" % raiders.size())
 	for r in raiders:
@@ -214,11 +213,10 @@ func test_spawner_fills_outside_the_walls() -> void:
 
 func test_raider_comes_through_gate_and_attacks_player_in_yard() -> void:
 	var spawner_node: EnemySpawner
-	_level = LEVEL.instantiate() as Node3D
+	_level = instance_zone(["Outpost17"])
+	_site = _level.get_node("Outpost17")
 	_player = _level.get_node("Player") as PlayerController
-	_player.controlled_locally = false
-	_player.head_bob_enabled = false
-	spawner_node = _level.get_node("RaiderSpawner") as EnemySpawner
+	spawner_node = _site.get_node("RaiderSpawner") as EnemySpawner
 	spawner_node.max_alive = 1
 	add_child(_level)
 	await wait_physics(30)
@@ -238,10 +236,10 @@ func test_raider_comes_through_gate_and_attacks_player_in_yard() -> void:
 
 
 func test_spawner_replaces_killed_raider() -> void:
-	_level = LEVEL.instantiate() as Node3D
+	_level = instance_zone(["Outpost17"])
+	_site = _level.get_node("Outpost17")
 	_player = _level.get_node("Player") as PlayerController
-	_player.controlled_locally = false
-	var spawner := _level.get_node("RaiderSpawner") as EnemySpawner
+	var spawner := _site.get_node("RaiderSpawner") as EnemySpawner
 	spawner.max_alive = 1
 	spawner.respawn_delay = 0.3
 	add_child(_level)
@@ -259,7 +257,7 @@ func test_spawner_replaces_killed_raider() -> void:
 
 func test_loot_placed_on_surfaces() -> void:
 	await _load_level()
-	var loot := _level.get_node("Loot").get_children()
+	var loot := _site.get_node("Loot").get_children()
 	check(loot.size() >= 20, "at least 20 loot pickups (%d)" % loot.size())
 	var space := _level.get_world_3d().direct_space_state
 	for pk: Node3D in loot:
@@ -272,7 +270,7 @@ func test_loot_placed_on_surfaces() -> void:
 func test_hud_prompt_and_notice_for_range_ammo() -> void:
 	await _load_level()
 	var hud := _level.get_node("HUD") as HUD
-	var ammo := _level.get_node("Loot/RangeAmmoA") as Pickup
+	var ammo := _site.get_node("Loot/RangeAmmoA") as Pickup
 	await _arm_rifle()
 	await _teleport(Vector3(10.2, 0.05, 35.4), 0)
 	var eye := _player.head.global_position
@@ -297,7 +295,7 @@ func test_hud_prompt_and_notice_for_range_ammo() -> void:
 func test_can_pick_loot_off_warehouse_shelves() -> void:
 	await _load_level()
 	for spec in [["WarehouseShelfScrap", Vector3(-22.8, 0.05, 13.0)], ["WarehouseShelfCloth", Vector3(-22.8, 0.05, 3.0)]]:
-		var pk := _level.get_node("Loot/" + spec[0]) as Pickup
+		var pk := _site.get_node("Loot/" + spec[0]) as Pickup
 		await _teleport(spec[1], 90)
 		var eye := _player.head.global_position
 		var target := pk.global_position + Vector3(0, 0.1, 0)
@@ -323,7 +321,7 @@ func test_no_loot_overlaps_solid_geometry() -> void:
 	var space := _level.get_world_3d().direct_space_state
 	var box := BoxShape3D.new()
 	box.size = Vector3(0.35, 0.25, 0.35)
-	for pk: Node3D in _level.get_node("Loot").get_children():
+	for pk: Node3D in _site.get_node("Loot").get_children():
 		var q := PhysicsShapeQueryParameters3D.new()
 		q.shape = box
 		q.transform = Transform3D(pk.global_basis, pk.global_position + Vector3(0, 0.2, 0))
@@ -335,7 +333,7 @@ func test_no_loot_overlaps_solid_geometry() -> void:
 
 func test_every_guard_tower_can_be_climbed() -> void:
 	await _load_level()
-	var towers := _level.get_node("GuardTowers").get_children()
+	var towers := _site.get_node("GuardTowers").get_children()
 	check(towers.size() == 4, "4 guard towers")
 	var w := InputFrame.new()
 	w.move = Vector2(0, -1)
@@ -359,7 +357,7 @@ func test_every_guard_tower_can_be_climbed() -> void:
 
 func test_salvage_containers_placed_clear_of_geometry() -> void:
 	await _load_level()
-	var containers := _level.get_node("SalvageContainers").get_children()
+	var containers := _site.get_node("SalvageContainers").get_children()
 	check(containers.size() >= 10, "at least 10 salvage containers (%d)" % containers.size())
 	var space := _level.get_world_3d().direct_space_state
 	var ids := {}
@@ -385,7 +383,7 @@ func test_salvage_containers_placed_clear_of_geometry() -> void:
 
 func test_every_container_can_be_searched_from_the_front() -> void:
 	await _load_level()
-	for c: SalvageContainer in _level.get_node("SalvageContainers").get_children():
+	for c: SalvageContainer in _site.get_node("SalvageContainers").get_children():
 		_player.close_container()
 		_player.health.revive(1.0)
 		var front := c.global_basis.z
@@ -411,17 +409,17 @@ func test_every_container_can_be_searched_from_the_front() -> void:
 func test_new_guns_placed_in_the_outpost() -> void:
 	await _load_level()
 	# Increment 11: guns are rarer; the command post has gun parts instead
-	check(_level.get_node_or_null("Loot/CommandPostShotgun") == null, "no free shotgun any more")
-	check((_level.get_node("Loot/CommandPostBarrel") as Pickup).item.id == &"gun_barrel", "a gun barrel in the command post")
-	check((_level.get_node("Loot/CommandPostTrigger") as Pickup).item.id == &"trigger_group", "a trigger group in the command post")
-	check((_level.get_node("Loot/WastelandServiceRifle") as Pickup).item.weapon.id == &"service_rifle", "a service rifle out in the wastes")
-	var scope := _level.get_node("Loot/TowerScope") as Pickup
+	check(_site.get_node_or_null("Loot/CommandPostShotgun") == null, "no free shotgun any more")
+	check((_site.get_node("Loot/CommandPostBarrel") as Pickup).item.id == &"gun_barrel", "a gun barrel in the command post")
+	check((_site.get_node("Loot/CommandPostTrigger") as Pickup).item.id == &"trigger_group", "a trigger group in the command post")
+	check((_site.get_node("Loot/WastelandServiceRifle") as Pickup).item.weapon.id == &"service_rifle", "a service rifle out in the wastes")
+	var scope := _site.get_node("Loot/TowerScope") as Pickup
 	check(scope.item.attachment != null and scope.item.attachment.id == &"scope_4x", "a 4× scope by the marksman rifle")
-	var marksman := _level.get_node("Loot/TowerMarksmanRifle") as Pickup
+	var marksman := _site.get_node("Loot/TowerMarksmanRifle") as Pickup
 	check(marksman.item.weapon != null and marksman.item.weapon.id == &"scoped_rifle", "marksman rifle up a guard tower")
 	check(marksman.global_position.y > 4.5, "on the tower platform (y %.2f)" % marksman.global_position.y)
 	# Climb the tower and take it
-	var tower := _level.get_node("GuardTowers/GuardTower") as Node3D
+	var tower := _site.get_node("GuardTowers/GuardTower") as Node3D
 	await _teleport(tower.global_position + Vector3(0, 4.65, -0.6), 0)
 	var eye := _player.head.global_position
 	var target := marksman.global_position + Vector3(0, 0.05, 0)
@@ -442,7 +440,7 @@ func test_benches_placed_and_usable() -> void:
 	await _load_level()
 	var space := _level.get_world_3d().direct_space_state
 	for name in ["Workbench", "WeaponsBench"]:
-		var bench := _level.get_node("CraftingStations/" + name) as CraftingStation
+		var bench := _site.get_node("CraftingStations/" + name) as CraftingStation
 		var body := bench.get_node("Body") as StaticBody3D
 		var shape := body.get_node("BodyShape") as CollisionShape3D
 		var box := (shape.shape as BoxShape3D).duplicate() as BoxShape3D
@@ -473,7 +471,7 @@ func test_benches_placed_and_usable() -> void:
 
 func test_salvage_piles_on_open_ground() -> void:
 	await _load_level()
-	var piles := _level.get_node("SalvagePiles").get_children()
+	var piles := _site.get_node("SalvagePiles").get_children()
 	check(piles.size() >= 8, "8+ salvage piles (%d)" % piles.size())
 	var space := _level.get_world_3d().direct_space_state
 	for pile: SalvagePile in piles:

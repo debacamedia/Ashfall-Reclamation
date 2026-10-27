@@ -8,7 +8,7 @@ extends Node
 ## they come back. More rules (death penalties, spawn selection between
 ## settlements, co-op revives) will live here too.
 ##
-## Lives in the level scene; see levels/outpost_17/outpost_17.tscn.
+## Lives in the level scene; see levels/early_zone/early_zone.tscn.
 
 signal player_died(player: PlayerController, info: DamageInfo)
 signal player_respawned(player: PlayerController)

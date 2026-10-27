@@ -5,6 +5,11 @@ extends Node
 
 var failures: PackedStringArray = []
 
+## The early zone (Increment 15): Outpost 17 at the origin, Halden's
+## Crossing at HALDENS_AT, five blockout places, the ash-storm edge.
+const ZONE_PATH := "res://levels/early_zone/early_zone.tscn"
+const HALDENS_AT := Vector3(450, 0, -275)
+
 
 func check(condition: bool, message: String) -> void:
 	if not condition:
@@ -104,3 +109,27 @@ func classic_kit(p: PlayerController) -> PlayerController:
 	}
 	p.get_node("Inventory").set("starting_items", kit)
 	return p
+
+
+## A fresh early zone (not yet added to the tree), with its player driven
+## by tests and every raider spawner off except those in the named sites
+## ("Outpost17", "HaldensCrossing").
+func instance_zone(raiders_at: Array = []) -> Node3D:
+	var zone := (load(ZONE_PATH) as PackedScene).instantiate() as Node3D
+	for n in zone.find_children("*", "Node3D", true, false):
+		if n is EnemySpawner:
+			var site := str(zone.get_path_to(n)).get_slice("/", 0)
+			(n as EnemySpawner).enabled = raiders_at.has(site)
+	var p := zone.get_node("Player") as PlayerController
+	p.controlled_locally = false
+	p.head_bob_enabled = false
+	return zone
+
+
+## instance_zone(), added and settled, with navigation answering.
+func load_zone(raiders_at: Array = []) -> Node3D:
+	var zone := instance_zone(raiders_at)
+	add_child(zone)
+	await wait_physics(30)
+	await wait_for_navigation(zone.get_world_3d().navigation_map)
+	return zone

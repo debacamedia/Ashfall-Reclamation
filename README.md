@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 14 (fort building)
+## Current state: Increment 15 (the early zone)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -18,6 +18,7 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 12:** **a second region, Halden's Crossing**: follow the road south out of Outpost 17 and hold E at the road sign. A ruined town with enterable shops, a two-storey hotel and a burned church, rooftop and water-tower sightlines, and a walled raider camp held by tougher **Raider Veterans**. 21 containers, scrap heaps and appliance piles for crafting materials in bulk. You carry your gear between regions, each region remembers what you looted, and saves include every region.
 - **Increment 13:** **construction**: craft structure kits (K → Structures), press **B** for build mode and place them with a green/red ghost: sandbag and wooden barricades, wooden and metal walls, a gate you open with E, spike traps, storage crates and a field workbench. Rotate with R, choose with the mouse wheel, move what you've built with F, repair with E and dismantle with X (within 30 s of placing, you get the kit back). Raiders path around what you build and **hack through** walls when you've shut them out. Everything you build is saved, per region.
 - **Increment 14:** **fort building**: walls, fences and barricades **snap end to end** at any angle (R sets the joint: 45°, 90°…); wall kits place as **solid, window or doorway** (V); **platforms** you can stack and build on, reached by **stairs** (raiders follow) or **ladders** (they can't); a craftable **chain-link fence**; the gate opens with E anywhere on it. The outpost's own **props and loot containers can be moved (F) or scrapped (X)** for materials (trucks scrap only; containers once emptied). **Spike traps slow raiders to 1/4 speed.** Magic Mouse / trackpad swipes choose kits and weapons. Up to 1,000 structures per region, with merged meshes for speed.
+- **Increment 15:** **the early zone**: Outpost 17 and Halden's Crossing are now one walkable zone laid out from the Regional Buildout Map. The outpost is on the west coast, Halden's ~530 m north-east up a new main road, with five more places blocked out: Saint Mercy Clinic, Ash Creek Farms, Smuggler's Gulch, Black Ridge Mine and Northwatch Outpost. Roads, a railway and signposts join them, and a **compass** shows where everything is. The old border berms are gone: the zone's edge is an **ash storm** (it warns, then hurts, then stops you) and the coast. Raiders only appear near you. Old saves move into the zone automatically.
 - **Resource Pack 3:** weathered brick, cracked asphalt, tar-paper roofs and painted containers; shop signs, raider graffiti and decals across Halden's Crossing and Outpost 17; bullet impacts that sound like the surface; crafting, salvage, pickup, reload and container sounds; town ambience. See [`docs/art/ashfall_pack_v3/INTEGRATION.md`](docs/art/ashfall_pack_v3/INTEGRATION.md) for what's integrated and what's only imported.
 
 ## Run it
@@ -41,3 +42,4 @@ godot --headless --path . -s res://tests/test_runner.gd
 ## Docs
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Milestone 1 technical architecture, authority model, collision layers, structure, roadmap.
 - [`docs/increments/`](docs/increments/): one guide per increment: files, hierarchy, inputs, inspector settings, signals, testing, troubleshooting.
+- `levels/early_zone/` is generated: edit the data at the top of [`tools/build_early_zone.gd`](tools/build_early_zone.gd) and re-run it to move places, roads or the zone's edge.

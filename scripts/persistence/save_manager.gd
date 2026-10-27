@@ -20,15 +20,22 @@ extends Node
 ## parent, so a node that's missing on load (a pickup taken after saving, an
 ## item dropped before saving) is re-created.
 ##
-## FORMAT (version 2):
-##   {"format": "ashfall_save", "version": 2, "saved_at": "...",
-##    "level": "res://levels/outpost_17/outpost_17.tscn",
+## FORMAT (version 3):
+##   {"format": "ashfall_save", "version": 3, "saved_at": "...",
+##    "level": "res://levels/early_zone/early_zone.tscn",
 ##    "nodes": [{"path": "Player", "scene": "res://...", "parent": ".",
 ##               "data": {...}}, ...],
 ##    "regions": {"res://levels/…/other.tscn": {"nodes": [...]}, ...}}
 ## "regions" is the remembered state of the regions you're not in
 ## (WorldManager, Increment 12); same node entries, no players.
 ## Older versions are upgraded in _migrate(); newer ones are refused.
+##
+## Version 3 (Increment 15): Outpost 17 and Halden's Crossing stopped being
+## levels and became sites in the early zone. Older saves are moved over:
+## each entry's path gains its site ("Loot/Medkit" -> "Outpost17/Loot/Medkit"),
+## positions in Halden's Crossing move by where the town now stands, and
+## built structures keep their own names. A site the save knew nothing about
+## (a town never visited) is listed in "untouched" and left as it is.
 ##
 ## AUTHORITY: in co-op only the host saves and loads (the world state lives
 ## there); clients will receive the result through normal replication.
@@ -39,8 +46,15 @@ signal loaded(path: String)
 signal failed(reason: String)
 
 const FORMAT := "ashfall_save"
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 const QUICK_SLOT := "quicksave"
+## The level the old Outpost 17 / Halden's Crossing levels became part of.
+const ZONE_LEVEL := "res://levels/early_zone/early_zone.tscn"
+## Old level -> [its site node in the zone, where the site now stands].
+const SITE_MIGRATION := {
+	"res://levels/outpost_17/outpost_17.tscn": ["Outpost17", Vector3.ZERO],
+	"res://levels/haldens_crossing/haldens_crossing.tscn": ["HaldensCrossing", Vector3(450, 0, -275)],
+}
 
 ## Where saves go. Tests point this somewhere else.
 var save_dir := "user://saves"
@@ -187,9 +201,19 @@ func apply_save_data(data: Dictionary, root: Node) -> void:
 	for e in entries:
 		if e is Dictionary:
 			listed[str(e.get("path", ""))] = true
+	# Sites the save knew nothing about keep everything they have
+	var untouched: Array[Node] = []
+	var untouched_paths: Variant = data.get("untouched", [])
+	if untouched_paths is Array:
+		for u in untouched_paths:
+			var n := root.get_node_or_null(NodePath(str(u)))
+			if n != null:
+				untouched.append(n)
 	# Things that were gone when the game was saved (taken pickups) or
 	# appeared since (items dropped after saving) are removed first.
 	for n in get_tree().get_nodes_in_group("persist"):
+		if untouched.any(func(u: Node) -> bool: return u.is_ancestor_of(n)):
+			continue
 		if root.is_ancestor_of(n) and not listed.has(str(root.get_path_to(n))) \
 				and n.has_method("is_save_removable") and n.call("is_save_removable"):
 			n.get_parent().remove_child(n)
@@ -236,11 +260,77 @@ func _apply_after_scene_change(data: Dictionary, path: String) -> void:
 
 ## Upgrades older save versions.
 ##   1 → 2: no other regions remembered yet.
+##   2 → 3: Outpost 17 and Halden's Crossing became sites in the early zone.
 func _migrate(data: Dictionary) -> Dictionary:
 	if int(data.get("version", 1)) < 2:
 		data["regions"] = {}
 		data["version"] = 2
+	if int(data.get("version", 2)) < 3:
+		data = migrate_to_zone(data)
+		data["version"] = 3
 	return data
+
+
+## Moves a version 2 save from the old levels into the early zone.
+static func migrate_to_zone(data: Dictionary) -> Dictionary:
+	var level := str(data.get("level", ""))
+	if not SITE_MIGRATION.has(level):
+		return data
+	var nodes := []
+	var seen: Array[String] = []
+	nodes.append_array(_move_entries(data.get("nodes", []), level))
+	seen.append(level)
+	var regions: Variant = data.get("regions", {})
+	var left := {}
+	if regions is Dictionary:
+		for other in regions:
+			var state: Variant = regions[other]
+			if SITE_MIGRATION.has(other) and state is Dictionary and (state as Dictionary).get("nodes") is Array:
+				nodes.append_array(_move_entries(state["nodes"], other))
+				seen.append(other)
+			else:
+				left[other] = state
+	var untouched := []
+	for old in SITE_MIGRATION:
+		if not seen.has(old):
+			untouched.append(SITE_MIGRATION[old][0])
+	data["level"] = ZONE_LEVEL
+	data["nodes"] = nodes
+	data["regions"] = left
+	data["untouched"] = untouched
+	return data
+
+
+static func _move_entries(entries: Variant, level: String) -> Array:
+	var out := []
+	if not entries is Array:
+		return out
+	var site: String = SITE_MIGRATION[level][0]
+	var offset: Vector3 = SITE_MIGRATION[level][1]
+	var n := 0
+	for e in entries:
+		if not e is Dictionary:
+			continue
+		var entry := (e as Dictionary).duplicate(true)
+		var path := str(entry.get("path", ""))
+		var parent := str(entry.get("parent", "."))
+		if path == "Player":
+			pass  # the zone's player
+		elif path.begins_with("Structures/"):
+			# One Structures node for the whole zone now: keep names apart
+			entry["path"] = "Structures/%s_%d" % [site, n]
+			n += 1
+		else:
+			entry["path"] = site + "/" + path
+			entry["parent"] = site if parent == "." else site + "/" + parent
+		if offset != Vector3.ZERO and entry.get("data") is Dictionary:
+			var d: Dictionary = entry["data"]
+			for key in ["position", "origin"]:
+				var v: Variant = d.get(key)
+				if v is Array and (v as Array).size() == 3:
+					d[key] = [float(v[0]) + offset.x, float(v[1]) + offset.y, float(v[2]) + offset.z]
+		out.append(entry)
+	return out
 
 
 ## The WorldManager autoload (other regions' state), if present.

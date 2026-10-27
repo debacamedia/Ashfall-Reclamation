@@ -3,7 +3,8 @@ extends CanvasLayer
 ## In-game overlay: health bar, damage feedback (red flash, low-health pulse,
 ## direction arcs), death screen with respawn countdown, dynamic crosshair
 ## with hit markers, weapon and ammo readout, interaction prompt with hold
-## progress, pickup notices, carried resources, UI sounds, debug readout (F3).
+## progress, pickup notices, carried resources, UI sounds, debug readout (F3),
+## and the compass strip with the zone's landmarks (CompassBar).
 ##
 ## Scene: res://scenes/ui/hud.tscn
 
@@ -57,10 +58,15 @@ var _flash := 0.0
 var _pulse_time := 0.0
 var _trail_fraction := 1.0
 var _bar_width := 0.0
+## The compass strip (built in code).
+var compass: CompassBar
 
 
 func _ready() -> void:
 	_bar_width = _health_fill.size.x
+	compass = CompassBar.new()
+	compass.name = "Compass"
+	add_child(compass)
 	_death_screen.visible = false
 	_damage_vignette.modulate.a = 0.0
 	var saves := get_node_or_null("/root/SaveManager")
@@ -79,6 +85,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	compass.player = player
 	if player == null:
 		return
 	if player.weapon != _weapon:

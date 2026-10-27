@@ -12,7 +12,7 @@ config_version=5
 
 config/name="ASHFALL: Reclamation"
 config/description="Post-apocalyptic first-person survival shooter with settlement building."
-run/main_scene="res://levels/outpost_17/outpost_17.tscn"
+run/main_scene="res://levels/early_zone/early_zone.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
