@@ -117,6 +117,12 @@ func _process(delta: float) -> void:
 			show_notice("%s  →  backpack (spare)" % def.display_name, Color(0.75, 0.9, 1.0)))
 		player.gun_equipped.connect(func(def: WeaponDefinition) -> void:
 			show_notice("%s  →  slot %d (unloaded: reload)" % [def.display_name, def.slot], Color(0.75, 0.9, 1.0)))
+		player.pack_changed.connect(func(pack: ItemDefinition) -> void:
+			show_notice("Wearing your %s: %.0f kg, %d slots" % [pack.display_name if pack != null else "satchel",
+				PlayerInventory.weight_for(pack), PlayerInventory.slots_for(pack)], Color(0.75, 0.9, 1.0)))
+		player.pack_refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
 		player.gun_refused.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED))
@@ -156,6 +162,7 @@ func _process(delta: float) -> void:
 	_update_weapon_strip()
 	# Full-screen windows (inventory, container, crafting) hide the corner readouts
 	var window_open := inventory_screen.visible or (container_screen != null and container_screen.visible) or (crafting_screen != null and crafting_screen.visible)
+	compass.get_node("PlaceBanner").visible = not window_open
 	for c: CanvasItem in [_weapon_strip, _quick_slot, _weapon_label, _ammo_label]:
 		if c != null:
 			c.modulate.a = 0.0 if window_open else 1.0
@@ -454,7 +461,8 @@ func _update_hint() -> void:
 		for w in player.weapon_slots.owned():
 			if not w.definition.melee:
 				has_gun = true
-	_hint.visible = not has_gun and not player.is_dead()
+	var window_open := inventory_screen.visible or (container_screen != null and container_screen.visible) or (crafting_screen != null and crafting_screen.visible)
+	_hint.visible = not has_gun and not player.is_dead() and not window_open
 	if _hint.visible:
 		var wood := player.inventory.count_of(&"wood") if player.inventory != null else 0
 		_hint.text = ("You only have a machete.  Press K and craft a Pipe Pistol." if wood > 0

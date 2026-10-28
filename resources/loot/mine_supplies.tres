@@ -1,53 +1,59 @@
 [gd_resource type="Resource" script_class="LootTable" format=3]
 
-[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_het1v"]
-[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="2_feuyk"]
-[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="3_vvm61"]
-[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="4_ggv3c"]
-[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_giheh"]
-[ext_resource type="Resource" path="res://resources/items/spring.tres" id="6_4jpdw"]
-[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="7_eqyan"]
-[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="8_3at6s"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_feuyk"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="2_vvm61"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="3_ggv3c"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="4_giheh"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="5_4jpdw"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="6_eqyan"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="7_3at6s"]
+[ext_resource type="Resource" path="res://resources/items/frame_pack.tres" id="8_5t7uq"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_fpu1p"]
 
-[sub_resource type="Resource" id="Resource_5t7uq"]
-script = ExtResource("1_het1v")
-item = ExtResource("2_feuyk")
+[sub_resource type="Resource" id="Resource_doydg"]
+script = ExtResource("1_feuyk")
+item = ExtResource("2_vvm61")
 weight = 3.0
 min_quantity = 2
 max_quantity = 4
 
-[sub_resource type="Resource" id="Resource_fpu1p"]
-script = ExtResource("1_het1v")
-item = ExtResource("3_vvm61")
-weight = 2.0
-max_quantity = 2
-
-[sub_resource type="Resource" id="Resource_doydg"]
-script = ExtResource("1_het1v")
-item = ExtResource("4_ggv3c")
-weight = 2.0
-max_quantity = 2
-
 [sub_resource type="Resource" id="Resource_qvw2w"]
-script = ExtResource("1_het1v")
-item = ExtResource("5_giheh")
+script = ExtResource("1_feuyk")
+item = ExtResource("3_ggv3c")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_y2kdy"]
+script = ExtResource("1_feuyk")
+item = ExtResource("4_giheh")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_s58j8"]
+script = ExtResource("1_feuyk")
+item = ExtResource("5_4jpdw")
 weight = 2.0
 min_quantity = 2
 max_quantity = 5
 
-[sub_resource type="Resource" id="Resource_y2kdy"]
-script = ExtResource("1_het1v")
-item = ExtResource("6_4jpdw")
+[sub_resource type="Resource" id="Resource_ypxs5"]
+script = ExtResource("1_feuyk")
+item = ExtResource("6_eqyan")
 max_quantity = 2
 
-[sub_resource type="Resource" id="Resource_s58j8"]
-script = ExtResource("1_het1v")
-item = ExtResource("7_eqyan")
+[sub_resource type="Resource" id="Resource_yue3x"]
+script = ExtResource("1_feuyk")
+item = ExtResource("7_3at6s")
 weight = 2.0
 max_quantity = 2
 
+[sub_resource type="Resource" id="Resource_jus2g"]
+script = ExtResource("1_feuyk")
+item = ExtResource("8_5t7uq")
+weight = 0.3
+
 [resource]
-script = ExtResource("8_3at6s")
-entries = Array[ExtResource("1_het1v")]([SubResource("Resource_5t7uq"), SubResource("Resource_fpu1p"), SubResource("Resource_doydg"), SubResource("Resource_qvw2w"), SubResource("Resource_y2kdy"), SubResource("Resource_s58j8")])
+script = ExtResource("9_fpu1p")
+entries = Array[ExtResource("1_feuyk")]([SubResource("Resource_doydg"), SubResource("Resource_qvw2w"), SubResource("Resource_y2kdy"), SubResource("Resource_s58j8"), SubResource("Resource_ypxs5"), SubResource("Resource_yue3x"), SubResource("Resource_jus2g")])
 min_rolls = 2
 max_rolls = 4

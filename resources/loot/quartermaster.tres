@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_h874t"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="2_r7son"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_y45fm"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="4_4tsef"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="5_wmxf6"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="6_jcxw7"]
+[ext_resource type="Resource" path="res://resources/items/military_pack.tres" id="7_7iftm"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="8_mwnrc"]
+
+[sub_resource type="Resource" id="Resource_syc0h"]
+script = ExtResource("1_h874t")
+item = ExtResource("2_r7son")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_xfqur"]
+script = ExtResource("1_h874t")
+item = ExtResource("3_y45fm")
+weight = 2.0
+min_quantity = 2
+max_quantity = 5
+
+[sub_resource type="Resource" id="Resource_cinyq"]
+script = ExtResource("1_h874t")
+item = ExtResource("4_4tsef")
+weight = 2.0
+min_quantity = 15
+max_quantity = 30
+
+[sub_resource type="Resource" id="Resource_725kx"]
+script = ExtResource("1_h874t")
+item = ExtResource("5_wmxf6")
+
+[sub_resource type="Resource" id="Resource_54bv6"]
+script = ExtResource("1_h874t")
+item = ExtResource("6_jcxw7")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_gy2kc"]
+script = ExtResource("1_h874t")
+item = ExtResource("7_7iftm")
+
+[resource]
+script = ExtResource("8_mwnrc")
+guaranteed = Array[ExtResource("1_h874t")]([SubResource("Resource_gy2kc")])
+entries = Array[ExtResource("1_h874t")]([SubResource("Resource_syc0h"), SubResource("Resource_xfqur"), SubResource("Resource_cinyq"), SubResource("Resource_725kx"), SubResource("Resource_54bv6")])

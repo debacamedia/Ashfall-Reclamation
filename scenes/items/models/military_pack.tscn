@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="1_qs50t"]
+[ext_resource type="Material" path="res://assets/materials/raider_leather.tres" id="2_ew56p"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_c0qux"]
+size = Vector3(0.42, 0.24, 0.56)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xcdys"]
+size = Vector3(0.42839998, 0.03, 0.196)
+
+[sub_resource type="BoxMesh" id="BoxMesh_36vb2"]
+size = Vector3(0.05, 0.02, 0.476)
+
+[sub_resource type="BoxMesh" id="BoxMesh_60ia4"]
+size = Vector3(0.05, 0.02, 0.476)
+
+[sub_resource type="BoxMesh" id="BoxMesh_iskyj"]
+size = Vector3(0.08, 0.168, 0.224)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rfdi5"]
+size = Vector3(0.08, 0.168, 0.224)
+
+[node name="MilitaryPack" type="Node3D" unique_id=1492802565]
+
+[node name="Bag" type="MeshInstance3D" parent="." unique_id=1527371018]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+material_override = ExtResource("1_qs50t")
+mesh = SubResource("BoxMesh_c0qux")
+
+[node name="Flap" type="MeshInstance3D" parent="." unique_id=1413275542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.255, -0.1848)
+material_override = ExtResource("1_qs50t")
+mesh = SubResource("BoxMesh_xcdys")
+
+[node name="StrapL" type="MeshInstance3D" parent="." unique_id=728857451]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.105, 0.25, 0.02)
+material_override = ExtResource("2_ew56p")
+mesh = SubResource("BoxMesh_36vb2")
+
+[node name="StrapR" type="MeshInstance3D" parent="." unique_id=1726408692]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.105, 0.25, 0.02)
+material_override = ExtResource("2_ew56p")
+mesh = SubResource("BoxMesh_60ia4")
+
+[node name="PouchL" type="MeshInstance3D" parent="." unique_id=1489325373]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.084, 0.05)
+material_override = ExtResource("1_qs50t")
+mesh = SubResource("BoxMesh_iskyj")
+
+[node name="PouchR" type="MeshInstance3D" parent="." unique_id=185974547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.084, 0.05)
+material_override = ExtResource("1_qs50t")
+mesh = SubResource("BoxMesh_rfdi5")

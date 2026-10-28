@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/rucksack.png" id="1_0rinn"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_135n7"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_0rinn"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/rucksack.tscn" id="3_navh0"]
+
+[resource]
+script = ExtResource("2_0rinn")
+id = &"rucksack"
+display_name = "Rucksack"
+description = "A patched canvas rucksack on a stick frame. 30 slots, 40 kg. Put it on from your backpack (right-click or Wear)."
+category = 9
+icon = ExtResource("1_0rinn")
+max_stack = 1
+weight = 1.2
+base_value = 80
+world_model = ExtResource("3_navh0")
+pickup_hold_time = 0.3
+pickup_sound = ExtResource("1_135n7")
+pack_slots = 30
+pack_carry_weight = 40.0

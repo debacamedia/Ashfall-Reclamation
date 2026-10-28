@@ -8,6 +8,32 @@ extends InventoryComponent
 ## Given once when the game starts (not on respawn).
 @export var starting_items: Dictionary[ItemDefinition, int] = {}
 
+## What you carry with no backpack on: the satchel you start with
+## (Increment 16.8). It can't be lost.
+const SATCHEL_SLOTS := 24
+const SATCHEL_WEIGHT := 30.0
+
+## The backpack you're wearing (an item with pack_slots), or null for the
+## satchel. Change it through PlayerController.request_wear_pack.
+var pack: ItemDefinition
+
+
+static func slots_for(def: ItemDefinition) -> int:
+	return def.pack_slots if def != null and def.is_pack() else SATCHEL_SLOTS
+
+
+static func weight_for(def: ItemDefinition) -> float:
+	return def.pack_carry_weight if def != null and def.is_pack() else SATCHEL_WEIGHT
+
+
+## Puts on `def` (null = back to the satchel) if everything still fits.
+## Doesn't move the pack items themselves (PlayerController does).
+func set_pack(def: ItemDefinition) -> bool:
+	if not set_capacity(slots_for(def), weight_for(def)):
+		return false
+	pack = def
+	return true
+
 var _loadout_given := false
 
 

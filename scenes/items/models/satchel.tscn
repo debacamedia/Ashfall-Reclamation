@@ -1,0 +1,47 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/tent_canvas.tres" id="1_88frf"]
+[ext_resource type="Material" path="res://assets/materials/raider_leather.tres" id="2_bxq1s"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_uy7ib"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_4r5yk"]
+size = Vector3(0.36, 0.14, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kdg5f"]
+size = Vector3(0.36720002, 0.03, 0.105000004)
+
+[sub_resource type="BoxMesh" id="BoxMesh_821h2"]
+size = Vector3(0.05, 0.02, 0.255)
+
+[sub_resource type="BoxMesh" id="BoxMesh_52rb7"]
+size = Vector3(0.05, 0.02, 0.255)
+
+[sub_resource type="BoxMesh" id="BoxMesh_b2k5y"]
+size = Vector3(0.06, 0.02, 0.05)
+
+[node name="Satchel" type="Node3D" unique_id=1779437137]
+
+[node name="Bag" type="MeshInstance3D" parent="." unique_id=1078263103]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+material_override = ExtResource("1_88frf")
+mesh = SubResource("BoxMesh_4r5yk")
+
+[node name="Flap" type="MeshInstance3D" parent="." unique_id=724758414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.155, -0.09900001)
+material_override = ExtResource("2_bxq1s")
+mesh = SubResource("BoxMesh_kdg5f")
+
+[node name="StrapL" type="MeshInstance3D" parent="." unique_id=2012258540]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.15, 0.02)
+material_override = ExtResource("2_bxq1s")
+mesh = SubResource("BoxMesh_821h2")
+
+[node name="StrapR" type="MeshInstance3D" parent="." unique_id=470839492]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09, 0.15, 0.02)
+material_override = ExtResource("2_bxq1s")
+mesh = SubResource("BoxMesh_52rb7")
+
+[node name="Buckle" type="MeshInstance3D" parent="." unique_id=1153837732]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0)
+material_override = ExtResource("3_uy7ib")
+mesh = SubResource("BoxMesh_b2k5y")

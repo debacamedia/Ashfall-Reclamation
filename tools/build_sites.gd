@@ -27,10 +27,10 @@ const LOOT := {
 	"pharmacy": [1, 2, [["bandage", 1, 2, 2]], [["chemicals", 3, 2, 4], ["medkit", 2, 1, 1], ["cloth", 1, 1, 3]]],
 	"farm_shed": [2, 4, [], [["scrap_metal", 3, 2, 4], ["wood_plank", 3, 2, 4], ["spring", 2, 1, 2], ["metal_pipe", 2, 1, 2], ["fuel", 2, 1, 1], ["cloth", 1, 1, 3], ["shotgun_shells", 1, 3, 6]]],
 	"barn_loft": [1, 3, [["shotgun_shells", 1, 6, 12]], [["gun_stock", 1, 1, 1], ["cloth", 2, 2, 4], ["medkit", 1, 1, 1], ["fuel", 1, 1, 2]]],
-	"mine_supplies": [2, 4, [], [["gunpowder", 3, 2, 4], ["fuel", 2, 1, 2], ["metal_plate", 2, 1, 2], ["scrap_metal", 2, 2, 5], ["spring", 1, 1, 2], ["metal_pipe", 2, 1, 2]]],
+	"mine_supplies": [2, 4, [], [["gunpowder", 3, 2, 4], ["fuel", 2, 1, 2], ["metal_plate", 2, 1, 2], ["scrap_metal", 2, 2, 5], ["spring", 1, 1, 2], ["metal_pipe", 2, 1, 2], ["frame_pack", 0.3, 1, 1]]],
 	"mine_explosives": [1, 2, [["gunpowder", 1, 3, 5]], [["fuel", 2, 1, 2], ["chemicals", 2, 1, 2], ["spring", 1, 1, 1]]],
 	"mine_office": [1, 3, [], [["electronics", 2, 1, 2], ["pistol_ammo", 2, 6, 12], ["chemicals", 1, 1, 2], ["cloth", 1, 1, 2], ["gun_magazine", 1, 1, 1]]],
-	"smuggler_stash": [3, 5, [["electronics", 1, 1, 2]], [["suppressor", 1, 1, 1], ["extended_mag", 1, 1, 1], ["red_dot", 1, 1, 1], ["scope_4x", 0.5, 1, 1], ["foregrip", 1, 1, 1], ["rifle_ammo", 2, 15, 30], ["pistol_ammo", 2, 10, 20], ["shotgun_shells", 1, 6, 12], ["chemicals", 2, 1, 2], ["gunpowder", 2, 1, 3], ["gun_receiver", 1, 1, 1], ["gun_barrel", 1, 1, 1], ["trigger_group", 1, 1, 1], ["medkit", 1, 1, 1]]],
+	"smuggler_stash": [3, 5, [["electronics", 1, 1, 2]], [["suppressor", 1, 1, 1], ["extended_mag", 1, 1, 1], ["red_dot", 1, 1, 1], ["scope_4x", 0.5, 1, 1], ["foregrip", 1, 1, 1], ["rifle_ammo", 2, 15, 30], ["pistol_ammo", 2, 10, 20], ["shotgun_shells", 1, 6, 12], ["chemicals", 2, 1, 2], ["gunpowder", 2, 1, 3], ["gun_receiver", 1, 1, 1], ["gun_barrel", 1, 1, 1], ["trigger_group", 1, 1, 1], ["medkit", 1, 1, 1], ["military_pack", 0.4, 1, 1]]],
 	# Increment 16.6: guns you can find. Each list's 5th part is "exactly one of"
 	"smuggler_guns": [1, 2, [["pistol_ammo", 1, 8, 15]], [["shotgun_shells", 2, 6, 12], ["rifle_ammo", 2, 15, 30], ["gun_magazine", 1, 1, 1], ["suppressor", 1, 1, 1]],
 		[["weapons/pistol_item", 4, 1, 1], ["weapons/shotgun_item", 3, 1, 1], ["weapons/service_rifle_item", 1, 1, 1]]],
@@ -38,7 +38,9 @@ const LOOT := {
 	"garrison_armory": [2, 3, [], [["rifle_ammo", 3, 20, 40], ["shotgun_shells", 2, 8, 16], ["pistol_ammo", 2, 10, 20], ["gun_magazine", 1, 1, 1], ["gun_barrel", 1, 1, 1], ["red_dot", 1, 1, 1], ["foregrip", 1, 1, 1], ["extended_mag", 1, 1, 1]],
 		[["weapons/service_rifle_item", 3, 1, 1], ["weapons/shotgun_item", 3, 1, 1], ["weapons/pistol_item", 2, 1, 1], ["weapons/scoped_rifle_item", 1, 1, 1]]],
 	"garrison_ammo": [2, 3, [["rifle_ammo", 1, 30, 60]], [["pistol_ammo", 2, 15, 30], ["shotgun_shells", 2, 10, 20], ["rifle_308", 1, 10, 20], ["gunpowder", 1, 2, 4]]],
-	"garrison_crate": [2, 4, [["medkit", 1, 1, 1]], [["bandage", 2, 2, 4], ["rifle_ammo", 3, 15, 30], ["gun_receiver", 1, 1, 1], ["trigger_group", 1, 1, 1], ["gun_stock", 1, 1, 1], ["metal_plate", 2, 1, 2], ["electronics", 1, 1, 2], ["red_dot", 1, 1, 1]]],
+	"garrison_crate": [2, 4, [["medkit", 1, 1, 1]], [["bandage", 2, 2, 4], ["rifle_ammo", 3, 15, 30], ["gun_receiver", 1, 1, 1], ["trigger_group", 1, 1, 1], ["gun_stock", 1, 1, 1], ["metal_plate", 2, 1, 2], ["electronics", 1, 1, 2], ["red_dot", 1, 1, 1], ["military_pack", 0.6, 1, 1]]],
+	# Increment 16.8: Northwatch's stores always have a military pack
+	"quartermaster": [1, 3, [["military_pack", 1, 1, 1]], [["bandage", 2, 2, 4], ["cloth", 2, 2, 5], ["rifle_ammo", 2, 15, 30], ["medkit", 1, 1, 1], ["metal_plate", 1, 1, 2]]],
 	"officer_locker": [1, 3, [["pistol_ammo", 1, 8, 16]], [["electronics", 2, 1, 2], ["medkit", 1, 1, 1], ["weapons/pistol_item", 1, 1, 1], ["red_dot", 1, 1, 1], ["extended_mag", 1, 1, 1]]],
 	"comms_gear": [1, 2, [["electronics", 1, 2, 3]], [["scope_4x", 1, 1, 1], ["spring", 1, 1, 2], ["metal_plate", 1, 1, 1], ["rifle_308", 1, 5, 10]]],
 }
@@ -631,7 +633,7 @@ func _northwatch() -> Kit:
 		"wall": "corrugated", "floor": "concrete_plain", "roof": "flat", "roof_mat": "rust",
 		"openings": [["W", 0, "door"], ["N", 1, "window"]],
 	})
-	k.container_at_wall("crate", "StoresCrate", s, "E", -1.0, "garrison_crate", "Military Crate")
+	k.container_at_wall("crate", "StoresCrate", s, "E", -1.0, "quartermaster", "Quartermaster's Crate")
 	k.pile("appliance", "BrokenRadio", s, Vector3(1.6, 0, 1.4), -90)
 	# Guard towers in two corners (their ladders face the yard)
 	k.prop("guard_tower", "TowerNE", Vector3(13.5, 0, -2.0), 180, "Towers")

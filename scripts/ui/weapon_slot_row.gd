@@ -31,7 +31,7 @@ var _info := Label.new()
 func _init(slot_number := 1) -> void:
 	slot = slot_number
 	name = "WeaponSlot%d" % slot
-	custom_minimum_size = Vector2(270, 74)
+	custom_minimum_size = Vector2(270, 68)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_style.bg_color = Color(0.1, 0.1, 0.09, 0.92)
 	_style.set_border_width_all(2)
@@ -39,15 +39,15 @@ func _init(slot_number := 1) -> void:
 	_style.set_corner_radius_all(4)
 	_style.content_margin_left = 8
 	_style.content_margin_right = 8
-	_style.content_margin_top = 5
-	_style.content_margin_bottom = 5
+	_style.content_margin_top = 3
+	_style.content_margin_bottom = 3
 	add_theme_stylebox_override("panel", _style)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(row)
 	_icon.name = "Icon"
-	_icon.custom_minimum_size = Vector2(76, 58)
+	_icon.custom_minimum_size = Vector2(72, 52)
 	_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE

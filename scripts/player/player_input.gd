@@ -14,6 +14,11 @@ signal mouse_capture_changed(captured: bool)
 ## On by default: a Mac Magic Mouse can't hold right and left click at once.
 ## Off = hold to aim.
 @export var aim_toggle := true
+## Double-tap forward (W) to sprint, like Minecraft (Increment 16.8). The
+## sprint lasts until you stop moving forward or crouch. Shift still works.
+@export var double_tap_sprint := true
+## The second tap has to come within this many seconds of the first.
+@export_range(0.1, 0.6, 0.01) var double_tap_window := 0.3
 
 ## True while a menu (inventory) is open: the mouse is free and gameplay
 ## input is ignored.
@@ -41,6 +46,9 @@ var _scroll := ScrollStepper.new()
 @export var wheel_cooldown_msec := 180
 ## Ignore the aim press that recaptured the mouse.
 var _aim_blocked_until_release := false
+## Double-tap sprint: on until forward is let go
+var sprint_latched := false
+var _last_forward_tap := -10.0
 
 
 func _ready() -> void:
@@ -97,20 +105,41 @@ func _unhandled_input(event: InputEvent) -> void:
 		_cycle_from_scroll(event)  # mouse wheel: one weapon per notch
 
 
+## Double-tap forward to sprint. `tapped`: forward was just pressed;
+## `forward`: moving forward now; `now`: seconds. Sprinting stops when you
+## stop moving forward or crouch. Returns whether the sprint is on.
+func update_double_tap(tapped: bool, forward: bool, crouching: bool, now: float) -> bool:
+	if not double_tap_sprint:
+		sprint_latched = false
+		return false
+	if tapped:
+		if now - _last_forward_tap <= double_tap_window:
+			sprint_latched = true
+		_last_forward_tap = now
+	if sprint_latched and (not forward or crouching):
+		sprint_latched = false
+	return sprint_latched
+
+
 ## Called by PlayerController once per physics tick.
 func gather() -> InputFrame:
 	var frame := InputFrame.new()
 	frame.crouch = _crouch_latched if crouch_toggle else false
 	if ui_open or not is_mouse_captured():
 		_look_accumulator = Vector2.ZERO
+		sprint_latched = false
 		return frame  # neutral frame while the mouse is free or a menu is open
 
 	frame.move = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	frame.look = _look_accumulator
 	frame.jump = Input.is_action_just_pressed("jump")
-	frame.sprint = Input.is_action_pressed("sprint")
 	if not crouch_toggle:
 		frame.crouch = Input.is_action_pressed("crouch")
+	# Game time (physics ticks), not the wall clock: a slow frame can't
+	# stretch two quick taps apart
+	update_double_tap(Input.is_action_just_pressed("move_forward"), frame.move.y < -0.3, frame.crouch,
+		Engine.get_physics_frames() / float(Engine.physics_ticks_per_second))
+	frame.sprint = Input.is_action_pressed("sprint") or sprint_latched
 	var fire_held := Input.is_action_pressed("fire")
 	if _fire_blocked_until_release:
 		if not fire_held:

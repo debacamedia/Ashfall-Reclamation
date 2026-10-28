@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 16.7 (bigger interface, weapon slots, spare guns)
+## Current state: Increment 16.8 (backpacks, double-tap sprint)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -23,6 +23,7 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 16.5:** **performance pass**: buildings merge into a few meshes per place when the zone loads; interiors are drawn only within 70 m; the sun's shadows use two cascades; buildings hide what's behind them (occlusion culling). About 60% fewer draw calls for the same picture. F3 now shows fps and draw calls, and `tools/benchmark.gd` measures a fixed route. See [`docs/increments/16_5_performance.md`](docs/increments/16_5_performance.md).
 - **Increment 16.6:** **dying drops your gear**: everything you carry (backpack and guns, with their attachments and loaded rounds) goes into a **Your Gear** chest where you fell, marked on the compass with a beam of light over it; you respawn with only your machete. **Guns to find**: the Smuggler's Gulch gun cabinet and Northwatch's weapons lockers always hold a gun, and both places have better loot all round. A found gun goes straight into its slot. **A weapons bench in Northwatch's armory.** The Saint Mercy signpost now stands at the trail head instead of inside the staff house. See [`docs/increments/16_6_gear_and_guns.md`](docs/increments/16_6_gear_and_guns.md).
 - **Increment 16.7:** **a bigger interface** that scales with the window (Retina, full screen), 25% bigger by default; **Ctrl/Cmd + = / − / 0** to change it. A bigger, clearer **compass**. The **inventory screen shows your five weapon slots**: click to take a gun out, right-click or drag to put it away. **Spare guns**: a second (or worse) gun goes into your backpack instead of turning into ammo, a better one swaps the old into the backpack; right-click, Equip or drag a spare onto its slot to swap it in. Spares weigh 1–4.6 kg and are carried unloaded, with attachments off. See [`docs/increments/16_7_inventory_and_spares.md`](docs/increments/16_7_inventory_and_spares.md).
+- **Increment 16.8:** **backpacks**: a backpack slot in the inventory; craft a **Rucksack** (40 kg, 30 slots) by hand, find a **Military Pack** (50 kg, 36 slots: always in Northwatch's Quartermaster's Crate), craft a **Frame Pack** (60 kg, 42 slots) at a workbench, though it rattles and raiders hear you. Your pack drops with your gear when you die. **Double-tap W to sprint** (Minecraft-style), with a slight view widening; sprint time is counted for hunger later. See [`docs/increments/16_8_backpacks_and_sprint.md`](docs/increments/16_8_backpacks_and_sprint.md).
 - **Resource Pack 3:** weathered brick, cracked asphalt, tar-paper roofs and painted containers; shop signs, raider graffiti and decals across Halden's Crossing and Outpost 17; bullet impacts that sound like the surface; crafting, salvage, pickup, reload and container sounds; town ambience. See [`docs/art/ashfall_pack_v3/INTEGRATION.md`](docs/art/ashfall_pack_v3/INTEGRATION.md) for what's integrated and what's only imported.
 
 ## Run it
@@ -30,7 +31,7 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
 3. Press **F5**.
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug (fps, draw calls) · Ctrl/Cmd + = / − / 0 interface size.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift or double-tap W sprint · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug (fps, draw calls) · Ctrl/Cmd + = / − / 0 interface size.
 
 ## After pulling an update — important
 Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.

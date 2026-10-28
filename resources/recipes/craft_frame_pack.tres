@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_5uy51"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="2_vegvf"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="3_uuxon"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="4_ni11b"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="5_74c58"]
+[ext_resource type="Resource" path="res://resources/items/frame_pack.tres" id="6_4lx8i"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="7_772ti"]
+
+[resource]
+script = ExtResource("7_772ti")
+id = &"craft_frame_pack"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_5uy51"), int]({
+ExtResource("2_vegvf"): 3,
+ExtResource("3_uuxon"): 2,
+ExtResource("4_ni11b"): 1,
+ExtResource("5_74c58"): 8
+})
+output = ExtResource("6_4lx8i")
+craft_time = 14.0

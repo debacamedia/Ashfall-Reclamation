@@ -4,7 +4,7 @@ extends Resource
 ## Items are identified by `id` everywhere (saves, trading, recipes), so never
 ## change an id once it ships.
 
-enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, STRUCTURE }
+enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, STRUCTURE, EQUIPMENT }
 
 @export var id: StringName = &"item"
 @export var display_name := "Item"
@@ -45,6 +45,21 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, S
 @export var attachment: AttachmentDefinition
 ## Structure kits (Increment 13): what this kit builds in build mode (B).
 @export var structure: StructureDefinition
+
+
+@export_group("Backpack")
+## A backpack you can wear (Increment 16.8): how many slots it gives you…
+@export var pack_slots := 0
+## …and how much it carries (kg). Worn, its own weight doesn't count.
+@export var pack_carry_weight := 0.0
+## A big frame pack rattles: moving makes a noise raiders hear this far
+## (m) when walking, half again when sprinting; never when crouched. 0 = quiet.
+@export var pack_rattle_radius := 0.0
+
+
+## A backpack you can wear.
+func is_pack() -> bool:
+	return pack_slots > 0 and pack_carry_weight > 0.0
 
 
 func get_label(quantity: int) -> String:

@@ -3,7 +3,7 @@ extends SceneTree
 ## and saves it to assets/icons/<id>.png (128×128, transparent background).
 ##
 ## Needs a real renderer (not --headless):
-##   godot --path . -s res://tools/render_item_icons.gd
+##   godot --path . -s res://tools/render_item_icons.gd [-- id1,id2]
 ## Then assign the PNGs to each item's `icon` (the Increment 6 build did this).
 
 const SIZE := 128
@@ -45,8 +45,14 @@ func _run() -> void:
 	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
 	vp.add_child(cam)
 
+	# Optional: -- id1,id2 renders only those items
+	var only := PackedStringArray()
+	if OS.get_cmdline_user_args().size() > 0:
+		only = OS.get_cmdline_user_args()[0].split(",")
 	for item in ItemDatabase.all_items():
 		if item.world_model == null:
+			continue
+		if not only.is_empty() and not only.has(String(item.id)):
 			continue
 		var model := item.world_model.instantiate() as Node3D
 		vp.add_child(model)

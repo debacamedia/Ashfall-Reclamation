@@ -15,6 +15,8 @@ extends Node
 signal contents_changed(slots: PackedInt32Array)
 ## Emitted when items come in from outside (pickups, transfers in).
 signal item_received(item: ItemDefinition, quantity: int)
+## The number of slots or the weight limit changed (a different backpack).
+signal capacity_changed
 
 @export_range(1, 200) var slot_count := 24
 ## Kilograms. 0 = no weight limit.
@@ -159,6 +161,43 @@ func add_to_slot(index: int, item: ItemDefinition, quantity: int) -> int:
 	_slots[index] = {"item": item, "qty": n}
 	contents_changed.emit(PackedInt32Array([index]))
 	return n
+
+
+## Why the contents wouldn't fit in `slots` slots and `weight` kg (0 = no
+## limit), "" if they would. Leaves everything as it is.
+func capacity_refusal_reason(slots: int, weight: float) -> String:
+	var used := slot_count - get_free_slot_count()
+	if used > slots:
+		return "Too many things: empty %d slot%s first" % [used - slots, "" if used - slots == 1 else "s"]
+	var w := get_total_weight()
+	if weight > 0.0 and w > weight + 0.001:
+		return "Too heavy: drop %.1f kg first" % (w - weight)
+	return ""
+
+
+## Changes how many slots there are and the weight limit (a backpack,
+## Increment 16.8). Shrinking moves things out of the slots that go into
+## empty ones that stay. Returns false (and changes nothing) if the
+## contents wouldn't fit.
+func set_capacity(slots: int, weight: float) -> bool:
+	slots = clampi(slots, 1, 200)
+	if capacity_refusal_reason(slots, weight) != "":
+		return false
+	if slots < _slots.size():
+		var free: Array[int] = []
+		for i in slots:
+			if _slots[i] == null:
+				free.append(i)
+		for i in range(slots, _slots.size()):
+			if _slots[i] != null:
+				_slots[free.pop_front()] = _slots[i]
+				_slots[i] = null
+	slot_count = slots
+	max_weight = weight
+	_resize()
+	capacity_changed.emit()
+	contents_changed.emit(PackedInt32Array(range(_slots.size())))
+	return true
 
 
 ## Pickups and other outside sources use this: adds and announces.

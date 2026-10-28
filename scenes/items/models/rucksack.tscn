@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/tent_canvas.tres" id="1_yb3n6"]
+[ext_resource type="Material" path="res://assets/materials/raider_leather.tres" id="2_phgbw"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="3_41ghl"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_cobdp"]
+size = Vector3(0.38, 0.2, 0.46)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lu7l7"]
+size = Vector3(0.3876, 0.03, 0.161)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1opa6"]
+size = Vector3(0.05, 0.02, 0.391)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jugrv"]
+size = Vector3(0.05, 0.02, 0.391)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mt0bt"]
+size = Vector3(0.03, 0.03, 0.483)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ekve3"]
+size = Vector3(0.03, 0.03, 0.483)
+
+[node name="Rucksack" type="Node3D" unique_id=438732864]
+
+[node name="Bag" type="MeshInstance3D" parent="." unique_id=1850510893]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+material_override = ExtResource("1_yb3n6")
+mesh = SubResource("BoxMesh_cobdp")
+
+[node name="Flap" type="MeshInstance3D" parent="." unique_id=909394838]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.215, -0.1518)
+material_override = ExtResource("1_yb3n6")
+mesh = SubResource("BoxMesh_lu7l7")
+
+[node name="StrapL" type="MeshInstance3D" parent="." unique_id=876631446]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.095, 0.21000001, 0.02)
+material_override = ExtResource("2_phgbw")
+mesh = SubResource("BoxMesh_1opa6")
+
+[node name="StrapR" type="MeshInstance3D" parent="." unique_id=311435293]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.095, 0.21000001, 0.02)
+material_override = ExtResource("2_phgbw")
+mesh = SubResource("BoxMesh_jugrv")
+
+[node name="StickL" type="MeshInstance3D" parent="." unique_id=1747649650]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16, 0.23, 0)
+material_override = ExtResource("3_41ghl")
+mesh = SubResource("BoxMesh_mt0bt")
+
+[node name="StickR" type="MeshInstance3D" parent="." unique_id=943483459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16, 0.23, 0)
+material_override = ExtResource("3_41ghl")
+mesh = SubResource("BoxMesh_ekve3")

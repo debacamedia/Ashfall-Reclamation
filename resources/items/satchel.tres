@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/satchel.png" id="1_erjam"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_yw4dt"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_erjam"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/satchel.tscn" id="3_r6yfg"]
+
+[resource]
+script = ExtResource("2_erjam")
+id = &"satchel"
+display_name = "Satchel"
+description = "The shoulder bag you started with. 24 slots, 30 kg. You never lose it."
+category = 9
+icon = ExtResource("1_erjam")
+max_stack = 1
+base_value = 10
+world_model = ExtResource("3_r6yfg")
+pickup_hold_time = 0.3
+pickup_sound = ExtResource("1_yw4dt")
+pack_slots = 24
+pack_carry_weight = 30.0

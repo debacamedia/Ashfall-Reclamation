@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_5f4hd"]
+[ext_resource type="Texture2D" path="res://assets/icons/frame_pack.png" id="1_o8guc"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_o8guc"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/frame_pack.tscn" id="3_a0rr3"]
+
+[resource]
+script = ExtResource("2_o8guc")
+id = &"frame_pack"
+display_name = "Frame Pack"
+description = "A welded pipe frame with a load bag: 42 slots, 60 kg. It rattles when you walk: raiders nearby will hear you (crouch to move quietly)."
+category = 9
+icon = ExtResource("1_o8guc")
+max_stack = 1
+weight = 2.6
+base_value = 300
+world_model = ExtResource("3_a0rr3")
+pickup_hold_time = 0.3
+pickup_sound = ExtResource("1_5f4hd")
+pack_slots = 42
+pack_carry_weight = 60.0
+pack_rattle_radius = 14.0

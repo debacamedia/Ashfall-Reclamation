@@ -52,6 +52,9 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 			for slot in w.attachments:
 				atts.append(String((w.attachments[slot] as AttachmentDefinition).id))
 			gun_states[String(w.base_definition.id)] = {"attachments": atts, "magazine": w.ammo_in_magazine}
+	# The backpack you had on (Increment 16.8); your satchel stays with you
+	if player.inventory != null and player.inventory.pack != null:
+		stacks.append([player.inventory.pack, 1])
 	if stacks.is_empty():
 		return null
 	var cache := (load(SCENE) as PackedScene).instantiate() as DeathCache
@@ -69,6 +72,7 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 	# Now take it all off the player
 	if player.inventory != null:
 		player.inventory.clear()
+		player.inventory.set_pack(null)
 	if player.weapon_slots != null:
 		player.weapon_slots.remove_guns()
 	return cache

@@ -49,6 +49,10 @@ signal gun_stowed(weapon: WeaponDefinition)
 signal gun_equipped(weapon: WeaponDefinition)
 ## A spare-gun request was refused, and why.
 signal gun_refused(reason: String)
+## You put on a backpack (null = back to the satchel), Increment 16.8.
+signal pack_changed(pack: ItemDefinition)
+## A backpack request was refused, and why.
+signal pack_refused(reason: String)
 ## Crafting: one unit started / finished; the queue was cancelled or refused.
 signal crafting_started(recipe: RecipeDefinition, duration: float)
 signal crafting_finished(recipe: RecipeDefinition)
@@ -71,6 +75,11 @@ enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBI
 @export_group("Speeds (m/s)")
 @export var walk_speed := 4.5
 @export var sprint_speed := 7.5
+## How much wider the view gets at full sprint (degrees), like Minecraft.
+@export var sprint_fov_kick := 6.0
+## Seconds spent sprinting, ever: the hook for hunger later (Increment 16.8).
+var sprint_seconds := 0.0
+var _sprint_amount := 0.0
 @export var crouch_speed := 2.2
 @export var jump_velocity := 4.8
 
@@ -234,6 +243,7 @@ func simulate(frame: InputFrame, delta: float) -> void:
 			return  # killed by the landing
 
 	_update_movement_state()
+	_update_pack_rattle(delta)
 	_update_head_bob(delta)
 
 	_update_weapon_selection(frame, delta)
@@ -276,6 +286,7 @@ func respawn_at(spawn: Transform3D) -> void:
 	head.rotation = Vector3.ZERO
 	camera.position = Vector3.ZERO
 	camera.fov = _base_fov
+	_sprint_amount = 0.0
 	aim_amount = 0.0
 	is_aiming = false
 	ladder = null
@@ -553,6 +564,7 @@ func save_state() -> Dictionary:
 		"inventory": inventory.to_data() if inventory != null else [],
 		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
 		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
+		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
 	}
 
 
@@ -574,6 +586,10 @@ func load_state(data: Dictionary) -> void:
 	var limit := deg_to_rad(max_pitch_degrees)
 	head.rotation.x = clampf(_number(data.get("pitch"), 0.0), -limit, limit)
 	if inventory != null and data.get("inventory") is Array:
+		# The backpack first: it decides how many slots there are to fill
+		var pack_def := ItemDatabase.get_item(StringName(str(data.get("pack", ""))))
+		inventory.clear()
+		inventory.set_pack(pack_def if pack_def != null and pack_def.is_pack() else null)
 		inventory.from_data(data["inventory"])
 	var loadout: Variant = data.get("loadout")
 	if weapon_slots != null and loadout is Dictionary and not (loadout as Dictionary).is_empty():
@@ -785,6 +801,99 @@ func _stow_gun(slot: int, prefer := -1) -> void:
 func _drop_at_feet(item: ItemDefinition, qty: int) -> void:
 	var parent := get_parent() if get_parent() != null else get_tree().current_scene
 	Pickup.spawn(parent, item, qty, global_position + Vector3.UP * 0.3)
+
+
+# ---------------------------------------------------------------- backpacks (Increment 16.8)
+
+var _rattle_left := 0.0
+
+
+## Why you can't put on the backpack in slot `index` ("" = you can). The pack
+## you're wearing goes into the backpack in its place, so everything (it
+## included) has to fit the new one.
+func wear_pack_refusal_reason(index: int) -> String:
+	var item := inventory.get_slot_item(index) if inventory != null else null
+	if is_dead() or inventory == null:
+		return "Can't do that now"
+	if item == null or not item.is_pack():
+		return "That's not a backpack"
+	var old := inventory.pack
+	var used := inventory.slot_count - inventory.get_free_slot_count()
+	var after_used := used - (1 if inventory.get_slot_quantity(index) == 1 else 0) + (1 if old != null else 0)
+	var after_weight := inventory.get_total_weight() - item.weight + (old.weight if old != null else 0.0)
+	if after_used > item.pack_slots:
+		return "The %s has %d slots: empty %d first" % [item.display_name, item.pack_slots, after_used - item.pack_slots]
+	if after_weight > item.pack_carry_weight + 0.001:
+		return "The %s carries %.0f kg: drop %.1f kg first" % [item.display_name, item.pack_carry_weight, after_weight - item.pack_carry_weight]
+	return ""
+
+
+## Puts on the backpack from slot `index`; the one you had on goes into the
+## backpack in its place. Validated.
+func request_wear_pack(index: int) -> bool:
+	var reason := wear_pack_refusal_reason(index)
+	if reason != "":
+		pack_refused.emit(reason)
+		return false
+	var item := inventory.get_slot_item(index)
+	var old := inventory.pack
+	inventory.take_from_slot(index, 1)
+	inventory.set_pack(item)
+	if old != null:
+		var limit := inventory.max_weight
+		inventory.max_weight = 0.0
+		if inventory.add_to_slot(index, old, 1) == 0:
+			inventory.add_item(old, 1)
+		inventory.max_weight = limit
+	pack_changed.emit(item)
+	return true
+
+
+## Why you can't take your backpack off ("" = you can): everything, the
+## pack included, has to fit the satchel.
+func take_off_pack_refusal_reason() -> String:
+	if is_dead() or inventory == null:
+		return "Can't do that now"
+	var old := inventory.pack
+	if old == null:
+		return "You're wearing your satchel"
+	var used := inventory.slot_count - inventory.get_free_slot_count() + 1
+	var w := inventory.get_total_weight() + old.weight
+	if used > PlayerInventory.SATCHEL_SLOTS:
+		return "Your satchel has %d slots: empty %d first" % [PlayerInventory.SATCHEL_SLOTS, used - PlayerInventory.SATCHEL_SLOTS]
+	if w > PlayerInventory.SATCHEL_WEIGHT + 0.001:
+		return "Your satchel carries %.0f kg: drop %.1f kg first" % [PlayerInventory.SATCHEL_WEIGHT, w - PlayerInventory.SATCHEL_WEIGHT]
+	return ""
+
+
+## Takes the backpack off (into your satchel). Validated.
+func request_take_off_pack() -> bool:
+	var reason := take_off_pack_refusal_reason()
+	if reason != "":
+		pack_refused.emit(reason)
+		return false
+	var old := inventory.pack
+	inventory.set_pack(null)
+	inventory.add_item(old, 1)
+	pack_changed.emit(null)
+	return true
+
+
+## A rattling frame pack makes a noise raiders hear as you move (not crouched).
+func _update_pack_rattle(delta: float) -> void:
+	var pack := inventory.pack if inventory != null else null
+	if pack == null or pack.pack_rattle_radius <= 0.0 or is_dead():
+		return
+	var moving := movement_state == MovementState.WALKING or movement_state == MovementState.SPRINTING
+	if not moving:
+		_rattle_left = 0.0
+		return
+	_rattle_left -= delta
+	if _rattle_left > 0.0:
+		return
+	_rattle_left = 0.6
+	var radius := pack.pack_rattle_radius * (1.5 if movement_state == MovementState.SPRINTING else 1.0)
+	get_tree().call_group("noise_listeners", "hear_noise", global_position, radius, self)
 
 
 # ---------------------------------------------------------------- construction
@@ -1200,7 +1309,12 @@ func _update_aim(frame: InputFrame, delta: float) -> void:
 		is_aiming = can_aim
 		aim_changed.emit(is_aiming)
 	var eased := aim_amount * aim_amount * (3.0 - 2.0 * aim_amount)
-	camera.fov = lerpf(_base_fov, _base_fov / _ads_zoom(), eased)
+	# Sprinting widens the view a little (eases in and out)
+	var sprinting := movement_state == MovementState.SPRINTING
+	_sprint_amount = move_toward(_sprint_amount, 1.0 if sprinting else 0.0, delta * 4.0)
+	if sprinting:
+		sprint_seconds += delta
+	camera.fov = lerpf(_base_fov, _base_fov / _ads_zoom(), eased) + sprint_fov_kick * _sprint_amount * (1.0 - eased)
 
 
 # ---------------------------------------------------------------- ladders

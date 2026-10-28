@@ -27,6 +27,10 @@ var selected := -1
 var _slots: Array[InventorySlot] = []
 ## The five weapon slots (Increment 16.7), 1–5.
 var weapon_rows: Array[WeaponSlotRow] = []
+## The backpack slot under them (Increment 16.8).
+var pack_row: PackSlotRow
+## The grid scrolls when a big backpack has more slots than fit.
+var grid_scroll: ScrollContainer
 var _refresh_left := 0.0
 
 @onready var _grid: GridContainer = %Grid
@@ -58,6 +62,28 @@ func _ready() -> void:
 		row.spare_dropped.connect(request_use)
 		column.add_child(row)
 		weapon_rows.append(row)
+	var gap := Control.new()
+	gap.custom_minimum_size = Vector2(0, 4)
+	column.add_child(gap)
+	pack_row = PackSlotRow.new()
+	pack_row.take_off_requested.connect(request_take_off_pack)
+	pack_row.pack_dropped.connect(request_use)
+	column.add_child(pack_row)
+	# The backpack grid scrolls (5 rows show) when a big pack has more
+	var body := _grid.get_parent()
+	var at := _grid.get_index()
+	grid_scroll = ScrollContainer.new()
+	grid_scroll.name = "GridScroll"
+	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	grid_scroll.custom_minimum_size = Vector2(6 * 72 + 5 * 6 + 14, 5 * 72 + 4 * 6)
+	var owner_of_grid := _grid.owner
+	body.remove_child(_grid)
+	body.add_child(grid_scroll)
+	body.move_child(grid_scroll, at)
+	grid_scroll.add_child(_grid)
+	# Moving it loses its %Name: give it back
+	_grid.owner = owner_of_grid
+	_grid.unique_name_in_owner = true
 
 
 func get_inventory() -> PlayerInventory:
@@ -118,6 +144,8 @@ func _process(delta: float) -> void:
 func _refresh_weapons() -> void:
 	if player == null:
 		return
+	if pack_row != null:
+		pack_row.refresh()
 	var pending := player.weapon_slots.pending_slot if player.weapon_slots != null else 0
 	for row in weapon_rows:
 		var w := player.weapon_slots.get_weapon(row.slot) if player.weapon_slots != null else null
@@ -148,6 +176,12 @@ func request_use(index: int) -> void:
 	var item := inv.get_slot_item(index)
 	if item == null:
 		return
+	if item.is_pack():
+		# A backpack: put it on (Increment 16.8)
+		player.request_wear_pack(index)
+		selected = -1
+		_refresh()
+		return
 	if item.weapon != null:
 		# A spare gun: swap it into its weapon slot (Increment 16.7)
 		if player.request_equip_spare(index):
@@ -155,6 +189,12 @@ func request_use(index: int) -> void:
 		_refresh()
 		return
 	player.request_use_item(item)
+
+
+## Takes the backpack off (back to the satchel).
+func request_take_off_pack() -> void:
+	if player != null and player.request_take_off_pack():
+		_refresh()
 
 
 ## Puts the gun in weapon slot `slot` into the backpack.
@@ -174,6 +214,8 @@ func request_drop(index: int) -> void:
 func handle_slot_drop(data: Dictionary, target: InventorySlot) -> void:
 	if data.has("weapon_slot"):
 		request_stow(int(data["weapon_slot"]))
+	elif data.has("pack_slot"):
+		request_take_off_pack()
 	elif data.get("inventory") == get_inventory():
 		request_move(int(data["inventory_slot"]), target.index)
 
@@ -199,9 +241,21 @@ func _bind() -> void:
 	if inv == null:
 		return
 	inv.contents_changed.connect(_on_contents_changed)
+	if not inv.capacity_changed.is_connected(_rebuild_grid):
+		inv.capacity_changed.connect(_rebuild_grid)
 	for row in weapon_rows:
 		row.inventory = inv
+	pack_row.inventory = inv as PlayerInventory
+	_rebuild_grid()
+
+
+## One slot widget per backpack slot (again when you change backpacks).
+func _rebuild_grid() -> void:
+	var inv := get_inventory()
+	if inv == null:
+		return
 	for child in _grid.get_children():
+		_grid.remove_child(child)
 		child.queue_free()
 	_slots.clear()
 	var slot_scene := load(SLOT_SCENE_PATH) as PackedScene
@@ -221,6 +275,8 @@ func _unbind() -> void:
 	var inv := get_inventory()
 	if inv != null and inv.contents_changed.is_connected(_on_contents_changed):
 		inv.contents_changed.disconnect(_on_contents_changed)
+	if inv != null and inv.capacity_changed.is_connected(_rebuild_grid):
+		inv.capacity_changed.disconnect(_rebuild_grid)
 
 
 func _on_contents_changed(_changed: PackedInt32Array) -> void:
@@ -261,8 +317,8 @@ func _refresh() -> void:
 	_refresh_weapons()
 
 	var item := inv.get_slot_item(selected) if selected >= 0 else null
-	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.weapon == null)
-	_use_button.text = "Equip" if item != null and item.weapon != null else "Use"
+	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.weapon == null and not item.is_pack())
+	_use_button.text = "Equip" if item != null and item.weapon != null else ("Wear" if item != null and item.is_pack() else "Use")
 	_drop_button.disabled = item == null
 	if item == null:
 		_detail_name.text = "Select an item"
@@ -276,6 +332,13 @@ func _refresh() -> void:
 		"Stack %d / %d  ·  %.1f kg total" % [qty, item.max_stack, item.weight * qty]]
 	if item.heal_amount > 0.0:
 		lines.append("Restores %d health (%.0f s)" % [roundi(item.heal_amount), item.use_time])
+	if item.is_pack():
+		var now := inv as PlayerInventory
+		lines.append("Backpack: %.0f kg, %d slots (you carry %.0f kg, %d slots now)" % [item.pack_carry_weight, item.pack_slots,
+			PlayerInventory.weight_for(now.pack if now != null else null), PlayerInventory.slots_for(now.pack if now != null else null)])
+		lines.append("Right-click, Wear or drag it to the backpack slot to put it on")
+		if item.pack_rattle_radius > 0.0:
+			lines.append("Rattles as you move: raiders within %.0f m hear you (crouch to move quietly)" % item.pack_rattle_radius)
 	if item.weapon != null:
 		var kind: String = WeaponSlotRow.KINDS.get(item.weapon.slot, "")
 		var there := player.weapon_slots.get_weapon(item.weapon.slot) if player.weapon_slots != null else null

@@ -61,6 +61,21 @@ func _ready() -> void:
 		if selected_side == SIDE_PLAYER:
 			request_store(selected))
 	_take_all_button.pressed.connect(request_take_all)
+	# Your side scrolls when a big backpack has more slots than fit (16.8)
+	var side := _player_grid.get_parent()
+	var at := _player_grid.get_index()
+	var scroll := ScrollContainer.new()
+	scroll.name = "PlayerGridScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size = Vector2(6 * 72 + 5 * 6 + 14, 4 * 72 + 3 * 6)
+	var owner_of_grid := _player_grid.owner
+	side.remove_child(_player_grid)
+	side.add_child(scroll)
+	side.move_child(scroll, at)
+	scroll.add_child(_player_grid)
+	# Moving it loses its %Name: give it back
+	_player_grid.owner = owner_of_grid
+	_player_grid.unique_name_in_owner = true
 
 
 func is_open() -> bool:
@@ -165,7 +180,15 @@ func _bind() -> void:
 	player.transfer_refused.connect(_on_transfer_refused)
 	if player.inventory != null:
 		player.inventory.contents_changed.connect(_on_contents_changed)
+		player.inventory.capacity_changed.connect(_on_capacity_changed)
 		_build_slots(_player_grid, _player_slots, player.inventory, SIDE_PLAYER)
+
+
+func _on_capacity_changed() -> void:
+	if player != null and player.inventory != null:
+		_build_slots(_player_grid, _player_slots, player.inventory, SIDE_PLAYER)
+		if visible:
+			_refresh()
 
 
 func _unbind() -> void:
@@ -177,6 +200,8 @@ func _unbind() -> void:
 			(pair[0] as Signal).disconnect(pair[1])
 	if player.inventory != null and player.inventory.contents_changed.is_connected(_on_contents_changed):
 		player.inventory.contents_changed.disconnect(_on_contents_changed)
+	if player.inventory != null and player.inventory.capacity_changed.is_connected(_on_capacity_changed):
+		player.inventory.capacity_changed.disconnect(_on_capacity_changed)
 
 
 func _build_slots(grid: GridContainer, list: Array[InventorySlot], inv: InventoryComponent, side: StringName) -> void:

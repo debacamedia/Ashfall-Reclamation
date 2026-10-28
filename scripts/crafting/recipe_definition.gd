@@ -8,7 +8,7 @@ extends Resource
 ## structure, but the inputs, station and time work the same way.
 
 enum Station { HAND, WORKBENCH, WEAPONS_BENCH }
-enum Category { MATERIALS, COMPONENTS, AMMO, MEDICAL, WEAPONS, ATTACHMENTS, STRUCTURES }
+enum Category { MATERIALS, COMPONENTS, AMMO, MEDICAL, WEAPONS, ATTACHMENTS, STRUCTURES, GEAR }
 
 @export var id: StringName = &"recipe"
 ## Shown in the recipe list; empty = the output's name.
