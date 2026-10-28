@@ -5,7 +5,7 @@ extends RefCounted
 ## HealthComponent.apply_damage(). Listeners of `damaged`/`died` read it for
 ## hit reactions, kill feeds and AI awareness.
 
-enum Type { BALLISTIC, MELEE, FALL, EXPLOSIVE, ENVIRONMENT }
+enum Type { BALLISTIC, MELEE, FALL, EXPLOSIVE, ENVIRONMENT, VEHICLE }
 
 var amount := 0.0
 var type: Type = Type.BALLISTIC

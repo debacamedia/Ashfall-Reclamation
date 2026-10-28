@@ -24,6 +24,7 @@ const UNVISITED_COLOR := Color(0.62, 0.6, 0.56)
 const STORM_COLOR := Color(1.0, 0.45, 0.2, 0.85)
 const GEAR_COLOR := Color(1, 1, 1)
 const BUILT_COLOR := Color(0.85, 0.78, 0.6)
+const TRUCK_COLOR := Color(0.55, 0.8, 1.0)
 const STATION_COLORS := {
 	RecipeDefinition.Station.WORKBENCH: Color(0.78, 0.6, 0.38),
 	RecipeDefinition.Station.WEAPONS_BENCH: Color(0.55, 0.7, 0.85),
@@ -301,6 +302,11 @@ func markers() -> Array[Dictionary]:
 		if n is DeathCache:
 			var c := n as DeathCache
 			out.append({"kind": "gear", "name": "Your gear", "at": Vector2(c.global_position.x, c.global_position.z)})
+	for n in tree.get_nodes_in_group("vehicles"):
+		var t := n as Truck
+		if t != null:
+			out.append({"kind": "truck", "name": "Your truck" if t.driver == null else "Your truck (you're driving)",
+				"at": Vector2(t.global_position.x, t.global_position.z), "heading": t.map_heading()})
 	if _knowledge != null:
 		for pin in _knowledge.pins:
 			out.append({"kind": "pin", "name": "Pin %d" % pin["number"], "number": pin["number"], "at": pin["at"]})
@@ -350,6 +356,9 @@ func _draw_overlay() -> void:
 		if m["kind"] == "gear":
 			draw_icon(ci, "gear", to_screen(m["at"]), GEAR_COLOR)
 			_label(ci, font, to_screen(m["at"]) + Vector2(0, 22), "Your gear", SMALL_SIZE, Color.WHITE)
+	for m in all:
+		if m["kind"] == "truck":
+			draw_icon(ci, "truck", to_screen(m["at"]), TRUCK_COLOR, "", -float(m["heading"]))
 	for m in all:
 		if m["kind"] == "pin":
 			draw_icon(ci, "pin", to_screen(m["at"]), MapKnowledge.pin_color(m["number"]), str(m["number"]))
@@ -402,7 +411,7 @@ func _draw_north(ci: CanvasItem, font: Font) -> void:
 
 ## Draws a map symbol on `ci` at `at`. Kinds: you (an arrow turned by
 ## `angle`), place, place_unvisited, gear, station (with a letter), pin
-## (with its number), built, storm. Also used by the map screen's key.
+## (with its number), truck (turned by `angle`), built, storm. Also used by the map screen's key.
 static func draw_icon(ci: CanvasItem, kind: String, at: Vector2, color := Color.WHITE, text := "", angle := 0.0) -> void:
 	var outline := Color(0, 0, 0, 0.8)
 	match kind:
@@ -439,6 +448,16 @@ static func draw_icon(ci: CanvasItem, kind: String, at: Vector2, color := Color.
 			ci.draw_circle(head, 9.5, outline)
 			ci.draw_circle(head, 8, color)
 			_icon_text(ci, head, text, Color(0.06, 0.06, 0.06))
+		"truck":
+			# A box with a cab end, nose along `angle` (a player's yaw)
+			var pts := PackedVector2Array([Vector2(-6, -12), Vector2(6, -12), Vector2(7, 11), Vector2(-7, 11)])
+			for i in pts.size():
+				pts[i] = at + pts[i].rotated(angle)
+			ci.draw_colored_polygon(pts, color)
+			var ring := pts.duplicate()
+			ring.append(pts[0])
+			ci.draw_polyline(ring, outline, 2.0)
+			ci.draw_line(at + Vector2(-6, -4).rotated(angle), at + Vector2(6, -4).rotated(angle), outline, 2.0)
 		"built":
 			ci.draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), color)
 			ci.draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), outline, false, 1.0)

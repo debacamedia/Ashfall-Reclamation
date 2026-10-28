@@ -83,7 +83,7 @@ func toggle() -> void:
 
 
 func enter() -> bool:
-	if active or player == null or player.is_dead() or player.ladder != null:
+	if active or player == null or player.is_dead() or player.ladder != null or player.vehicle != null:
 		return false
 	refresh_kits()
 	var root := ConstructionRules.structures_root(player.get_parent())

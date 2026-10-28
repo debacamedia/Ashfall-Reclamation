@@ -6,6 +6,7 @@ extends SceneTree
 ## Run from the project root (re-running rebuilds everything it makes):
 ##
 ##     godot --headless --path . -s res://tools/build_early_zone.gd
+##     … -- zone-only     (just early_zone.tscn: places, vehicles, landmarks)
 ##
 ## Writes, under levels/early_zone/:
 ##   early_zone.tscn            the level (main scene)
@@ -77,6 +78,13 @@ const RAIL := [Vector2(105, 58), Vector2(160, 40), Vector2(240, 0), Vector2(320,
 	Vector2(400, -118), Vector2(470, -160), Vector2(540, -195), Vector2(620, -228),
 	Vector2(700, -258), Vector2(800, -290)]
 
+## Vehicles (Increment 18): [node name, scene, position, heading (compass
+## degrees the nose points: 0 = north, 90 = east)]. Not part of any place,
+## so StaticBatcher never merges them.
+const VEHICLES := [
+	["CargoTruck", "res://scenes/vehicles/cargo_truck.tscn", Vector3(5.5, 0.1, 8.0), 180.0],  # Outpost 17, beside the yard road by the motor pool, nose to the gate
+]
+
 ## Signposts: [position (x, z), [destinations…]]
 const SIGNPOSTS := [
 	[Vector2(8, 80), ["HaldensCrossing", "AshCreekFarms"]],
@@ -113,12 +121,16 @@ func _run() -> void:
 	for i in EDGE.size():
 		kinds.append(ZoneBoundary.Kind.SEA if SEA_EDGES.has(i) else ZoneBoundary.Kind.STORM)
 	_boundary.edge_kinds = kinds
+	# -- zone-only: just the zone scene (after adding a vehicle or a place);
+	# the terrain, roads, rocks and navmesh stay as they are
+	var zone_only := OS.get_cmdline_user_args().has("zone-only")
 	_materials()
-	_save(_terrain(), "terrain.scn")
-	_save(_roads(), "roads.scn")
-	_save(_rocks(), "rocks.scn")
-	ResourceSaver.save(_environment(), OUT + "early_zone_environment.tres")
-	await _zone()
+	if not zone_only:
+		_save(_terrain(), "terrain.scn")
+		_save(_roads(), "roads.scn")
+		_save(_rocks(), "rocks.scn")
+		ResourceSaver.save(_environment(), OUT + "early_zone_environment.tres")
+	await _zone(not zone_only)
 	_boundary.free()
 	print("early zone built")
 	quit()
@@ -974,11 +986,13 @@ func _environment() -> Environment:
 	return env
 
 
-func _zone() -> void:
-	# An empty navigation scene first: the zone instances it, and it's filled below
-	var empty := Node3D.new()
-	empty.name = "Navigation"
-	_save(empty, "navigation.scn")
+func _zone(bake := true) -> void:
+	# An empty navigation scene first: the zone instances it, and it's filled
+	# below (zone-only keeps the baked one)
+	if bake:
+		var empty := Node3D.new()
+		empty.name = "Navigation"
+		_save(empty, "navigation.scn")
 
 	var zone := Node3D.new()
 	zone.name = "EarlyZone"
@@ -1051,6 +1065,15 @@ func _zone() -> void:
 	var nav := (load(NAV_PATH) as PackedScene).instantiate()
 	nav.name = "Navigation"
 	zone.add_child(nav)
+	var vehicles := Node3D.new()
+	vehicles.name = "Vehicles"
+	zone.add_child(vehicles)
+	for v in VEHICLES:
+		var car := (load(v[1]) as PackedScene).instantiate() as Node3D
+		car.name = v[0]
+		# Godot's vehicles drive toward +Z: yaw 0 here means nose north (-Z)
+		car.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(180.0 - v[3])), v[2])
+		vehicles.add_child(car)
 	var spawn := Marker3D.new()
 	spawn.name = "PlayerSpawn"
 	spawn.position = Vector3(0, 0.05, 14)
@@ -1092,7 +1115,8 @@ func _zone() -> void:
 	_own(zone, zone)
 	wind.unique_name_in_owner = true
 	_save(zone, "early_zone.tscn")
-	await _bake_navigation()
+	if bake:
+		await _bake_navigation()
 
 
 ## Invisible walls past the edge: storm edges `backstop_distance` out, the

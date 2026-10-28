@@ -65,6 +65,13 @@ var _bar_width := 0.0
 var compass: CompassBar
 ## The map window, M (built in code, Increment 17).
 var map_screen: MapScreen
+## Speed and fuel while you drive (built in code, Increment 18).
+var drive_panel: VBoxContainer
+var _drive_speed: Label
+var _drive_fuel: Label
+var _drive_fuel_bar: ProgressBar
+var _drive_keys: Label
+var _told_empty := false
 
 
 func _ready() -> void:
@@ -80,6 +87,7 @@ func _ready() -> void:
 	add_child(compass)
 	map_screen = MapScreen.new()
 	add_child(map_screen)
+	_build_drive_panel()
 	_death_screen.visible = false
 	_damage_vignette.modulate.a = 0.0
 	var saves := get_node_or_null("/root/SaveManager")
@@ -152,6 +160,15 @@ func _process(delta: float) -> void:
 			# Not for the place you start in: you haven't gone anywhere yet
 			if player.map_knowledge.places.size() > 1:
 				show_notice("%s is on your map  (M)" % place, Color(0.95, 0.85, 0.6)))
+		player.vehicle_refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
+		player.vehicle_refuelled.connect(func(truck: Truck, _litres: float) -> void:
+			show_notice("Refuelled: %d / %d L" % [roundi(truck.fuel), roundi(truck.fuel_capacity)], Color(0.7, 0.95, 0.7)))
+		player.vehicle_entered.connect(func(truck: Truck) -> void:
+			_told_empty = truck.fuel <= 0.0
+			if truck.fuel <= 0.0:
+				show_notice("Out of fuel: fill it from a Fuel Can at the fuel cap", Color(1.0, 0.6, 0.4)))
 		player.pin_refused.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED))
@@ -172,14 +189,17 @@ func _process(delta: float) -> void:
 		if _scope != null:
 			_scope.visible = _weapon.definition.scope_overlay and player.aim_amount >= 0.95 and not player.is_dead()
 	_update_weapon_strip()
+	_update_drive_panel()
 	# Full-screen windows (inventory, container, crafting) hide the corner readouts
 	var window_open := is_window_open()
+	var driving := player.vehicle != null
+	_crosshair.visible = not driving
 	compass.get_node("PlaceBanner").visible = not window_open
 	# The map covers the top of the screen, where the compass is
 	compass.modulate.a = 0.0 if map_screen.visible else 1.0
 	for c: CanvasItem in [_weapon_strip, _quick_slot, _weapon_label, _ammo_label]:
 		if c != null:
-			c.modulate.a = 0.0 if window_open else 1.0
+			c.modulate.a = 0.0 if window_open or driving else 1.0
 	# …and the last two notices move down under the window, clear of its buttons
 	_notices.offset_top = -86.0 if window_open else -316.0
 	_notices.offset_bottom = -10.0 if window_open else -126.0
@@ -203,6 +223,82 @@ func _process(delta: float) -> void:
 			Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME) / 1000.0,
 		]
+
+
+func _build_drive_panel() -> void:
+	drive_panel = VBoxContainer.new()
+	drive_panel.name = "DrivePanel"
+	drive_panel.visible = false
+	drive_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	drive_panel.anchor_left = 0.5
+	drive_panel.anchor_right = 0.5
+	drive_panel.anchor_top = 1.0
+	drive_panel.anchor_bottom = 1.0
+	drive_panel.offset_left = -260
+	drive_panel.offset_right = 260
+	drive_panel.offset_top = -132
+	drive_panel.offset_bottom = -14
+	drive_panel.alignment = BoxContainer.ALIGNMENT_END
+	drive_panel.add_theme_constant_override("separation", 2)
+	$Root.add_child(drive_panel)
+	_drive_speed = Label.new()
+	_drive_speed.name = "Speed"
+	_drive_speed.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_drive_speed.add_theme_font_size_override("font_size", 34)
+	_drive_speed.add_theme_color_override("font_color", Color(0.95, 0.93, 0.87))
+	_drive_speed.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	_drive_speed.add_theme_constant_override("outline_size", 6)
+	drive_panel.add_child(_drive_speed)
+	_drive_fuel = Label.new()
+	_drive_fuel.name = "Fuel"
+	_drive_fuel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_drive_fuel.add_theme_font_size_override("font_size", 17)
+	_drive_fuel.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	_drive_fuel.add_theme_constant_override("outline_size", 5)
+	drive_panel.add_child(_drive_fuel)
+	_drive_fuel_bar = ProgressBar.new()
+	_drive_fuel_bar.name = "FuelBar"
+	_drive_fuel_bar.show_percentage = false
+	_drive_fuel_bar.custom_minimum_size = Vector2(240, 8)
+	_drive_fuel_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color(0.1, 0.1, 0.09, 0.8)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.95, 0.75, 0.35)
+	_drive_fuel_bar.add_theme_stylebox_override("background", bg)
+	_drive_fuel_bar.add_theme_stylebox_override("fill", fill)
+	drive_panel.add_child(_drive_fuel_bar)
+	_drive_keys = Label.new()
+	_drive_keys.name = "Keys"
+	_drive_keys.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_drive_keys.text = "W / S  drive · reverse     A / D  steer     Space  handbrake     T  camera     E  get out"
+	_drive_keys.add_theme_font_size_override("font_size", 14)
+	_drive_keys.add_theme_color_override("font_color", Color(0.85, 0.83, 0.78))
+	_drive_keys.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	_drive_keys.add_theme_constant_override("outline_size", 5)
+	drive_panel.add_child(_drive_keys)
+
+
+## Speed, fuel and the keys while you drive.
+func _update_drive_panel() -> void:
+	var truck := player.vehicle
+	drive_panel.visible = truck != null and not is_window_open()
+	if truck == null:
+		return
+	var reversing := truck.forward_speed() < -0.5
+	_drive_speed.text = "%d km/h%s" % [roundi(truck.speed_kmh()), "  R" if reversing else ""]
+	var empty := truck.fuel <= 0.0
+	_drive_fuel.text = "OUT OF FUEL" if empty else "Fuel  %d / %d L" % [roundi(truck.fuel), roundi(truck.fuel_capacity)]
+	var low := truck.fuel_fraction() < 0.15
+	_drive_fuel.add_theme_color_override("font_color", Color(1.0, 0.45, 0.35) if low else Color(0.95, 0.85, 0.6))
+	_drive_fuel_bar.value = truck.fuel_fraction() * 100.0
+	(_drive_fuel_bar.get_theme_stylebox("fill") as StyleBoxFlat).bg_color = Color(1.0, 0.45, 0.35) if low else Color(0.95, 0.75, 0.35)
+	if empty and not _told_empty:
+		_told_empty = true
+		show_notice("Out of fuel: fill it from a Fuel Can at the fuel cap", Color(1.0, 0.6, 0.4))
+		_play_ui(SOUND_DENIED)
+	elif not empty:
+		_told_empty = false
 
 
 ## A full-screen window is open: inventory, container, crafting or the map.
@@ -297,7 +393,7 @@ func _update_health_visuals(delta: float) -> void:
 func _update_death_screen() -> void:
 	var dead := player.is_dead()
 	_death_screen.visible = dead
-	_crosshair.visible = not dead
+	_crosshair.visible = not dead and player.vehicle == null
 	if not dead:
 		return
 	var left := game_mode.get_respawn_time_left(player) if game_mode != null else 0.0
@@ -482,7 +578,7 @@ func _update_hint() -> void:
 			if not w.definition.melee:
 				has_gun = true
 	var window_open := is_window_open()
-	_hint.visible = not has_gun and not player.is_dead() and not window_open
+	_hint.visible = not has_gun and not player.is_dead() and not window_open and player.vehicle == null
 	if _hint.visible:
 		var wood := player.inventory.count_of(&"wood") if player.inventory != null else 0
 		_hint.text = ("You only have a machete.  Press K and craft a Pipe Pistol." if wood > 0

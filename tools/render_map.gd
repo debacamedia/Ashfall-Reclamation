@@ -125,6 +125,9 @@ func _prepare(zone: Node) -> void:
 			n.set_process(false)
 	for e in get_nodes_in_group("enemies"):
 		e.queue_free()
+	# Vehicles move: they don't belong in the picture (the map marks them)
+	for v in get_nodes_in_group("vehicles"):
+		(v as Node3D).visible = false
 	var we := zone.get_node("Lighting/WorldEnvironment") as WorldEnvironment
 	var env := we.environment.duplicate() as Environment
 	env.fog_enabled = false

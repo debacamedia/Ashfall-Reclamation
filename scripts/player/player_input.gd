@@ -133,6 +133,7 @@ func gather() -> InputFrame:
 	frame.move = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	frame.look = _look_accumulator
 	frame.jump = Input.is_action_just_pressed("jump")
+	frame.jump_held = Input.is_action_pressed("jump")
 	if not crouch_toggle:
 		frame.crouch = Input.is_action_pressed("crouch")
 	# Game time (physics ticks), not the wall clock: a slow frame can't

@@ -130,6 +130,7 @@ func _init() -> void:
 			["place", MapView.PLACE_COLOR, "", "A place you've been"],
 			["place_unvisited", MapView.UNVISITED_COLOR, "", "Not been there yet"],
 			["gear", MapView.GEAR_COLOR, "", "Your dropped gear"],
+			["truck", MapView.TRUCK_COLOR, "", "Your truck"],
 			["station", MapView.STATION_COLORS[RecipeDefinition.Station.WORKBENCH], "W", "Workbench"],
 			["station", MapView.STATION_COLORS[RecipeDefinition.Station.WEAPONS_BENCH], "G", "Weapons bench"],
 			["pin", MapKnowledge.pin_color(1), "1", "Your pins"],
@@ -433,7 +434,7 @@ func _key_icon(kind: String, color: Color, text: String) -> Control:
 	icon.custom_minimum_size = Vector2(28, 28)
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	icon.draw.connect(func() -> void:
-		MapView.draw_icon(icon, kind, Vector2(14, 22 if kind == "pin" else (18 if kind == "gear" else 14)), color, text))
+		MapView.draw_icon(icon, kind, Vector2(14, 22 if kind == "pin" else (18 if kind == "gear" else 14)), color, text, PI / 2.0 if kind == "truck" else 0.0))
 	return icon
 
 

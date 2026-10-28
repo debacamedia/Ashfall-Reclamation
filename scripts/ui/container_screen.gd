@@ -38,6 +38,8 @@ var selected := -1
 var _player_slots: Array[InventorySlot] = []
 var _container_slots: Array[InventorySlot] = []
 var _message_left := 0.0
+## The container's grid scrolls when it has many slots (a truck bed, 18).
+var container_scroll: ScrollContainer
 
 @onready var _title: Label = %Title
 @onready var _weight_label: Label = %CarryLabel
@@ -76,6 +78,19 @@ func _ready() -> void:
 	# Moving it loses its %Name: give it back
 	_player_grid.owner = owner_of_grid
 	_player_grid.unique_name_in_owner = true
+	# …and so does the container's side, for a truck bed (18)
+	var cside := _container_grid.get_parent()
+	var cat := _container_grid.get_index()
+	container_scroll = ScrollContainer.new()
+	container_scroll.name = "ContainerGridScroll"
+	container_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var cowner := _container_grid.owner
+	cside.remove_child(_container_grid)
+	cside.add_child(container_scroll)
+	cside.move_child(container_scroll, cat)
+	container_scroll.add_child(_container_grid)
+	_container_grid.owner = cowner
+	_container_grid.unique_name_in_owner = true
 
 
 func is_open() -> bool:
@@ -139,6 +154,11 @@ func _on_container_opened(c: SalvageContainer) -> void:
 	_title.text = c.container_name.to_upper()
 	# Big ones (your dropped gear) get wider rows so they fit the window
 	_container_grid.columns = 4 if c.inventory.slot_count <= 12 else 6
+	# Up to 4 rows show; more scroll
+	var rows := ceili(float(c.inventory.slot_count) / _container_grid.columns)
+	if container_scroll != null:
+		container_scroll.custom_minimum_size = Vector2(_container_grid.columns * 72 + (_container_grid.columns - 1) * 6 + (14 if rows > 4 else 0),
+			mini(rows, 4) * 72 + (mini(rows, 4) - 1) * 6)
 	_build_slots(_container_grid, _container_slots, c.inventory, SIDE_CONTAINER)
 	if not c.inventory.contents_changed.is_connected(_on_contents_changed):
 		c.inventory.contents_changed.connect(_on_contents_changed)

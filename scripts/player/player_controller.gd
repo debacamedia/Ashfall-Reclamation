@@ -72,10 +72,15 @@ signal build_refused(reason: String)
 ## Map (Increment 17): a new place you've been, pins dropped or removed,
 ## and why a pin couldn't be dropped.
 signal place_discovered(place_name: String)
+## Trucks (Increment 18): got in, got out, couldn't, refuelled.
+signal vehicle_entered(truck: Truck)
+signal vehicle_exited(truck: Truck)
+signal vehicle_refused(reason: String)
+signal vehicle_refuelled(truck: Truck, litres: float)
 signal map_pins_changed
 signal pin_refused(reason: String)
 
-enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
+enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING, DRIVING }
 
 @export_group("Speeds (m/s)")
 @export var walk_speed := 4.5
@@ -230,6 +235,9 @@ func simulate(frame: InputFrame, delta: float) -> void:
 			interactor.tick(delta, false, null)
 		_simulate_dead(frame, delta)
 		return
+	if vehicle != null:
+		_simulate_driving(frame, delta)
+		return
 
 	# Mouse look is slowed while zoomed so aiming feels the same
 	_apply_look(frame.look * lerpf(1.0, 1.0 / _ads_zoom(), aim_amount))
@@ -284,6 +292,8 @@ func simulate(frame: InputFrame, delta: float) -> void:
 ## Brings the player back to life at `spawn` with full health. Called by
 ## GameMode (the authority), not directly by input.
 func respawn_at(spawn: Transform3D) -> void:
+	if vehicle != null:
+		leave_vehicle(true)
 	if _death_tween != null:
 		_death_tween.kill()
 	health.revive(1.0)
@@ -556,6 +566,132 @@ func _can_transfer() -> bool:
 		and current_container.is_within_reach(head.global_position)
 
 
+# ---------------------------------------------------------------- trucks
+
+## How far you can turn your head from the road while driving (radians).
+const DRIVE_LOOK_LIMIT := 2.0
+
+## The truck you're driving, or null.
+var vehicle: Truck
+var _drive_yaw := 0.0
+var _drive_interact_was := false
+var _saved_layers := Vector2i.ZERO
+
+
+func is_driving() -> bool:
+	return vehicle != null
+
+
+## Gets in to drive `truck` (called by its door after a validated E press).
+## Returns true if you're now driving.
+func enter_vehicle(truck: Truck) -> bool:
+	if truck == null or vehicle == truck:
+		return false
+	var reason := truck.entry_refusal_reason(self)
+	if reason == "" and ladder != null:
+		reason = "Can't do that now"
+	if reason != "":
+		vehicle_refused.emit(reason)
+		return false
+	close_container()
+	close_station()
+	cancel_item_use()
+	cancel_crafting()
+	var bm := get_node_or_null("%BuildMode") as BuildMode
+	if bm != null:
+		bm.exit()
+	is_aiming = false
+	aim_amount = 0.0
+	camera.fov = _base_fov
+	vehicle = truck
+	truck.take_driver(self)
+	_saved_layers = Vector2i(collision_layer, collision_mask)
+	collision_layer = 0
+	collision_mask = 0
+	velocity = Vector3.ZERO
+	_drive_yaw = 0.0
+	_drive_interact_was = true  # the E that got you in doesn't get you out
+	head.rotation = Vector3.ZERO
+	camera.position = Vector3.ZERO
+	if weapon != null:
+		weapon.cancel_reload()
+		weapon.visible = false
+	global_transform = truck.seat_transform(self)
+	movement_state = MovementState.DRIVING
+	movement_state_changed.emit(movement_state)
+	vehicle_entered.emit(truck)
+	return true
+
+
+## Gets out beside the truck. Refused (with vehicle_refused) if there's no
+## room to stand; `force` gets you out anyway (dying, loading a save).
+func leave_vehicle(force := false) -> bool:
+	if vehicle == null:
+		return false
+	var truck := vehicle
+	var spot := truck.exit_spot() if is_instance_valid(truck) else Vector3.INF
+	if spot == Vector3.INF:
+		if not force:
+			vehicle_refused.emit("No room to get out here")
+			return false
+		spot = global_position + Vector3.UP * 0.5
+	var facing := rotation.y
+	if is_instance_valid(truck):
+		facing = truck.map_heading() + _drive_yaw
+		truck.release_driver()
+	vehicle = null
+	collision_layer = _saved_layers.x
+	collision_mask = _saved_layers.y
+	global_transform = Transform3D(Basis(Vector3.UP, facing), spot)
+	velocity = Vector3.ZERO
+	head.rotation = Vector3(head.rotation.x, 0.0, 0.0)
+	_drive_yaw = 0.0
+	if weapon != null and not is_dead():
+		weapon.visible = true
+		weapon.lowered = false
+	if not is_dead():
+		movement_state = MovementState.IDLE
+		movement_state_changed.emit(movement_state)
+	vehicle_exited.emit(truck)
+	return true
+
+
+## Empties a Fuel Can into `truck` (called by its fuel cap).
+func request_refuel(truck: Truck) -> float:
+	if truck == null:
+		return 0.0
+	var reason := truck.refuel_refusal_reason(self)
+	if reason != "":
+		vehicle_refused.emit(reason)
+		return 0.0
+	var litres := truck.refuel_from(self)
+	if litres > 0.0:
+		vehicle_refuelled.emit(truck, litres)
+	return litres
+
+
+## One tick in the driver's seat: look round the cab, drive, E gets out.
+func _simulate_driving(frame: InputFrame, _delta: float) -> void:
+	if not is_instance_valid(vehicle):
+		vehicle = null
+		collision_layer = _saved_layers.x
+		collision_mask = _saved_layers.y
+		return
+	_drive_yaw = clampf(_drive_yaw - frame.look.x, -DRIVE_LOOK_LIMIT, DRIVE_LOOK_LIMIT)
+	var limit := deg_to_rad(max_pitch_degrees)
+	head.rotation.x = clampf(head.rotation.x - frame.look.y, -limit, limit)
+	head.rotation.y = _drive_yaw
+	vehicle.set_controls(-frame.move.y, frame.move.x, frame.jump_held)
+	global_transform = vehicle.seat_transform(self)
+	velocity = Vector3.ZERO
+	if interactor != null:
+		interactor.tick(0.0, false, null)
+	var pressed := frame.interact and not _drive_interact_was
+	_drive_interact_was = frame.interact
+	if pressed:
+		leave_vehicle()
+
+
 # ---------------------------------------------------------------- map
 
 ## How often the ground round you is revealed on the map (s).
@@ -623,6 +759,10 @@ func request_remove_pin(number: int) -> bool:
 ## inventory and the rounds in the magazine.
 func save_state() -> Dictionary:
 	var p := global_position
+	if vehicle != null:
+		# Saved standing beside the truck, not in its seat
+		var spot := vehicle.exit_spot()
+		p = spot if spot != Vector3.INF else vehicle.global_position + Vector3.UP * 3.0
 	return {
 		"position": [p.x, p.y, p.z],
 		"yaw": rotation.y,
@@ -1508,6 +1648,8 @@ func _on_landed(impact_speed: float) -> void:
 
 
 func _on_health_died(info: DamageInfo) -> void:
+	if vehicle != null:
+		leave_vehicle(true)
 	cancel_item_use()
 	close_container()
 	cancel_crafting()

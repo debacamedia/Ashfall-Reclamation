@@ -10,6 +10,7 @@ extends RefCounted
 var move := Vector2.ZERO   ## x = strafe (right +), y = forward/back (back +). Length <= 1.
 var look := Vector2.ZERO   ## Radians this tick: x = yaw, y = pitch (down +).
 var jump := false          ## True only on the tick jump was pressed.
+var jump_held := false     ## Jump key held this tick (a truck's handbrake).
 var sprint := false
 var crouch := false
 var fire := false           ## Trigger held this tick.
@@ -23,7 +24,7 @@ var cycle := 0              ## Mouse wheel this tick: +1 next weapon, -1 previou
 
 ## Compact form for sending to the host later.
 func to_dict() -> Dictionary:
-	return {"m": move, "l": look, "j": jump, "s": sprint, "c": crouch, "f": fire, "r": reload, "i": interact, "h": use_heal, "a": aim, "w": slot, "y": cycle}
+	return {"m": move, "l": look, "j": jump, "jh": jump_held, "s": sprint, "c": crouch, "f": fire, "r": reload, "i": interact, "h": use_heal, "a": aim, "w": slot, "y": cycle}
 
 
 ## Builds a frame from untrusted data (e.g. a network peer). Values are
@@ -35,6 +36,7 @@ static func from_dict(data: Dictionary) -> InputFrame:
 	frame.move = (move_value as Vector2).limit_length(1.0) if move_value is Vector2 else Vector2.ZERO
 	frame.look = (look_value as Vector2).clampf(-PI, PI) if look_value is Vector2 else Vector2.ZERO
 	frame.jump = _strict_bool(data.get("j", false))
+	frame.jump_held = _strict_bool(data.get("jh", false))
 	frame.sprint = _strict_bool(data.get("s", false))
 	frame.crouch = _strict_bool(data.get("c", false))
 	frame.fire = _strict_bool(data.get("f", false))
