@@ -6,7 +6,8 @@ extends SceneTree
 ## Run from the project root (re-running rebuilds everything it makes):
 ##
 ##     godot --headless --path . -s res://tools/build_early_zone.gd
-##     … -- zone-only     (just early_zone.tscn: places, vehicles, landmarks)
+##     … -- zone-only       (just early_zone.tscn: places, vehicles, people)
+##     … -- zone-only bake  (that, and a fresh navmesh: a place's insides changed)
 ##
 ## Writes, under levels/early_zone/:
 ##   early_zone.tscn            the level (main scene)
@@ -85,6 +86,18 @@ const VEHICLES := [
 	["CargoTruck", "res://scenes/vehicles/cargo_truck.tscn", Vector3(5.5, 0.1, 8.0), 180.0],  # Outpost 17, beside the yard road by the motor pool, nose to the gate
 ]
 
+## Survivors (Increment 19): people waiting at other places, who'll come and
+## live at your settlement if you ask. [node name, their name, position,
+## facing (compass degrees), what they say first]
+const SURVIVORS := [
+	["Maya", "Maya", Vector3(247, 0.05, -193), 90.0,
+		"I hid in the pharmacy when the raiders came. Find somewhere safe to live and I'll come."],
+	["Tomas", "Tomas", Vector3(464, 0.05, -312), 180.0,
+		"The diner's been my home since the town fell. Got a bed somewhere safer?"],
+	["Jeb", "Old Jeb", Vector3(278, 0.05, -528.6), 0.0,
+		"Forty years I worked this mine. Find me a bed that isn't down a hole and I'm yours."],
+]
+
 ## Signposts: [position (x, z), [destinations…]]
 const SIGNPOSTS := [
 	[Vector2(8, 80), ["HaldensCrossing", "AshCreekFarms"]],
@@ -124,13 +137,15 @@ func _run() -> void:
 	# -- zone-only: just the zone scene (after adding a vehicle or a place);
 	# the terrain, roads, rocks and navmesh stay as they are
 	var zone_only := OS.get_cmdline_user_args().has("zone-only")
+	# … -- zone-only bake: the zone scene and a fresh navmesh (a place changed)
+	var bake := not zone_only or OS.get_cmdline_user_args().has("bake")
 	_materials()
 	if not zone_only:
 		_save(_terrain(), "terrain.scn")
 		_save(_roads(), "roads.scn")
 		_save(_rocks(), "rocks.scn")
 		ResourceSaver.save(_environment(), OUT + "early_zone_environment.tres")
-	await _zone(not zone_only)
+	await _zone(bake)
 	_boundary.free()
 	print("early zone built")
 	quit()
@@ -1074,6 +1089,18 @@ func _zone(bake := true) -> void:
 		# Godot's vehicles drive toward +Z: yaw 0 here means nose north (-Z)
 		car.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(180.0 - v[3])), v[2])
 		vehicles.add_child(car)
+	var survivors := Node3D.new()
+	survivors.name = "Survivors"
+	zone.add_child(survivors)
+	for sv in SURVIVORS:
+		var person := (load("res://scenes/npcs/settler.tscn") as PackedScene).instantiate() as Node3D
+		person.name = sv[0]
+		person.set("settler_name", sv[1])
+		person.set("greeting", sv[4])
+		person.set("look_seed", hash(sv[1]))
+		person.position = sv[2]
+		person.rotation.y = deg_to_rad(-float(sv[3]))  # compass heading (0 = north) as a yaw
+		survivors.add_child(person)
 	var spawn := Marker3D.new()
 	spawn.name = "PlayerSpawn"
 	spawn.position = Vector3(0, 0.05, 14)

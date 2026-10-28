@@ -54,12 +54,20 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	# -- ash_creek_farms … builds just the named places (folder names)
+	var only := Array(OS.get_cmdline_user_args())
+	var want := func(folder: String) -> bool: return only.is_empty() or only.has(folder)
 	_loot_tables()
-	_saint_mercy().save("res://levels/saint_mercy_clinic/saint_mercy_clinic.tscn")
-	_ash_creek().save("res://levels/ash_creek_farms/ash_creek_farms.tscn")
-	_smugglers_gulch().save("res://levels/smugglers_gulch/smugglers_gulch.tscn")
-	_black_ridge().save("res://levels/black_ridge_mine/black_ridge_mine.tscn")
-	_northwatch().save("res://levels/northwatch_outpost/northwatch_outpost.tscn")
+	if want.call("saint_mercy_clinic"):
+		_saint_mercy().save("res://levels/saint_mercy_clinic/saint_mercy_clinic.tscn")
+	if want.call("ash_creek_farms"):
+		_ash_creek().save("res://levels/ash_creek_farms/ash_creek_farms.tscn")
+	if want.call("smugglers_gulch"):
+		_smugglers_gulch().save("res://levels/smugglers_gulch/smugglers_gulch.tscn")
+	if want.call("black_ridge_mine"):
+		_black_ridge().save("res://levels/black_ridge_mine/black_ridge_mine.tscn")
+	if want.call("northwatch_outpost"):
+		_northwatch().save("res://levels/northwatch_outpost/northwatch_outpost.tscn")
 	print("sites built")
 	quit()
 
@@ -341,7 +349,100 @@ func _ash_creek() -> Kit:
 		k.box(fence, "Rail", Vector3(0.1, 0.12, 20), Vector3(side * 4.0 - 6, 0.95, 32), "wood")
 		k.box(fence, "RailLow", Vector3(0.1, 0.12, 20), Vector3(side * 4.0 - 6, 0.5, 32), "wood")
 	k.spawner("RaiderSpawner", "raider", 2, 60.0, [Vector2(-32, -2), Vector2(40, -30)])
+	_ash_creek_settlement(k, f, b)
 	return k
+
+
+## Ash Creek Farms as a settlement (Increment 19): the notice board where you
+## claim it, the pump, the Farm Store (barn) and the Armory Locker
+## (farmhouse), beds for four, and the spots settlers work and stand guard.
+## The Settlement sits at the farm's centre (its defended area is round it).
+func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D) -> void:
+	var st := Settlement.new()
+	st.name = "Settlement"
+	k.root.add_child(st)
+	# Notice board in front of the porch, facing the lane
+	var board_at := Vector3(-4.2, 0, 15.4)
+	var board := k.solid_body(st, "NoticeBoard", Transform3D(Basis.IDENTITY, board_at))
+	for x in [-0.55, 0.55]:
+		k.box(board, "Post", Vector3(0.1, 1.9, 0.1), Vector3(x, 0.95, 0), "wood")
+	k.box(board, "Board", Vector3(1.3, 0.8, 0.06), Vector3(0, 1.4, 0.03), "wood")
+	k.box(board, "Notice", Vector3(0.9, 0.55, 0.01), Vector3(0, 1.42, 0.065), "paint_white")
+	k.box(board, "Roof", Vector3(1.5, 0.06, 0.36), Vector3(0, 1.92, 0.05), "rust")
+	var claim := ClaimPoint.new()
+	claim.name = "ClaimPoint"
+	claim.position = board_at + Vector3(0, 1.4, 0.1)
+	st.add_child(claim)
+	_area(claim, Vector3(1.4, 1.0, 0.4))
+	# The pump, in the pump house in front of the water tank (the door's west)
+	var pump_at := Vector3(9.6, 0, 23.1)  # clear of the parts footlocker on the north wall
+	var pump_body := k.solid_body(st, "PumpHead", Transform3D(Basis.IDENTITY, pump_at))
+	k.box(pump_body, "Base", Vector3(0.5, 0.2, 0.5), Vector3(0, 0.1, 0), "metal_dark")
+	k.box(pump_body, "Column", Vector3(0.22, 0.9, 0.22), Vector3(0, 0.65, 0), "rust")
+	k.box(pump_body, "Head", Vector3(0.34, 0.24, 0.3), Vector3(0, 1.2, 0), "rust")
+	k.box(pump_body, "Handle", Vector3(0.06, 0.06, 0.7), Vector3(0, 1.32, 0.3), "metal_dark", 0.0, false)
+	k.box(pump_body, "Spout", Vector3(0.1, 0.1, 0.3), Vector3(-0.2, 1.05, 0), "rust", 90.0, false)
+	var pump := WaterPump.new()
+	pump.name = "WaterPump"
+	pump.position = pump_at + Vector3(0, 0.9, 0)
+	st.add_child(pump)
+	_area(pump, Vector3(0.8, 1.6, 1.0))
+	# Farm Store in the barn; Armory Locker in the farmhouse kitchen
+	var store := k.scene("crate").instantiate() as Node3D
+	store.name = "FarmStore"
+	store.position = k.at(barn, k.against(barn, "W", -2.0, 0.44))
+	store.rotation.y = k.yaw_in(barn, Kit.facing_from("W"))
+	store.set("container_name", "Farm Store")
+	store.set("object_name", "Farm Store")
+	st.add_child(store)
+	var armory := k.scene("locker").instantiate() as Node3D
+	armory.name = "Armory"
+	armory.position = k.at(house, k.against(house, "E", -1.8, 0.39))
+	armory.rotation.y = k.yaw_in(house, Kit.facing_from("E"))
+	armory.set("container_name", "Armory Locker")
+	armory.set("object_name", "Armory Locker")
+	st.add_child(armory)
+	# Beds for four in the farmhouse's west room (clear of the bedroom chest)
+	for i in 3:
+		_bed(k, "SettlerBed%d" % i, house, [Vector3(-3.5, 0, -0.9), Vector3(-3.5, 0, 0.8), Vector3(-1.2, 0, -2.6)][i])
+	# Where farmers work, guards stand, newcomers walk in and everyone gathers
+	_markers(st, "FarmSpots", [Vector3(-38, 0, -20), Vector3(-34, 0, -30), Vector3(-42, 0, -14), Vector3(-38, 0, 34),
+		Vector3(40, 0, -6), Vector3(40, 0, 12), Vector3(2, 0, -48), Vector3(16, 0, -48)])
+	_markers(st, "GuardPosts", [Vector3(-6, 0, 17.5), Vector3(-6, 0, 30), Vector3(14, 0, -3.5), Vector3(-16, 0, 28),
+		Vector3(21, 0, 5)])
+	_markers(st, "", [["ArrivalPoint", Vector3(-6, 0, 44)], ["Hangout", Vector3(-8, 0, 16.5)]])
+	var people := Node3D.new()
+	people.name = "Settlers"
+	st.add_child(people)
+
+
+func _area(area: Area3D, size: Vector3) -> void:
+	var cs := CollisionShape3D.new()
+	cs.name = "Shape"
+	var box := BoxShape3D.new()
+	box.size = size
+	cs.shape = box
+	area.add_child(cs)
+
+
+## A group of Marker3Ds under `parent` (or loose ones, named, if `group` is "").
+func _markers(parent: Node3D, group: String, points: Array) -> void:
+	var holder := parent
+	if group != "":
+		holder = Node3D.new()
+		holder.name = group
+		parent.add_child(holder)
+	var i := 0
+	for p in points:
+		var m := Marker3D.new()
+		if p is Array:
+			m.name = p[0]
+			m.position = p[1]
+		else:
+			m.name = "%s%d" % [group.trim_suffix("s"), i]
+			m.position = p
+		holder.add_child(m)
+		i += 1
 
 
 func _fields(k: Kit) -> void:

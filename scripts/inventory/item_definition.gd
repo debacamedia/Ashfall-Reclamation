@@ -4,7 +4,7 @@ extends Resource
 ## Items are identified by `id` everywhere (saves, trading, recipes), so never
 ## change an id once it ships.
 
-enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, STRUCTURE, EQUIPMENT }
+enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, STRUCTURE, EQUIPMENT, FOOD }
 
 @export var id: StringName = &"item"
 @export var display_name := "Item"

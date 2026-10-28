@@ -291,8 +291,13 @@ func markers() -> Array[Dictionary]:
 		var l := n as Landmark
 		if l != null and l.radius > 0.0:
 			var visited := _knowledge != null and _knowledge.has_visited(l.display_name)
-			out.append({"kind": "place" if visited else "place_unvisited", "name": l.display_name,
-				"at": Vector2(l.global_position.x, l.global_position.z), "visited": visited})
+			var yours := _is_yours(l.display_name)
+			out.append({"kind": "place" if visited or yours else "place_unvisited", "name": l.display_name + ("  (yours)" if yours else ""),
+				"at": Vector2(l.global_position.x, l.global_position.z), "visited": visited or yours, "yours": yours})
+	for n in tree.get_nodes_in_group("settlers"):
+		var st := n as Settler
+		if st != null and st.has_arrived() and not st.is_dead():
+			out.append({"kind": "settler", "name": "%s (%s)" % [st.settler_name, st.role_name()], "at": Vector2(st.global_position.x, st.global_position.z)})
 	for n in tree.get_nodes_in_group("crafting_stations"):
 		var s := n as CraftingStation
 		if s != null and _seen(s.global_position):
@@ -311,6 +316,15 @@ func markers() -> Array[Dictionary]:
 		for pin in _knowledge.pins:
 			out.append({"kind": "pin", "name": "Pin %d" % pin["number"], "number": pin["number"], "at": pin["at"]})
 	return out
+
+
+## A settlement of yours stands at this place.
+func _is_yours(place: String) -> bool:
+	for n in get_tree().get_nodes_in_group("settlements"):
+		var s := n as Settlement
+		if s.is_claimed and s.place_name == place:
+			return true
+	return false
 
 
 func _seen(p: Vector3) -> bool:
@@ -345,8 +359,11 @@ func _draw_overlay() -> void:
 			draw_icon(ci, "station", to_screen(m["at"]), STATION_COLORS.get(m["station"], Color.WHITE),
 				"G" if m["station"] == RecipeDefinition.Station.WEAPONS_BENCH else "W")
 	for m in all:
+		if m["kind"] == "settler":
+			draw_icon(ci, "settler", to_screen(m["at"]), Settlement.CLAIMED_COLOR)
+	for m in all:
 		if m["kind"] == "place" or m["kind"] == "place_unvisited":
-			draw_icon(ci, m["kind"], to_screen(m["at"]), PLACE_COLOR if m["visited"] else UNVISITED_COLOR)
+			draw_icon(ci, m["kind"], to_screen(m["at"]), Settlement.CLAIMED_COLOR if m.get("yours", false) else (PLACE_COLOR if m["visited"] else UNVISITED_COLOR))
 	for m in all:
 		if m["kind"] == "place" or m["kind"] == "place_unvisited":
 			var text: String = m["name"] if m["visited"] else m["name"] + "  ?"
@@ -458,6 +475,9 @@ static func draw_icon(ci: CanvasItem, kind: String, at: Vector2, color := Color.
 			ring.append(pts[0])
 			ci.draw_polyline(ring, outline, 2.0)
 			ci.draw_line(at + Vector2(-6, -4).rotated(angle), at + Vector2(6, -4).rotated(angle), outline, 2.0)
+		"settler":
+			ci.draw_circle(at, 4.0, outline)
+			ci.draw_circle(at, 3.0, color)
 		"built":
 			ci.draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), color)
 			ci.draw_rect(Rect2(at - Vector2(3, 3), Vector2(6, 6)), outline, false, 1.0)

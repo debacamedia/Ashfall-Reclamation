@@ -1,0 +1,102 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="Mat_wood"]
+albedo_color = Color(0.5, 0.36, 0.22, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Mat_cabbage"]
+albedo_color = Color(0.42, 0.62, 0.28, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_carrot"]
+albedo_color = Color(0.9, 0.45, 0.12, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_potato"]
+albedo_color = Color(0.62, 0.5, 0.32, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="Mesh_base"]
+size = Vector3(0.38, 0.03, 0.26)
+
+[sub_resource type="BoxMesh" id="Mesh_side"]
+size = Vector3(0.38, 0.12, 0.02)
+
+[sub_resource type="BoxMesh" id="Mesh_end"]
+size = Vector3(0.02, 0.12, 0.26)
+
+[sub_resource type="SphereMesh" id="Mesh_cabbage"]
+radius = 0.075
+height = 0.14
+radial_segments = 10
+rings = 6
+
+[sub_resource type="SphereMesh" id="Mesh_potato"]
+radius = 0.045
+height = 0.07
+radial_segments = 8
+rings = 4
+
+[sub_resource type="CylinderMesh" id="Mesh_carrot"]
+top_radius = 0.022
+bottom_radius = 0.004
+height = 0.17
+radial_segments = 6
+rings = 1
+
+[node name="Vegetables" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
+material_override = SubResource("Mat_wood")
+mesh = SubResource("Mesh_base")
+
+[node name="SideA" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0.12)
+material_override = SubResource("Mat_wood")
+mesh = SubResource("Mesh_side")
+
+[node name="SideB" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, -0.12)
+material_override = SubResource("Mat_wood")
+mesh = SubResource("Mesh_side")
+
+[node name="EndA" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0.07, 0)
+material_override = SubResource("Mat_wood")
+mesh = SubResource("Mesh_end")
+
+[node name="EndB" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, 0.07, 0)
+material_override = SubResource("Mat_wood")
+mesh = SubResource("Mesh_end")
+
+[node name="Cabbage" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.1, 0.02)
+material_override = SubResource("Mat_cabbage")
+mesh = SubResource("Mesh_cabbage")
+
+[node name="Cabbage2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.1, -0.04)
+material_override = SubResource("Mat_cabbage")
+mesh = SubResource("Mesh_cabbage")
+
+[node name="PotatoA" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11, 0.08, 0.06)
+material_override = SubResource("Mat_potato")
+mesh = SubResource("Mesh_potato")
+
+[node name="PotatoB" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.08, -0.05)
+material_override = SubResource("Mat_potato")
+mesh = SubResource("Mesh_potato")
+
+[node name="CarrotA" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.03, 0.15, 0.07)
+material_override = SubResource("Mat_carrot")
+mesh = SubResource("Mesh_carrot")
+
+[node name="CarrotB" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -0.94, 0.34, 0.94, 0, 0, -0.34, 0, 0.94, -0.04, 0.16, 0.08)
+material_override = SubResource("Mat_carrot")
+mesh = SubResource("Mesh_carrot")

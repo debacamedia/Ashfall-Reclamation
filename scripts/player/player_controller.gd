@@ -77,6 +77,10 @@ signal vehicle_entered(truck: Truck)
 signal vehicle_exited(truck: Truck)
 signal vehicle_refused(reason: String)
 signal vehicle_refuelled(truck: Truck, litres: float)
+## Settlements (Increment 19): talked to someone who lives at one (the HUD
+## opens the settlement screen at them), or opened a settlement's board.
+signal settler_talked(settler: Settler)
+signal settlement_board_opened(settlement: Settlement)
 signal map_pins_changed
 signal pin_refused(reason: String)
 
@@ -690,6 +694,46 @@ func _simulate_driving(frame: InputFrame, _delta: float) -> void:
 	_drive_interact_was = frame.interact
 	if pressed:
 		leave_vehicle()
+
+
+# ---------------------------------------------------------------- settlements
+
+## Claims `s` (from its notice board). Validated by the Settlement.
+func request_claim(s: Settlement) -> bool:
+	return s != null and s.request_claim(self)
+
+
+func request_repair_pump(s: Settlement) -> bool:
+	return s != null and s.request_repair_pump(self)
+
+
+## Talking to a settler: a survivor is asked to come to your settlement (the
+## first you have with a free bed); someone who lives at one opens it.
+func talk_to(settler: Settler) -> void:
+	if settler == null or is_dead():
+		return
+	if settler.settlement == null:
+		var home := best_settlement_for_recruit()
+		if home != null:
+			home.request_recruit(self, settler)
+		else:
+			settler_talked.emit(settler)
+		return
+	settler_talked.emit(settler)
+
+
+## A claimed settlement with a free bed, else any claimed one, else any.
+func best_settlement_for_recruit() -> Settlement:
+	var any: Settlement = null
+	var claimed_one: Settlement = null
+	for n in get_tree().get_nodes_in_group("settlements"):
+		var s := n as Settlement
+		any = s if any == null else any
+		if s.is_claimed:
+			claimed_one = s if claimed_one == null else claimed_one
+			if s.free_beds() > 0:
+				return s
+	return claimed_one if claimed_one != null else any
 
 
 # ---------------------------------------------------------------- map

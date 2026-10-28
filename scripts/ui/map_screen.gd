@@ -128,6 +128,8 @@ func _init() -> void:
 	side.add_child(_heading("KEY"))
 	for row in [["you", Color.WHITE, "", "You"],
 			["place", MapView.PLACE_COLOR, "", "A place you've been"],
+			["place", Settlement.CLAIMED_COLOR, "", "Your settlement"],
+			["settler", Settlement.CLAIMED_COLOR, "", "Your settlers"],
 			["place_unvisited", MapView.UNVISITED_COLOR, "", "Not been there yet"],
 			["gear", MapView.GEAR_COLOR, "", "Your dropped gear"],
 			["truck", MapView.TRUCK_COLOR, "", "Your truck"],
@@ -373,8 +375,10 @@ func _rebuild_lists() -> void:
 		var been := k.has_visited(l.display_name)
 		visited += int(been)
 		var at := Vector2(l.global_position.x, l.global_position.z)
-		_places_box.add_child(_list_row("place" if been else "place_unvisited", MapView.PLACE_COLOR if been else MapView.UNVISITED_COLOR, "",
-			l.display_name + ("" if been else "  ?"), at, -1))
+		var yours := view._is_yours(l.display_name)
+		_places_box.add_child(_list_row("place" if been or yours else "place_unvisited",
+			Settlement.CLAIMED_COLOR if yours else (MapView.PLACE_COLOR if been else MapView.UNVISITED_COLOR), "",
+			l.display_name + ("  (yours)" if yours else ("" if been else "  ?")), at, -1))
 	var counter := _label("Been to %d of %d" % [visited, places.size()], 13, Color(0.7, 0.68, 0.62))
 	counter.name = "PlacesCount"
 	_places_box.add_child(counter)

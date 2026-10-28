@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 18 (the truck)
+## Current state: Increment 19 (Ash Creek Farms, the first settlement)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -26,6 +26,14 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 16.8:** **backpacks**: a backpack slot in the inventory; craft a **Rucksack** (40 kg, 30 slots) by hand, find a **Military Pack** (50 kg, 36 slots: always in Northwatch's Quartermaster's Crate), craft a **Frame Pack** (60 kg, 42 slots) at a workbench, though it rattles and raiders hear you. Your pack drops with your gear when you die. **Double-tap W to sprint** (Minecraft-style), with a slight view widening; sprint time is counted for hunger later. See [`docs/increments/16_8_backpacks_and_sprint.md`](docs/increments/16_8_backpacks_and_sprint.md).
 - **Increment 17:** **the map** (**M**): the whole zone seen from above, **filling in as you explore** (you see further from rooftops and the water tower). It marks the seven places (greyed until you've been), the crafting benches you've found, what you've built, **your dropped gear** and the ash-storm edge. **Right-click to drop a pin** (up to 10): pins show on the **compass** too. Drag, scroll or pinch to move and zoom; the side panel lists the places and pins with their distances (click one to look at it). Saved with your game. See [`docs/increments/17_map.md`](docs/increments/17_map.md).
 - **Increment 18:** **a truck you can drive**, parked in Outpost 17's yard. **E** at the driver's door to get in, **W/S** drive and reverse, **A/D** steer, **Space** handbrake, **T** for a camera behind, **E** to get out. Up to 70 km/h. The **bed holds 48 slots / 400 kg** (E at the tailgate). It runs on **fuel**: 40 L tank, about 6.5 km a tank, and each Fuel Can adds 10 L at the fuel cap. Raiders hear the engine, and running into them hurts them. It's on the compass and the map, and saved where you leave it. See [`docs/increments/18_truck.md`](docs/increments/18_truck.md).
+- **Increment 19:** **Ash Creek Farms becomes your first settlement.**
+  - **Claiming it:** clear its raiders, then hold **E** at the notice board on the farmhouse porch. It turns green on the compass and map, and its raiders stop coming.
+  - **Water and food:** fix the **pump** (3 Scrap Metal, 2 Metal Pipe, a Spring). **Farmers** turn water into **Fresh Vegetables** in the Farm Store (in the barn), and everyone eats from it. Go hungry too long and settlers stop working, then leave.
+  - **Settlers:** **newcomers** walk in when there's a free bed (4) and food. **Survivors** at Saint Mercy, Halden's and Black Ridge come if you ask them (E).
+  - **Guards:** they patrol and shoot raiders. Arm them with your spare guns, or stock the **Armory Locker**.
+  - **Running it:** press **L** for the settlement screen: jobs, guns, stocks.
+
+  See [`docs/increments/19_ash_creek_settlement.md`](docs/increments/19_ash_creek_settlement.md).
 - **Resource Pack 3:** weathered brick, cracked asphalt, tar-paper roofs and painted containers; shop signs, raider graffiti and decals across Halden's Crossing and Outpost 17; bullet impacts that sound like the surface; crafting, salvage, pickup, reload and container sounds; town ambience. See [`docs/art/ashfall_pack_v3/INTEGRATION.md`](docs/art/ashfall_pack_v3/INTEGRATION.md) for what's integrated and what's only imported.
 
 ## Run it
@@ -33,7 +41,7 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
 3. Press **F5**.
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · M map (right-click: pin) · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift or double-tap W sprint · E at the truck's door to drive (W/S, A/D, Space handbrake, T camera, E get out) · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug (fps, draw calls) · Ctrl/Cmd + = / − / 0 interface size.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · M map (right-click: pin) · L settlement · H use medkit · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift or double-tap W sprint · E at the truck's door to drive (W/S, A/D, Space handbrake, T camera, E get out) · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug (fps, draw calls) · Ctrl/Cmd + = / − / 0 interface size.
 
 ## After pulling an update — important
 Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.

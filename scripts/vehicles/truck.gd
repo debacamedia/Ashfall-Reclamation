@@ -335,7 +335,7 @@ func _hit_raiders(delta: float) -> void:
 	if speed < hit_speed:
 		return
 	for body in bumper.get_overlapping_bodies():
-		if body == driver or _hit_cooldowns.has(body) or not body is Node3D:
+		if body == driver or _hit_cooldowns.has(body) or not body is Node3D or (body as Node).is_in_group("settlers"):
 			continue
 		var to := (body as Node3D).global_position - global_position
 		if Vector3(to.x, 0, to.z).dot(vel) <= 0.0:

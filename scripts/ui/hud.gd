@@ -65,6 +65,9 @@ var _bar_width := 0.0
 var compass: CompassBar
 ## The map window, M (built in code, Increment 17).
 var map_screen: MapScreen
+## The settlement window, L (built in code, Increment 19).
+var settlement_screen: SettlementScreen
+var _settlements_bound := {}
 ## Speed and fuel while you drive (built in code, Increment 18).
 var drive_panel: VBoxContainer
 var _drive_speed: Label
@@ -87,6 +90,8 @@ func _ready() -> void:
 	add_child(compass)
 	map_screen = MapScreen.new()
 	add_child(map_screen)
+	settlement_screen = SettlementScreen.new()
+	add_child(settlement_screen)
 	_build_drive_panel()
 	_death_screen.visible = false
 	_damage_vignette.modulate.a = 0.0
@@ -108,8 +113,10 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	compass.player = player
 	map_screen.player = player
+	settlement_screen.player = player
 	if player == null:
 		return
+	_bind_settlements()
 	if player.weapon != _weapon:
 		_bind_weapon(player.weapon)
 	if player.health != _health:
@@ -169,6 +176,12 @@ func _process(delta: float) -> void:
 			_told_empty = truck.fuel <= 0.0
 			if truck.fuel <= 0.0:
 				show_notice("Out of fuel: fill it from a Fuel Can at the fuel cap", Color(1.0, 0.6, 0.4)))
+		player.settler_talked.connect(func(settler: Settler) -> void:
+			if settler.settlement == null:
+				show_notice("%s: \"%s\"" % [settler.settler_name, settler.greeting if settler.greeting != "" else "Hello."], Color(0.95, 0.9, 0.75))
+			else:
+				settlement_screen.open(settler.settlement, settler))
+		player.settlement_board_opened.connect(func(s: Settlement) -> void: settlement_screen.open(s))
 		player.pin_refused.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED))
@@ -196,7 +209,7 @@ func _process(delta: float) -> void:
 	_crosshair.visible = not driving
 	compass.get_node("PlaceBanner").visible = not window_open
 	# The map covers the top of the screen, where the compass is
-	compass.modulate.a = 0.0 if map_screen.visible else 1.0
+	compass.modulate.a = 0.0 if map_screen.visible or settlement_screen.visible else 1.0
 	for c: CanvasItem in [_weapon_strip, _quick_slot, _weapon_label, _ammo_label]:
 		if c != null:
 			c.modulate.a = 0.0 if window_open or driving else 1.0
@@ -223,6 +236,21 @@ func _process(delta: float) -> void:
 			Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME) / 1000.0,
 		]
+
+
+## Settlements' notices ("Maya has arrived…") and refusals, once each.
+func _bind_settlements() -> void:
+	for n in get_tree().get_nodes_in_group("settlements"):
+		if _settlements_bound.has(n):
+			continue
+		_settlements_bound[n] = true
+		var s := n as Settlement
+		s.notice.connect(func(text: String) -> void: show_notice(text, Color(0.7, 0.95, 0.7)))
+		s.refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED)
+			if settlement_screen.visible:
+				settlement_screen.show_message(reason))
 
 
 func _build_drive_panel() -> void:
@@ -304,7 +332,8 @@ func _update_drive_panel() -> void:
 ## A full-screen window is open: inventory, container, crafting or the map.
 func is_window_open() -> bool:
 	return inventory_screen.visible or (container_screen != null and container_screen.visible) \
-		or (crafting_screen != null and crafting_screen.visible) or (map_screen != null and map_screen.visible)
+		or (crafting_screen != null and crafting_screen.visible) or (map_screen != null and map_screen.visible) \
+		or (settlement_screen != null and settlement_screen.visible)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -516,7 +545,10 @@ func show_notice(text: String, color := Color(0.95, 0.85, 0.55)) -> void:
 	notice.add_theme_constant_override("outline_size", 5)
 	notice.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
 	notice.add_theme_color_override("font_color", color)
-	notice.set_meta("time_left", 2.5)
+	# Long ones wrap (the column is ~390 wide) and stay a little longer
+	notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	notice.custom_minimum_size.x = 380
+	notice.set_meta("time_left", 2.5 + maxf(text.length() - 40, 0) / 30.0)
 	_notices.add_child(notice)
 	while _notices.get_child_count() > 5:
 		_notices.get_child(0).free()

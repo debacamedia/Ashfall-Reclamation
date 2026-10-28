@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/vegetables.png" id="0_icon"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_soft"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_def"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/vegetables.tscn" id="3_model"]
+
+[resource]
+script = ExtResource("2_def")
+id = &"vegetables"
+display_name = "Fresh Vegetables"
+description = "Cabbages, carrots and potatoes from Ash Creek Farms. Settlers eat one a day; the farmers grow more with water."
+category = 10
+icon = ExtResource("0_icon")
+max_stack = 20
+weight = 0.4
+base_value = 3
+world_model = ExtResource("3_model")
+pickup_sound = ExtResource("1_soft")
