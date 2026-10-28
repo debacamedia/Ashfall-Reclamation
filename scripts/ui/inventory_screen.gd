@@ -123,6 +123,8 @@ func _input(event: InputEvent) -> void:
 	var hud := get_parent().get_parent() as HUD if get_parent() != null else null
 	if hud != null and hud.crafting_screen != null and hud.crafting_screen.visible:
 		return
+	if hud != null and hud.map_screen != null and hud.map_screen.visible:
+		return
 	if event.is_action_pressed("inventory"):
 		toggle()
 		get_viewport().set_input_as_handled()

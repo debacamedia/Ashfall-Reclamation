@@ -63,6 +63,8 @@ var _trail_fraction := 1.0
 var _bar_width := 0.0
 ## The compass strip (built in code).
 var compass: CompassBar
+## The map window, M (built in code, Increment 17).
+var map_screen: MapScreen
 
 
 func _ready() -> void:
@@ -76,6 +78,8 @@ func _ready() -> void:
 	compass = CompassBar.new()
 	compass.name = "Compass"
 	add_child(compass)
+	map_screen = MapScreen.new()
+	add_child(map_screen)
 	_death_screen.visible = false
 	_damage_vignette.modulate.a = 0.0
 	var saves := get_node_or_null("/root/SaveManager")
@@ -95,6 +99,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	compass.player = player
+	map_screen.player = player
 	if player == null:
 		return
 	if player.weapon != _weapon:
@@ -143,6 +148,13 @@ func _process(delta: float) -> void:
 		if crafting_screen != null:
 			crafting_screen.player = player
 		player.craft_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
+		player.place_discovered.connect(func(place: String) -> void:
+			# Not for the place you start in: you haven't gone anywhere yet
+			if player.map_knowledge.places.size() > 1:
+				show_notice("%s is on your map  (M)" % place, Color(0.95, 0.85, 0.6)))
+		player.pin_refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
 		player.attachment_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 	_update_prompt()
 	_update_item_use()
@@ -161,8 +173,10 @@ func _process(delta: float) -> void:
 			_scope.visible = _weapon.definition.scope_overlay and player.aim_amount >= 0.95 and not player.is_dead()
 	_update_weapon_strip()
 	# Full-screen windows (inventory, container, crafting) hide the corner readouts
-	var window_open := inventory_screen.visible or (container_screen != null and container_screen.visible) or (crafting_screen != null and crafting_screen.visible)
+	var window_open := is_window_open()
 	compass.get_node("PlaceBanner").visible = not window_open
+	# The map covers the top of the screen, where the compass is
+	compass.modulate.a = 0.0 if map_screen.visible else 1.0
 	for c: CanvasItem in [_weapon_strip, _quick_slot, _weapon_label, _ammo_label]:
 		if c != null:
 			c.modulate.a = 0.0 if window_open else 1.0
@@ -189,6 +203,12 @@ func _process(delta: float) -> void:
 			Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME) / 1000.0,
 		]
+
+
+## A full-screen window is open: inventory, container, crafting or the map.
+func is_window_open() -> bool:
+	return inventory_screen.visible or (container_screen != null and container_screen.visible) \
+		or (crafting_screen != null and crafting_screen.visible) or (map_screen != null and map_screen.visible)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -331,7 +351,7 @@ func _bind_interactor(interactor: PlayerInteractor) -> void:
 func _update_prompt() -> void:
 	var target := _interactor.focused if _interactor != null else null
 	if target == null or not is_instance_valid(target) or player.is_dead() or player.current_container != null \
-			or (crafting_screen != null and crafting_screen.visible):
+			or (crafting_screen != null and crafting_screen.visible) or map_screen.visible:
 		_prompt_label.visible = false
 		_prompt_reason.visible = false
 		_hold_bar.visible = false
@@ -461,7 +481,7 @@ func _update_hint() -> void:
 		for w in player.weapon_slots.owned():
 			if not w.definition.melee:
 				has_gun = true
-	var window_open := inventory_screen.visible or (container_screen != null and container_screen.visible) or (crafting_screen != null and crafting_screen.visible)
+	var window_open := is_window_open()
 	_hint.visible = not has_gun and not player.is_dead() and not window_open
 	if _hint.visible:
 		var wood := player.inventory.count_of(&"wood") if player.inventory != null else 0

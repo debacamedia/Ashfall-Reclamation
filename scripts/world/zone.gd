@@ -33,6 +33,26 @@ func _ready() -> void:
 	apply_draw_distances(self)
 
 
+## The zone's map (Increment 17): map.tres beside the zone's scene, or null.
+func get_map() -> ZoneMap:
+	return Zone.map_for(scene_file_path)
+
+
+static func map_for(scene_path: String) -> ZoneMap:
+	var path := scene_path.get_base_dir().path_join("map.tres")
+	return load(path) as ZoneMap if scene_path != "" and ResourceLoader.exists(path) else null
+
+
+## The zone `node` is in (its nearest Zone ancestor), or null.
+static func of(node: Node) -> Zone:
+	var n := node
+	while n != null:
+		if n is Zone:
+			return n
+		n = n.get_parent()
+	return null
+
+
 ## The places in the zone: each is its own level scene instanced here.
 func sites() -> Array[Node3D]:
 	var out: Array[Node3D] = []

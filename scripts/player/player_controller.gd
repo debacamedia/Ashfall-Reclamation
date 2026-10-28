@@ -69,6 +69,11 @@ signal structure_repaired(structure: Structure)
 signal structure_dismantled(definition: StructureDefinition)
 signal structure_moved(structure: Structure)
 signal build_refused(reason: String)
+## Map (Increment 17): a new place you've been, pins dropped or removed,
+## and why a pin couldn't be dropped.
+signal place_discovered(place_name: String)
+signal map_pins_changed
+signal pin_refused(reason: String)
 
 enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBING }
 
@@ -207,6 +212,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if controlled_locally:
 		simulate(player_input.gather(), delta)
+	_update_map(delta)
 	if global_position.y < kill_plane_y and not is_dead():
 		var info := DamageInfo.create(health.max_health * 10.0, DamageInfo.Type.ENVIRONMENT)
 		health.apply_damage(info)
@@ -550,6 +556,67 @@ func _can_transfer() -> bool:
 		and current_container.is_within_reach(head.global_position)
 
 
+# ---------------------------------------------------------------- map
+
+## How often the ground round you is revealed on the map (s).
+const MAP_UPDATE_INTERVAL := 0.25
+
+## What you know of each zone's map: zone id -> MapKnowledge.
+var maps := {}
+var _map_timer := 0.0
+
+
+## The map knowledge for the zone you're in (made on first use).
+var map_knowledge: MapKnowledge:
+	get:
+		return map_for(map_zone_id())
+
+
+## The id of the zone you're in ("early_zone"), from its folder.
+func map_zone_id() -> String:
+	var zone := Zone.of(self)
+	if zone != null and zone.scene_file_path != "":
+		return zone.scene_file_path.get_base_dir().get_file()
+	var scene := get_tree().current_scene if is_inside_tree() else null
+	return scene.scene_file_path.get_base_dir().get_file() if scene != null and scene.scene_file_path != "" else "default"
+
+
+func map_for(zone_id: String) -> MapKnowledge:
+	if not maps.has(zone_id):
+		var k := MapKnowledge.new()
+		k.pins_changed.connect(func() -> void: map_pins_changed.emit())
+		maps[zone_id] = k
+	return maps[zone_id]
+
+
+## Reveals the map round you and notes the places you reach. Runs where the
+## game state lives (the host), for every player.
+func _update_map(delta: float) -> void:
+	_map_timer -= delta
+	if _map_timer > 0.0 or is_dead() or not is_inside_tree():
+		return
+	_map_timer = MAP_UPDATE_INTERVAL
+	var k := map_knowledge
+	k.reveal_around(global_position)
+	var place := Landmark.at(get_tree(), global_position)
+	if place != null and place.radius > 0.0 and k.visit(place.display_name):
+		place_discovered.emit(place.display_name)
+
+
+## Drops a pin on the map at `at` (x, z). Returns its number, or 0 (and
+## pin_refused) if it can't.
+func request_add_pin(at: Vector2) -> int:
+	var reason := map_knowledge.pin_refusal_reason(at)
+	if reason != "":
+		pin_refused.emit(reason)
+		return 0
+	return map_knowledge.add_pin(at)
+
+
+func request_remove_pin(number: int) -> bool:
+	return map_knowledge.remove_pin(number)
+
+
 # ---------------------------------------------------------------- saving
 
 ## Plain data for SaveManager: where you are, where you're looking, health,
@@ -565,7 +632,15 @@ func save_state() -> Dictionary:
 		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
 		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
 		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
+		"maps": _maps_data(),
 	}
+
+
+func _maps_data() -> Dictionary:
+	var out := {}
+	for id: String in maps:
+		out[id] = (maps[id] as MapKnowledge).to_data()
+	return out
 
 
 ## Restores save_state() data. Anything missing or malformed keeps its
@@ -602,6 +677,15 @@ func load_state(data: Dictionary) -> void:
 		weapon.ammo_changed.emit(weapon.ammo_in_magazine, weapon.reserve_ammo)
 	var hp := _number(data.get("health"), health.max_health)
 	health.revive(clampf(hp, 1.0, health.max_health) / health.max_health)
+	# The map (Increment 17). Older saves have none: you start mapping afresh
+	var raw_maps: Variant = data.get("maps")
+	for id: String in maps:
+		(maps[id] as MapKnowledge).from_data({})
+	if raw_maps is Dictionary:
+		for id in raw_maps:
+			if id is String:
+				map_for(id).from_data(raw_maps[id])
+	_map_timer = 0.0
 
 
 static func _number(value: Variant, fallback: float) -> float:
