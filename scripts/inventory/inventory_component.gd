@@ -148,6 +148,19 @@ func add_item(item: ItemDefinition, quantity: int) -> int:
 	return to_add
 
 
+## Puts `quantity` of `item` into empty slot `index` (if it's empty and it
+## fits). Returns how many went in.
+func add_to_slot(index: int, item: ItemDefinition, quantity: int) -> int:
+	if index < 0 or index >= _slots.size() or _slots[index] != null:
+		return 0
+	var n := mini(can_add(item, quantity), item.max_stack)
+	if n <= 0:
+		return 0
+	_slots[index] = {"item": item, "qty": n}
+	contents_changed.emit(PackedInt32Array([index]))
+	return n
+
+
 ## Pickups and other outside sources use this: adds and announces.
 func receive(item: ItemDefinition, quantity: int) -> int:
 	var added := add_item(item, quantity)

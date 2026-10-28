@@ -60,7 +60,8 @@ func get_block_reason(interactor: Node3D) -> String:
 	if item == null or quantity <= 0:
 		return "Empty"
 	if item.category == ItemDefinition.Category.WEAPON:
-		return "" if interactor is PlayerController else "Can't carry that"
+		var pc := interactor as PlayerController
+		return pc.gun_refusal_reason(item.weapon) if pc != null and item.weapon != null else "Can't carry that"
 	var inventory := InventoryComponent.find_on(interactor)
 	if inventory == null:
 		return "Can't carry this"
@@ -69,9 +70,9 @@ func get_block_reason(interactor: Node3D) -> String:
 
 func get_prompt(interactor: Node3D) -> String:
 	var player := interactor as PlayerController
-	if item != null and item.weapon != null and player != null and player.weapon_slots != null \
-			and player.weapon_refusal_reason(item.weapon) != "":
-		return "Take ammo from %s" % item.display_name
+	if item != null and item.weapon != null and player != null \
+			and player.gun_destination(item.weapon) == PlayerController.GUN_TO_BACKPACK:
+		return "%s %s (spare, into your backpack)" % [action_name, object_name]
 	return "%s %s" % [action_name, object_name]
 
 
@@ -145,21 +146,12 @@ func is_save_removable() -> bool:
 	return true
 
 
-## Guns go into their loadout slot. If you already have this gun, you take
-## its loaded magazine as ammo instead.
+## Guns go into their weapon slot, or your backpack as a spare if you
+## already have that gun or a better one (Increment 16.7).
 func _take_weapon(interactor: Node3D) -> void:
 	var player := interactor as PlayerController
 	if player == null:
 		return
-	if player.weapon_refusal_reason(item.weapon) == "" and player.give_weapon(item.weapon):
-		picked_up.emit(item, 1, interactor)
-		player.weapon_picked_up.emit(item.weapon)
-		queue_free()
-		return
-	var ammo := ItemDatabase.find_ammo_item(item.weapon.ammo_type)
-	if ammo == null or player.inventory == null:
-		return
-	var taken := player.inventory.receive(ammo, item.weapon.magazine_size)
-	if taken > 0:
+	if player.receive_gun(item.weapon) != "":
 		picked_up.emit(item, 1, interactor)
 		queue_free()

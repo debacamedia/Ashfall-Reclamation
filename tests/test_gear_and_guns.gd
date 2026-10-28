@@ -200,10 +200,9 @@ func test_a_gun_from_a_container_goes_into_your_hands() -> void:
 	var gun := p.weapon_slots.get_weapon(SHOTGUN.weapon.slot)
 	check(gun != null and gun.base_definition.id == SHOTGUN.weapon.id, "it's in its weapon slot, ready to use")
 	check(p.inventory.count_of(SHOTGUN.id) == 0, "not stuffed in the backpack")
-	# A second one: you already have it, so you take its shells
-	var shells_before := p.inventory.count_of(&"shotgun_shells")
+	# A second one: you already have it, so it's a spare in your backpack
 	check(p.request_take_all() == 1, "took the second")
-	check(p.inventory.count_of(&"shotgun_shells") > shells_before, "as shells, since you have one")
+	check(p.inventory.count_of(SHOTGUN.id) == 1, "as a spare, since you have one (Increment 16.7)")
 	check(cab.inventory.count_of(SHOTGUN.id) == 0, "the cabinet is empty")
 	await _free(zone)
 

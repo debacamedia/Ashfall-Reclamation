@@ -25,6 +25,9 @@ var player: PlayerController:
 
 var selected := -1
 var _slots: Array[InventorySlot] = []
+## The five weapon slots (Increment 16.7), 1–5.
+var weapon_rows: Array[WeaponSlotRow] = []
+var _refresh_left := 0.0
 
 @onready var _grid: GridContainer = %Grid
 @onready var _weight_label: Label = %WeightLabel
@@ -42,6 +45,19 @@ func _ready() -> void:
 	visible = false
 	_use_button.pressed.connect(_on_use_pressed)
 	_drop_button.pressed.connect(_on_drop_pressed)
+	# Weapon slots replace the old text list of equipped guns
+	var panel := _weapon_label.get_parent() as Control
+	panel.visible = false
+	var column := panel.get_parent() as VBoxContainer
+	column.custom_minimum_size.x = 270
+	column.add_theme_constant_override("separation", 6)
+	for s in range(1, WeaponSlots.SLOT_COUNT + 1):
+		var row := WeaponSlotRow.new(s)
+		row.pressed.connect(_on_weapon_row_pressed)
+		row.stow_requested.connect(request_stow)
+		row.spare_dropped.connect(request_use)
+		column.add_child(row)
+		weapon_rows.append(row)
 
 
 func get_inventory() -> PlayerInventory:
@@ -89,9 +105,31 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if visible and player != null and player.is_dead():
 		close()
+	# Ammo counts change as you reload while it's open
+	_refresh_left -= delta
+	if visible and _refresh_left <= 0.0:
+		_refresh_left = 0.25
+		_refresh_weapons()
+
+
+func _refresh_weapons() -> void:
+	if player == null:
+		return
+	var pending := player.weapon_slots.pending_slot if player.weapon_slots != null else 0
+	for row in weapon_rows:
+		var w := player.weapon_slots.get_weapon(row.slot) if player.weapon_slots != null else null
+		var in_hand := w != null and (row.slot == pending if pending != 0 else w == player.weapon)
+		row.show_weapon(w, in_hand)
+
+
+## Clicking a weapon slot takes that gun out (validated by WeaponSlots).
+func _on_weapon_row_pressed(slot: int) -> void:
+	if player != null and player.weapon_slots != null and not player.is_dead():
+		player.weapon_slots.request_slot(slot)
+		_refresh_weapons()
 
 
 # ---------------------------------------------------------------- requests
@@ -108,8 +146,21 @@ func request_use(index: int) -> void:
 	if inv == null:
 		return
 	var item := inv.get_slot_item(index)
-	if item != null:
-		player.request_use_item(item)
+	if item == null:
+		return
+	if item.weapon != null:
+		# A spare gun: swap it into its weapon slot (Increment 16.7)
+		if player.request_equip_spare(index):
+			selected = index if not inv.is_slot_empty(index) else -1
+		_refresh()
+		return
+	player.request_use_item(item)
+
+
+## Puts the gun in weapon slot `slot` into the backpack.
+func request_stow(slot: int) -> void:
+	if player != null and player.request_stow_gun(slot):
+		_refresh()
 
 
 func request_drop(index: int) -> void:
@@ -119,8 +170,11 @@ func request_drop(index: int) -> void:
 
 
 ## A slot was dropped onto another slot of this screen: move/merge/swap.
+## A gun dragged off a weapon slot goes into the backpack.
 func handle_slot_drop(data: Dictionary, target: InventorySlot) -> void:
-	if data.get("inventory") == get_inventory():
+	if data.has("weapon_slot"):
+		request_stow(int(data["weapon_slot"]))
+	elif data.get("inventory") == get_inventory():
 		request_move(int(data["inventory_slot"]), target.index)
 
 
@@ -145,6 +199,8 @@ func _bind() -> void:
 	if inv == null:
 		return
 	inv.contents_changed.connect(_on_contents_changed)
+	for row in weapon_rows:
+		row.inventory = inv
 	for child in _grid.get_children():
 		child.queue_free()
 	_slots.clear()
@@ -202,15 +258,11 @@ func _refresh() -> void:
 	_weight_label.text = "%.1f / %.0f kg" % [weight, inv.max_weight]
 	_weight_bar.value = 100.0 * weight / maxf(inv.max_weight, 0.001)
 
-	var weapon_lines := []
-	var owned: Array[HitscanWeapon] = player.weapon_slots.owned() if player.weapon_slots != null else ([player.weapon] if player.weapon != null else [] as Array[HitscanWeapon])
-	for w in owned:
-		weapon_lines.append("%s%d  %s\n     %d / %d" % ["▶ " if w == player.weapon else "   ", w.definition.slot,
-			w.definition.display_name, w.ammo_in_magazine, w.reserve_ammo])
-	_weapon_label.text = "\n".join(weapon_lines) if not weapon_lines.is_empty() else "Nothing equipped"
+	_refresh_weapons()
 
 	var item := inv.get_slot_item(selected) if selected >= 0 else null
-	_use_button.disabled = item == null or item.category != ItemDefinition.Category.MEDICAL
+	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.weapon == null)
+	_use_button.text = "Equip" if item != null and item.weapon != null else "Use"
 	_drop_button.disabled = item == null
 	if item == null:
 		_detail_name.text = "Select an item"
@@ -224,5 +276,11 @@ func _refresh() -> void:
 		"Stack %d / %d  ·  %.1f kg total" % [qty, item.max_stack, item.weight * qty]]
 	if item.heal_amount > 0.0:
 		lines.append("Restores %d health (%.0f s)" % [roundi(item.heal_amount), item.use_time])
+	if item.weapon != null:
+		var kind: String = WeaponSlotRow.KINDS.get(item.weapon.slot, "")
+		var there := player.weapon_slots.get_weapon(item.weapon.slot) if player.weapon_slots != null else null
+		lines.append("Spare gun for slot %d (%s), unloaded" % [item.weapon.slot, kind.to_lower()])
+		lines.append("Right-click, Equip or drag it to slot %d to swap it in%s" % [item.weapon.slot,
+			"" if there == null else " (your %s goes into the backpack)" % there.base_definition.display_name])
 	_detail_info.text = "\n".join(lines)
 	_detail_desc.text = item.description

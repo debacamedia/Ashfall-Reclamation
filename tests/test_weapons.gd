@@ -223,9 +223,9 @@ func test_weapon_pickup_fills_its_slot() -> void:
 	check(p.inventory.count_of(&"shotgun") == 0, "guns don't go into the inventory grid")
 	var again := _pickup_in_front(p, SHOTGUN_ITEM)
 	await _run(p, _frame(), 2)
-	check(again.get_prompt(p) == "Take ammo from Pump Shotgun", "second one: %s" % again.get_prompt(p))
+	check(again.get_prompt(p) == "Pick up Pump Shotgun (spare, into your backpack)", "second one: %s" % again.get_prompt(p))
 	await _hold_e(p, 40)
-	check(p.inventory.count_of(&"shotgun_shells") == 6 and not is_instance_valid(again), "a duplicate gun gives its 6 shells")
+	check(p.inventory.count_of(&"shotgun") == 1 and not is_instance_valid(again), "a second gun goes into the backpack as a spare (Increment 16.7)")
 
 
 # ---------------------------------------------------------------- shotgun

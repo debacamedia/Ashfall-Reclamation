@@ -6,8 +6,12 @@ extends Control
 ##
 ## Built by the HUD in code. Purely presentation.
 
-const WIDTH := 560.0
-const HEIGHT := 30.0
+const WIDTH := 640.0
+const HEIGHT := 40.0
+## Text sizes (Increment 16.7: bigger, easier to read)
+const CARDINAL_SIZE := 22
+const INTERCARDINAL_SIZE := 16
+const NAME_SIZE := 18
 ## Degrees of view across the strip.
 const SPAN := 120.0
 const BANNER_TIME := 3.2
@@ -27,15 +31,15 @@ var _check := 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	custom_minimum_size = Vector2(WIDTH, HEIGHT + 22)
+	custom_minimum_size = Vector2(WIDTH, HEIGHT + 30)
 	size = custom_minimum_size
 	_centre()
 	_banner = Label.new()
 	_banner.name = "PlaceBanner"
 	_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_banner.position = Vector2(-120, HEIGHT + 60)
-	_banner.size = Vector2(WIDTH + 240, 48)
-	_banner.add_theme_font_size_override("font_size", 34)
+	_banner.position = Vector2(-120, HEIGHT + 86)
+	_banner.size = Vector2(WIDTH + 240, 52)
+	_banner.add_theme_font_size_override("font_size", 38)
 	_banner.add_theme_color_override("font_color", Color(0.95, 0.86, 0.62))
 	_banner.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
 	_banner.add_theme_constant_override("outline_size", 8)
@@ -90,7 +94,7 @@ func _draw() -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	var font := get_theme_default_font()
-	draw_rect(Rect2(0, 0, WIDTH, HEIGHT), Color(0.05, 0.05, 0.04, 0.45))
+	draw_rect(Rect2(0, 0, WIDTH, HEIGHT), Color(0.05, 0.05, 0.04, 0.55))
 	var heading := heading_of(player.rotation.y)
 	# Ticks every 15°, letters on the cardinal and intercardinal points
 	for step in range(0, 360, 15):
@@ -99,14 +103,15 @@ func _draw() -> void:
 			continue
 		var label: Variant = POINTS.get(float(step))
 		if label != null:
-			var s := 18 if String(label).length() == 1 else 13
-			var col := Color(1.0, 0.82, 0.45) if label == "N" else Color(0.92, 0.9, 0.84)
+			var s := CARDINAL_SIZE if String(label).length() == 1 else INTERCARDINAL_SIZE
+			var col := Color(1.0, 0.82, 0.45) if label == "N" else Color(0.95, 0.93, 0.87)
 			var w := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, s).x
-			draw_string(font, Vector2(x - w / 2.0, HEIGHT - 9), label, HORIZONTAL_ALIGNMENT_LEFT, -1, s, col)
+			draw_string_outline(font, Vector2(x - w / 2.0, HEIGHT - 8), label, HORIZONTAL_ALIGNMENT_LEFT, -1, s, 3, Color(0, 0, 0, 0.6))
+			draw_string(font, Vector2(x - w / 2.0, HEIGHT - 8), label, HORIZONTAL_ALIGNMENT_LEFT, -1, s, col)
 		else:
-			draw_line(Vector2(x, HEIGHT - 9), Vector2(x, HEIGHT - 3), Color(0.9, 0.88, 0.8, 0.6), 1.0)
-	# Landmarks: a diamond each; the one nearest the middle gets its name and
-	# distance under it
+			draw_line(Vector2(x, HEIGHT - 11), Vector2(x, HEIGHT - 3), Color(0.9, 0.88, 0.8, 0.65), 1.5)
+	# Landmarks: a diamond each along the top; the one nearest the middle
+	# gets its name and distance under the strip
 	var named: Landmark = null
 	var named_x := 0.0
 	for n in get_tree().get_nodes_in_group("landmarks"):
@@ -116,18 +121,21 @@ func _draw() -> void:
 		var x := _x_for(bearing(player.global_position, l.global_position), heading)
 		if is_nan(x):
 			continue
-		var c := Vector2(x, 4)
-		draw_colored_polygon(PackedVector2Array([c + Vector2(0, -4), c + Vector2(4, 0), c + Vector2(0, 4), c + Vector2(-4, 0)]), l.marker_color)
-		if absf(x - WIDTH / 2.0) < 70.0 and (named == null or absf(x - WIDTH / 2.0) < absf(named_x - WIDTH / 2.0)):
+		var c := Vector2(x, 7)
+		var d := 6.0
+		draw_colored_polygon(PackedVector2Array([c + Vector2(0, -d), c + Vector2(d, 0), c + Vector2(0, d), c + Vector2(-d, 0)]), l.marker_color)
+		draw_polyline(PackedVector2Array([c + Vector2(0, -d), c + Vector2(d, 0), c + Vector2(0, d), c + Vector2(-d, 0), c + Vector2(0, -d)]), Color(0, 0, 0, 0.6), 1.0)
+		if absf(x - WIDTH / 2.0) < 80.0 and (named == null or absf(x - WIDTH / 2.0) < absf(named_x - WIDTH / 2.0)):
 			named = l
 			named_x = x
 	if named != null:
 		var text := "%s  %s" % [named.get_compass_name(), _distance_text(named.flat_distance(player.global_position))]
-		var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
-		var tx := clampf(named_x - w / 2.0, 0.0, WIDTH - w)
-		draw_string(font, Vector2(tx, HEIGHT + 16), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.95, 0.85, 0.6))
+		var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, NAME_SIZE).x
+		var tx := clampf(named_x - w / 2.0, 6.0, WIDTH - w - 6.0)
+		draw_rect(Rect2(tx - 8, HEIGHT + 3, w + 16, NAME_SIZE + 9), Color(0.05, 0.05, 0.04, 0.6))
+		draw_string(font, Vector2(tx, HEIGHT + NAME_SIZE + 4), text, HORIZONTAL_ALIGNMENT_LEFT, -1, NAME_SIZE, named.marker_color.lerp(Color(1, 0.92, 0.75), 0.3))
 	# The way you're facing
-	draw_line(Vector2(WIDTH / 2.0, 0), Vector2(WIDTH / 2.0, 6), Color(1, 1, 1, 0.9), 2.0)
+	draw_line(Vector2(WIDTH / 2.0, 0), Vector2(WIDTH / 2.0, 9), Color(1, 1, 1, 0.95), 2.5)
 
 
 func _x_for(bearing_deg: float, heading: float) -> float:

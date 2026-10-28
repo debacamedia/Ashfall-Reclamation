@@ -43,6 +43,12 @@ signal container_closed(container: SalvageContainer)
 signal transfer_refused(reason: String)
 ## A new gun joined the loadout (HUD notice, sound).
 signal weapon_picked_up(weapon: WeaponDefinition)
+## A gun went into your backpack as a spare (Increment 16.7).
+signal gun_stowed(weapon: WeaponDefinition)
+## A spare gun came out of your backpack into its slot.
+signal gun_equipped(weapon: WeaponDefinition)
+## A spare-gun request was refused, and why.
+signal gun_refused(reason: String)
 ## Crafting: one unit started / finished; the queue was cancelled or refused.
 signal crafting_started(recipe: RecipeDefinition, duration: float)
 signal crafting_finished(recipe: RecipeDefinition)
@@ -511,24 +517,20 @@ func request_take_all() -> int:
 ## Your own guns come back out of your dropped gear with their attachments
 ## and loaded rounds. Returns 1 if the gun left the container.
 func _take_gun(c: SalvageContainer, slot: int, report: bool) -> int:
-	var def := c.inventory.get_slot_item(slot).weapon
-	if weapon_refusal_reason(def) == "" and give_weapon(def):
-		c.inventory.take_from_slot(slot, 1)
-		var w := weapon_slots.get_weapon(def.slot) if weapon_slots != null else null
+	var item := c.inventory.get_slot_item(slot)
+	var def := item.weapon
+	var reason := gun_refusal_reason(def)
+	if reason != "":
+		if report:
+			transfer_refused.emit(reason)
+		return 0
+	c.inventory.take_from_slot(slot, 1)
+	var dest := receive_gun(def, false)
+	if dest == GUN_TO_SLOT:
+		var w := weapon_slots.get_weapon(def.slot)
 		if w != null and c is DeathCache:
 			(c as DeathCache).restore_gun(w)
-		weapon_picked_up.emit(def)
-		return 1
-	var ammo := ItemDatabase.find_ammo_item(def.ammo_type)
-	var reason := weapon_refusal_reason(def)
-	if ammo != null and inventory.receive(ammo, maxi(def.magazine_size, 1)) > 0:
-		c.inventory.take_from_slot(slot, 1)
-		if report:
-			transfer_refused.emit("%s: took its ammo" % reason)
-		return 1
-	if report:
-		transfer_refused.emit(reason if reason != "" else "Can't carry that")
-	return 0
+	return 1
 
 
 func _can_transfer() -> bool:
@@ -611,7 +613,9 @@ func give_weapon(def: WeaponDefinition) -> bool:
 	return true
 
 
-## Why a crafted or found gun can't be added ("" = it can).
+## Why a crafted or found gun can't go into its weapon slot ("" = it can):
+## the slot already holds this gun or a better one. (It can still go into
+## your backpack as a spare: see gun_destination.)
 func weapon_refusal_reason(def: WeaponDefinition) -> String:
 	if weapon_slots == null:
 		return "Can't carry that"
@@ -623,6 +627,164 @@ func weapon_refusal_reason(def: WeaponDefinition) -> String:
 	if existing.base_definition.tier > def.tier:
 		return "Your %s is better" % existing.base_definition.display_name
 	return ""
+
+
+# ---------------------------------------------------------------- spare guns (Increment 16.7)
+
+## Where a gun you get goes:
+const GUN_TO_SLOT := "slot"          ## into its weapon slot (a worse gun there goes to your backpack)
+const GUN_TO_BACKPACK := "backpack"  ## into your backpack as a spare
+## The rounds in a gun's magazine, a spare's attachments: anything that
+## doesn't fit when a gun goes into the backpack is dropped at your feet.
+
+## Where `def` would go if you got it now ("" = nowhere: no room).
+func gun_destination(def: WeaponDefinition) -> String:
+	if def == null or weapon_slots == null or is_dead():
+		return ""
+	var existing := weapon_slots.get_weapon(def.slot)
+	if existing == null:
+		return GUN_TO_SLOT
+	if weapon_refusal_reason(def) == "" and _can_stow(existing):
+		return GUN_TO_SLOT  # an upgrade: the old one becomes a spare
+	if def.melee:
+		return ""
+	var item := ItemDatabase.find_weapon_item(def.id)
+	if item != null and inventory != null and inventory.can_add(item, 1) >= 1:
+		return GUN_TO_BACKPACK
+	return ""
+
+
+## Why you can't take `def` right now ("" = you can).
+func gun_refusal_reason(def: WeaponDefinition) -> String:
+	if gun_destination(def) != "":
+		return ""
+	if def == null or weapon_slots == null or is_dead():
+		return "Can't carry that"
+	var item := ItemDatabase.find_weapon_item(def.id)
+	if item != null and inventory != null and inventory.get_refusal_reason(item, 1) != "":
+		return "No room for a spare %s: %s" % [def.display_name, inventory.get_refusal_reason(item, 1).to_lower()]
+	return "No room for a spare " + def.display_name
+
+
+## Gives you a gun you found, crafted or took: into its slot, or into your
+## backpack as a spare. Returns where it went ("" = refused, nothing changed).
+## Found guns come loaded.
+func receive_gun(def: WeaponDefinition, announce := true) -> String:
+	var dest := gun_destination(def)
+	match dest:
+		GUN_TO_SLOT:
+			if weapon_slots.get_weapon(def.slot) != null:
+				_stow_gun(def.slot)
+			give_weapon(def)
+			weapon_picked_up.emit(def)
+		GUN_TO_BACKPACK:
+			inventory.add_item(ItemDatabase.find_weapon_item(def.id), 1)
+			if announce:
+				gun_stowed.emit(def)
+	return dest
+
+
+## Takes a spare gun out of backpack slot `index` and puts it in its weapon
+## slot; whatever was there goes into the backpack in its place. Spares are
+## carried unloaded, so it comes out with an empty magazine: reload.
+func request_equip_spare(index: int) -> bool:
+	var item := inventory.get_slot_item(index) if inventory != null else null
+	var reason := _equip_spare_refusal(item)
+	if reason != "":
+		gun_refused.emit(reason)
+		return false
+	var def := item.weapon
+	inventory.take_from_slot(index, 1)
+	if weapon_slots.get_weapon(def.slot) != null:
+		# A swap never fails for weight: you're trading one gun for another
+		var limit := inventory.max_weight
+		inventory.max_weight = 0.0
+		_stow_gun(def.slot, index)
+		inventory.max_weight = limit
+	give_weapon(def)
+	var w := weapon_slots.get_weapon(def.slot)
+	w.cancel_reload()
+	w.ammo_in_magazine = 0
+	w.ammo_changed.emit(w.ammo_in_magazine, w.reserve_ammo)
+	weapon_slots.request_slot(def.slot)
+	gun_equipped.emit(def)
+	return true
+
+
+func _equip_spare_refusal(item: ItemDefinition) -> String:
+	if is_dead() or weapon_slots == null or inventory == null:
+		return "Can't do that now"
+	if item == null or item.weapon == null:
+		return "That's not a gun"
+	var existing := weapon_slots.get_weapon(item.weapon.slot)
+	if existing != null and existing.base_definition.id == item.weapon.id:
+		return "You already have a %s in your hands" % item.weapon.display_name
+	if existing != null and ItemDatabase.find_weapon_item(existing.base_definition.id) == null:
+		return "Can't put away your " + existing.base_definition.display_name
+	return ""
+
+
+## Puts the gun in weapon slot `slot` into your backpack (validated): its
+## attachments come off into the backpack too, and the rounds in its magazine
+## go back with your ammo. Blades stay where they are.
+func request_stow_gun(slot: int) -> bool:
+	var w := weapon_slots.get_weapon(slot) if weapon_slots != null else null
+	var reason := ""
+	if is_dead() or w == null:
+		reason = "Nothing to put away"
+	elif w.definition.melee:
+		reason = "Your blade stays on your belt"
+	elif not _can_stow(w):
+		var item := ItemDatabase.find_weapon_item(w.base_definition.id)
+		reason = "No room in your backpack" if item == null or inventory.get_refusal_reason(item, 1) == "" else inventory.get_refusal_reason(item, 1)
+	if reason != "":
+		gun_refused.emit(reason)
+		return false
+	var def := w.base_definition
+	_stow_gun(slot)
+	gun_stowed.emit(def)
+	return true
+
+
+func _can_stow(w: HitscanWeapon) -> bool:
+	if w == null or w.definition.melee or inventory == null:
+		return false
+	var item := ItemDatabase.find_weapon_item(w.base_definition.id)
+	return item != null and inventory.can_add(item, 1) >= 1
+
+
+## Moves the gun in `slot` into the backpack (at `prefer` if that backpack
+## slot is free), with its attachments and loaded rounds alongside.
+func _stow_gun(slot: int, prefer := -1) -> void:
+	var w := weapon_slots.get_weapon(slot)
+	if w == null:
+		return
+	var item := ItemDatabase.find_weapon_item(w.base_definition.id)
+	var extras: Array = []  # [ItemDefinition, qty]
+	for att_slot in w.attachments.keys():
+		var att := w.remove_attachment(att_slot)
+		var att_item := ItemDatabase.find_attachment_item(att.id) if att != null else null
+		if att_item != null:
+			extras.append([att_item, 1])
+	w.cancel_reload()
+	var ammo := ItemDatabase.find_ammo_item(w.definition.ammo_type)
+	if ammo != null and w.ammo_in_magazine > 0:
+		extras.append([ammo, w.ammo_in_magazine])
+	w.ammo_in_magazine = 0
+	weapon_slots.remove_weapon(slot)
+	if prefer >= 0 and inventory.is_slot_empty(prefer):
+		inventory.add_to_slot(prefer, item, 1)
+	else:
+		inventory.add_item(item, 1)
+	for e in extras:
+		var left: int = e[1] - inventory.receive(e[0], e[1])
+		if left > 0:
+			_drop_at_feet(e[0], left)
+
+
+func _drop_at_feet(item: ItemDefinition, qty: int) -> void:
+	var parent := get_parent() if get_parent() != null else get_tree().current_scene
+	Pickup.spawn(parent, item, qty, global_position + Vector3.UP * 0.3)
 
 
 # ---------------------------------------------------------------- construction
@@ -918,7 +1080,7 @@ func craft_refusal_reason(recipe: RecipeDefinition) -> String:
 		if have < recipe.inputs[item]:
 			return "Missing %d %s" % [recipe.inputs[item] - have, item.display_name]
 	if recipe.output.weapon != null:
-		return weapon_refusal_reason(recipe.output.weapon)
+		return gun_refusal_reason(recipe.output.weapon)
 	if not inventory.can_exchange(recipe.inputs, recipe.output, recipe.output_quantity):
 		return "Inventory full"
 	return ""
@@ -970,9 +1132,8 @@ func _update_crafting(delta: float) -> void:
 	for item: ItemDefinition in recipe.inputs:
 		inventory.remove_item(item.id, recipe.inputs[item])
 	if recipe.output.weapon != null:
-		# A gun goes into its loadout slot, not the bag
-		give_weapon(recipe.output.weapon)
-		weapon_picked_up.emit(recipe.output.weapon)
+		# A gun goes into its weapon slot, or your backpack as a spare
+		receive_gun(recipe.output.weapon)
 	else:
 		inventory.receive(recipe.output, recipe.output_quantity)
 	crafting_finished.emit(recipe)

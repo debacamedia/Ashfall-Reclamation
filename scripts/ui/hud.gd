@@ -12,6 +12,9 @@ extends CanvasLayer
 @export var player: PlayerController
 ## The level's GameMode, for the respawn countdown and cause of death.
 @export var game_mode: GameMode
+## The interface size in use (see UiScale).
+var ui_scale := UiScale.DEFAULT
+var _wanted_ui_scale := UiScale.DEFAULT
 ## Health fraction below which the screen edges pulse red.
 @export var low_health_threshold := 0.3
 
@@ -64,6 +67,12 @@ var compass: CompassBar
 
 func _ready() -> void:
 	_bar_width = _health_fill.size.x
+	# Interface size (Increment 16.7): saved, and re-fitted when the window changes
+	_wanted_ui_scale = UiScale.saved()
+	ui_scale = UiScale.apply(get_window(), _wanted_ui_scale)
+	get_window().size_changed.connect(_refit_ui_scale)
+	# Notices ("No room in your backpack") show over the inventory and other windows
+	_notices.z_index = 5
 	compass = CompassBar.new()
 	compass.name = "Compass"
 	add_child(compass)
@@ -104,6 +113,13 @@ func _process(delta: float) -> void:
 		player.transfer_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.weapon_picked_up.connect(func(def: WeaponDefinition) -> void:
 			show_notice("%s  →  slot %d" % [def.display_name, def.slot], Color(0.75, 0.9, 1.0)))
+		player.gun_stowed.connect(func(def: WeaponDefinition) -> void:
+			show_notice("%s  →  backpack (spare)" % def.display_name, Color(0.75, 0.9, 1.0)))
+		player.gun_equipped.connect(func(def: WeaponDefinition) -> void:
+			show_notice("%s  →  slot %d (unloaded: reload)" % [def.display_name, def.slot], Color(0.75, 0.9, 1.0)))
+		player.gun_refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
 		player.structure_placed.connect(func(st: Structure) -> void:
 			show_notice("Built " + st.definition.display_name, Color(0.8, 0.95, 0.7)))
 		player.structure_repaired.connect(func(st: Structure) -> void:
@@ -138,6 +154,17 @@ func _process(delta: float) -> void:
 		if _scope != null:
 			_scope.visible = _weapon.definition.scope_overlay and player.aim_amount >= 0.95 and not player.is_dead()
 	_update_weapon_strip()
+	# Full-screen windows (inventory, container, crafting) hide the corner readouts
+	var window_open := inventory_screen.visible or (container_screen != null and container_screen.visible) or (crafting_screen != null and crafting_screen.visible)
+	for c: CanvasItem in [_weapon_strip, _quick_slot, _weapon_label, _ammo_label]:
+		if c != null:
+			c.modulate.a = 0.0 if window_open else 1.0
+	# …and the last two notices move down under the window, clear of its buttons
+	_notices.offset_top = -86.0 if window_open else -316.0
+	_notices.offset_bottom = -10.0 if window_open else -126.0
+	var count := _notices.get_child_count()
+	for i in count:
+		(_notices.get_child(i) as CanvasItem).visible = not window_open or i >= count - 2
 	_update_hint()
 
 	_update_health_visuals(delta)
@@ -160,6 +187,35 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_debug"):
 		_debug_label.visible = not _debug_label.visible
+	var k := event as InputEventKey
+	if k != null and k.pressed and not k.echo and (k.ctrl_pressed or k.meta_pressed):
+		match k.physical_keycode:
+			KEY_EQUAL, KEY_KP_ADD:
+				set_ui_scale(ui_scale + UiScale.STEP)
+			KEY_MINUS, KEY_KP_SUBTRACT:
+				set_ui_scale(ui_scale - UiScale.STEP)
+			KEY_0, KEY_KP_0:
+				set_ui_scale(UiScale.DEFAULT)
+			_:
+				return
+		get_viewport().set_input_as_handled()
+
+
+## A resized window keeps the size you chose, as far as it fits.
+func _refit_ui_scale() -> void:
+	var fitted := clampf(_wanted_ui_scale, UiScale.MIN, UiScale.largest_for(Vector2(get_window().size)))
+	ui_scale = fitted
+	if not is_equal_approx(get_window().content_scale_factor, fitted):
+		get_window().content_scale_factor = fitted
+
+
+## Sets, saves and announces the interface size (clamped to what fits).
+func set_ui_scale(value: float) -> void:
+	_wanted_ui_scale = clampf(snappedf(value, 0.01), UiScale.MIN, UiScale.largest_for(Vector2(get_window().size)))
+	ui_scale = _wanted_ui_scale
+	UiScale.apply(get_window(), _wanted_ui_scale)
+	UiScale.save(ui_scale)
+	show_notice("Interface size %d%%" % roundi(ui_scale * 100.0), Color(0.85, 0.9, 1.0))
 
 
 # ---------------------------------------------------------------- health

@@ -77,7 +77,8 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	return data is Dictionary and data.has("inventory_slot")
+	# A backpack slot, or a gun dragged off a weapon slot (Increment 16.7)
+	return data is Dictionary and (data.has("inventory_slot") or data.has("weapon_slot"))
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:

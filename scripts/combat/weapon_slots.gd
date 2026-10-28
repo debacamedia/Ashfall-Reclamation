@@ -122,6 +122,29 @@ func remove_guns() -> void:
 			_player.weapon = null
 
 
+## Removes the gun in `slot` (put away into the backpack, Increment 16.7).
+## If it was in your hands, the next gun you have comes out.
+func remove_weapon(slot: int) -> void:
+	var w := get_weapon(slot)
+	if w == null:
+		return
+	var was_current := slot == current_slot or slot == pending_slot
+	w.get_parent().remove_child(w)
+	w.queue_free()
+	weapons[slot] = null
+	if not was_current:
+		return
+	pending_slot = 0
+	_holstering = false
+	var next := first_owned_slot()
+	if next > 0:
+		_equip_now(next)
+	else:
+		current_slot = 0
+		if _player != null:
+			_player.weapon = null
+
+
 ## Starts switching to a slot (validated: owned, not already in hand).
 func request_slot(slot: int) -> bool:
 	if slot < 1 or slot > SLOT_COUNT or weapons[slot] == null:

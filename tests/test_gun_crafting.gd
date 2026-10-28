@@ -211,7 +211,8 @@ func test_parts_make_a_pistol_at_the_weapons_bench() -> void:
 		check(p.inventory.count_of(StringName(id)) == 0, "%s used" % id)
 	p.inventory.add_item(_item("scrap_metal"), 4)
 	p.inventory.add_item(WOOD, 1)
-	check(p.craft_refusal_reason(PIPE_R) == "Your Sidearm Pistol is better", "no downgrading: '%s'" % p.craft_refusal_reason(PIPE_R))
+	check(p.inventory.count_of(&"pipe_pistol") == 1, "the pipe pistol it replaced is a spare in the backpack (Increment 16.7)")
+	check(p.gun_destination(PIPE) == PlayerController.GUN_TO_BACKPACK and p.craft_refusal_reason(PIPE_R) == "", "a worse gun can still be made: it goes into the backpack")
 
 
 func test_part_recipes_turn_materials_into_parts() -> void:
