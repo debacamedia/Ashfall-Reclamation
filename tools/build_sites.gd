@@ -30,7 +30,16 @@ const LOOT := {
 	"mine_supplies": [2, 4, [], [["gunpowder", 3, 2, 4], ["fuel", 2, 1, 2], ["metal_plate", 2, 1, 2], ["scrap_metal", 2, 2, 5], ["spring", 1, 1, 2], ["metal_pipe", 2, 1, 2]]],
 	"mine_explosives": [1, 2, [["gunpowder", 1, 3, 5]], [["fuel", 2, 1, 2], ["chemicals", 2, 1, 2], ["spring", 1, 1, 1]]],
 	"mine_office": [1, 3, [], [["electronics", 2, 1, 2], ["pistol_ammo", 2, 6, 12], ["chemicals", 1, 1, 2], ["cloth", 1, 1, 2], ["gun_magazine", 1, 1, 1]]],
-	"smuggler_stash": [2, 4, [["electronics", 1, 1, 2]], [["suppressor", 1, 1, 1], ["extended_mag", 1, 1, 1], ["red_dot", 1, 1, 1], ["rifle_ammo", 2, 15, 30], ["pistol_ammo", 2, 10, 20], ["chemicals", 2, 1, 2], ["gunpowder", 2, 1, 3], ["gun_receiver", 1, 1, 1], ["medkit", 1, 1, 1]]],
+	"smuggler_stash": [3, 5, [["electronics", 1, 1, 2]], [["suppressor", 1, 1, 1], ["extended_mag", 1, 1, 1], ["red_dot", 1, 1, 1], ["scope_4x", 0.5, 1, 1], ["foregrip", 1, 1, 1], ["rifle_ammo", 2, 15, 30], ["pistol_ammo", 2, 10, 20], ["shotgun_shells", 1, 6, 12], ["chemicals", 2, 1, 2], ["gunpowder", 2, 1, 3], ["gun_receiver", 1, 1, 1], ["gun_barrel", 1, 1, 1], ["trigger_group", 1, 1, 1], ["medkit", 1, 1, 1]]],
+	# Increment 16.6: guns you can find. Each list's 5th part is "exactly one of"
+	"smuggler_guns": [1, 2, [["pistol_ammo", 1, 8, 15]], [["shotgun_shells", 2, 6, 12], ["rifle_ammo", 2, 15, 30], ["gun_magazine", 1, 1, 1], ["suppressor", 1, 1, 1]],
+		[["weapons/pistol_item", 4, 1, 1], ["weapons/shotgun_item", 3, 1, 1], ["weapons/service_rifle_item", 1, 1, 1]]],
+	"smuggler_lookout": [1, 3, [["rifle_308", 1, 6, 12]], [["weapons/scoped_rifle_item", 1, 1, 1], ["weapons/pistol_item", 1, 1, 1], ["scope_4x", 1, 1, 1], ["red_dot", 1, 1, 1], ["medkit", 1, 1, 1], ["rifle_ammo", 2, 10, 20]]],
+	"garrison_armory": [2, 3, [], [["rifle_ammo", 3, 20, 40], ["shotgun_shells", 2, 8, 16], ["pistol_ammo", 2, 10, 20], ["gun_magazine", 1, 1, 1], ["gun_barrel", 1, 1, 1], ["red_dot", 1, 1, 1], ["foregrip", 1, 1, 1], ["extended_mag", 1, 1, 1]],
+		[["weapons/service_rifle_item", 3, 1, 1], ["weapons/shotgun_item", 3, 1, 1], ["weapons/pistol_item", 2, 1, 1], ["weapons/scoped_rifle_item", 1, 1, 1]]],
+	"garrison_ammo": [2, 3, [["rifle_ammo", 1, 30, 60]], [["pistol_ammo", 2, 15, 30], ["shotgun_shells", 2, 10, 20], ["rifle_308", 1, 10, 20], ["gunpowder", 1, 2, 4]]],
+	"garrison_crate": [2, 4, [["medkit", 1, 1, 1]], [["bandage", 2, 2, 4], ["rifle_ammo", 3, 15, 30], ["gun_receiver", 1, 1, 1], ["trigger_group", 1, 1, 1], ["gun_stock", 1, 1, 1], ["metal_plate", 2, 1, 2], ["electronics", 1, 1, 2], ["red_dot", 1, 1, 1]]],
+	"officer_locker": [1, 3, [["pistol_ammo", 1, 8, 16]], [["electronics", 2, 1, 2], ["medkit", 1, 1, 1], ["weapons/pistol_item", 1, 1, 1], ["red_dot", 1, 1, 1], ["extended_mag", 1, 1, 1]]],
 	"comms_gear": [1, 2, [["electronics", 1, 2, 3]], [["scope_4x", 1, 1, 1], ["spring", 1, 1, 2], ["metal_plate", 1, 1, 1], ["rifle_308", 1, 5, 10]]],
 }
 
@@ -67,6 +76,11 @@ func _loot_tables() -> void:
 			en.append(_entry(e))
 		t.guaranteed = g
 		t.entries = en
+		var one: Array[LootEntry] = []
+		if spec.size() > 4:
+			for e: Array in spec[4]:
+				one.append(_entry(e))
+		t.one_of = one
 		ResourceSaver.save(t, "res://resources/loot/%s.tres" % name)
 	print("  %d loot tables" % LOOT.size())
 
@@ -392,7 +406,7 @@ func _smugglers_gulch() -> Kit:
 	})
 	k.container_at_wall("crate", "ContrabandA", d, "N", -4.5, "smuggler_stash", "Contraband")
 	k.container_at_wall("crate", "ContrabandB", d, "N", -2.8, "smuggler_stash", "Contraband")
-	k.container_at_wall("locker", "GunCabinet", d, "W", -2.4, "weapons_locker", "Gun Cabinet")
+	k.container_at_wall("locker", "GunCabinet", d, "W", -2.4, "smuggler_guns", "Gun Cabinet")
 	var wb := k.prop("weapons_bench", "DenWeaponsBench", k.at(d, Vector3(4.2, 0, -3.0)), 0, "CraftingStations")
 	wb.name = "DenWeaponsBench"
 	k.prop("wood_crate", "DenCrateA", k.at(d, Vector3(5.6, 0, 2.6)), 10)
@@ -425,7 +439,7 @@ func _smugglers_gulch() -> Kit:
 	for r: Array in [[Vector3(0, 5.5, -1.75), Vector3(3.6, 1.0, 0.1)], [Vector3(-1.75, 5.5, 0), Vector3(0.1, 1.0, 3.6)], [Vector3(1.75, 5.5, 0), Vector3(0.1, 1.0, 3.6)]]:
 		k.box(lt, "Rail", r[1], r[0], "wood")
 	k.ladder("LookoutLadder", lt, Vector3(0, 0, 1.8), 0, 5.0)
-	k.container("crate", "LookoutCache", lt, Vector3(0.6, 5.0, -0.9), 0, "sniper_stash", "Lookout Cache")
+	k.container("crate", "LookoutCache", lt, Vector3(0.6, 5.0, -0.9), 0, "smuggler_lookout", "Lookout Cache")
 	# Shipping containers, tents, fires, sandbags at the way in
 	k.prop("shipping_container", "ContainerRed", Vector3(12, 0, 6), 80)
 	k.prop("shipping_container", "ContainerBlue", Vector3(16, 0, -1), 75)
@@ -588,7 +602,7 @@ func _northwatch() -> Kit:
 	k.fixture("MapTable", c, Vector3(-1.2, 0, -1.0), Vector3(1.8, 0.85, 1.0), "wood")
 	k.prop("radio", "CommsRadio", k.at(c, Vector3(2.6, 0, -2.7)), 0)
 	k.container_at_wall("crate", "CommsGear", c, "N", 1.6, "comms_gear", "Comms Gear")
-	k.container_at_wall("footlocker", "OfficersLocker", c, "W", 2.2, "footlocker", "Officer's Locker")
+	k.container_at_wall("footlocker", "OfficersLocker", c, "W", 2.2, "officer_locker", "Officer's Locker")
 	k.pickup("electronics", 1, "TableElectronics", c, Vector3(-1.2, 0.85, -1.0))
 	# Barracks
 	var b := k.building("Barracks", Vector2(-9, -11), 0, Vector2(12, 6), {
@@ -599,23 +613,25 @@ func _northwatch() -> Kit:
 		_bed(k, "Bunk%d" % i, b, Vector3(-4.6 + i * 2.6, 0, -1.6), 90)
 	k.container_at_wall("footlocker", "BarracksLockerA", b, "W", 1.4, "footlocker", "Footlocker")
 	k.container_at_wall("footlocker", "BarracksLockerB", b, "E", 1.4, "footlocker", "Footlocker")
-	k.container_at_wall("crate", "BarracksCrate", b, "S", 4.6, "military_crate", "Military Crate")
+	k.container_at_wall("crate", "BarracksCrate", b, "S", 4.6, "garrison_crate", "Military Crate")
 	k.pickup("medkit", 1, "BarracksMedkit", b, Vector3(0.6, 0.55, -1.6))
-	# Armory
-	var a := k.building("Armory", Vector2(-12, 9), 0, Vector2(6, 5), {
+	# Armory, with a gun bench (Increment 16.6)
+	var a := k.building("Armory", Vector2(-12, 9), 0, Vector2(8, 6), {
 		"wall": "concrete", "floor": "concrete_plain", "roof": "flat",
-		"openings": [["E", 0, "door"]],
+		"openings": [["E", 0, "door"], ["S", -1.5, "window"]],
 	})
-	k.container_at_wall("locker", "ArmoryLockerA", a, "W", -1.0, "weapons_locker", "Weapons Locker")
-	k.container_at_wall("locker", "ArmoryLockerB", a, "W", 0.9, "weapons_locker", "Weapons Locker")
-	k.container_at_wall("crate", "ArmoryAmmo", a, "N", 0.8, "ammo_crate", "Ammo Crate")
-	k.pickup("rifle_ammo", 30, "ArmoryRifleAmmo", a, Vector3(1.4, 0, 1.4))
+	k.container_at_wall("locker", "ArmoryLockerA", a, "W", -1.2, "garrison_armory", "Weapons Locker")
+	k.container_at_wall("locker", "ArmoryLockerB", a, "W", 1.0, "garrison_armory", "Weapons Locker")
+	k.container_at_wall("crate", "ArmoryAmmo", a, "N", -2.2, "garrison_ammo", "Ammo Crate")
+	var gun_bench := k.prop("weapons_bench", "ArmoryWeaponsBench", k.at(a, Vector3(1.3, 0, -2.0)), 0, "CraftingStations")
+	gun_bench.name = "ArmoryWeaponsBench"
+	k.pickup("rifle_ammo", 30, "ArmoryRifleAmmo", a, Vector3(2.4, 0, 1.9))
 	# Stores hut
 	var s := k.building("Stores", Vector2(11, 9), 0, Vector2(6, 5), {
 		"wall": "corrugated", "floor": "concrete_plain", "roof": "flat", "roof_mat": "rust",
 		"openings": [["W", 0, "door"], ["N", 1, "window"]],
 	})
-	k.container_at_wall("crate", "StoresCrate", s, "E", -1.0, "military_crate", "Military Crate")
+	k.container_at_wall("crate", "StoresCrate", s, "E", -1.0, "garrison_crate", "Military Crate")
 	k.pile("appliance", "BrokenRadio", s, Vector3(1.6, 0, 1.4), -90)
 	# Guard towers in two corners (their ladders face the yard)
 	k.prop("guard_tower", "TowerNE", Vector3(13.5, 0, -2.0), 180, "Towers")

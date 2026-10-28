@@ -117,7 +117,7 @@ func _draw() -> void:
 		if is_nan(x):
 			continue
 		var c := Vector2(x, 4)
-		draw_colored_polygon(PackedVector2Array([c + Vector2(0, -4), c + Vector2(4, 0), c + Vector2(0, 4), c + Vector2(-4, 0)]), Color(0.95, 0.75, 0.35))
+		draw_colored_polygon(PackedVector2Array([c + Vector2(0, -4), c + Vector2(4, 0), c + Vector2(0, 4), c + Vector2(-4, 0)]), l.marker_color)
 		if absf(x - WIDTH / 2.0) < 70.0 and (named == null or absf(x - WIDTH / 2.0) < absf(named_x - WIDTH / 2.0)):
 			named = l
 			named_x = x

@@ -1,0 +1,151 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/death_cache.gd" id="1_hqxn5"]
+[ext_resource type="Material" path="res://assets/materials/olive_drab.tres" id="3_c3nh1"]
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="4_vy7cf"]
+[ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="5_wfmpv"]
+[ext_resource type="Script" path="res://scripts/world/landmark.gd" id="9_mark"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/locker_open.wav" id="6_bbix5"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/rummage.tres" id="7_aa58c"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/locker_close.wav" id="8_sa1y2"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_beam"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.92, 0.7, 0.35)
+cull_mode = 2
+
+[sub_resource type="CylinderMesh" id="Mesh_beam"]
+material = SubResource("Mat_beam")
+top_radius = 0.06
+bottom_radius = 0.06
+height = 7.0
+radial_segments = 6
+rings = 1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tlxpb"]
+size = Vector3(0.92, 0.53999996, 0.57)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6aeah"]
+size = Vector3(0.8, 0.42, 0.45)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nscmc"]
+size = Vector3(0.8, 0.35, 0.45)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6kdok"]
+size = Vector3(0.05, 0.355, 0.45999998)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0na5l"]
+size = Vector3(0.05, 0.355, 0.45999998)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kboeo"]
+size = Vector3(0.03, 0.04, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_f3aft"]
+size = Vector3(0.03, 0.04, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wvyye"]
+size = Vector3(0.82, 0.07, 0.47)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ut605"]
+size = Vector3(0.08, 0.06, 0.02)
+
+[node name="DeathCache" type="Area3D" unique_id=953733768]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_hqxn5")
+container_name = "Your Gear"
+search_time = 0.0
+focus_offset = Vector3(0, 0.294, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1289237640]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+shape = SubResource("BoxShape3D_tlxpb")
+
+[node name="Body" type="StaticBody3D" parent="." unique_id=1758737432]
+collision_layer = 2
+collision_mask = 0
+
+[node name="BodyShape" type="CollisionShape3D" parent="Body" unique_id=513374277]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+shape = SubResource("BoxShape3D_6aeah")
+
+[node name="Box" type="MeshInstance3D" parent="Body" unique_id=831088994]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0)
+material_override = ExtResource("3_c3nh1")
+mesh = SubResource("BoxMesh_nscmc")
+
+[node name="BandL" type="MeshInstance3D" parent="Body" unique_id=502608427]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.256, 0.175, 0)
+material_override = ExtResource("4_vy7cf")
+mesh = SubResource("BoxMesh_6kdok")
+
+[node name="BandR" type="MeshInstance3D" parent="Body" unique_id=519448792]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.256, 0.175, 0)
+material_override = ExtResource("4_vy7cf")
+mesh = SubResource("BoxMesh_0na5l")
+
+[node name="HandleL" type="MeshInstance3D" parent="Body" unique_id=827701784]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.415, 0.24499999, 0)
+material_override = ExtResource("4_vy7cf")
+mesh = SubResource("BoxMesh_kboeo")
+
+[node name="HandleR" type="MeshInstance3D" parent="Body" unique_id=325256858]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.415, 0.24499999, 0)
+material_override = ExtResource("4_vy7cf")
+mesh = SubResource("BoxMesh_f3aft")
+
+[node name="Lid" type="Node3D" parent="." unique_id=345122101]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -0.225)
+
+[node name="LidTop" type="MeshInstance3D" parent="Lid" unique_id=149626586]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0.225)
+material_override = ExtResource("3_c3nh1")
+mesh = SubResource("BoxMesh_wvyye")
+
+[node name="Latch" type="MeshInstance3D" parent="Lid" unique_id=178838038]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.46499997)
+material_override = ExtResource("4_vy7cf")
+mesh = SubResource("BoxMesh_ut605")
+
+[node name="Inventory" type="Node" parent="." unique_id=825661167]
+unique_name_in_owner = true
+script = ExtResource("5_wfmpv")
+slot_count = 8
+max_weight = 0.0
+
+[node name="OpenSound" type="AudioStreamPlayer3D" parent="." unique_id=1837143997]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+stream = ExtResource("6_bbix5")
+unit_size = 5.0
+bus = &"SFX"
+
+[node name="SearchSound" type="AudioStreamPlayer3D" parent="." unique_id=1123250149]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+stream = ExtResource("7_aa58c")
+volume_db = -3.0
+unit_size = 4.0
+bus = &"SFX"
+
+[node name="CloseSound" type="AudioStreamPlayer3D" parent="." unique_id=359193560]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+stream = ExtResource("8_sa1y2")
+unit_size = 5.0
+bus = &"SFX"
+
+[node name="Beam" type="MeshInstance3D" parent="." unique_id=771200301]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.9, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_beam")
+
+[node name="Marker" type="Marker3D" parent="." unique_id=771200302]
+script = ExtResource("9_mark")
+display_name = "Your Gear"
+radius = 0.0
+compass_name = "Your gear"
+marker_color = Color(1, 1, 1, 1)

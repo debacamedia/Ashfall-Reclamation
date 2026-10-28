@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_jwssb"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="2_qgjwr"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="3_bws01"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol_item.tres" id="4_r4m1i"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="5_thvv4"]
+[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="6_q2hev"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="7_o477o"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="8_4bjey"]
+
+[sub_resource type="Resource" id="Resource_gg2n2"]
+script = ExtResource("1_jwssb")
+item = ExtResource("2_qgjwr")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_vsa0h"]
+script = ExtResource("1_jwssb")
+item = ExtResource("3_bws01")
+
+[sub_resource type="Resource" id="Resource_n522b"]
+script = ExtResource("1_jwssb")
+item = ExtResource("4_r4m1i")
+
+[sub_resource type="Resource" id="Resource_1x2rs"]
+script = ExtResource("1_jwssb")
+item = ExtResource("5_thvv4")
+
+[sub_resource type="Resource" id="Resource_307au"]
+script = ExtResource("1_jwssb")
+item = ExtResource("6_q2hev")
+
+[sub_resource type="Resource" id="Resource_7ubcx"]
+script = ExtResource("1_jwssb")
+item = ExtResource("7_o477o")
+min_quantity = 8
+max_quantity = 16
+
+[resource]
+script = ExtResource("8_4bjey")
+guaranteed = Array[ExtResource("1_jwssb")]([SubResource("Resource_7ubcx")])
+entries = Array[ExtResource("1_jwssb")]([SubResource("Resource_gg2n2"), SubResource("Resource_vsa0h"), SubResource("Resource_n522b"), SubResource("Resource_1x2rs"), SubResource("Resource_307au")])

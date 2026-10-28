@@ -220,6 +220,8 @@ func _update_death_screen() -> void:
 	var left := game_mode.get_respawn_time_left(player) if game_mode != null else 0.0
 	_death_cause.text = game_mode.get_death_cause(player) if game_mode != null else ""
 	_respawn_prompt.text = "Respawn in %d" % ceili(left) if left > 0.0 else "Press SPACE to respawn"
+	if game_mode != null and game_mode.get_dropped_gear(player) != null:
+		_respawn_prompt.text += "\n\nYour gear is where you fell: follow \"Your gear\" on the compass"
 
 
 # ---------------------------------------------------------------- weapon

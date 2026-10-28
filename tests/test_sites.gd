@@ -71,6 +71,7 @@ func test_sites_are_real_places_now() -> void:
 	check(zone.get_node_or_null("AshCreekFarms/CraftingStations/FarmWorkbench") is CraftingStation, "a workbench in the farm's tool shed")
 	check(zone.get_node_or_null("BlackRidgeMine/CraftingStations/MineWorkbench") is CraftingStation, "a workbench in the mine's workshop")
 	check(zone.get_node_or_null("SmugglersGulch/CraftingStations/DenWeaponsBench") is CraftingStation, "a weapons bench in the smugglers' den")
+	check(zone.get_node_or_null("NorthwatchOutpost/CraftingStations/ArmoryWeaponsBench") is CraftingStation, "a gun bench in Northwatch's armory")
 	zone.free()
 
 

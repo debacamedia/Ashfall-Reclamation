@@ -10,6 +10,8 @@ extends Marker3D
 @export var radius := 60.0
 ## Short label on the compass (defaults to the display name).
 @export var compass_name := ""
+## The compass marker's colour (your dropped gear is white, places amber).
+@export var marker_color := Color(0.95, 0.75, 0.35)
 
 
 func _ready() -> void:

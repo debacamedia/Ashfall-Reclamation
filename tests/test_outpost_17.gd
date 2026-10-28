@@ -158,7 +158,9 @@ func test_death_screen_and_respawn_loop() -> void:
 	check((hud.get_node("%RespawnPrompt") as Label).text.begins_with("Respawn in"), "countdown shown")
 	await get_tree().create_timer(0.35).timeout
 	await wait_physics(2)
-	check((hud.get_node("%RespawnPrompt") as Label).text == "Press SPACE to respawn", "prompt after the delay")
+	var prompt := (hud.get_node("%RespawnPrompt") as Label).text
+	check(prompt.begins_with("Press SPACE to respawn"), "prompt after the delay")
+	check(prompt.contains("Your gear") == (gm.get_dropped_gear(_player) != null), "and where your gear is, if you dropped any (Increment 16.6)")
 	var f := InputFrame.new()
 	f.jump = true
 	await get_tree().physics_frame

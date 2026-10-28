@@ -278,7 +278,8 @@ func respawn_at(spawn: Transform3D) -> void:
 	_apply_height(stand_height)
 	if weapon_slots != null and weapon_slots.current_slot > 0:
 		weapon_slots.equip_immediately(weapon_slots.pending_slot if weapon_slots.pending_slot != 0 else weapon_slots.current_slot)
-	# Never respawn without ammo; the inventory itself is kept on death for now
+	# Never respawn without ammo for a gun you still have (GameMode usually
+	# drops your guns and backpack where you died: DeathCache)
 	for w in _owned_weapons():
 		if inventory != null and w.definition.starting_reserve > 0 and not w.definition.melee:
 			inventory.ensure_minimum_ammo(w.definition.ammo_type, w.definition.starting_reserve)
@@ -454,6 +455,8 @@ func request_take(slot: int, quantity: int = -1) -> int:
 	var item := c.inventory.get_slot_item(slot)
 	if item == null:
 		return 0
+	if item.weapon != null:
+		return _take_gun(c, slot, true)
 	var want := c.inventory.get_slot_quantity(slot) if quantity < 0 else mini(quantity, c.inventory.get_slot_quantity(slot))
 	var moved := c.inventory.transfer_slot_to(slot, inventory, want)
 	if moved < want:
@@ -487,6 +490,9 @@ func request_take_all() -> int:
 		var item := current_container.inventory.get_slot_item(i)
 		if item == null:
 			continue
+		if item.weapon != null:
+			total += _take_gun(current_container, i, refusal == "")
+			continue
 		var want := current_container.inventory.get_slot_quantity(i)
 		var moved := current_container.inventory.transfer_slot_to(i, inventory, want)
 		total += moved
@@ -497,6 +503,32 @@ func request_take_all() -> int:
 	if refusal != "":
 		transfer_refused.emit(refusal)
 	return total
+
+
+## A gun in a container goes into its loadout slot, not the backpack
+## (Increment 16.6). If that slot already holds this gun or a better one, you
+## take a magazine of its ammo instead, as with a gun lying on the ground.
+## Your own guns come back out of your dropped gear with their attachments
+## and loaded rounds. Returns 1 if the gun left the container.
+func _take_gun(c: SalvageContainer, slot: int, report: bool) -> int:
+	var def := c.inventory.get_slot_item(slot).weapon
+	if weapon_refusal_reason(def) == "" and give_weapon(def):
+		c.inventory.take_from_slot(slot, 1)
+		var w := weapon_slots.get_weapon(def.slot) if weapon_slots != null else null
+		if w != null and c is DeathCache:
+			(c as DeathCache).restore_gun(w)
+		weapon_picked_up.emit(def)
+		return 1
+	var ammo := ItemDatabase.find_ammo_item(def.ammo_type)
+	var reason := weapon_refusal_reason(def)
+	if ammo != null and inventory.receive(ammo, maxi(def.magazine_size, 1)) > 0:
+		c.inventory.take_from_slot(slot, 1)
+		if report:
+			transfer_refused.emit("%s: took its ammo" % reason)
+		return 1
+	if report:
+		transfer_refused.emit(reason if reason != "" else "Can't carry that")
+	return 0
 
 
 func _can_transfer() -> bool:

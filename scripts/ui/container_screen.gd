@@ -122,6 +122,8 @@ func _on_container_opened(c: SalvageContainer) -> void:
 	selected = -1
 	selected_side = &""
 	_title.text = c.container_name.to_upper()
+	# Big ones (your dropped gear) get wider rows so they fit the window
+	_container_grid.columns = 4 if c.inventory.slot_count <= 12 else 6
 	_build_slots(_container_grid, _container_slots, c.inventory, SIDE_CONTAINER)
 	if not c.inventory.contents_changed.is_connected(_on_contents_changed):
 		c.inventory.contents_changed.connect(_on_contents_changed)

@@ -85,7 +85,7 @@ const SIGNPOSTS := [
 	[Vector2(458, -385), ["NorthwatchOutpost", "BlackRidgeMine"]],
 	[Vector2(446, -478), ["NorthwatchOutpost", "BlackRidgeMine", "HaldensCrossing"]],
 	[Vector2(310, -6), ["AshCreekFarms", "Outpost17"]],
-	[Vector2(246, -232), ["SmugglersGulch", "HaldensCrossing"]],
+	[Vector2(231, -229), ["SmugglersGulch", "HaldensCrossing"]],  # at the trail head, clear of the staff house
 ]
 
 # Materials used across the zone

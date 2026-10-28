@@ -468,897 +468,897 @@ texture_filter = 5
 [sub_resource type="QuadMesh" id="QuadMesh_yg15u"]
 size = Vector2(2.4, 0.94)
 
-[node name="SaintMercyClinic" type="Node3D" unique_id=427407436]
+[node name="SaintMercyClinic" type="Node3D" unique_id=1450171472]
 metadata/region_name = "Saint Mercy Clinic"
 
-[node name="Buildings" type="Node3D" parent="." unique_id=220762677 groups=["navigation_geometry"]]
+[node name="Buildings" type="Node3D" parent="." unique_id=242221675 groups=["navigation_geometry"]]
 
-[node name="Hospital" type="StaticBody3D" parent="Buildings" unique_id=1877850910]
+[node name="Hospital" type="StaticBody3D" parent="Buildings" unique_id=118417930]
 collision_layer = 2
 collision_mask = 0
 metadata/doors = [[Vector3(-6.85, 0, -10), Vector3(-1, 0, 0)], [Vector3(6.85, 0, 0), Vector3(1, 0, 0)]]
 metadata/size = Vector2(14, 30)
 metadata/storeys = 2
 
-[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=162997336]
+[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=556741721]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 1.65, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=201616991]
+[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=272707243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 1.65, -14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1254620127]
+[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1931518811]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=9279079]
+[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1678210285]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, -14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=718099294]
+[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=68783261]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.75, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1167332452]
+[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1176406214]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.75, -14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=839274375]
+[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1767240918]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_6hjww")
 
-[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=477341783]
+[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=522704451]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, -14.85)
 shape = SubResource("BoxShape3D_pqd5p")
 
-[node name="WallN0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1318705850]
+[node name="WallN0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1281776133]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallN0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=874112901]
+[node name="WallN0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=484429695]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallN0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1553746034]
+[node name="WallN0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=966898374]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.75, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallN0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=756921439]
+[node name="WallN0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=770073474]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.75, -14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallN0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1569640035]
+[node name="WallN0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2122673375]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 1.65, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallN0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1991233930]
+[node name="WallN0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1266902506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 1.65, -14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallN1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1355838068]
+[node name="WallN1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=728637217]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 4.95, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallN1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=163073014]
+[node name="WallN1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=325662724]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 4.95, -14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallN1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1008090332]
+[node name="WallN1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1657428968]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3.8, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallN1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=715870029]
+[node name="WallN1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1726889133]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3.8, -14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallN1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1393345063]
+[node name="WallN1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1593193761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 6.05, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallN1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=523115498]
+[node name="WallN1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1397107237]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 6.05, -14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallN1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=881783140]
+[node name="WallN1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=775820908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.95, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_6hjww")
 
-[node name="WallN1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=768312808]
+[node name="WallN1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1226311968]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.95, -14.85)
 shape = SubResource("BoxShape3D_pqd5p")
 
-[node name="WallN1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2133768651]
+[node name="WallN1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1479292398]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.8, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallN1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1410267480]
+[node name="WallN1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=696654512]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.8, -14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallN1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=904623819]
+[node name="WallN1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=382251193]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.05, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallN1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1312389211]
+[node name="WallN1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1716443162]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.05, -14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallN1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=421800629]
+[node name="WallN1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1477401566]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 4.95, -14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallN1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1237502078]
+[node name="WallN1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1832804595]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 4.95, -14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=713028689]
+[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=254866373]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 1.65, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1528696630]
+[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=48903199]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 1.65, 14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallS0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1783767568]
+[node name="WallS0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1334249134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallS0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1595098901]
+[node name="WallS0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2066049729]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, 14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallS0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=364520498]
+[node name="WallS0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2033109004]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.75, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallS0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1604092907]
+[node name="WallS0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=196477277]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.75, 14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallS0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=903452496]
+[node name="WallS0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1618504282]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_6hjww")
 
-[node name="WallS0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=832618782]
+[node name="WallS0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=590575707]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 14.85)
 shape = SubResource("BoxShape3D_pqd5p")
 
-[node name="WallS0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=395422093]
+[node name="WallS0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=493577889]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallS0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=384168016]
+[node name="WallS0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=76887881]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, 14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallS0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1867192900]
+[node name="WallS0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1833804815]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.75, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallS0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=320868034]
+[node name="WallS0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=673099904]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.75, 14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallS0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1689101666]
+[node name="WallS0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1698848940]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 1.65, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallS0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1776786297]
+[node name="WallS0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2016416488]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 1.65, 14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallS1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=788428389]
+[node name="WallS1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2029163737]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 4.95, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallS1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=857155108]
+[node name="WallS1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=221122693]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 4.95, 14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallS1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1937378361]
+[node name="WallS1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1628103620]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3.8, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallS1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=728848203]
+[node name="WallS1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1678234430]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3.8, 14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallS1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1600806488]
+[node name="WallS1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=554423605]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 6.05, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallS1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=49832326]
+[node name="WallS1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2136650960]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 6.05, 14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallS1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1313325328]
+[node name="WallS1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1953547281]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.95, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_6hjww")
 
-[node name="WallS1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=625408588]
+[node name="WallS1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1928648417]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.95, 14.85)
 shape = SubResource("BoxShape3D_pqd5p")
 
-[node name="WallS1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1012949336]
+[node name="WallS1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=303909030]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.8, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallS1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=658366775]
+[node name="WallS1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1125423111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.8, 14.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallS1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1118916826]
+[node name="WallS1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=438195618]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.05, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallS1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=706465494]
+[node name="WallS1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1438073811]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.05, 14.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallS1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=768370205]
+[node name="WallS1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=233648564]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 4.95, 14.85)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallS1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1656096998]
+[node name="WallS1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1786427464]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 4.95, 14.85)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1389011343]
+[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=290576653]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, -12.75)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_3j23q")
 
-[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1149921470]
+[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2027922782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, -12.75)
 shape = SubResource("BoxShape3D_tsw32")
 
-[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1610642200]
+[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=483360047]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 2.8500001, -10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_mr3qh")
 
-[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2129366849]
+[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=990019393]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 2.8500001, -10)
 shape = SubResource("BoxShape3D_o4pjl")
 
-[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1942944048]
+[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=539274284]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, -2.9)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_is2uu")
 
-[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=349306195]
+[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=411113704]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, -2.9)
 shape = SubResource("BoxShape3D_k50m2")
 
-[node name="WallW0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1221571974]
+[node name="WallW0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=41005993]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 0.5, 4)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=971461845]
+[node name="WallW0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=968886413]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 0.5, 4)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1503039936]
+[node name="WallW0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=615609881]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 2.75, 4)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1488362479]
+[node name="WallW0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=506459518]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 2.75, 4)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=396937549]
+[node name="WallW0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1809543593]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, 7)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_4jugl")
 
-[node name="WallW0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=642695469]
+[node name="WallW0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=398261023]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, 7)
 shape = SubResource("BoxShape3D_i856c")
 
-[node name="WallW0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1712273185]
+[node name="WallW0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=845001863]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 0.5, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=720321789]
+[node name="WallW0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=187041789]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 0.5, 10)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW0_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1839068353]
+[node name="WallW0_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1065835207]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 2.75, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW0_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1585636532]
+[node name="WallW0_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=396960828]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 2.75, 10)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW0_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=444646286]
+[node name="WallW0_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=178330275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, 12.65)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_qw00g")
 
-[node name="WallW0_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1082057440]
+[node name="WallW0_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1223938082]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 1.65, 12.65)
 shape = SubResource("BoxShape3D_evo1n")
 
-[node name="WallW1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1961234653]
+[node name="WallW1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1447120340]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, -12.65)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_qw00g")
 
-[node name="WallW1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1613648563]
+[node name="WallW1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1400373439]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, -12.65)
 shape = SubResource("BoxShape3D_evo1n")
 
-[node name="WallW1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=819890735]
+[node name="WallW1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=947286596]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, -10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=404617755]
+[node name="WallW1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=185733213]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, -10)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=444618520]
+[node name="WallW1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=781965448]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, -10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=130809930]
+[node name="WallW1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=489559332]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, -10)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1311654141]
+[node name="WallW1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1013886862]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, -7)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_4jugl")
 
-[node name="WallW1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1977298077]
+[node name="WallW1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=790288757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, -7)
 shape = SubResource("BoxShape3D_i856c")
 
-[node name="WallW1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=681377678]
+[node name="WallW1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1251138168]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, -4)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=208799894]
+[node name="WallW1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1193962437]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, -4)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=615447732]
+[node name="WallW1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1711239955]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, -4)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1148045408]
+[node name="WallW1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1401545639]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, -4)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1387997980]
+[node name="WallW1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=446805842]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, 0)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rx6tx")
 
-[node name="WallW1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2013863302]
+[node name="WallW1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1868819042]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, 0)
 shape = SubResource("BoxShape3D_kpm16")
 
-[node name="WallW1_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=602318928]
+[node name="WallW1_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=982150243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, 4)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW1_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1623136531]
+[node name="WallW1_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1391466988]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, 4)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW1_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=343401237]
+[node name="WallW1_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=152078659]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, 4)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW1_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=764751128]
+[node name="WallW1_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=498060427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, 4)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW1_9" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=864960194]
+[node name="WallW1_9" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1526616332]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, 7)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_4jugl")
 
-[node name="WallW1_9Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=688207514]
+[node name="WallW1_9Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=932203582]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, 7)
 shape = SubResource("BoxShape3D_i856c")
 
-[node name="WallW1_10" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1879644252]
+[node name="WallW1_10" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2145648122]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW1_10Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1259566720]
+[node name="WallW1_10Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=33466669]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 3.8, 10)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW1_11" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=446812934]
+[node name="WallW1_11" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1984149986]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW1_11Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=917173299]
+[node name="WallW1_11Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1246762450]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 6.05, 10)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW1_12" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=572734276]
+[node name="WallW1_12" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=89058420]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, 12.65)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_qw00g")
 
-[node name="WallW1_12Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=927273353]
+[node name="WallW1_12Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1934897576]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.85, 4.95, 12.65)
 shape = SubResource("BoxShape3D_evo1n")
 
-[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1213656909]
+[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2084416329]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, -12.65)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_qw00g")
 
-[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1106649732]
+[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=724215202]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, -12.65)
 shape = SubResource("BoxShape3D_evo1n")
 
-[node name="WallE0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1072106457]
+[node name="WallE0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1240401350]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, -10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=797358425]
+[node name="WallE0_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1976914527]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, -10)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1135237148]
+[node name="WallE0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1050022525]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, -10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=189776796]
+[node name="WallE0_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1315621402]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, -10)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1310843065]
+[node name="WallE0_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=925597376]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, -7.5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulloc")
 
-[node name="WallE0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1125419159]
+[node name="WallE0_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=293419907]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, -7.5)
 shape = SubResource("BoxShape3D_j7jab")
 
-[node name="WallE0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1202963819]
+[node name="WallE0_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=683486724]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, -5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1445220239]
+[node name="WallE0_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1172074939]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, -5)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=771235047]
+[node name="WallE0_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=455615694]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, -5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=810645923]
+[node name="WallE0_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=57694034]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, -5)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2138400683]
+[node name="WallE0_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=439679599]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, -2.6)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_socf7")
 
-[node name="WallE0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=593879729]
+[node name="WallE0_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=902839895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, -2.6)
 shape = SubResource("BoxShape3D_erwec")
 
-[node name="WallE0_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=401138842]
+[node name="WallE0_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=873935377]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.8500001, 0)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_mr3qh")
 
-[node name="WallE0_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2012898721]
+[node name="WallE0_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2112059899]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.8500001, 0)
 shape = SubResource("BoxShape3D_o4pjl")
 
-[node name="WallE0_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1868574917]
+[node name="WallE0_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1129436943]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, 2.6)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_socf7")
 
-[node name="WallE0_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1638344292]
+[node name="WallE0_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=328613151]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, 2.6)
 shape = SubResource("BoxShape3D_erwec")
 
-[node name="WallE0_9" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1105496593]
+[node name="WallE0_9" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1351201370]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, 5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE0_9Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=260762317]
+[node name="WallE0_9Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=857962679]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, 5)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE0_10" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1613797218]
+[node name="WallE0_10" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=928118183]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, 5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE0_10Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1221513632]
+[node name="WallE0_10Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1500910552]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, 5)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE0_11" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=265598084]
+[node name="WallE0_11" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=612986829]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, 7.5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulloc")
 
-[node name="WallE0_11Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=693883208]
+[node name="WallE0_11Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2142729627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, 7.5)
 shape = SubResource("BoxShape3D_j7jab")
 
-[node name="WallE0_12" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1442344276]
+[node name="WallE0_12" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=477613506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE0_12Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=399292238]
+[node name="WallE0_12Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1748785331]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0.5, 10)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE0_13" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1130171159]
+[node name="WallE0_13" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=538139060]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE0_13Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=833790261]
+[node name="WallE0_13Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1619092037]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 2.75, 10)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE0_14" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1455708440]
+[node name="WallE0_14" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1613115941]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, 12.65)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_qw00g")
 
-[node name="WallE0_14Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1173863554]
+[node name="WallE0_14Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1769954030]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 1.65, 12.65)
 shape = SubResource("BoxShape3D_evo1n")
 
-[node name="WallE1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2105441391]
+[node name="WallE1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=229200084]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, -12.65)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_qw00g")
 
-[node name="WallE1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1002363088]
+[node name="WallE1_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=407164377]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, -12.65)
 shape = SubResource("BoxShape3D_evo1n")
 
-[node name="WallE1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1840022586]
+[node name="WallE1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1914021274]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, -10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1404373592]
+[node name="WallE1_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2085124067]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, -10)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=25242295]
+[node name="WallE1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=173864706]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, -10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1366328662]
+[node name="WallE1_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=970516273]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, -10)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=21197997]
+[node name="WallE1_3" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1874621273]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, -7.5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulloc")
 
-[node name="WallE1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1743172285]
+[node name="WallE1_3Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2015342042]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, -7.5)
 shape = SubResource("BoxShape3D_j7jab")
 
-[node name="WallE1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=113988792]
+[node name="WallE1_4" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=977283005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, -5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1113386594]
+[node name="WallE1_4Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=172308973]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, -5)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1957918863]
+[node name="WallE1_5" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1980852750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, -5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1707395928]
+[node name="WallE1_5Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1656440976]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, -5)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1157141169]
+[node name="WallE1_6" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=394199438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, -2.5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulloc")
 
-[node name="WallE1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=915637219]
+[node name="WallE1_6Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2131700000]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, -2.5)
 shape = SubResource("BoxShape3D_j7jab")
 
-[node name="WallE1_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1776579027]
+[node name="WallE1_7" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1514724098]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, 0)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE1_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=860253915]
+[node name="WallE1_7Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1412110990]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, 0)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE1_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=922972101]
+[node name="WallE1_8" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1720935361]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, 0)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE1_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=743223299]
+[node name="WallE1_8Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=673063002]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, 0)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE1_9" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=642023653]
+[node name="WallE1_9" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1141410975]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, 2.5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulloc")
 
-[node name="WallE1_9Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1398439058]
+[node name="WallE1_9Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1565405997]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, 2.5)
 shape = SubResource("BoxShape3D_j7jab")
 
-[node name="WallE1_10" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=704834445]
+[node name="WallE1_10" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2082277287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, 5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE1_10Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1721576193]
+[node name="WallE1_10Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1525470413]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, 5)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE1_11" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1694738014]
+[node name="WallE1_11" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1546860434]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, 5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE1_11Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=727328090]
+[node name="WallE1_11Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=689683884]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, 5)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE1_12" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1383959706]
+[node name="WallE1_12" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1695958280]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, 7.5)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulloc")
 
-[node name="WallE1_12Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1455535266]
+[node name="WallE1_12Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1055815028]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, 7.5)
 shape = SubResource("BoxShape3D_j7jab")
 
-[node name="WallE1_13" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1070307318]
+[node name="WallE1_13" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1409676503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE1_13Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2000747640]
+[node name="WallE1_13Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1791318158]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 3.8, 10)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE1_14" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1124881032]
+[node name="WallE1_14" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1839621739]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, 10)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE1_14Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1832447936]
+[node name="WallE1_14Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=253948638]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 6.05, 10)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE1_15" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=497994344]
+[node name="WallE1_15" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1252747666]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, 12.65)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_qw00g")
 
-[node name="WallE1_15Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1271996983]
+[node name="WallE1_15Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1049348054]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 4.95, 12.65)
 shape = SubResource("BoxShape3D_evo1n")
 
-[node name="Floor" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1014484020]
+[node name="Floor" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1666018243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = ExtResource("2_3k1hs")
 mesh = SubResource("BoxMesh_waosj")
 
-[node name="Slab1A" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=846454734]
+[node name="Slab1A" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1958785356]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15, -8.15)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_uk61i")
 
-[node name="Slab1ACol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=497105982]
+[node name="Slab1ACol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1182971211]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15, -8.15)
 shape = SubResource("BoxShape3D_m8ldw")
 
-[node name="Slab1B" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=290062076]
+[node name="Slab1B" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=359328095]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15, 7.35)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_6b0l6")
 
-[node name="Slab1BCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=676496614]
+[node name="Slab1BCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=528377766]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15, 7.35)
 shape = SubResource("BoxShape3D_s2nld")
 
-[node name="Slab1C" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1094636185]
+[node name="Slab1C" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1380357615]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.55, 3.15, -0.8)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_jv7m5")
 
-[node name="Slab1CCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=34959416]
+[node name="Slab1CCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1129879957]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.55, 3.15, -0.8)
 shape = SubResource("BoxShape3D_yc42r")
 
-[node name="Slab1D" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=849835470]
+[node name="Slab1D" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=548221062]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4499998, 3.15, -0.8)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_h86sm")
 
-[node name="Slab1DCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=995976803]
+[node name="Slab1DCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=570769019]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4499998, 3.15, -0.8)
 shape = SubResource("BoxShape3D_68gfh")
 
-[node name="Roof" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1122200382]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=820986572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.75, 0)
 material_override = ExtResource("4_uchvi")
 mesh = SubResource("BoxMesh_hwfq5")
 
-[node name="RoofCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=745799673]
+[node name="RoofCol" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=750281860]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.75, 0)
 shape = SubResource("BoxShape3D_8sp3d")
 
-[node name="ParapetN_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=614132637]
+[node name="ParapetN_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1996484636]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.35, -14.950001)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vqh6o")
 
-[node name="ParapetN_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=400063419]
+[node name="ParapetN_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1320818080]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.35, -14.950001)
 shape = SubResource("BoxShape3D_s2g6t")
 
-[node name="ParapetS_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=127012351]
+[node name="ParapetS_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=175563652]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.35, 14.950001)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_vqh6o")
 
-[node name="ParapetS_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2116654421]
+[node name="ParapetS_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1302775782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.35, 14.950001)
 shape = SubResource("BoxShape3D_s2g6t")
 
-[node name="ParapetW_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=117167988]
+[node name="ParapetW_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1816528992]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.95, 7.35, -4.3)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_0u7b2")
 
-[node name="ParapetW_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=164167196]
+[node name="ParapetW_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2021167629]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.95, 7.35, -4.3)
 shape = SubResource("BoxShape3D_bp7ok")
 
-[node name="ParapetW_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=591086038]
+[node name="ParapetW_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=2127169366]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.95, 7.35, 11.3)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_4akfl")
 
-[node name="ParapetW_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=804358785]
+[node name="ParapetW_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1480984431]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.95, 7.35, 11.3)
 shape = SubResource("BoxShape3D_xlshs")
 
-[node name="ParapetE_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1226737833]
+[node name="ParapetE_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=618605648]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95, 7.35, 0)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_uc440")
 
-[node name="ParapetE_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1421701813]
+[node name="ParapetE_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1985119744]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95, 7.35, 0)
 shape = SubResource("BoxShape3D_atqoi")
 
-[node name="Inner_-68_-50_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=722311841]
+[node name="Inner_-68_-50_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=959916707]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8249998, 1.65, -5)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_jb4fd")
 
-[node name="Inner_-68_-50_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1031641047]
+[node name="Inner_-68_-50_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1539799851]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8249998, 1.65, -5)
 shape = SubResource("BoxShape3D_7uj7w")
 
-[node name="Inner_-68_-50_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=307557878]
+[node name="Inner_-68_-50_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=814962608]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, -5)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_jge3b")
 
-[node name="Inner_-68_-50_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=2128376734]
+[node name="Inner_-68_-50_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=187830604]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, -5)
 shape = SubResource("BoxShape3D_lugfg")
 
-[node name="Inner_-68_-50_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1793052728]
+[node name="Inner_-68_-50_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1436566510]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8250003, 1.65, -5)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_jb4fd")
 
-[node name="Inner_-68_-50_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1720929912]
+[node name="Inner_-68_-50_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1887026081]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8250003, 1.65, -5)
 shape = SubResource("BoxShape3D_7uj7w")
 
-[node name="Inner_-68_50_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1591191608]
+[node name="Inner_-68_50_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=373488454]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8249998, 1.65, 5)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_jb4fd")
 
-[node name="Inner_-68_50_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1994228126]
+[node name="Inner_-68_50_0Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=618643001]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8249998, 1.65, 5)
 shape = SubResource("BoxShape3D_7uj7w")
 
-[node name="Inner_-68_50_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1412702022]
+[node name="Inner_-68_50_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1689659716]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, 5)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_jge3b")
 
-[node name="Inner_-68_50_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=217368468]
+[node name="Inner_-68_50_1Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1136624053]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, 5)
 shape = SubResource("BoxShape3D_lugfg")
 
-[node name="Inner_-68_50_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=847610971]
+[node name="Inner_-68_50_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=412663803]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8250003, 1.65, 5)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_jb4fd")
 
-[node name="Inner_-68_50_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1113995233]
+[node name="Inner_-68_50_2Col" type="CollisionShape3D" parent="Buildings/Hospital" unique_id=1072312730]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8250003, 1.65, 5)
 shape = SubResource("BoxShape3D_7uj7w")
 
-[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/Hospital" unique_id=1556688084]
+[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/Hospital" unique_id=2043065752]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95, -10)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1368,13 +1368,13 @@ distance_fade_length = 15.0
 omni_range = 11.0
 omni_attenuation = 0.8
 
-[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1233994678]
+[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1946361841]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24, -10)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_6svgd")
 
-[node name="Lamp0_1" type="OmniLight3D" parent="Buildings/Hospital" unique_id=1510206248]
+[node name="Lamp0_1" type="OmniLight3D" parent="Buildings/Hospital" unique_id=314626817]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95, 0)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1384,13 +1384,13 @@ distance_fade_length = 15.0
 omni_range = 11.0
 omni_attenuation = 0.8
 
-[node name="Bulb0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=326466808]
+[node name="Bulb0_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=504825049]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24, 0)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_0jayc")
 
-[node name="Lamp0_2" type="OmniLight3D" parent="Buildings/Hospital" unique_id=2048868446]
+[node name="Lamp0_2" type="OmniLight3D" parent="Buildings/Hospital" unique_id=124117751]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95, 10)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1400,13 +1400,13 @@ distance_fade_length = 15.0
 omni_range = 11.0
 omni_attenuation = 0.8
 
-[node name="Bulb0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1623566569]
+[node name="Bulb0_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=106405968]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24, 10)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_qqps3")
 
-[node name="Lamp1_0" type="OmniLight3D" parent="Buildings/Hospital" unique_id=190037779]
+[node name="Lamp1_0" type="OmniLight3D" parent="Buildings/Hospital" unique_id=1024356323]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.25, -10)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1416,13 +1416,13 @@ distance_fade_length = 15.0
 omni_range = 11.0
 omni_attenuation = 0.8
 
-[node name="Bulb1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=132941471]
+[node name="Bulb1_0" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1948009082]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.54, -10)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_6yaex")
 
-[node name="Lamp1_1" type="OmniLight3D" parent="Buildings/Hospital" unique_id=2130244403]
+[node name="Lamp1_1" type="OmniLight3D" parent="Buildings/Hospital" unique_id=1163045091]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.25, 0)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1432,13 +1432,13 @@ distance_fade_length = 15.0
 omni_range = 11.0
 omni_attenuation = 0.8
 
-[node name="Bulb1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1971438164]
+[node name="Bulb1_1" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1137301719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.54, 0)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_4ink2")
 
-[node name="Lamp1_2" type="OmniLight3D" parent="Buildings/Hospital" unique_id=677867593]
+[node name="Lamp1_2" type="OmniLight3D" parent="Buildings/Hospital" unique_id=1322356165]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.25, 10)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1448,7 +1448,7 @@ distance_fade_length = 15.0
 omni_range = 11.0
 omni_attenuation = 0.8
 
-[node name="Bulb1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1444627314]
+[node name="Bulb1_2" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1509329782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.54, 10)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
@@ -1461,24 +1461,24 @@ height = 3.3
 width = 0.5
 material = ExtResource("8_ooo5f")
 
-[node name="RoofLadder" type="Node3D" parent="Buildings/Hospital" unique_id=227027430 instance=ExtResource("6_eq8kp")]
+[node name="RoofLadder" type="Node3D" parent="Buildings/Hospital" unique_id=1021828021 instance=ExtResource("6_eq8kp")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -7.05, 0, 7)
 script = ExtResource("7_bpv46")
 height = 6.9
 width = 0.5
 material = ExtResource("8_ooo5f")
 
-[node name="CrossV" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1034814287]
+[node name="CrossV" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=820830219]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9, 15.03)
 material_override = ExtResource("9_2ah61")
 mesh = SubResource("BoxMesh_eoa8v")
 
-[node name="CrossH" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=24475675]
+[node name="CrossH" type="MeshInstance3D" parent="Buildings/Hospital" unique_id=1138484351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9, 15.03)
 material_override = ExtResource("9_2ah61")
 mesh = SubResource("BoxMesh_ay3ha")
 
-[node name="Annex" type="StaticBody3D" parent="Buildings" unique_id=258256377]
+[node name="Annex" type="StaticBody3D" parent="Buildings" unique_id=1133759520]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 4)
 collision_layer = 2
 collision_mask = 0
@@ -1486,174 +1486,174 @@ metadata/doors = [[Vector3(-15, 0, 8.85), Vector3(0, 0, 1)], [Vector3(-10.65, 0,
 metadata/size = Vector2(9, 10)
 metadata/storeys = 1
 
-[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1499010654]
+[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1370272672]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.65, -4.85)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_o86uf")
 
-[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=941967421]
+[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1690830981]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.65, -4.85)
 shape = SubResource("BoxShape3D_wygc4")
 
-[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=773333679]
+[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=297620648]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -4.85)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1168378851]
+[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=2119091122]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -4.85)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=615454202]
+[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=2110955747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.75, -4.85)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=377109334]
+[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=254083368]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.75, -4.85)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/Annex" unique_id=126635399]
+[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1500546480]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55, 1.65, -4.85)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_3dknp")
 
-[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=870118450]
+[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1427442420]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55, 1.65, -4.85)
 shape = SubResource("BoxShape3D_rb1gp")
 
-[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=222285928]
+[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1546791488]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.65, 1.65, 4.85)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_fyj82")
 
-[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=550225446]
+[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1873171549]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.65, 1.65, 4.85)
 shape = SubResource("BoxShape3D_qmibf")
 
-[node name="WallS0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1252681587]
+[node name="WallS0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=960789168]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, 4.85)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_0lmqo")
 
-[node name="WallS0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=667323686]
+[node name="WallS0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1880743853]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, 4.85)
 shape = SubResource("BoxShape3D_18pvq")
 
-[node name="WallS0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=736713344]
+[node name="WallS0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=194379615]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.65, 1.65, 4.85)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_fyj82")
 
-[node name="WallS0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1550412430]
+[node name="WallS0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=654295277]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.65, 1.65, 4.85)
 shape = SubResource("BoxShape3D_qmibf")
 
-[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1135242362]
+[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=651647937]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, -3.65)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_cdqrb")
 
-[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=2056076732]
+[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1841369471]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, -3.65)
 shape = SubResource("BoxShape3D_slxnf")
 
-[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1924627771]
+[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1761873284]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0.5, -2)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=958796716]
+[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1504580532]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0.5, -2)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1625635051]
+[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=2006306963]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 2.75, -2)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1710202952]
+[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1173518750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 2.75, -2)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW0_3" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1253858037]
+[node name="WallW0_3" type="MeshInstance3D" parent="Buildings/Annex" unique_id=901846155]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, 0)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_70rlq")
 
-[node name="WallW0_3Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1518529631]
+[node name="WallW0_3Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1596970577]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, 0)
 shape = SubResource("BoxShape3D_lbskt")
 
-[node name="WallW0_4" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1624431548]
+[node name="WallW0_4" type="MeshInstance3D" parent="Buildings/Annex" unique_id=127848162]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0.5, 2)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW0_4Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=901560813]
+[node name="WallW0_4Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=521002101]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0.5, 2)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW0_5" type="MeshInstance3D" parent="Buildings/Annex" unique_id=970243123]
+[node name="WallW0_5" type="MeshInstance3D" parent="Buildings/Annex" unique_id=255430379]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 2.75, 2)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW0_5Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=2145792282]
+[node name="WallW0_5Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=537707885]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 2.75, 2)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW0_6" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1146028611]
+[node name="WallW0_6" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1147616642]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, 3.65)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_cdqrb")
 
-[node name="WallW0_6Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=221313178]
+[node name="WallW0_6Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1573810027]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, 3.65)
 shape = SubResource("BoxShape3D_slxnf")
 
-[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=561125642]
+[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=2142303857]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, -3.75)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_va0j8")
 
-[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1909484476]
+[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=928155438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, -3.75)
 shape = SubResource("BoxShape3D_ate0e")
 
-[node name="WallE0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=234455077]
+[node name="WallE0_1" type="MeshInstance3D" parent="Buildings/Annex" unique_id=372249792]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 2.8500001, -2)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_mr3qh")
 
-[node name="WallE0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1224545839]
+[node name="WallE0_1Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=410809502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 2.8500001, -2)
 shape = SubResource("BoxShape3D_o4pjl")
 
-[node name="WallE0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1198347781]
+[node name="WallE0_2" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1147363708]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, 1.75)
 material_override = ExtResource("10_q7dwi")
 mesh = SubResource("BoxMesh_mh6p8")
 
-[node name="WallE0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=595314477]
+[node name="WallE0_2Col" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1245428231]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, 1.75)
 shape = SubResource("BoxShape3D_mms4h")
 
-[node name="Floor" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1372709821]
+[node name="Floor" type="MeshInstance3D" parent="Buildings/Annex" unique_id=2067163333]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = ExtResource("2_3k1hs")
 mesh = SubResource("BoxMesh_rhirj")
 
-[node name="Roof" type="MeshInstance3D" parent="Buildings/Annex" unique_id=761177131]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Annex" unique_id=554273429]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.45, 0)
 material_override = ExtResource("4_uchvi")
 mesh = SubResource("BoxMesh_hps6r")
 
-[node name="RoofCol" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1845427139]
+[node name="RoofCol" type="CollisionShape3D" parent="Buildings/Annex" unique_id=1752532579]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.45, 0)
 shape = SubResource("BoxShape3D_4qmjt")
 
-[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/Annex" unique_id=951223637]
+[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/Annex" unique_id=932184264]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95, 0)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1663,13 +1663,13 @@ distance_fade_length = 15.0
 omni_range = 7.5
 omni_attenuation = 0.8
 
-[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1721722772]
+[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/Annex" unique_id=1950319531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24, 0)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_jis47")
 
-[node name="StaffHouse" type="StaticBody3D" parent="Buildings" unique_id=496181986]
+[node name="StaffHouse" type="StaticBody3D" parent="Buildings" unique_id=1839437926]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -30)
 collision_layer = 2
 collision_mask = 0
@@ -1677,161 +1677,161 @@ metadata/doors = [[Vector3(-2, 0, -26.65), Vector3(0, 0, 1)]]
 metadata/size = Vector2(9, 7)
 metadata/storeys = 1
 
-[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1755810809]
+[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=985464097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.55, 1.65, -3.35)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_3dknp")
 
-[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=218133150]
+[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=354215375]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.55, 1.65, -3.35)
 shape = SubResource("BoxShape3D_rb1gp")
 
-[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=653419461]
+[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=851728640]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -3.35)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=361678721]
+[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=634929168]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -3.35)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1876177695]
+[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1432701807]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2.75, -3.35)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=227686484]
+[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1551675496]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2.75, -3.35)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=948789270]
+[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1264970035]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.65, -3.35)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_o86uf")
 
-[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=535401438]
+[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=816407593]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.65, -3.35)
 shape = SubResource("BoxShape3D_wygc4")
 
-[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=212568573]
+[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1292350988]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.65, 1.65, 3.35)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_fyj82")
 
-[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=524577670]
+[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=631095596]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.65, 1.65, 3.35)
 shape = SubResource("BoxShape3D_qmibf")
 
-[node name="WallS0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1638106001]
+[node name="WallS0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=44324301]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, 3.35)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_0lmqo")
 
-[node name="WallS0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=17963267]
+[node name="WallS0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=2032383440]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8500001, 3.35)
 shape = SubResource("BoxShape3D_18pvq")
 
-[node name="WallS0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=594121295]
+[node name="WallS0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1899195882]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.65, 1.65, 3.35)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_fyj82")
 
-[node name="WallS0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=672172608]
+[node name="WallS0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1254331302]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.65, 1.65, 3.35)
 shape = SubResource("BoxShape3D_qmibf")
 
-[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1901954939]
+[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1447135490]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, -1.9)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_r47lc")
 
-[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=2011219324]
+[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=10822354]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, -1.9)
 shape = SubResource("BoxShape3D_oo8oh")
 
-[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=2028318172]
+[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1853526004]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0.5, 0)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=485892880]
+[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=955234553]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 0.5, 0)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=904558633]
+[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=479284221]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 2.75, 0)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=273795542]
+[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=802082040]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 2.75, 0)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallW0_3" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1251483463]
+[node name="WallW0_3" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=935297474]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, 1.9)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_r47lc")
 
-[node name="WallW0_3Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1940368749]
+[node name="WallW0_3Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1766215430]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, 1.65, 1.9)
 shape = SubResource("BoxShape3D_oo8oh")
 
-[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1323573115]
+[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=375089211]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, -1.9)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_r47lc")
 
-[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1058078810]
+[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=850419886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, -1.9)
 shape = SubResource("BoxShape3D_oo8oh")
 
-[node name="WallE0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=2134796330]
+[node name="WallE0_1" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1669189754]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 0.5, 0)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_ilkoe")
 
-[node name="WallE0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=251121752]
+[node name="WallE0_1Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=881165604]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 0.5, 0)
 shape = SubResource("BoxShape3D_sxseg")
 
-[node name="WallE0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=747361424]
+[node name="WallE0_2" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1985313312]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 2.75, 0)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_8ppmt")
 
-[node name="WallE0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1277153335]
+[node name="WallE0_2Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=658540993]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 2.75, 0)
 shape = SubResource("BoxShape3D_e2t6h")
 
-[node name="WallE0_3" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1946813613]
+[node name="WallE0_3" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=994853016]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, 1.9)
 material_override = ExtResource("5_f4njm")
 mesh = SubResource("BoxMesh_r47lc")
 
-[node name="WallE0_3Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=2016663749]
+[node name="WallE0_3Col" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1377423421]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 1.65, 1.9)
 shape = SubResource("BoxShape3D_oo8oh")
 
-[node name="Floor" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=236801014]
+[node name="Floor" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=759530636]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_50046")
 
-[node name="Ceiling" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=662909697]
+[node name="Ceiling" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=47072025]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.36, 0)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_y7022")
 
-[node name="CeilingCol" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1020185087]
+[node name="CeilingCol" type="CollisionShape3D" parent="Buildings/StaffHouse" unique_id=1772088543]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.36, 0)
 shape = SubResource("BoxShape3D_vgvnc")
 
-[node name="Roof" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1076941178]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=342236187]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 4.52, 0)
 material_override = ExtResource("4_uchvi")
 mesh = SubResource("PrismMesh_q5gdd")
 
-[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/StaffHouse" unique_id=2004001370]
+[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/StaffHouse" unique_id=1014981879]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95, 0)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1841,13 +1841,13 @@ distance_fade_length = 15.0
 omni_range = 6.75
 omni_attenuation = 0.8
 
-[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1368977337]
+[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/StaffHouse" unique_id=1710098146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24, 0)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_kyels")
 
-[node name="GeneratorShed" type="StaticBody3D" parent="Buildings" unique_id=1073585958]
+[node name="GeneratorShed" type="StaticBody3D" parent="Buildings" unique_id=918964351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 20)
 collision_layer = 2
 collision_mask = 0
@@ -1855,102 +1855,102 @@ metadata/doors = [[Vector3(10.15, 0, 20), Vector3(-1, 0, 0)]]
 metadata/size = Vector2(6, 5)
 metadata/storeys = 1
 
-[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=362033103]
+[node name="WallN0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=2027351602]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 1.65, -2.35)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_rwfru")
 
-[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=906883533]
+[node name="WallN0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=518819384]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 1.65, -2.35)
 shape = SubResource("BoxShape3D_34go0")
 
-[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=807464474]
+[node name="WallN0_1" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1758910831]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, -2.35)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_vbyxc")
 
-[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1239081672]
+[node name="WallN0_1Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1755938681]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, -2.35)
 shape = SubResource("BoxShape3D_ema76")
 
-[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=538475001]
+[node name="WallN0_2" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=964516965]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.75, -2.35)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_hcdn0")
 
-[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1125412910]
+[node name="WallN0_2Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1358817024]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.75, -2.35)
 shape = SubResource("BoxShape3D_03e5b")
 
-[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=537743594]
+[node name="WallN0_3" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=417503108]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 1.65, -2.35)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_q63dg")
 
-[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=465789937]
+[node name="WallN0_3Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1654935188]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 1.65, -2.35)
 shape = SubResource("BoxShape3D_h128q")
 
-[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=207002359]
+[node name="WallS0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1097098702]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 2.35)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_e5qnd")
 
-[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=324318612]
+[node name="WallS0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1914194789]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 2.35)
 shape = SubResource("BoxShape3D_cwor5")
 
-[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1605748087]
+[node name="WallW0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=842273017]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.85, 1.65, -1.5)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_oau0v")
 
-[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=2041141591]
+[node name="WallW0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=536618535]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.85, 1.65, -1.5)
 shape = SubResource("BoxShape3D_2vrqg")
 
-[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=913730290]
+[node name="WallW0_1" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1811142745]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.85, 2.8500001, 0)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_mr3qh")
 
-[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1068897456]
+[node name="WallW0_1Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1371562757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.85, 2.8500001, 0)
 shape = SubResource("BoxShape3D_o4pjl")
 
-[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=23548864]
+[node name="WallW0_2" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1787666896]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.85, 1.65, 1.5)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_oau0v")
 
-[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=553682185]
+[node name="WallW0_2Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1863908183]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.85, 1.65, 1.5)
 shape = SubResource("BoxShape3D_2vrqg")
 
-[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=26249921]
+[node name="WallE0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=868365960]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.85, 1.65, 0)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_fckdg")
 
-[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=889053595]
+[node name="WallE0_0Col" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=772638412]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.85, 1.65, 0)
 shape = SubResource("BoxShape3D_rtnn7")
 
-[node name="Floor" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=203993377]
+[node name="Floor" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1323013176]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = ExtResource("2_3k1hs")
 mesh = SubResource("BoxMesh_2i4u2")
 
-[node name="Roof" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=108879192]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1664530038]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.45, 0)
 material_override = ExtResource("12_a2yi3")
 mesh = SubResource("BoxMesh_outn3")
 
-[node name="RoofCol" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=1368792248]
+[node name="RoofCol" type="CollisionShape3D" parent="Buildings/GeneratorShed" unique_id=385805930]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.45, 0)
 shape = SubResource("BoxShape3D_ilip5")
 
-[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/GeneratorShed" unique_id=555008174]
+[node name="Lamp0_0" type="OmniLight3D" parent="Buildings/GeneratorShed" unique_id=551042797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.95, 0)
 light_color = Color(1, 0.85, 0.65, 1)
 light_energy = 1.1
@@ -1960,252 +1960,252 @@ distance_fade_length = 15.0
 omni_range = 6.0
 omni_attenuation = 0.8
 
-[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1535971076]
+[node name="Bulb0_0" type="MeshInstance3D" parent="Buildings/GeneratorShed" unique_id=1882654394]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24, 0)
 material_override = SubResource("StandardMaterial3D_t8i4w")
 cast_shadow = 0
 mesh = SubResource("BoxMesh_2nwuv")
 
-[node name="Furniture" type="Node3D" parent="." unique_id=1193445888 groups=["navigation_geometry"]]
+[node name="Furniture" type="Node3D" parent="." unique_id=1948955073 groups=["navigation_geometry"]]
 
-[node name="Fixtures" type="StaticBody3D" parent="Furniture" unique_id=1937182262]
+[node name="Fixtures" type="StaticBody3D" parent="Furniture" unique_id=58281439]
 collision_layer = 2
 collision_mask = 0
 
-[node name="ReceptionCounter" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=877456813]
+[node name="ReceptionCounter" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1694520288]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -2.6)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_n0nxk")
 
-[node name="ReceptionCounterCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=262803496]
+[node name="ReceptionCounterCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=834077122]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -2.6)
 shape = SubResource("BoxShape3D_m7y03")
 
-[node name="WaitingBench" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=381283568]
+[node name="WaitingBench" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1428917048]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.225, 3.6)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_kjsph")
 
-[node name="WaitingBenchCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=2057546346]
+[node name="WaitingBenchCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1196586178]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.225, 3.6)
 shape = SubResource("BoxShape3D_2enrc")
 
-[node name="NorthWardBed0" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=958458454]
+[node name="NorthWardBed0" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=399138028]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, -13.2)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="NorthWardBed0Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1148312850]
+[node name="NorthWardBed0Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=399917156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, -13.2)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="SouthWardBed0" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=303419444]
+[node name="SouthWardBed0" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=533414060]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, 8)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="SouthWardBed0Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=100853580]
+[node name="SouthWardBed0Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=22780383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, 8)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="NorthWardBed1" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=251379737]
+[node name="NorthWardBed1" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=357443268]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, -10.6)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="NorthWardBed1Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1763076437]
+[node name="NorthWardBed1Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=231854220]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, -10.6)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="SouthWardBed1" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=241893370]
+[node name="SouthWardBed1" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1411323199]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, 10.6)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="SouthWardBed1Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=28788633]
+[node name="SouthWardBed1Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=810860678]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, 10.6)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="NorthWardBed2" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=609303512]
+[node name="NorthWardBed2" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1782823315]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, -8)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="NorthWardBed2Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1274810699]
+[node name="NorthWardBed2Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1850061572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, -8)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="SouthWardBed2" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=495355104]
+[node name="SouthWardBed2" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1382813253]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, 13.2)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="SouthWardBed2Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1920239559]
+[node name="SouthWardBed2Col" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=2118451175]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.275, 13.2)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="OperatingTable" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=214452366]
+[node name="OperatingTable" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1656566566]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 3.75, -9.5)
 material_override = ExtResource("8_ooo5f")
 mesh = SubResource("BoxMesh_tgdew")
 
-[node name="OperatingTableCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=892464826]
+[node name="OperatingTableCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1574009106]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 3.75, -9.5)
 shape = SubResource("BoxShape3D_8awg3")
 
-[node name="DoctorsDesk" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=96421894]
+[node name="DoctorsDesk" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=62332017]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3.7, 9)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_jnty1")
 
-[node name="DoctorsDeskCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1710009996]
+[node name="DoctorsDeskCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=2124192330]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3.7, 9)
 shape = SubResource("BoxShape3D_67hsv")
 
-[node name="AnnexBedA" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=658895243]
+[node name="AnnexBedA" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1287643422]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.7, 0.275, 0.5999999)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="AnnexBedACol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=336410781]
+[node name="AnnexBedACol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=956916540]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.7, 0.275, 0.5999999)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="AnnexBedB" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1681153961]
+[node name="AnnexBedB" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=164129892]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.7, 0.275, 4.4)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="AnnexBedBCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1110868643]
+[node name="AnnexBedBCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=2125680843]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.7, 0.275, 4.4)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="StaffBed" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1530767202]
+[node name="StaffBed" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=1578373040]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0.275, -31.8)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_hngg8")
 
-[node name="StaffBedCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1468911079]
+[node name="StaffBedCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=2142651862]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0.275, -31.8)
 shape = SubResource("BoxShape3D_xn0ni")
 
-[node name="StaffTable" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=608763697]
+[node name="StaffTable" type="MeshInstance3D" parent="Furniture/Fixtures" unique_id=167293779]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, -31)
 material_override = ExtResource("3_xjhfq")
 mesh = SubResource("BoxMesh_32hre")
 
-[node name="StaffTableCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1531744331]
+[node name="StaffTableCol" type="CollisionShape3D" parent="Furniture/Fixtures" unique_id=1035946426]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, -31)
 shape = SubResource("BoxShape3D_rawe1")
 
-[node name="Props" type="Node3D" parent="." unique_id=1347291476 groups=["navigation_geometry"]]
+[node name="Props" type="Node3D" parent="." unique_id=1001179188 groups=["navigation_geometry"]]
 
-[node name="ClinicGenerator" type="StaticBody3D" parent="Props" unique_id=1442919342 instance=ExtResource("13_qe7oa")]
+[node name="ClinicGenerator" type="StaticBody3D" parent="Props" unique_id=1116322732 instance=ExtResource("13_qe7oa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.4, 0, 18.8)
 collision_layer = 2
 collision_mask = 0
 
-[node name="AmbulanceBay" type="StaticBody3D" parent="Props" unique_id=1587999206]
+[node name="AmbulanceBay" type="StaticBody3D" parent="Props" unique_id=1525931681]
 collision_layer = 2
 collision_mask = 0
 
-[node name="CanopyPost" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=114935980]
+[node name="CanopyPost" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=635658606]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.7, -4.8)
 material_override = ExtResource("8_ooo5f")
 mesh = SubResource("BoxMesh_jguin")
 
-[node name="CanopyPostCol" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=26554585]
+[node name="CanopyPostCol" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=841931428]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.7, -4.8)
 shape = SubResource("BoxShape3D_h31yt")
 
-[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=291920464]
+[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=1262145655]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.7, -4.8)
 material_override = ExtResource("8_ooo5f")
 mesh = SubResource("BoxMesh_jguin")
 
-[node name="@CollisionShape3D@6" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=1211400987]
+[node name="@CollisionShape3D@6" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=1411864030]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.7, -4.8)
 shape = SubResource("BoxShape3D_h31yt")
 
-[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=91664638]
+[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=652247349]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.7, 4.8)
 material_override = ExtResource("8_ooo5f")
 mesh = SubResource("BoxMesh_jguin")
 
-[node name="@CollisionShape3D@8" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=1518505844]
+[node name="@CollisionShape3D@8" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=1718186451]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.7, 4.8)
 shape = SubResource("BoxShape3D_h31yt")
 
-[node name="@MeshInstance3D@9" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=1411017882]
+[node name="@MeshInstance3D@9" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=2075328073]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.7, 4.8)
 material_override = ExtResource("8_ooo5f")
 mesh = SubResource("BoxMesh_jguin")
 
-[node name="@CollisionShape3D@10" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=1369015157]
+[node name="@CollisionShape3D@10" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=1644538682]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.7, 4.8)
 shape = SubResource("BoxShape3D_h31yt")
 
-[node name="Canopy" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=2001283422]
+[node name="Canopy" type="MeshInstance3D" parent="Props/AmbulanceBay" unique_id=120814112]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 3.5, 0)
 material_override = ExtResource("11_ujcex")
 mesh = SubResource("BoxMesh_2hhh6")
 
-[node name="CanopyCol" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=310220961]
+[node name="CanopyCol" type="CollisionShape3D" parent="Props/AmbulanceBay" unique_id=1736038068]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 3.5, 0)
 shape = SubResource("BoxShape3D_7x2u5")
 
-[node name="Ambulance" type="StaticBody3D" parent="Props" unique_id=1994264593]
+[node name="Ambulance" type="StaticBody3D" parent="Props" unique_id=2013001406]
 transform = Transform3D(0.99026805, 0, 0.1391731, 0, 1, 0, -0.1391731, 0, 0.99026805, 14, 0, -2.6)
 collision_layer = 2
 collision_mask = 0
 
-[node name="Box" type="MeshInstance3D" parent="Props/Ambulance" unique_id=239919056]
+[node name="Box" type="MeshInstance3D" parent="Props/Ambulance" unique_id=680145896]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.6)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulyuo")
 
-[node name="BoxCol" type="CollisionShape3D" parent="Props/Ambulance" unique_id=1344545372]
+[node name="BoxCol" type="CollisionShape3D" parent="Props/Ambulance" unique_id=124981901]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.6)
 shape = SubResource("BoxShape3D_r55qf")
 
-[node name="Cab" type="MeshInstance3D" parent="Props/Ambulance" unique_id=995531429]
+[node name="Cab" type="MeshInstance3D" parent="Props/Ambulance" unique_id=700077665]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 2.1)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rhlof")
 
-[node name="CabCol" type="CollisionShape3D" parent="Props/Ambulance" unique_id=1169121374]
+[node name="CabCol" type="CollisionShape3D" parent="Props/Ambulance" unique_id=178126108]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 2.1)
 shape = SubResource("BoxShape3D_p6rmg")
 
-[node name="Stripe" type="MeshInstance3D" parent="Props/Ambulance" unique_id=1443311272]
+[node name="Stripe" type="MeshInstance3D" parent="Props/Ambulance" unique_id=1750757848]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.6)
 material_override = ExtResource("9_2ah61")
 mesh = SubResource("BoxMesh_6tfqg")
 
-[node name="@StaticBody3D@11" type="StaticBody3D" parent="Props" unique_id=1524294619]
+[node name="@StaticBody3D@11" type="StaticBody3D" parent="Props" unique_id=303638206]
 transform = Transform3D(0.9781476, 0, -0.2079117, 0, 1, 0, 0.2079117, 0, 0.9781476, 16.5, 0, 2.8)
 collision_layer = 2
 collision_mask = 0
 
-[node name="Box" type="MeshInstance3D" parent="Props/@StaticBody3D@11" unique_id=1677081025]
+[node name="Box" type="MeshInstance3D" parent="Props/@StaticBody3D@11" unique_id=196305539]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.6)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_ulyuo")
 
-[node name="BoxCol" type="CollisionShape3D" parent="Props/@StaticBody3D@11" unique_id=1611599681]
+[node name="BoxCol" type="CollisionShape3D" parent="Props/@StaticBody3D@11" unique_id=633074589]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.6)
 shape = SubResource("BoxShape3D_r55qf")
 
-[node name="Cab" type="MeshInstance3D" parent="Props/@StaticBody3D@11" unique_id=1729264185]
+[node name="Cab" type="MeshInstance3D" parent="Props/@StaticBody3D@11" unique_id=1312241415]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 2.1)
 material_override = ExtResource("1_i4rcu")
 mesh = SubResource("BoxMesh_rhlof")
 
-[node name="CabCol" type="CollisionShape3D" parent="Props/@StaticBody3D@11" unique_id=960271400]
+[node name="CabCol" type="CollisionShape3D" parent="Props/@StaticBody3D@11" unique_id=2095397564]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 2.1)
 shape = SubResource("BoxShape3D_p6rmg")
 
-[node name="Stripe" type="MeshInstance3D" parent="Props/@StaticBody3D@11" unique_id=1266523233]
+[node name="Stripe" type="MeshInstance3D" parent="Props/@StaticBody3D@11" unique_id=794478659]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.6)
 material_override = ExtResource("9_2ah61")
 mesh = SubResource("BoxMesh_6tfqg")
@@ -2216,83 +2216,83 @@ collision_layer = 2
 collision_mask = 0
 script = ExtResource("15_hbmtn")
 
-[node name="BoundaryWall" type="StaticBody3D" parent="Props" unique_id=1124051776]
+[node name="BoundaryWall" type="StaticBody3D" parent="Props" unique_id=178227362]
 collision_layer = 2
 collision_mask = 0
 
-[node name="Wall" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=2114112116]
+[node name="Wall" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=713890931]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 26, 0.55, 12)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_ipiwq")
 
-[node name="WallCol" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1911764241]
+[node name="WallCol" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1009469665]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 26, 0.55, 12)
 shape = SubResource("BoxShape3D_pa6ah")
 
-[node name="@MeshInstance3D@12" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1033890247]
+[node name="@MeshInstance3D@12" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1249047775]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 26, 0.55, -33)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_sd8sr")
 
-[node name="@CollisionShape3D@13" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1474103330]
+[node name="@CollisionShape3D@13" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1599465505]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 26, 0.55, -33)
 shape = SubResource("BoxShape3D_yumdq")
 
-[node name="@MeshInstance3D@14" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=339284297]
+[node name="@MeshInstance3D@14" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1216273916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.55, -38)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_43i5x")
 
-[node name="@CollisionShape3D@15" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1999666031]
+[node name="@CollisionShape3D@15" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=2138962816]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.55, -38)
 shape = SubResource("BoxShape3D_lcieo")
 
-[node name="@MeshInstance3D@16" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1701482984]
+[node name="@MeshInstance3D@16" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=298223438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 0.55, -38)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_3jdbn")
 
-[node name="@CollisionShape3D@17" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=656766669]
+[node name="@CollisionShape3D@17" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=760087115]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 0.55, -38)
 shape = SubResource("BoxShape3D_w51pm")
 
-[node name="@MeshInstance3D@18" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1758236652]
+[node name="@MeshInstance3D@18" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1403052449]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -26, 0.55, -10)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_4vxnc")
 
-[node name="@CollisionShape3D@19" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1345475194]
+[node name="@CollisionShape3D@19" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=754869975]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -26, 0.55, -10)
 shape = SubResource("BoxShape3D_fflvp")
 
-[node name="@MeshInstance3D@20" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1897382302]
+[node name="@MeshInstance3D@20" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1862401472]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -26, 0.55, 20)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_dmc2j")
 
-[node name="@CollisionShape3D@21" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1712671589]
+[node name="@CollisionShape3D@21" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1514000749]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -26, 0.55, 20)
 shape = SubResource("BoxShape3D_gu8y8")
 
-[node name="@MeshInstance3D@22" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1519738117]
+[node name="@MeshInstance3D@22" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1513515408]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.55, 28)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_4vxnc")
 
-[node name="@CollisionShape3D@23" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1732426504]
+[node name="@CollisionShape3D@23" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=658143765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.55, 28)
 shape = SubResource("BoxShape3D_fflvp")
 
-[node name="@MeshInstance3D@24" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=1002983301]
+[node name="@MeshInstance3D@24" type="MeshInstance3D" parent="Props/BoundaryWall" unique_id=575787692]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.55, 28)
 material_override = ExtResource("16_pysox")
 mesh = SubResource("BoxMesh_ku6st")
 
-[node name="@CollisionShape3D@25" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=1311474415]
+[node name="@CollisionShape3D@25" type="CollisionShape3D" parent="Props/BoundaryWall" unique_id=956217567]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.55, 28)
 shape = SubResource("BoxShape3D_hdab2")
 
-[node name="SalvageContainers" type="Node3D" parent="." unique_id=183598077 groups=["navigation_geometry"]]
+[node name="SalvageContainers" type="Node3D" parent="." unique_id=1034743060 groups=["navigation_geometry"]]
 
 [node name="ReceptionDrawer" type="Area3D" parent="SalvageContainers" unique_id=953733768 instance=ExtResource("17_b2ixs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -4.55)
@@ -2328,7 +2328,7 @@ loot_table = ExtResource("23_ot805")
 object_name = "Medical Supplies"
 focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="PharmacyCabinet" type="Area3D" parent="SalvageContainers" unique_id=1408490572 instance=ExtResource("20_puujd")]
+[node name="PharmacyCabinet" type="Area3D" parent="SalvageContainers" unique_id=1779366338 instance=ExtResource("20_puujd")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5, 0, 14.31)
 collision_layer = 16
 collision_mask = 0
@@ -2340,7 +2340,7 @@ lid_open_rotation = Vector3(0, -110, 0)
 object_name = "Pharmacy Cabinet"
 focus_offset = Vector3(0, 0.98999995, 0)
 
-[node name="PatientBelongings" type="Area3D" parent="SalvageContainers" unique_id=875796073 instance=ExtResource("17_b2ixs")]
+[node name="PatientBelongings" type="Area3D" parent="SalvageContainers" unique_id=1803724344 instance=ExtResource("17_b2ixs")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 6.335, 0, 12.5)
 collision_layer = 16
 collision_mask = 0
@@ -2351,7 +2351,7 @@ loot_table = ExtResource("19_uuidp")
 object_name = "Patient Belongings"
 focus_offset = Vector3(0, 0.294, 0)
 
-[node name="SurgicalSupplies" type="Area3D" parent="SalvageContainers" unique_id=313666042 instance=ExtResource("22_7rnq6")]
+[node name="SurgicalSupplies" type="Area3D" parent="SalvageContainers" unique_id=1555216017 instance=ExtResource("22_7rnq6")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 6.26, 3.3, 2.5)
 collision_layer = 16
 collision_mask = 0
@@ -2362,7 +2362,7 @@ loot_table = ExtResource("23_ot805")
 object_name = "Surgical Supplies"
 focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="DoctorsLocker" type="Area3D" parent="SalvageContainers" unique_id=52466476 instance=ExtResource("17_b2ixs")]
+[node name="DoctorsLocker" type="Area3D" parent="SalvageContainers" unique_id=137534981 instance=ExtResource("17_b2ixs")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6.335, 3.3, -12.5)
 collision_layer = 16
 collision_mask = 0
@@ -2373,7 +2373,7 @@ loot_table = ExtResource("21_pgoqk")
 object_name = "Doctor's Locker"
 focus_offset = Vector3(0, 0.294, 0)
 
-[node name="RooftopStash" type="Area3D" parent="SalvageContainers" unique_id=173009952 instance=ExtResource("22_7rnq6")]
+[node name="RooftopStash" type="Area3D" parent="SalvageContainers" unique_id=550858335 instance=ExtResource("22_7rnq6")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4, 6.9, 3)
 collision_layer = 16
 collision_mask = 0
@@ -2384,7 +2384,7 @@ loot_table = ExtResource("25_jse1w")
 object_name = "Rooftop Stash"
 focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="TriageSupplies" type="Area3D" parent="SalvageContainers" unique_id=854115751 instance=ExtResource("22_7rnq6")]
+[node name="TriageSupplies" type="Area3D" parent="SalvageContainers" unique_id=1033168343 instance=ExtResource("22_7rnq6")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -0.26000023)
 collision_layer = 16
 collision_mask = 0
@@ -2395,7 +2395,7 @@ loot_table = ExtResource("23_ot805")
 object_name = "Triage Supplies"
 focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="StaffLocker" type="Area3D" parent="SalvageContainers" unique_id=1293096263 instance=ExtResource("17_b2ixs")]
+[node name="StaffLocker" type="Area3D" parent="SalvageContainers" unique_id=1477868500 instance=ExtResource("17_b2ixs")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -5.835, 0, -28.1)
 collision_layer = 16
 collision_mask = 0
@@ -2406,7 +2406,7 @@ loot_table = ExtResource("19_uuidp")
 object_name = "Staff Locker"
 focus_offset = Vector3(0, 0.294, 0)
 
-[node name="ShedToolChest" type="Area3D" parent="SalvageContainers" unique_id=1741765678 instance=ExtResource("22_7rnq6")]
+[node name="ShedToolChest" type="Area3D" parent="SalvageContainers" unique_id=1327008306 instance=ExtResource("22_7rnq6")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 14.2, 0, 21.76)
 collision_layer = 16
 collision_mask = 0
@@ -2417,11 +2417,11 @@ loot_table = ExtResource("26_724db")
 object_name = "Tool Chest"
 focus_offset = Vector3(0, 0.42000002, 0)
 
-[node name="CraftingStations" type="Node3D" parent="." unique_id=1437888809 groups=["navigation_geometry"]]
+[node name="CraftingStations" type="Node3D" parent="." unique_id=1351401114 groups=["navigation_geometry"]]
 
-[node name="Towers" type="Node3D" parent="." unique_id=814566441 groups=["navigation_geometry"]]
+[node name="Towers" type="Node3D" parent="." unique_id=378586259 groups=["navigation_geometry"]]
 
-[node name="SalvagePiles" type="Node3D" parent="." unique_id=917399585]
+[node name="SalvagePiles" type="Node3D" parent="." unique_id=1702611575]
 
 [node name="HallVending" type="Area3D" parent="SalvagePiles" unique_id=1708227069 instance=ExtResource("27_0rj0s")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.6, 0, 3.4)
@@ -2451,7 +2451,7 @@ ExtResource("31_vvdqq"): 1
 pile_name = "Broken Furniture"
 focus_offset = Vector3(0, 0.36, 0)
 
-[node name="SouthWardWreck" type="Area3D" parent="SalvagePiles" unique_id=513680515 instance=ExtResource("33_bohsn")]
+[node name="SouthWardWreck" type="Area3D" parent="SalvagePiles" unique_id=377807081 instance=ExtResource("33_bohsn")]
 transform = Transform3D(0.9396926, 0, -0.34202012, 0, 1, 0, 0.34202012, 0, 0.9396926, 2.5, 0, 10)
 collision_layer = 16
 collision_mask = 0
@@ -2464,7 +2464,7 @@ ExtResource("31_vvdqq"): 1
 pile_name = "Broken Furniture"
 focus_offset = Vector3(0, 0.36, 0)
 
-[node name="OldXRay" type="Area3D" parent="SalvagePiles" unique_id=1663437065 instance=ExtResource("27_0rj0s")]
+[node name="OldXRay" type="Area3D" parent="SalvagePiles" unique_id=270152887 instance=ExtResource("27_0rj0s")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -3, 3.3, -11.5)
 collision_layer = 16
 collision_mask = 0
@@ -2479,7 +2479,7 @@ pile_name = "Busted Appliances"
 salvage_time = 2.0
 focus_offset = Vector3(0, 0.78, 0)
 
-[node name="AnnexMachine" type="Area3D" parent="SalvagePiles" unique_id=886141922 instance=ExtResource("27_0rj0s")]
+[node name="AnnexMachine" type="Area3D" parent="SalvagePiles" unique_id=1847079817 instance=ExtResource("27_0rj0s")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -12.4, 0, 6.6)
 collision_layer = 16
 collision_mask = 0
@@ -2494,7 +2494,7 @@ pile_name = "Busted Appliances"
 salvage_time = 2.0
 focus_offset = Vector3(0, 0.78, 0)
 
-[node name="StaffChair" type="Area3D" parent="SalvagePiles" unique_id=1714924239 instance=ExtResource("33_bohsn")]
+[node name="StaffChair" type="Area3D" parent="SalvagePiles" unique_id=333483384 instance=ExtResource("33_bohsn")]
 transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 0.29999995, 0, -28.4)
 collision_layer = 16
 collision_mask = 0
@@ -2518,7 +2518,7 @@ ExtResource("34_i5r1g"): 3
 })
 focus_offset = Vector3(0, 0.21, 0)
 
-[node name="ShedPalletB" type="Area3D" parent="SalvagePiles" unique_id=946372480 instance=ExtResource("35_13r6h")]
+[node name="ShedPalletB" type="Area3D" parent="SalvagePiles" unique_id=1841760037 instance=ExtResource("35_13r6h")]
 transform = Transform3D(0.9848077, 0, -0.17364818, 0, 1, 0, 0.17364818, 0, 0.9848077, 18.5, 0, 15)
 collision_layer = 16
 collision_mask = 0
@@ -2543,7 +2543,7 @@ pile_name = "Scrap Heap"
 salvage_time = 2.0
 focus_offset = Vector3(0, 0.36, 0)
 
-[node name="AmbulanceScrapB" type="Area3D" parent="SalvagePiles" unique_id=2083527464 instance=ExtResource("36_vdmg4")]
+[node name="AmbulanceScrapB" type="Area3D" parent="SalvagePiles" unique_id=576183212 instance=ExtResource("36_vdmg4")]
 transform = Transform3D(0.9659258, 0, -0.25881904, 0, 1, 0, 0.25881904, 0, 0.9659258, 12, 0, 6.8)
 collision_layer = 16
 collision_mask = 0
@@ -2557,7 +2557,7 @@ pile_name = "Scrap Heap"
 salvage_time = 2.0
 focus_offset = Vector3(0, 0.36, 0)
 
-[node name="Loot" type="Node3D" parent="." unique_id=1483155517]
+[node name="Loot" type="Node3D" parent="." unique_id=1723906706]
 
 [node name="HallBandages" type="Area3D" parent="Loot" unique_id=1900172670 instance=ExtResource("38_hg6jd")]
 transform = Transform3D(0.77692443, 0, -0.6295939, 0, 1, 0, 0.6295939, 0, 0.77692443, 3, 1, -2.2)
@@ -2568,7 +2568,7 @@ script = ExtResource("39_cxbcj")
 item = ExtResource("40_135wl")
 quantity = 2
 
-[node name="WardChemicals" type="Area3D" parent="Loot" unique_id=711035777 instance=ExtResource("38_hg6jd")]
+[node name="WardChemicals" type="Area3D" parent="Loot" unique_id=329938541 instance=ExtResource("38_hg6jd")]
 transform = Transform3D(0.993253, 0, 0.115967825, 0, 1, 0, -0.115967825, 0, 0.993253, -3.8, 0, -9)
 collision_layer = 16
 collision_mask = 0
@@ -2576,7 +2576,7 @@ monitoring = false
 script = ExtResource("39_cxbcj")
 item = ExtResource("41_ih85v")
 
-[node name="UpstairsMedkit" type="Area3D" parent="Loot" unique_id=677460980 instance=ExtResource("38_hg6jd")]
+[node name="UpstairsMedkit" type="Area3D" parent="Loot" unique_id=277821637 instance=ExtResource("38_hg6jd")]
 transform = Transform3D(0.9885942, 0, -0.15060395, 0, 1, 0, 0.15060395, 0, 0.9885942, 2, 4.1, 9)
 collision_layer = 16
 collision_mask = 0
@@ -2584,7 +2584,7 @@ monitoring = false
 script = ExtResource("39_cxbcj")
 item = ExtResource("42_blgam")
 
-[node name="AnnexAmmo" type="Area3D" parent="Loot" unique_id=1161987911 instance=ExtResource("38_hg6jd")]
+[node name="AnnexAmmo" type="Area3D" parent="Loot" unique_id=2055370169 instance=ExtResource("38_hg6jd")]
 transform = Transform3D(0.768245, 0, -0.640156, 0, 1, 0, 0.640156, 0, 0.768245, -13.8, 0, 1)
 collision_layer = 16
 collision_mask = 0
@@ -2593,7 +2593,7 @@ script = ExtResource("39_cxbcj")
 item = ExtResource("43_dyt1u")
 quantity = 8
 
-[node name="StaffCloth" type="Area3D" parent="Loot" unique_id=942399018 instance=ExtResource("38_hg6jd")]
+[node name="StaffCloth" type="Area3D" parent="Loot" unique_id=2009159802 instance=ExtResource("38_hg6jd")]
 transform = Transform3D(0.96941423, 0, -0.24543032, 0, 1, 0, 0.24543032, 0, 0.96941423, 0, 0.75, -31)
 collision_layer = 16
 collision_mask = 0
@@ -2602,7 +2602,7 @@ script = ExtResource("39_cxbcj")
 item = ExtResource("44_s7e4u")
 quantity = 3
 
-[node name="ShedElectronics" type="Area3D" parent="Loot" unique_id=1444196305 instance=ExtResource("38_hg6jd")]
+[node name="ShedElectronics" type="Area3D" parent="Loot" unique_id=93018366 instance=ExtResource("38_hg6jd")]
 transform = Transform3D(0.9989924, 0, -0.04487989, 0, 1, 0, 0.04487989, 0, 0.9989924, 11.6, 0, 18.6)
 collision_layer = 16
 collision_mask = 0
@@ -2610,7 +2610,7 @@ monitoring = false
 script = ExtResource("39_cxbcj")
 item = ExtResource("30_sinma")
 
-[node name="ShedFuel" type="Area3D" parent="Loot" unique_id=500740575 instance=ExtResource("38_hg6jd")]
+[node name="ShedFuel" type="Area3D" parent="Loot" unique_id=389860883 instance=ExtResource("38_hg6jd")]
 transform = Transform3D(0.8735753, 0, 0.4866889, 0, 1, 0, -0.4866889, 0, 0.8735753, 9, 0, 23.6)
 collision_layer = 16
 collision_mask = 0
@@ -2618,27 +2618,27 @@ monitoring = false
 script = ExtResource("39_cxbcj")
 item = ExtResource("45_ewvho")
 
-[node name="Signage" type="Node3D" parent="." unique_id=1843318409]
+[node name="Signage" type="Node3D" parent="." unique_id=1134597814]
 
-[node name="ClinicSign" type="MeshInstance3D" parent="Signage" unique_id=2015170345]
+[node name="ClinicSign" type="MeshInstance3D" parent="Signage" unique_id=793817320]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 7.03, 3, 0)
 material_override = SubResource("StandardMaterial3D_3rrb2")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_yg15u")
 
-[node name="Soundscape" type="Node3D" parent="." unique_id=159634023]
+[node name="Soundscape" type="Node3D" parent="." unique_id=1872871250]
 
-[node name="RaiderSpawner" type="Node3D" parent="." unique_id=235980655]
+[node name="RaiderSpawner" type="Node3D" parent="." unique_id=549817093]
 script = ExtResource("47_ur7l4")
 enemy_scene = ExtResource("48_u2ae4")
 respawn_delay = 45.0
 active_radius = 230.0
 
-[node name="Point0" type="Marker3D" parent="RaiderSpawner" unique_id=2109247578]
+[node name="Point0" type="Marker3D" parent="RaiderSpawner" unique_id=282389482]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.1, 18)
 
-[node name="Point1" type="Marker3D" parent="RaiderSpawner" unique_id=1695724331]
+[node name="Point1" type="Marker3D" parent="RaiderSpawner" unique_id=1482238726]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0.1, 18)
 
-[node name="Point2" type="Marker3D" parent="RaiderSpawner" unique_id=1404805598]
+[node name="Point2" type="Marker3D" parent="RaiderSpawner" unique_id=611097248]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -34)

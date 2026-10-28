@@ -1,0 +1,82 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_g87jn"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="2_dgvmr"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="3_wtocb"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="4_sf7ps"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="5_ntyrb"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="6_jktc3"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="7_s4och"]
+[ext_resource type="Resource" path="res://resources/items/foregrip.tres" id="8_rejwi"]
+[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="9_j4feu"]
+[ext_resource type="Resource" path="res://resources/items/weapons/service_rifle_item.tres" id="10_4yjou"]
+[ext_resource type="Resource" path="res://resources/items/weapons/shotgun_item.tres" id="11_rgg6f"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol_item.tres" id="12_x1tjt"]
+[ext_resource type="Resource" path="res://resources/items/weapons/scoped_rifle_item.tres" id="13_63uh5"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="14_qgq1g"]
+
+[sub_resource type="Resource" id="Resource_1senb"]
+script = ExtResource("1_g87jn")
+item = ExtResource("2_dgvmr")
+weight = 3.0
+min_quantity = 20
+max_quantity = 40
+
+[sub_resource type="Resource" id="Resource_oysnf"]
+script = ExtResource("1_g87jn")
+item = ExtResource("3_wtocb")
+weight = 2.0
+min_quantity = 8
+max_quantity = 16
+
+[sub_resource type="Resource" id="Resource_s4cw1"]
+script = ExtResource("1_g87jn")
+item = ExtResource("4_sf7ps")
+weight = 2.0
+min_quantity = 10
+max_quantity = 20
+
+[sub_resource type="Resource" id="Resource_nufff"]
+script = ExtResource("1_g87jn")
+item = ExtResource("5_ntyrb")
+
+[sub_resource type="Resource" id="Resource_tndgk"]
+script = ExtResource("1_g87jn")
+item = ExtResource("6_jktc3")
+
+[sub_resource type="Resource" id="Resource_jr8gp"]
+script = ExtResource("1_g87jn")
+item = ExtResource("7_s4och")
+
+[sub_resource type="Resource" id="Resource_2af0h"]
+script = ExtResource("1_g87jn")
+item = ExtResource("8_rejwi")
+
+[sub_resource type="Resource" id="Resource_g0k4m"]
+script = ExtResource("1_g87jn")
+item = ExtResource("9_j4feu")
+
+[sub_resource type="Resource" id="Resource_ekuda"]
+script = ExtResource("1_g87jn")
+item = ExtResource("10_4yjou")
+weight = 3.0
+
+[sub_resource type="Resource" id="Resource_hphut"]
+script = ExtResource("1_g87jn")
+item = ExtResource("11_rgg6f")
+weight = 3.0
+
+[sub_resource type="Resource" id="Resource_4ikw8"]
+script = ExtResource("1_g87jn")
+item = ExtResource("12_x1tjt")
+weight = 2.0
+
+[sub_resource type="Resource" id="Resource_q6hqb"]
+script = ExtResource("1_g87jn")
+item = ExtResource("13_63uh5")
+
+[resource]
+script = ExtResource("14_qgq1g")
+one_of = Array[ExtResource("1_g87jn")]([SubResource("Resource_ekuda"), SubResource("Resource_hphut"), SubResource("Resource_4ikw8"), SubResource("Resource_q6hqb")])
+entries = Array[ExtResource("1_g87jn")]([SubResource("Resource_1senb"), SubResource("Resource_oysnf"), SubResource("Resource_s4cw1"), SubResource("Resource_nufff"), SubResource("Resource_tndgk"), SubResource("Resource_jr8gp"), SubResource("Resource_2af0h"), SubResource("Resource_g0k4m")])
+min_rolls = 2

@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_trgh7"]
+[ext_resource type="Resource" path="res://resources/items/weapons/scoped_rifle_item.tres" id="2_lotc6"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol_item.tres" id="3_f7mrc"]
+[ext_resource type="Resource" path="res://resources/items/scope_4x.tres" id="4_qjnkl"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="5_jltg5"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="6_ftbl1"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="7_glxd2"]
+[ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="8_u7c12"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_uuwwm"]
+
+[sub_resource type="Resource" id="Resource_u5pcl"]
+script = ExtResource("1_trgh7")
+item = ExtResource("2_lotc6")
+
+[sub_resource type="Resource" id="Resource_5ev0e"]
+script = ExtResource("1_trgh7")
+item = ExtResource("3_f7mrc")
+
+[sub_resource type="Resource" id="Resource_f44dc"]
+script = ExtResource("1_trgh7")
+item = ExtResource("4_qjnkl")
+
+[sub_resource type="Resource" id="Resource_8f5r3"]
+script = ExtResource("1_trgh7")
+item = ExtResource("5_jltg5")
+
+[sub_resource type="Resource" id="Resource_ch2dk"]
+script = ExtResource("1_trgh7")
+item = ExtResource("6_ftbl1")
+
+[sub_resource type="Resource" id="Resource_sqlb6"]
+script = ExtResource("1_trgh7")
+item = ExtResource("7_glxd2")
+weight = 2.0
+min_quantity = 10
+max_quantity = 20
+
+[sub_resource type="Resource" id="Resource_6vsnd"]
+script = ExtResource("1_trgh7")
+item = ExtResource("8_u7c12")
+min_quantity = 6
+max_quantity = 12
+
+[resource]
+script = ExtResource("9_uuwwm")
+guaranteed = Array[ExtResource("1_trgh7")]([SubResource("Resource_6vsnd")])
+entries = Array[ExtResource("1_trgh7")]([SubResource("Resource_u5pcl"), SubResource("Resource_5ev0e"), SubResource("Resource_f44dc"), SubResource("Resource_8f5r3"), SubResource("Resource_ch2dk"), SubResource("Resource_sqlb6")])

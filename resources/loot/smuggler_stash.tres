@@ -1,72 +1,100 @@
 [gd_resource type="Resource" script_class="LootTable" format=3]
 
-[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_2wv2i"]
-[ext_resource type="Resource" path="res://resources/items/suppressor.tres" id="2_gq7i0"]
-[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="3_lipc4"]
-[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="4_ea21g"]
-[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="5_ahcq8"]
-[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="6_hs3vo"]
-[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="7_ncw33"]
-[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="8_anbt1"]
-[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="9_c7t2a"]
-[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="10_m8c4q"]
-[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="11_cia8s"]
-[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="12_yk0eo"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_hs3vo"]
+[ext_resource type="Resource" path="res://resources/items/suppressor.tres" id="2_ncw33"]
+[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="3_anbt1"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="4_c7t2a"]
+[ext_resource type="Resource" path="res://resources/items/scope_4x.tres" id="5_m8c4q"]
+[ext_resource type="Resource" path="res://resources/items/foregrip.tres" id="6_cia8s"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="7_yk0eo"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="8_ms8ux"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="9_cb5dy"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="10_4tupo"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="11_kavxs"]
+[ext_resource type="Resource" path="res://resources/items/gun_receiver.tres" id="12_3e175"]
+[ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="13_xofy5"]
+[ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="14_kaoxh"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="15_v0qsc"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="16_0yvon"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="17_e2nyj"]
 
-[sub_resource type="Resource" id="Resource_ms8ux"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("2_gq7i0")
+[sub_resource type="Resource" id="Resource_ome25"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("2_ncw33")
 
-[sub_resource type="Resource" id="Resource_cb5dy"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("3_lipc4")
+[sub_resource type="Resource" id="Resource_xerax"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("3_anbt1")
 
-[sub_resource type="Resource" id="Resource_4tupo"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("4_ea21g")
+[sub_resource type="Resource" id="Resource_riao5"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("4_c7t2a")
 
-[sub_resource type="Resource" id="Resource_kavxs"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("5_ahcq8")
+[sub_resource type="Resource" id="Resource_pbf0k"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("5_m8c4q")
+weight = 0.5
+
+[sub_resource type="Resource" id="Resource_wj6fy"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("6_cia8s")
+
+[sub_resource type="Resource" id="Resource_yoxco"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("7_yk0eo")
 weight = 2.0
 min_quantity = 15
 max_quantity = 30
 
-[sub_resource type="Resource" id="Resource_3e175"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("6_hs3vo")
+[sub_resource type="Resource" id="Resource_bc6sq"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("8_ms8ux")
 weight = 2.0
 min_quantity = 10
 max_quantity = 20
 
-[sub_resource type="Resource" id="Resource_xofy5"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("7_ncw33")
+[sub_resource type="Resource" id="Resource_hbd3w"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("9_cb5dy")
+min_quantity = 6
+max_quantity = 12
+
+[sub_resource type="Resource" id="Resource_kqt0j"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("10_4tupo")
 weight = 2.0
 max_quantity = 2
 
-[sub_resource type="Resource" id="Resource_kaoxh"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("8_anbt1")
+[sub_resource type="Resource" id="Resource_tk2wv"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("11_kavxs")
 weight = 2.0
 max_quantity = 3
 
-[sub_resource type="Resource" id="Resource_v0qsc"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("9_c7t2a")
+[sub_resource type="Resource" id="Resource_6mwsg"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("12_3e175")
 
-[sub_resource type="Resource" id="Resource_0yvon"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("10_m8c4q")
+[sub_resource type="Resource" id="Resource_qh5ns"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("13_xofy5")
 
-[sub_resource type="Resource" id="Resource_e2nyj"]
-script = ExtResource("1_2wv2i")
-item = ExtResource("11_cia8s")
+[sub_resource type="Resource" id="Resource_kx6ry"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("14_kaoxh")
+
+[sub_resource type="Resource" id="Resource_c826n"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("15_v0qsc")
+
+[sub_resource type="Resource" id="Resource_hg0uq"]
+script = ExtResource("1_hs3vo")
+item = ExtResource("16_0yvon")
 max_quantity = 2
 
 [resource]
-script = ExtResource("12_yk0eo")
-guaranteed = Array[ExtResource("1_2wv2i")]([SubResource("Resource_e2nyj")])
-entries = Array[ExtResource("1_2wv2i")]([SubResource("Resource_ms8ux"), SubResource("Resource_cb5dy"), SubResource("Resource_4tupo"), SubResource("Resource_kavxs"), SubResource("Resource_3e175"), SubResource("Resource_xofy5"), SubResource("Resource_kaoxh"), SubResource("Resource_v0qsc"), SubResource("Resource_0yvon")])
-min_rolls = 2
-max_rolls = 4
+script = ExtResource("17_e2nyj")
+guaranteed = Array[ExtResource("1_hs3vo")]([SubResource("Resource_hg0uq")])
+entries = Array[ExtResource("1_hs3vo")]([SubResource("Resource_ome25"), SubResource("Resource_xerax"), SubResource("Resource_riao5"), SubResource("Resource_pbf0k"), SubResource("Resource_wj6fy"), SubResource("Resource_yoxco"), SubResource("Resource_bc6sq"), SubResource("Resource_hbd3w"), SubResource("Resource_kqt0j"), SubResource("Resource_tk2wv"), SubResource("Resource_6mwsg"), SubResource("Resource_qh5ns"), SubResource("Resource_kx6ry"), SubResource("Resource_c826n")])
+min_rolls = 3
+max_rolls = 5

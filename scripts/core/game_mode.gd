@@ -17,6 +17,9 @@ signal player_respawned(player: PlayerController)
 @export var respawn_delay := 5.0
 ## Where players come back to life.
 @export var spawn_point: Node3D
+## Dying leaves everything you carried (backpack and guns) in a DeathCache
+## where you fell; you come back with only your blade (Increment 16.6).
+@export var drop_gear_on_death := true
 ## The player(s) this game mode manages. In co-op, joined players are added
 ## with register_player().
 @export var players: Array[PlayerController] = []
@@ -25,6 +28,8 @@ signal player_respawned(player: PlayerController)
 var _death_times := {}
 ## Cause text for the HUD, per player.
 var _death_causes := {}
+## player -> the DeathCache from their last death
+var _dropped := {}
 
 
 func _ready() -> void:
@@ -73,7 +78,18 @@ func try_respawn(player: PlayerController) -> bool:
 func _on_player_died(info: DamageInfo, player: PlayerController) -> void:
 	_death_times[player] = Time.get_ticks_msec()
 	_death_causes[player] = describe_cause(info)
+	if drop_gear_on_death:
+		player.close_container()
+		var parent := get_parent() as Node3D
+		if parent != null:
+			_dropped[player] = DeathCache.drop_for(player, parent, player.global_position)
 	player_died.emit(player, info)
+
+
+## The gear `player` dropped when they last died (null if none, or taken).
+func get_dropped_gear(player: PlayerController) -> DeathCache:
+	var c: Variant = _dropped.get(player)
+	return c if is_instance_valid(c) else null
 
 
 func _on_respawn_requested(player: PlayerController) -> void:

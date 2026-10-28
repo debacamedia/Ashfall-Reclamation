@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_26p1a"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="2_1vupu"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="3_i05rm"]
+[ext_resource type="Resource" path="res://resources/items/rifle_308.tres" id="4_xi11l"]
+[ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="5_2vhe0"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="6_jqlrr"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_ykksb"]
+
+[sub_resource type="Resource" id="Resource_hqq4o"]
+script = ExtResource("1_26p1a")
+item = ExtResource("2_1vupu")
+weight = 2.0
+min_quantity = 15
+max_quantity = 30
+
+[sub_resource type="Resource" id="Resource_j8hnp"]
+script = ExtResource("1_26p1a")
+item = ExtResource("3_i05rm")
+weight = 2.0
+min_quantity = 10
+max_quantity = 20
+
+[sub_resource type="Resource" id="Resource_uvw83"]
+script = ExtResource("1_26p1a")
+item = ExtResource("4_xi11l")
+min_quantity = 10
+max_quantity = 20
+
+[sub_resource type="Resource" id="Resource_85rm2"]
+script = ExtResource("1_26p1a")
+item = ExtResource("5_2vhe0")
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_qm5et"]
+script = ExtResource("1_26p1a")
+item = ExtResource("6_jqlrr")
+min_quantity = 30
+max_quantity = 60
+
+[resource]
+script = ExtResource("7_ykksb")
+guaranteed = Array[ExtResource("1_26p1a")]([SubResource("Resource_qm5et")])
+entries = Array[ExtResource("1_26p1a")]([SubResource("Resource_hqq4o"), SubResource("Resource_j8hnp"), SubResource("Resource_uvw83"), SubResource("Resource_85rm2")])
+min_rolls = 2

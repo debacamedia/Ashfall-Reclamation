@@ -102,6 +102,26 @@ func give_weapon(def: WeaponDefinition) -> bool:
 	return true
 
 
+## Takes away every gun, keeping blades (dying: the guns go into your
+## dropped gear, Increment 16.6). The blade, if any, comes out.
+func remove_guns() -> void:
+	for s in range(1, SLOT_COUNT + 1):
+		var w := weapons[s]
+		if w != null and not w.definition.melee:
+			w.get_parent().remove_child(w)
+			w.queue_free()
+			weapons[s] = null
+	pending_slot = 0
+	_holstering = false
+	var first := first_owned_slot()
+	if first > 0:
+		_equip_now(first)
+	else:
+		current_slot = 0
+		if _player != null:
+			_player.weapon = null
+
+
 ## Starts switching to a slot (validated: owned, not already in hand).
 func request_slot(slot: int) -> bool:
 	if slot < 1 or slot > SLOT_COUNT or weapons[slot] == null:
