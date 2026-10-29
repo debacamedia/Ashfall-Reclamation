@@ -11,7 +11,7 @@ const DT := 1.0 / 60.0
 ## Site -> [where it stands in the zone, the road in (site coordinates)]
 const SITES := {
 	"SaintMercyClinic": [Vector3(245, 0, -205), Vector3(27, 0, -17)],
-	"AshCreekFarms": [Vector3(340, 0, -90), Vector3(-6, 0, 30)],
+	"AshCreekFarms": [Vector3(307, 0, -106), Vector3(0, 0, 40)],  # turned 39.5°: the road in is site +z (19.5)
 	"SmugglersGulch": [Vector3(150, 0, -395), Vector3(10, 0, 30)],
 	"BlackRidgeMine": [Vector3(262, 0, -552), Vector3(36, 0, 12)],
 	"NorthwatchOutpost": [Vector3(400, 0, -680), Vector3(0, 0, 26)],
@@ -133,7 +133,7 @@ func test_everything_reachable_on_foot_or_by_ladder() -> void:
 	var map := zone.get_world_3d().navigation_map
 	for key in SITES:
 		var s := _site(zone, key)
-		var start := NavigationServer3D.map_get_closest_point(map, s.position + (SITES[key][1] as Vector3))
+		var start := NavigationServer3D.map_get_closest_point(map, s.transform * (SITES[key][1] as Vector3))
 		# The site's road in joins up with the outpost
 		var home := NavigationServer3D.map_get_path(map, NavigationServer3D.map_get_closest_point(map, Vector3(0, 0, 40)), start, true)
 		check(home.size() > 1 and home[home.size() - 1].distance_to(start) < 1.0, "%s: a way there from Outpost 17" % key)
@@ -257,7 +257,7 @@ func test_raiders_wait_at_each_place() -> void:
 	var map := zone.get_world_3d().navigation_map
 	for key in SITES:
 		var s := _site(zone, key)
-		await _teleport(p, s.position + (SITES[key][1] as Vector3) + Vector3.UP * 0.05)
+		await _teleport(p, s.transform * (SITES[key][1] as Vector3) + Vector3.UP * 0.05)
 		await get_tree().create_timer(EnemySpawner.CHECK_INTERVAL * 2.5).timeout
 		await wait_physics(10)
 		var count := 0

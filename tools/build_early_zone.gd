@@ -33,12 +33,14 @@ const OUTPOST_SCENE := "res://levels/outpost_17/outpost_17.tscn"
 const HALDENS_SCENE := "res://levels/haldens_crossing/haldens_crossing.tscn"
 const HALDENS_AT := Vector3(450, 0, -275)
 
-## Places: node name -> [display name, centre (x, z), radius, compass name]
+## Places: node name -> [display name, centre (x, z), radius, compass name,
+## (optional) yaw in degrees: the site is turned that much (Ash Creek, 19.5,
+## faces the railway and the main road)]
 const PLACES := {
 	"Outpost17": ["Outpost 17", Vector2(0, 5), 85.0, "Outpost 17"],
 	"HaldensCrossing": ["Halden's Crossing", Vector2(450, -275), 115.0, "Halden's"],
 	"SaintMercyClinic": ["Saint Mercy Clinic", Vector2(245, -205), 50.0, "Saint Mercy"],
-	"AshCreekFarms": ["Ash Creek Farms", Vector2(340, -90), 65.0, "Ash Creek"],
+	"AshCreekFarms": ["Ash Creek Farms", Vector2(307, -106), 80.0, "Ash Creek", 39.52],  # moved off the railway (19.5)
 	"SmugglersGulch": ["Smuggler's Gulch", Vector2(150, -395), 60.0, "Smuggler's Gulch"],
 	"BlackRidgeMine": ["Black Ridge Mine", Vector2(262, -552), 55.0, "Black Ridge"],
 	"NorthwatchOutpost": ["Northwatch Outpost", Vector2(400, -680), 45.0, "Northwatch"],
@@ -68,7 +70,7 @@ const ROADS := [
 		Vector2(425, -545), Vector2(410, -615), Vector2(402, -652)]],
 	["RoadToBlackRidge", "gravel", 5.0, [Vector2(438, -470), Vector2(395, -492), Vector2(345, -520),
 		Vector2(298, -540)]],
-	["FarmLane", "trail", 4.0, [Vector2(318, -12), Vector2(326, -40), Vector2(334, -62)]],
+	["FarmLane", "trail", 4.0, [Vector2(363, -38.1), Vector2(346.5, -58.2), Vector2(326.1, -82.9)]],  # under the farm's gateway (19.5)
 	["RoadEast", "gravel", 6.0, [Vector2(539, -275), Vector2(580, -279), Vector2(640, -287),
 		Vector2(700, -300), Vector2(760, -318)]],
 ]
@@ -105,7 +107,7 @@ const SIGNPOSTS := [
 	[Vector2(366, -265), ["SaintMercyClinic", "SmugglersGulch"]],
 	[Vector2(458, -385), ["NorthwatchOutpost", "BlackRidgeMine"]],
 	[Vector2(446, -478), ["NorthwatchOutpost", "BlackRidgeMine", "HaldensCrossing"]],
-	[Vector2(310, -6), ["AshCreekFarms", "Outpost17"]],
+	[Vector2(348, -44), ["AshCreekFarms", "Outpost17"]],  # at the farm lane (19.5)
 	[Vector2(231, -229), ["SmugglersGulch", "HaldensCrossing"]],  # at the trail head, clear of the staff house
 ]
 
@@ -463,7 +465,7 @@ const TINTS := [
 	[Vector2(120, -390), 230.0, Color(1.08, 0.8, 0.68)],    # Smuggler's Gulch: red earth
 	[Vector2(10, -240), 160.0, Color(1.05, 0.86, 0.74)],
 	[Vector2(450, -275), 175.0, Color(0.82, 0.78, 0.72)],   # Halden's: darker, trodden
-	[Vector2(340, -90), 110.0, Color(0.88, 0.86, 0.7)],     # Ash Creek: tilled
+	[Vector2(307, -106), 110.0, Color(0.88, 0.86, 0.7)],    # Ash Creek: tilled
 ]
 
 
@@ -733,13 +735,21 @@ func _roads() -> Node3D:
 	stop.rotation.y = atan2(-(RAIL[1] - RAIL[0]).x, -(RAIL[1] - RAIL[0]).y)
 	_box(stop, "Frame", Vector3(2.8, 1.1, 0.5), Vector3(0, 0.75, 0), "hazard")
 	rail.add_child(stop)
+	# Level crossings where a road meets the tracks (19.5)
+	var crossings := Node3D.new()
+	crossings.name = "LevelCrossings"
+	rail.add_child(crossings)
+	for c in level_crossings(rpts):
+		var lc := _level_crossing(c[0], c[1], c[2])
+		lc.name = "Crossing%d" % crossings.get_child_count()
+		crossings.add_child(lc)
 	# Signposts
 	var signs := Node3D.new()
 	signs.name = "Signposts"
 	root.add_child(signs)
 	for s in SIGNPOSTS:
 		signs.add_child(_signpost(s[0], s[1]))
-	print("  roads: %d, railway %.0f m, %d sleepers" % [ROADS.size(), _length(rpts), xforms.size()])
+	print("  roads: %d, railway %.0f m, %d sleepers, %d level crossings" % [ROADS.size(), _length(rpts), xforms.size(), crossings.get_child_count()])
 	return root
 
 
@@ -751,6 +761,57 @@ func _length(pts: PackedVector2Array) -> float:
 
 
 ## A wooden post with an arm pointing to each destination, labelled both sides.
+## Where each road crosses the railway: [[point, rail direction, width of
+## road along the rails]].
+func level_crossings(rpts: PackedVector2Array) -> Array:
+	var out := []
+	for road in ROADS:
+		var pts := _smooth(road[3], 1.0)
+		for i in pts.size() - 1:
+			for j in rpts.size() - 1:
+				var hit: Variant = Geometry2D.segment_intersects_segment(pts[i], pts[i + 1], rpts[j], rpts[j + 1])
+				if hit != null:
+					var rail_dir := (rpts[j + 1] - rpts[j]).normalized()
+					var skew := absf((pts[i + 1] - pts[i]).normalized().cross(rail_dir))
+					out.append([hit as Vector2, rail_dir, float(road[2]) / maxf(skew, 0.4)])
+	return out
+
+
+## Planks laid level with the rails where a road crosses, and a crossbuck
+## sign each side. Nothing here blocks a vehicle: the ground underneath is flat.
+func _level_crossing(at: Vector2, along: Vector2, road_w: float) -> Node3D:
+	var x := Node3D.new()
+	x.name = "Crossing"
+	x.position = Vector3(at.x, 0, at.y)
+	x.rotation.y = atan2(-along.y, along.x)  # local +X runs along the rails
+	var deck := road_w + 1.5
+	for side in [-1.0, 0.0, 1.0]:
+		var plank := MeshInstance3D.new()
+		plank.name = "Planks%d" % int(side + 1.0)
+		var pm := BoxMesh.new()
+		pm.size = Vector3(deck, 0.12, 1.25 if side == 0.0 else 0.62)
+		plank.mesh = pm
+		plank.material_override = M["sign_wood"]
+		plank.position = Vector3(0, 0.38, side * 1.12)
+		x.add_child(plank)
+	for side in [-1.0, 1.0]:
+		var sign := _solid_body("Crossbuck" + ("L" if side < 0 else "R"))
+		sign.position = Vector3(side * (deck / 2.0 + 1.0), 0, side * 3.4)
+		_box(sign, "Post", Vector3(0.12, 3.0, 0.12), Vector3(0, 1.5, 0), "sign_wood")
+		for tilt in [-38.0, 38.0]:
+			var arm := MeshInstance3D.new()
+			arm.name = "Arm" + ("A" if tilt < 0 else "B")
+			var am := BoxMesh.new()
+			am.size = Vector3(1.5, 0.22, 0.04)
+			arm.mesh = am
+			arm.material_override = M["paint_white"]
+			arm.position = Vector3(0, 2.6, 0.08 * side)
+			arm.rotation = Vector3(0, 0, deg_to_rad(tilt))
+			sign.add_child(arm)
+		x.add_child(sign)
+	return x
+
+
 func _signpost(at: Vector2, destinations: Array) -> Node3D:
 	var post := _solid_body("Signpost")
 	post.position = Vector3(at.x, 0, at.y)
@@ -1051,6 +1112,8 @@ func _zone(bake := true) -> void:
 		site.name = pair[0]
 		var c: Vector2 = PLACES[pair[0]][1]
 		site.position = Vector3(c.x, 0, c.y)
+		if (PLACES[pair[0]] as Array).size() > 4:
+			site.rotation.y = deg_to_rad(float(PLACES[pair[0]][4]))
 		zone.add_child(site)
 	# Landmarks (compass, place names)
 	var marks := Node3D.new()

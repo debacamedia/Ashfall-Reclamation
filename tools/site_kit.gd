@@ -69,6 +69,7 @@ const MATERIALS := {
 	"soot": "res://assets/materials/soot.tres",
 	"glass": "res://assets/materials/glass_dirty.tres",
 	"paint_white": "res://levels/early_zone/materials/paint_white.tres",
+	"sign_wood": "res://levels/early_zone/materials/sign_wood.tres",
 	"barn_red": "res://levels/early_zone/materials/barn_red.tres",
 	"red_cross": "res://levels/early_zone/materials/red_cross.tres",
 	"field_soil": "res://levels/early_zone/materials/field_soil.tres",

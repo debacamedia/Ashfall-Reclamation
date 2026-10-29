@@ -12,7 +12,7 @@ const PLACES := {
 	"Outpost17": Vector2(0, 5),
 	"HaldensCrossing": Vector2(450, -275),
 	"SaintMercyClinic": Vector2(245, -205),
-	"AshCreekFarms": Vector2(340, -90),
+	"AshCreekFarms": Vector2(307, -106),
 	"SmugglersGulch": Vector2(150, -395),
 	"BlackRidgeMine": Vector2(262, -552),
 	"NorthwatchOutpost": Vector2(400, -680),

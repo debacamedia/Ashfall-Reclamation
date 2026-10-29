@@ -45,6 +45,11 @@ const LOOT := {
 	"comms_gear": [1, 2, [["electronics", 1, 2, 3]], [["scope_4x", 1, 1, 1], ["spring", 1, 1, 2], ["metal_plate", 1, 1, 1], ["rifle_308", 1, 5, 10]]],
 }
 
+## Ash Creek's fields (19.5): four in a row behind the farmhouse.
+const FIELD_X := [-36.0, -12.0, 12.0, 36.0]
+const FIELD_Z := -50.0
+const FIELD_SIZE := Vector2(22, 20)
+
 const BOARD := Rect2(0.045, 0.145, 0.911, 0.713)  ## the board in a Pack 3 sign image
 const P3 := "res://assets/ashfall_pack_v3/materials/"
 
@@ -226,10 +231,21 @@ func _saint_mercy() -> Kit:
 
 # ================================================================ Ash Creek Farms
 
+## Ash Creek Farms (laid out again in Increment 19.5). The site is turned in
+## the zone so its front faces south-east, toward the railway and the main
+## road (PLACES yaw in build_early_zone.gd): here -z is the back, +z the front,
+## +x runs north-east along the tracks.
+##
+## The lane comes in under a gateway arch into a yard. The farmhouse faces
+## the yard from the back; the barn (food shelves along its back wall) and
+## silo are on the right; the tool shed, pump house and water tower on the
+## left; the fields in a row behind. The front right is left open for new
+## buildings, and the fences and guard posts are built by settlers once the
+## farm is claimed (19.6).
 func _ash_creek() -> Kit:
 	var k := Kit.new("AshCreekFarms", "Ash Creek Farms", 202)
-	# Farmhouse: two rooms, a porch, the front door facing the lane
-	var f := k.building("Farmhouse", Vector2(-8, 8), 0, Vector2(10, 8), {
+	# Farmhouse: two rooms, a porch facing the yard
+	var f := k.building("Farmhouse", Vector2(0, -16), 0, Vector2(10, 8), {
 		"wall": "wood", "floor": "wood", "roof": "pitched",
 		"openings": [["S", -2, "door"], ["S", 2.5, "window"], ["N", -2.5, "window"], ["N", 2.5, "window"],
 			["W", 0, "window"], ["E", 0, "door"]],
@@ -243,10 +259,11 @@ func _ash_creek() -> Kit:
 	k.container_at_wall("crate", "Pantry", f, "E", 2.6, "town_supplies", "Pantry")
 	k.pile("furniture", "KitchenChair", f, Vector3(-1.4, 0, 2.2), 40)
 	k.pickup("cloth", 2, "FarmCloth", f, Vector3(2.4, 0.75, 0.8))
-	# The barn, with a hayloft up a ladder
-	var b := k.building("Barn", Vector2(14, -14), 0, Vector2(12, 16), {
+	# The barn on the right of the yard, its big doors open onto it, with a
+	# hayloft up a ladder over the food shelves at the back
+	var b := k.building("Barn", Vector2(26, -2), -90, Vector2(12, 16), {
 		"wall": "barn_red", "floor": "wood", "roof": "pitched", "height": 5.4, "pitch": 3.0,
-		"openings": [["S", 0, "wide"], ["N", 3, "door"], ["E", 3, "window"], ["W", 3, "window"]],
+		"openings": [["S", 0, "wide"], ["E", 3, "window"], ["W", 3, "window"]],
 	})
 	var loft := k.solid_body(b, "Hayloft")
 	k.box(loft, "Deck", Vector3(11.4, 0.25, 6.0), Vector3(0, 2.875, -4.7), "wood")
@@ -261,8 +278,8 @@ func _ash_creek() -> Kit:
 	k.pile("scrap", "OldPlough", b, Vector3(-3.6, 0, 4.0), 60)
 	k.prop("wood_crate", "BarnCrateA", k.at(b, Vector3(4.6, 0, -0.4)), 15)
 	k.prop("wood_crate", "BarnCrateB", k.at(b, Vector3(-4.6, 0, 1.2)), -20)
-	# Tool shed with a workbench
-	var t := k.building("ToolShed", Vector2(-20, -6), 0, Vector2(6, 5), {
+	# The works on the left: tool shed, pump house, water tower, all facing the yard
+	var t := k.building("ToolShed", Vector2(-25, -16), 0, Vector2(6, 5), {
 		"wall": "corrugated", "floor": "concrete_plain", "roof": "flat", "roof_mat": "rust",
 		"openings": [["E", 0, "door"], ["N", -1, "window"]],
 	})
@@ -271,15 +288,14 @@ func _ash_creek() -> Kit:
 	k.container_at_wall("crate", "ShedCrate", t, "N", 1.3, "farm_shed", "Shed Crate")
 	k.container_at_wall("footlocker", "ToolChest", t, "W", -0.9, "tool_chest", "Tool Chest")
 	k.pickup("spring", 2, "ShedSprings", t, Vector3(1.4, 0, -0.2))
-	# Pump house by the water tower (the farm's future water)
-	var p := k.building("PumpHouse", Vector2(10, 22), 0, Vector2(5, 4), {
+	var p := k.building("PumpHouse", Vector2(-25, -2), 180, Vector2(5, 4), {
 		"wall": "concrete", "floor": "concrete_plain", "roof": "flat",
 		"openings": [["W", 0, "door"], ["S", 1, "window"]],
 	})
-	k.prop("water_tank", "PumpTank", k.at(p, Vector3(1.2, 0, -0.6)), 0)
+	k.prop("water_tank", "PumpTank", k.at(p, Vector3(1.2, 0, -0.6)), 180)
 	k.container_at_wall("footlocker", "PumpParts", p, "N", -1.0, "garage_parts", "Pump Parts")
 	# Water tower: a deck at 8 m with a ladder, a lookout over the fields
-	var tower := k.solid_body(k.groups["Buildings"], "WaterTower", Transform3D(Basis.IDENTITY, Vector3(-16, 0, 24)))
+	var tower := k.solid_body(k.groups["Buildings"], "WaterTower", Transform3D(Basis.IDENTITY, Vector3(-26, 0, 14)))
 	for leg in [Vector3(-1.8, 4, -1.8), Vector3(1.8, 4, -1.8), Vector3(-1.8, 4, 1.8), Vector3(1.8, 4, 1.8)]:
 		k.box(tower, "Leg", Vector3(0.3, 8.0, 0.3), leg, "wood")
 	k.box(tower, "Deck", Vector3(5.0, 0.2, 5.0), Vector3(0, 7.9, 0), "wood")
@@ -306,8 +322,8 @@ func _ash_creek() -> Kit:
 	tower.add_child(tcs)
 	k.ladder("TowerLadder", tower, Vector3(0, 0, 2.5), 0, 8.0)
 	k.container("crate", "LookoutStash", tower, Vector3(-1.3, 8.0, 1.5), 90, "sniper_stash", "Lookout Stash")
-	# Silo, chicken coop, tractor wreck, fuel
-	var silo := k.solid_body(k.groups["Buildings"], "Silo", Transform3D(Basis.IDENTITY, Vector3(26, 0, -24)))
+	# Silo behind the barn
+	var silo := k.solid_body(k.groups["Buildings"], "Silo", Transform3D(Basis.IDENTITY, Vector3(40, 0, -14)))
 	var sm := MeshInstance3D.new()
 	sm.name = "Body"
 	var scm := CylinderMesh.new()
@@ -326,43 +342,60 @@ func _ash_creek() -> Kit:
 	scs.shape = ssh
 	scs.position.y = 6.0
 	silo.add_child(scs)
-	var c := k.building("ChickenCoop", Vector2(-24, 14), 0, Vector2(4, 3), {
+	# Chicken coop by the water tower
+	var c := k.building("ChickenCoop", Vector2(-14, 24), 0, Vector2(4, 3), {
 		"wall": "wood", "floor": "", "roof": "flat", "roof_mat": "rust", "height": 2.6,
 		"openings": [["E", 0, "door"]],
 	})
 	k.pile("furniture", "CoopNests", c, Vector3(-0.6, 0, 0), 90)
-	var tractor := k.solid_body(k.groups["Props"], "TractorWreck", Transform3D(Basis(Vector3.UP, deg_to_rad(35)), Vector3(-2, 0, -8)))
+	# A tractor left on the track to the fields, scrap and fuel round the yard
+	var tractor := k.solid_body(k.groups["Props"], "TractorWreck", Transform3D(Basis(Vector3.UP, deg_to_rad(35)), Vector3(-22, 0, -31)))
 	k.box(tractor, "Body", Vector3(1.8, 1.4, 3.2), Vector3(0, 1.0, 0), "rust")
 	k.box(tractor, "Cab", Vector3(1.4, 1.2, 1.4), Vector3(0, 2.2, -0.6), "rust")
-	k.pile("scrap", "TractorScrap", null, Vector3(1.5, 0, -10.5), 20)
-	k.pile("scrap", "RustyMachinery", null, Vector3(30, 0, -12), -30)
-	k.pile("appliance", "OldStove", null, Vector3(-15, 0, 14), 90)
-	k.pile("pallet", "YardPallet", null, Vector3(4, 0, 6), 45)
-	k.prop("fuel_drums", "FarmDrums", Vector3(22, 0, -2), 0)
-	k.pickup("fuel", 1, "YardFuel", null, Vector3(23.6, 0, 0.2))
-	k.pickup("metal_pipe", 1, "YardPipe", null, Vector3(-4, 0, -5))
-	k.pickup("wood_plank", 3, "YardPlanks", null, Vector3(6.5, 0, 4.5))
-	# Fields of crops, and a fence along the lane
+	k.pile("scrap", "TractorScrap", null, Vector3(-18.5, 0, -33.5), 20)
+	k.pile("scrap", "RustyMachinery", null, Vector3(43, 0, 4), -30)
+	k.pile("appliance", "OldStove", null, Vector3(-12, 0, -21), 90)
+	k.pile("pallet", "YardPallet", null, Vector3(14, 0, 8), 45)
+	k.prop("fuel_drums", "FarmDrums", Vector3(38, 0, 10), 0)
+	k.pickup("fuel", 1, "YardFuel", null, Vector3(39.6, 0, 12.2))
+	k.pickup("metal_pipe", 1, "YardPipe", null, Vector3(-17, 0, -6))
+	k.pickup("wood_plank", 3, "YardPlanks", null, Vector3(10, 0, 12))
+	# The fields, in a row behind the farmhouse
 	_fields(k)
-	var fence := k.solid_body(k.groups["Props"], "LaneFence")
-	for side in [-1.0, 1.0]:
-		k.box(fence, "Rail", Vector3(0.1, 0.12, 20), Vector3(side * 4.0 - 6, 0.95, 32), "wood")
-		k.box(fence, "RailLow", Vector3(0.1, 0.12, 20), Vector3(side * 4.0 - 6, 0.5, 32), "wood")
-	k.spawner("RaiderSpawner", "raider", 2, 60.0, [Vector2(-32, -2), Vector2(40, -30)])
-	_ash_creek_settlement(k, f, b)
+	# A gateway arch where the lane comes in, high enough for the truck
+	var gate := k.solid_body(k.groups["Props"], "Gateway", Transform3D(Basis.IDENTITY, Vector3(0, 0, 36)))
+	for x in [-3.7, 3.7]:
+		k.box(gate, "PostL" if x < 0 else "PostR", Vector3(0.3, 5.0, 0.3), Vector3(x, 2.5, 0), "wood")
+	k.box(gate, "Beam", Vector3(8.2, 0.3, 0.3), Vector3(0, 4.8, 0), "wood")
+	k.box(gate, "Sign", Vector3(4.4, 0.7, 0.06), Vector3(0, 4.2, 0), "sign_wood", 0.0, false)
+	for face in [1.0, -1.0]:
+		var l := Label3D.new()
+		l.name = "SignText" + ("Front" if face > 0 else "Back")
+		l.text = "ASH CREEK FARMS"
+		l.font_size = 64
+		l.pixel_size = 0.005
+		l.outline_size = 0
+		l.modulate = Color(0.95, 0.9, 0.78)
+		l.double_sided = false
+		l.position = Vector3(0, 4.2, 0.035 * face)
+		l.rotation.y = 0.0 if face > 0 else PI
+		gate.add_child(l)
+	k.spawner("RaiderSpawner", "raider", 2, 60.0, [Vector2(-30, -36), Vector2(30, 16)])
+	_ash_creek_settlement(k, f, b, p)
 	return k
 
 
 ## Ash Creek Farms as a settlement (Increment 19): the notice board where you
-## claim it, the pump, the Farm Store (barn) and the Armory Locker
-## (farmhouse), beds for four, and the spots settlers work and stand guard.
-## The Settlement sits at the farm's centre (its defended area is round it).
-func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D) -> void:
+## claim it, the pump, the Farm Store (the food shelves at the back of the
+## barn, 19.5) and the Armory Locker (farmhouse), beds for four, and the spots
+## settlers work and stand guard. The Settlement sits at the farm's centre
+## (its defended area is round it).
+func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump_house: StaticBody3D) -> void:
 	var st := Settlement.new()
 	st.name = "Settlement"
 	k.root.add_child(st)
-	# Notice board in front of the porch, facing the lane
-	var board_at := Vector3(-4.2, 0, 15.4)
+	# Notice board in the yard by the porch, facing the gateway
+	var board_at := Vector3(5, 0, -7)
 	var board := k.solid_body(st, "NoticeBoard", Transform3D(Basis.IDENTITY, board_at))
 	for x in [-0.55, 0.55]:
 		k.box(board, "Post", Vector3(0.1, 1.9, 0.1), Vector3(x, 0.95, 0), "wood")
@@ -374,9 +407,9 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D) -> v
 	claim.position = board_at + Vector3(0, 1.4, 0.1)
 	st.add_child(claim)
 	_area(claim, Vector3(1.4, 1.0, 0.4))
-	# The pump, in the pump house in front of the water tank (the door's west)
-	var pump_at := Vector3(9.6, 0, 23.1)  # clear of the parts footlocker on the north wall
-	var pump_body := k.solid_body(st, "PumpHead", Transform3D(Basis.IDENTITY, pump_at))
+	# The pump, in the pump house in front of the water tank (by the door)
+	var pump_at := k.at(pump_house, Vector3(-0.4, 0, 1.1))  # clear of the parts footlocker on the north wall
+	var pump_body := k.solid_body(st, "PumpHead", Transform3D(Basis(Vector3.UP, pump_house.rotation.y), pump_at))
 	k.box(pump_body, "Base", Vector3(0.5, 0.2, 0.5), Vector3(0, 0.1, 0), "metal_dark")
 	k.box(pump_body, "Column", Vector3(0.22, 0.9, 0.22), Vector3(0, 0.65, 0), "rust")
 	k.box(pump_body, "Head", Vector3(0.34, 0.24, 0.3), Vector3(0, 1.2, 0), "rust")
@@ -385,16 +418,18 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D) -> v
 	var pump := WaterPump.new()
 	pump.name = "WaterPump"
 	pump.position = pump_at + Vector3(0, 0.9, 0)
+	pump.rotation.y = pump_house.rotation.y
 	st.add_child(pump)
 	_area(pump, Vector3(0.8, 1.6, 1.0))
-	# Farm Store in the barn; Armory Locker in the farmhouse kitchen
-	var store := k.scene("crate").instantiate() as Node3D
+	# The Farm Store: food shelves along the barn's back wall, under the loft
+	var store := (load("res://scenes/world/containers/food_shelves.tscn") as PackedScene).instantiate() as Node3D
 	store.name = "FarmStore"
-	store.position = k.at(barn, k.against(barn, "W", -2.0, 0.44))
-	store.rotation.y = k.yaw_in(barn, Kit.facing_from("W"))
+	store.position = k.at(barn, k.against(barn, "N", 0.0, 0.32))
+	store.rotation.y = k.yaw_in(barn, Kit.facing_from("N"))
 	store.set("container_name", "Farm Store")
 	store.set("object_name", "Farm Store")
 	st.add_child(store)
+	# Armory Locker in the farmhouse kitchen
 	var armory := k.scene("locker").instantiate() as Node3D
 	armory.name = "Armory"
 	armory.position = k.at(house, k.against(house, "E", -1.8, 0.39))
@@ -405,12 +440,16 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D) -> v
 	# Beds for four in the farmhouse's west room (clear of the bedroom chest)
 	for i in 3:
 		_bed(k, "SettlerBed%d" % i, house, [Vector3(-3.5, 0, -0.9), Vector3(-3.5, 0, 0.8), Vector3(-1.2, 0, -2.6)][i])
-	# Where farmers work, guards stand, newcomers walk in and everyone gathers
-	_markers(st, "FarmSpots", [Vector3(-38, 0, -20), Vector3(-34, 0, -30), Vector3(-42, 0, -14), Vector3(-38, 0, 34),
-		Vector3(40, 0, -6), Vector3(40, 0, 12), Vector3(2, 0, -48), Vector3(16, 0, -48)])
-	_markers(st, "GuardPosts", [Vector3(-6, 0, 17.5), Vector3(-6, 0, 30), Vector3(14, 0, -3.5), Vector3(-16, 0, 28),
-		Vector3(21, 0, 5)])
-	_markers(st, "", [["ArrivalPoint", Vector3(-6, 0, 44)], ["Hangout", Vector3(-8, 0, 16.5)]])
+	# Where farmers work (two to a field), guards stand (the gateway, the
+	# yard's corners and the fields), newcomers walk in and everyone gathers
+	var spots := []
+	for x in FIELD_X:
+		spots.append(Vector3(x - 5, 0, FIELD_Z - 4))
+		spots.append(Vector3(x + 5, 0, FIELD_Z + 4))
+	_markers(st, "FarmSpots", spots)
+	_markers(st, "GuardPosts", [Vector3(-4.5, 0, 32), Vector3(5, 0, 32), Vector3(-31, 0, 6), Vector3(42, 0, 16),
+		Vector3(0, 0, -32)])
+	_markers(st, "", [["ArrivalPoint", Vector3(0, 0, 74)], ["Hangout", Vector3(-2, 0, -6.5)]])
 	var people := Node3D.new()
 	people.name = "Settlers"
 	st.add_child(people)
@@ -449,8 +488,9 @@ func _fields(k: Kit) -> void:
 	var fields := Node3D.new()
 	fields.name = "Fields"
 	k.root.add_child(fields)
-	var plots := [[Vector2(-38, -24), Vector2(20, 30), "crop"], [Vector2(-38, 30), Vector2(20, 18), "crop_green"],
-		[Vector2(40, 4), Vector2(14, 36), "crop"], [Vector2(8, -48), Vector2(44, 14), "crop_green"]]
+	var plots := []
+	for i in FIELD_X.size():
+		plots.append([Vector2(FIELD_X[i], FIELD_Z), FIELD_SIZE, "crop" if i % 2 == 0 else "crop_green"])
 	var plant := CylinderMesh.new()
 	plant.top_radius = 0.04
 	plant.bottom_radius = 0.28

@@ -4,7 +4,7 @@ extends "res://tests/test_case.gd"
 ## guns, meals and leaving, the settlement screen, saving.
 
 const RAIDER_SCENE := preload("res://scenes/enemies/raider.tscn")
-const FARM := Vector3(340, 0, -90)
+const FARM := Vector3(307, 0, -106)
 
 var VEG: ItemDefinition = load("res://resources/items/vegetables.tres")
 var SCRAP: ItemDefinition = load("res://resources/items/scrap_metal.tres")
@@ -26,7 +26,7 @@ func _player(zone: Node3D) -> PlayerController:
 func _to_board(zone: Node3D) -> PlayerController:
 	var p := _player(zone)
 	var st := _farm(zone)
-	p.global_position = st.claim_point.global_position + Vector3(0, -1.35, 1.6)
+	p.global_position = st.claim_point.global_transform * Vector3(0, -1.35, 1.6)
 	p.rotation.y = 0.0
 	await wait_physics(5)
 	return p
@@ -121,7 +121,7 @@ func test_repair_the_pump() -> void:
 	p.inventory.add_item(SCRAP, 3)
 	p.inventory.add_item(PIPE, 2)
 	p.inventory.add_item(SPRING, 1)
-	p.global_position = st.pump.global_position + Vector3(-1.3, -0.85, 0)
+	p.global_position = st.pump.global_transform * Vector3(-1.3, -0.85, 0)
 	p.rotation.y = -PI / 2.0  # facing east, at the tank
 	await wait_physics(3)
 	check(st.pump.get_prompt(p).begins_with("Repair the pump"), "prompt: %s" % st.pump.get_prompt(p))
@@ -392,7 +392,7 @@ func test_settlement_screen() -> void:
 	screen.close()
 	check(not p.player_input.ui_open, "closed")
 	# The board opens it too
-	p.global_position = st.claim_point.global_position + Vector3(0, -1.35, 1.6)
+	p.global_position = st.claim_point.global_transform * Vector3(0, -1.35, 1.6)
 	p.rotation.y = 0.0
 	await wait_physics(5)
 	check(st.claim_point.try_interact(p, p.head.global_position) and screen.visible, "so does the notice board")

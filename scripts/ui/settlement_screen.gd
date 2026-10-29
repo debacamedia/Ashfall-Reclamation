@@ -233,7 +233,9 @@ func refresh() -> void:
 	var people := s.members()
 	var here := people.filter(func(p: Settler) -> bool: return p.has_arrived()).size()
 	var lines := []
-	lines.append("Fresh Vegetables:  %d   (%s / hour)" % [s.food(), _signed(r["food"])])
+	var cap := s.food_capacity()
+	lines.append("Fresh Vegetables:  %d / %d   (%s / hour)%s" % [s.food(), cap, _signed(r["food"]),
+		"   Store full" if cap > 0 and s.food() >= cap else ""])
 	lines.append("Water:  %d / %d L   (%s / hour)" % [roundi(s.water), roundi(s.water_capacity), _signed(r["water"])])
 	lines.append("Beds:  %d / %d in use%s" % [people.size(), s.beds, "" if here == people.size() else "  (%d on the way)" % (people.size() - here)])
 	lines.append("Farmers working:  %d" % r["farmers"])

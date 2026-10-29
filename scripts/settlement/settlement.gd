@@ -157,6 +157,14 @@ func food() -> int:
 	return store.inventory.count_of(FOOD) if store != null else 0
 
 
+## How many vegetables the store holds when full (its free space, plus what's
+## in it already).
+func food_capacity() -> int:
+	if store == null:
+		return 0
+	return food() + store.inventory.can_add(ItemDatabase.get_item(FOOD), 1 << 20)
+
+
 ## Water and food gained (or lost) per hour at the moment.
 func rates() -> Dictionary:
 	var pop := members().filter(func(s: Settler) -> bool: return s.has_arrived())
@@ -512,9 +520,15 @@ func on_settler_died(s: Settler) -> void:
 
 # ---------------------------------------------------------------- saving
 
+## Which layout of the place a save was made with. Ash Creek was laid out
+## again in 19.5 (layout 2): settlers saved standing round the old layout are
+## brought to the new one when it loads.
+const LAYOUT := 2
+
+
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "arrival_in": arrival_in,
-		"food_progress": _food_progress, "next_id": _next_id}
+		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT}
 
 
 func load_state(data: Dictionary) -> void:
@@ -525,6 +539,22 @@ func load_state(data: Dictionary) -> void:
 	_food_progress = clampf(_num(data.get("food_progress"), 0.0), 0.0, 1.0)
 	_next_id = maxi(int(_num(data.get("next_id"), 1.0)), _next_id)
 	_apply_claimed_look()
+	if int(_num(data.get("layout"), 1.0)) < LAYOUT:
+		_resettle.call_deferred()
+
+
+## After loading a save made with an older layout: everyone who'd arrived
+## gathers at the Hangout (they were standing where the old buildings were).
+func _resettle() -> void:
+	var h := get_node_or_null("Hangout") as Node3D
+	if h == null or not is_inside_tree():
+		return
+	var i := 0
+	for s in members():
+		if s.has_arrived():
+			s.global_position = h.global_position + Vector3((i % 3 - 1) * 1.2, 0.1, (i / 3) * 1.2)
+			s.velocity = Vector3.ZERO
+			i += 1
 
 
 static func _num(v: Variant, fallback: float) -> float:

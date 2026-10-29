@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 19 (Ash Creek Farms, the first settlement)
+## Current state: Increment 19.5 (Ash Creek Farms laid out again, food shelves)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -27,13 +27,14 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 17:** **the map** (**M**): the whole zone seen from above, **filling in as you explore** (you see further from rooftops and the water tower). It marks the seven places (greyed until you've been), the crafting benches you've found, what you've built, **your dropped gear** and the ash-storm edge. **Right-click to drop a pin** (up to 10): pins show on the **compass** too. Drag, scroll or pinch to move and zoom; the side panel lists the places and pins with their distances (click one to look at it). Saved with your game. See [`docs/increments/17_map.md`](docs/increments/17_map.md).
 - **Increment 18:** **a truck you can drive**, parked in Outpost 17's yard. **E** at the driver's door to get in, **W/S** drive and reverse, **A/D** steer, **Space** handbrake, **T** for a camera behind, **E** to get out. Up to 70 km/h. The **bed holds 48 slots / 400 kg** (E at the tailgate). It runs on **fuel**: 40 L tank, about 6.5 km a tank, and each Fuel Can adds 10 L at the fuel cap. Raiders hear the engine, and running into them hurts them. It's on the compass and the map, and saved where you leave it. See [`docs/increments/18_truck.md`](docs/increments/18_truck.md).
 - **Increment 19:** **Ash Creek Farms becomes your first settlement.**
-  - **Claiming it:** clear its raiders, then hold **E** at the notice board on the farmhouse porch. It turns green on the compass and map, and its raiders stop coming.
+  - **Claiming it:** clear its raiders, then hold **E** at the notice board by the farmhouse porch. It turns green on the compass and map, and its raiders stop coming.
   - **Water and food:** fix the **pump** (3 Scrap Metal, 2 Metal Pipe, a Spring). **Farmers** turn water into **Fresh Vegetables** in the Farm Store (in the barn), and everyone eats from it. Go hungry too long and settlers stop working, then leave.
   - **Settlers:** **newcomers** walk in when there's a free bed (4) and food. **Survivors** at Saint Mercy, Halden's and Black Ridge come if you ask them (E).
   - **Guards:** they patrol and shoot raiders. Arm them with your spare guns, or stock the **Armory Locker**.
   - **Running it:** press **L** for the settlement screen: jobs, guns, stocks.
 
   See [`docs/increments/19_ash_creek_settlement.md`](docs/increments/19_ash_creek_settlement.md).
+- **Increment 19.5:** **Ash Creek Farms laid out again.** The railway no longer runs through the farm: the farm sits beside the tracks, facing them, with a **level crossing** where its lane crosses (and at the main road near Halden's). The lane comes in under a gateway arch into a **yard**: the farmhouse at the back, the barn and silo on one side, the tool shed, pump house and water tower on the other, four **fields** in a row behind. **Food shelves** along the barn's back wall hold **1,200 vegetables** (was 240), with crates of produce showing as it fills; the settlement screen shows food against capacity. Old saves carry over. See [`docs/increments/19_5_farm_layout.md`](docs/increments/19_5_farm_layout.md).
 - **Resource Pack 3:** weathered brick, cracked asphalt, tar-paper roofs and painted containers; shop signs, raider graffiti and decals across Halden's Crossing and Outpost 17; bullet impacts that sound like the surface; crafting, salvage, pickup, reload and container sounds; town ambience. See [`docs/art/ashfall_pack_v3/INTEGRATION.md`](docs/art/ashfall_pack_v3/INTEGRATION.md) for what's integrated and what's only imported.
 
 ## Run it
