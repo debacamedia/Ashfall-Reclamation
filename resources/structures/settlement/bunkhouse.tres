@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_uf0x0"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_el42q"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_dd5kb"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_ul0hf"]
+
+[resource]
+script = ExtResource("4_ul0hf")
+id = &"bunkhouse"
+display_name = "Bunkhouse"
+scene_path = "res://scenes/settlement/bunkhouse.tscn"
+max_health = 1500.0
+footprint = Vector3(8.2, 4.6, 6.2)
+repair_cost = Dictionary[ExtResource("1_uf0x0"), int]({
+ExtResource("2_el42q"): 4,
+ExtResource("3_dd5kb"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_uf0x0"), int]({
+ExtResource("2_el42q"): 10,
+ExtResource("3_dd5kb"): 3
+})
+movable = false

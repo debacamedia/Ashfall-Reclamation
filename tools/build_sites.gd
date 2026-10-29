@@ -49,6 +49,29 @@ const LOOT := {
 const FIELD_X := [-36.0, -12.0, 12.0, 36.0]
 const FIELD_Z := -50.0
 const FIELD_SIZE := Vector2(22, 20)
+## Ash Creek's plan (19.6), laid out as sites when you claim it: fence runs
+## [name, from, to] in 4 m lengths (round the yard, with gaps for the
+## gateway and the track to the fields; round the fields, with a gate),
+## then guard posts at the yard's corners [name, at, facing out (x, z)].
+const FENCES := [
+	["FenceFrontLeft", Vector2(-40, 36), Vector2(-4, 36)],
+	["FenceFrontRight", Vector2(4, 36), Vector2(48, 36)],
+	["FenceRight", Vector2(48, 36), Vector2(48, -28)],
+	["FenceBackRight", Vector2(48, -28), Vector2(4, -28)],
+	["FenceBackLeft", Vector2(-4, -28), Vector2(-40, -28)],
+	["FenceLeft", Vector2(-40, -28), Vector2(-40, 36)],
+	["FieldFenceFrontLeft", Vector2(-48, -36), Vector2(-4, -36)],
+	["FieldFenceFrontRight", Vector2(4, -36), Vector2(48, -36)],
+	["FieldFenceRight", Vector2(48, -36), Vector2(48, -64)],
+	["FieldFenceBack", Vector2(48, -64), Vector2(-48, -64)],
+	["FieldFenceLeft", Vector2(-48, -64), Vector2(-48, -36)],
+]
+const GUARD_POSTS := [
+	["GuardPostFrontLeft", Vector2(-36, 32), Vector2(-1, 1)],
+	["GuardPostFrontRight", Vector2(44, 32), Vector2(1, 1)],
+	["GuardPostBackRight", Vector2(44, -24), Vector2(1, -1)],
+	["GuardPostBackLeft", Vector2(-36, -24), Vector2(-1, -1)],
+]
 
 const BOARD := Rect2(0.045, 0.145, 0.911, 0.713)  ## the board in a Pack 3 sign image
 const P3 := "res://assets/ashfall_pack_v3/materials/"
@@ -241,7 +264,7 @@ func _saint_mercy() -> Kit:
 ## silo are on the right; the tool shed, pump house and water tower on the
 ## left; the fields in a row behind. The front right is left open for new
 ## buildings, and the fences and guard posts are built by settlers once the
-## farm is claimed (19.6).
+## farm is claimed (19.6): see FENCES and GUARD_POSTS.
 func _ash_creek() -> Kit:
 	var k := Kit.new("AshCreekFarms", "Ash Creek Farms", 202)
 	# Farmhouse: two rooms, a porch facing the yard
@@ -349,7 +372,7 @@ func _ash_creek() -> Kit:
 	})
 	k.pile("furniture", "CoopNests", c, Vector3(-0.6, 0, 0), 90)
 	# A tractor left on the track to the fields, scrap and fuel round the yard
-	var tractor := k.solid_body(k.groups["Props"], "TractorWreck", Transform3D(Basis(Vector3.UP, deg_to_rad(35)), Vector3(-22, 0, -31)))
+	var tractor := k.solid_body(k.groups["Props"], "TractorWreck", Transform3D(Basis(Vector3.UP, deg_to_rad(80)), Vector3(-22, 0, -32)))
 	k.box(tractor, "Body", Vector3(1.8, 1.4, 3.2), Vector3(0, 1.0, 0), "rust")
 	k.box(tractor, "Cab", Vector3(1.4, 1.2, 1.4), Vector3(0, 2.2, -0.6), "rust")
 	k.pile("scrap", "TractorScrap", null, Vector3(-18.5, 0, -33.5), 20)
@@ -380,7 +403,7 @@ func _ash_creek() -> Kit:
 		l.position = Vector3(0, 4.2, 0.035 * face)
 		l.rotation.y = 0.0 if face > 0 else PI
 		gate.add_child(l)
-	k.spawner("RaiderSpawner", "raider", 2, 60.0, [Vector2(-30, -36), Vector2(30, 16)])
+	k.spawner("RaiderSpawner", "raider", 2, 60.0, [Vector2(-30, -32), Vector2(30, 16)])
 	_ash_creek_settlement(k, f, b, p)
 	return k
 
@@ -453,6 +476,30 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump
 	var people := Node3D.new()
 	people.name = "Settlers"
 	st.add_child(people)
+	# The plan settlers build once it's yours (19.6), and where sites go
+	var plans := Node3D.new()
+	plans.name = "Plans"
+	st.add_child(plans)
+	for i in 2:
+		# The yard's fence and its guard posts first, then the fields'
+		for f: Array in FENCES.slice(0, 6) if i == 0 else FENCES.slice(6):
+			var m := Marker3D.new()
+			m.name = f[0]
+			m.position = Vector3(f[1].x, 0, f[1].y)
+			m.set_meta("plan", "fence")
+			m.set_meta("to", Vector3(f[2].x, 0, f[2].y))
+			plans.add_child(m)
+		if i == 0:
+			for g: Array in GUARD_POSTS:
+				var m := Marker3D.new()
+				m.name = g[0]
+				var out: Vector2 = (g[2] as Vector2).normalized()
+				m.transform = Transform3D(Basis(Vector3.UP, atan2(-out.x, -out.y)), Vector3(g[1].x, 0, g[1].y))
+				m.set_meta("plan", "guard_post")
+				plans.add_child(m)
+	var sites := Node3D.new()
+	sites.name = "Sites"
+	st.add_child(sites)
 
 
 func _area(area: Area3D, size: Vector3) -> void:

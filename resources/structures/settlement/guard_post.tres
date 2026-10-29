@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_phn0q"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_wpgrj"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_xxiwj"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_fh112"]
+
+[resource]
+script = ExtResource("4_fh112")
+id = &"guard_post"
+display_name = "Guard Post"
+scene_path = "res://scenes/settlement/guard_post.tscn"
+max_health = 600.0
+footprint = Vector3(3.2, 2.7, 3.2)
+repair_cost = Dictionary[ExtResource("1_phn0q"), int]({
+ExtResource("3_xxiwj"): 2,
+ExtResource("2_wpgrj"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_phn0q"), int]({
+ExtResource("2_wpgrj"): 3,
+ExtResource("3_xxiwj"): 2
+})
+movable = false

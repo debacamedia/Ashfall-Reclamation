@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_36i1v"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_b2ujx"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_ei7my"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_ndwrc"]
+
+[resource]
+script = ExtResource("4_ndwrc")
+id = &"storehouse"
+display_name = "Storehouse"
+scene_path = "res://scenes/settlement/storehouse.tscn"
+max_health = 1500.0
+footprint = Vector3(12.2, 4.2, 6.2)
+repair_cost = Dictionary[ExtResource("1_36i1v"), int]({
+ExtResource("2_b2ujx"): 3,
+ExtResource("3_ei7my"): 2
+})
+dismantle_return = Dictionary[ExtResource("1_36i1v"), int]({
+ExtResource("2_b2ujx"): 8,
+ExtResource("3_ei7my"): 5
+})
+movable = false

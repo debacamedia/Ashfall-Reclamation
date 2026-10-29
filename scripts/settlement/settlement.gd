@@ -12,7 +12,12 @@ extends Node3D
 ##   - newcomers walk in when there's a free bed and spare food, and the
 ##     survivors you meet elsewhere can be sent here,
 ##   - guards patrol and shoot raiders; arm them from your backpack or by
-##     stocking the Armory Locker, which they take from themselves.
+##     stocking the Armory Locker, which they take from themselves,
+##   - Builders put up what's planned (Increment 19.6): the settlement's own
+##     fences and guard posts, laid out when you claim it, and the buildings
+##     you place in build mode (B): ConstructionSites under "Sites". You
+##     bring the materials (or leave them in the stores); what they build
+##     (SettlementBuildings) adds beds, shelves, guard spots and fields.
 ##
 ## Time: a settlement hour is `hour_seconds` of play (a minute), a day 24.
 ##
@@ -21,7 +26,9 @@ extends Node3D
 ##
 ## Built into the farm by tools/build_sites.gd. Children it uses:
 ##   ClaimPoint, WaterPump, FarmStore (container), Armory (container),
-##   FarmSpots/*, GuardPosts/*, ArrivalPoint, Hangout, Settlers (runtime).
+##   FarmSpots/*, GuardPosts/*, ArrivalPoint, Hangout, Settlers (runtime),
+##   Plans/* (what's laid out when it's claimed: markers with a "plan" meta
+##   and, for fences, a "to" end point), Sites (runtime ConstructionSites).
 
 signal claimed
 signal settler_arrived(settler: Settler)
@@ -32,6 +39,8 @@ signal pump_repaired
 signal refused(reason: String)
 ## Something worth a notice ("Maya is on the way to Ash Creek Farms").
 signal notice(text: String)
+## A building went up.
+signal built(site_name: String)
 
 const SETTLER_SCENE := "res://scenes/npcs/settler.tscn"
 const FOOD := &"vegetables"
@@ -39,6 +48,9 @@ const FOOD := &"vegetables"
 const CLAIMED_COLOR := Color(0.45, 0.9, 0.45)
 ## Repairing the pump takes these from your backpack.
 const PUMP_PARTS := {&"scrap_metal": 3, &"metal_pipe": 2, &"spring": 1}
+const SITE_SCENE := "res://scenes/settlement/construction_site.tscn"
+## How far from you a building can be planned (m).
+const PLAN_REACH := 14.0
 const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "Iris", "Joel", "Kit", "Lena",
 	"Milo", "Nora", "Otis", "Pearl", "Quinn", "Rosa", "Sam", "Tess", "Vic", "Wade", "Yara", "Zeke"]
 
@@ -92,6 +104,8 @@ var arrival_in := 0.0
 var _food_progress := 0.0
 var _next_id := 1
 var _armory_check := 0.0
+## The settlement's own plan has been laid out as sites (on claiming).
+var plans_laid := false
 ## Raider spawners stopped when it was claimed (restarted if a load unclaims it).
 var _stopped_spawners: Array[EnemySpawner] = []
 
@@ -100,6 +114,7 @@ var _stopped_spawners: Array[EnemySpawner] = []
 @onready var store: SalvageContainer = get_node_or_null("FarmStore")
 @onready var armory: SalvageContainer = get_node_or_null("Armory")
 @onready var settlers_root: Node3D = get_node_or_null("Settlers")
+@onready var sites_root: Node3D = get_node_or_null("Sites")
 
 
 func _ready() -> void:
@@ -133,7 +148,271 @@ func members() -> Array[Settler]:
 
 
 func free_beds() -> int:
-	return beds - members().size()
+	return total_beds() - members().size()
+
+
+## Beds in the farmhouse plus every bunkhouse built here.
+func total_beds() -> int:
+	var n := beds
+	for b in buildings():
+		n += b.beds
+	return n
+
+
+# ---------------------------------------------------------------- buildings
+
+## What's been built here (SettlementBuildings within the claim radius).
+func buildings() -> Array[SettlementBuilding]:
+	var out: Array[SettlementBuilding] = []
+	if not is_inside_tree():
+		return out
+	for n in get_tree().get_nodes_in_group("settlement_buildings"):
+		var b := n as SettlementBuilding
+		if b != null and not b.is_queued_for_deletion() and _within(b.global_position):
+			out.append(b)
+	return out
+
+
+func _within(p: Vector3) -> bool:
+	return Vector2(p.x - global_position.x, p.z - global_position.z).length() <= claim_radius
+
+
+## Where guards stand: the spots in the guard posts and towers built here,
+## or, until there are any, the settlement's own patrol points.
+func guard_posts() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	for b in buildings():
+		out.append_array(b.guard_spots())
+	return out
+
+
+func patrol_points() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var g := get_node_or_null("GuardPosts")
+	if g != null:
+		for c in g.get_children():
+			if c is Node3D:
+				out.append(c)
+	return out
+
+
+## Where farmers work: two to a field (the farm's own, then farm plots).
+func farm_spots() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var g := get_node_or_null("FarmSpots")
+	if g != null:
+		for c in g.get_children():
+			if c is Node3D:
+				out.append(c)
+	for b in buildings():
+		out.append_array(b.farm_spots())
+	return out
+
+
+## The things being built here, in the order they'll be built.
+func sites() -> Array[ConstructionSite]:
+	var out: Array[ConstructionSite] = []
+	if sites_root != null:
+		for c in sites_root.get_children():
+			var site := c as ConstructionSite
+			if site != null and not site.is_queued_for_deletion():
+				out.append(site)
+	return out
+
+
+## The site Builders work on now: the first with all its materials.
+func current_site() -> ConstructionSite:
+	for site in sites():
+		if site.is_supplied() and not site.is_done():
+			return site
+	return null
+
+
+## Lays out the settlement's own plan (fences, guard posts) as sites.
+func lay_out_plans() -> void:
+	if plans_laid or sites_root == null:
+		return
+	plans_laid = true
+	var plans := get_node_or_null("Plans")
+	if plans == null:
+		return
+	var have := {}
+	for site in sites():
+		have[site.key] = true
+	for m in plans.get_children():
+		var mark := m as Node3D
+		if mark == null or have.has(String(mark.name)):
+			continue
+		var plan := StringName(str(mark.get_meta("plan", "")))
+		if not SettlementPlans.has(plan):
+			continue
+		var pieces: Array[Transform3D] = []
+		var site_xf := mark.transform
+		if mark.has_meta("to"):
+			# A run of fence from the marker to "to", in 4 m lengths
+			var a := mark.position
+			var b: Vector3 = mark.get_meta("to")
+			var along := b - a
+			var n := maxi(roundi(along.length() / 4.0), 1)
+			var dir := along.normalized()
+			# The run's own +X points along it; each length faces +Z (out)
+			site_xf = Transform3D(Basis(Vector3.UP, atan2(-dir.z, dir.x)), a)
+			for i in n:
+				pieces.append(Transform3D(Basis.IDENTITY, Vector3((i + 0.5) * along.length() / n, 0, 0)))
+		else:
+			pieces.append(Transform3D.IDENTITY)
+		var site := _new_site(plan, pieces, String(mark.name))
+		site.transform = sites_root.transform.affine_inverse() * site_xf
+		sites_root.add_child(site)
+
+
+func _new_site(plan: StringName, pieces: Array[Transform3D], key := "") -> ConstructionSite:
+	var site := (load(SITE_SCENE) as PackedScene).instantiate() as ConstructionSite
+	site.name = key if key != "" else "Site%d" % _next_id
+	if key == "":
+		_next_id += 1
+	site.configure(plan, pieces, key)
+	return site
+
+
+func _on_site_finished(site: ConstructionSite) -> void:
+	built.emit(site.display_name())
+	notice.emit("The %s is built" % site.display_name().to_lower() if site.plan_id == &"fence" else "The %s at %s is built" % [site.display_name(), settlement_name])
+
+
+## "" if `player` can plan a `plan` at `xform` here, otherwise why not.
+func site_refusal_reason(player: PlayerController, plan: StringName, xform: Transform3D) -> String:
+	if player == null or player.is_dead():
+		return "Can't build now"
+	if not is_claimed:
+		return "Claim %s first" % settlement_name
+	if not SettlementPlans.has(plan) or not SettlementPlans.PLANS[plan]["placeable"]:
+		return "That can't be planned"
+	var def := SettlementPlans.structure(plan)
+	if def == null:
+		return "That can't be planned"
+	# Every corner inside the settlement
+	for c in _corners(def, xform):
+		if not _within(c):
+			return "Too far out: build inside %s" % settlement_name
+	if player.head.global_position.distance_to(xform.origin) > PLAN_REACH:
+		return "Too far away"
+	# Nothing in the way (buildings, props, people, other sites), on flat ground
+	var space := player.get_world_3d().direct_space_state
+	var q := PhysicsShapeQueryParameters3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(def.footprint.x, minf(def.footprint.y, 2.2), def.footprint.z) - Vector3(0.06, 0.06, 0.06)
+	q.shape = box
+	q.transform = Transform3D(xform.basis, xform.origin + Vector3.UP * (box.size.y * 0.5 + 0.08))
+	q.collision_mask = PhysicsLayers.WORLD_SOLID | PhysicsLayers.PLAYER | PhysicsLayers.NPCS | PhysicsLayers.INTERACTABLES
+	q.collide_with_areas = true
+	for hit in space.intersect_shape(q, 16):
+		var obj := hit["collider"] as CollisionObject3D
+		if obj == null or obj.collision_layer == PhysicsLayers.TERRAIN:
+			continue
+		if obj is ConstructionSite:
+			return "Something's already planned there"
+		return "Something's in the way"
+	for c in _corners(def, xform) + [xform.origin]:
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(c + Vector3.UP * 1.0, c + Vector3.DOWN * 1.0, PhysicsLayers.WORLD_SOLID))
+		if hit.is_empty():
+			return "Needs solid ground"
+		if absf((hit["position"] as Vector3).y - xform.origin.y) > 0.35:
+			return "The ground is too uneven"
+	return ""
+
+
+static func _corners(def: StructureDefinition, xform: Transform3D) -> Array[Vector3]:
+	var out: Array[Vector3] = []
+	for sx in [-0.5, 0.5]:
+		for sz in [-0.5, 0.5]:
+			out.append(xform * Vector3(def.footprint.x * sx, 0, def.footprint.z * sz))
+	return out
+
+
+## Plans a building at `xform` (validated): a site appears for Builders.
+func request_place_site(player: PlayerController, plan: StringName, xform: Transform3D) -> ConstructionSite:
+	var reason := site_refusal_reason(player, plan, xform)
+	if reason != "":
+		refused.emit(reason)
+		return null
+	var pieces: Array[Transform3D] = [Transform3D.IDENTITY]
+	var site := _new_site(plan, pieces)
+	site.transform = sites_root.global_transform.affine_inverse() * xform
+	sites_root.add_child(site)
+	notice.emit("%s planned. It needs %s; then a Builder" % [site.display_name(), SettlementPlans.cost_text(site.total_cost())])
+	return site
+
+
+## Hands `player`'s materials to `site` (validated).
+func request_deliver(player: PlayerController, site: ConstructionSite) -> int:
+	var reason := _site_reason(player, site)
+	if reason == "" and site.is_supplied():
+		reason = "It has everything it needs"
+	if reason == "" and not site.wants_any(player.inventory):
+		reason = "It needs %s" % SettlementPlans.cost_text(site.missing())
+	if reason != "":
+		refused.emit(reason)
+		return 0
+	var n := site.take_from(player.inventory)
+	if site.is_supplied():
+		notice.emit("The %s has everything%s" % [site.display_name(), "" if count_role(Settler.Role.BUILDER) > 0 else ": make someone a Builder (L)"])
+	return n
+
+
+## The player works on `site` for a moment (validated).
+func request_help_build(player: PlayerController, site: ConstructionSite) -> bool:
+	var reason := _site_reason(player, site)
+	if reason == "" and not site.is_supplied():
+		reason = "It needs %s first" % SettlementPlans.cost_text(site.missing())
+	if reason != "":
+		refused.emit(reason)
+		return false
+	site.add_work(ConstructionSite.HELP_HOURS)
+	return true
+
+
+## Calls off `site`: what was handed over comes back to `player` (what
+## doesn't fit goes into the stores).
+func request_cancel_site(player: PlayerController, site: ConstructionSite) -> bool:
+	var reason := _site_reason(player, site)
+	if reason != "":
+		refused.emit(reason)
+		return false
+	for id: StringName in site.delivered:
+		var item := ItemDatabase.get_item(id)
+		var left := int(site.delivered[id])
+		if player != null and player.inventory != null:
+			left -= player.inventory.add_item(item, left)
+		for st in stores():
+			if left <= 0:
+				break
+			st.inventory.max_weight = 0.0
+			left -= st.inventory.add_item(item, left)
+	site.delivered.clear()
+	notice.emit("The %s is called off" % site.display_name().to_lower())
+	site.queue_free()
+	return true
+
+
+func _site_reason(player: PlayerController, site: ConstructionSite) -> String:
+	if player == null or player.is_dead():
+		return "Can't do that now"
+	if site == null or not is_instance_valid(site) or site.is_queued_for_deletion() or site.settlement() != self:
+		return "That isn't being built here"
+	return ""
+
+
+## Sites short of materials take them from the stores.
+func _supply_sites() -> void:
+	for site in sites():
+		if site.is_supplied():
+			continue
+		for st in stores():
+			site.take_from(st.inventory)
+			if site.is_supplied():
+				notice.emit("The %s has its materials from the stores" % site.display_name().to_lower())
+				break
 
 
 func count_role(role: Settler.Role) -> int:
@@ -154,21 +433,56 @@ func raiders_here() -> int:
 # ---------------------------------------------------------------- stocks
 
 func food() -> int:
-	return store.inventory.count_of(FOOD) if store != null else 0
+	var n := 0
+	for st in stores():
+		n += st.inventory.count_of(FOOD)
+	return n
+
+
+## Every store: the Farm Store, then storehouse shelves built here.
+func stores() -> Array[SalvageContainer]:
+	var out: Array[SalvageContainer] = []
+	if store != null:
+		out.append(store)
+	for b in buildings():
+		if b.storage != null:
+			out.append(b.storage)
+	return out
+
+
+func _add_food(n: int) -> int:
+	var added := 0
+	for st in stores():
+		if added >= n:
+			break
+		added += st.inventory.add_item(ItemDatabase.get_item(FOOD), n - added)
+	return added
+
+
+func _eat(n: int) -> void:
+	var left := n
+	for st in stores():
+		if left <= 0:
+			break
+		var take := mini(st.inventory.count_of(FOOD), left)
+		if take > 0:
+			st.inventory.remove_item(FOOD, take)
+			left -= take
 
 
 ## How many vegetables the store holds when full (its free space, plus what's
 ## in it already).
 func food_capacity() -> int:
-	if store == null:
-		return 0
-	return food() + store.inventory.can_add(ItemDatabase.get_item(FOOD), 1 << 20)
+	var n := food()
+	for st in stores():
+		n += st.inventory.can_add(ItemDatabase.get_item(FOOD), 1 << 20)
+	return n
 
 
 ## Water and food gained (or lost) per hour at the moment.
 func rates() -> Dictionary:
 	var pop := members().filter(func(s: Settler) -> bool: return s.has_arrived())
-	var farmers := pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.FARMER).size()
+	var farmers := mini(pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.FARMER).size(), farm_spots().size())
 	var meals := pop.size() / meal_every_hours
 	return {
 		"water": (pump_water_per_hour if pump_working else barrel_water_per_hour) - farmers * farmer_water_per_hour - meals * water_per_meal,
@@ -202,6 +516,7 @@ func request_claim(player: Node3D) -> bool:
 	if store != null and store.inventory.count_of(FOOD) < starting_food:
 		store.inventory.add_item(ItemDatabase.get_item(FOOD), starting_food - store.inventory.count_of(FOOD))
 	_apply_claimed_look()
+	lay_out_plans()
 	claimed.emit()
 	notice.emit("%s is yours. Settlers will come when there's food and a bed (L: settlement)" % settlement_name)
 	return true
@@ -463,6 +778,7 @@ func _physics_process(delta: float) -> void:
 	if _armory_check <= 0.0:
 		_armory_check = 2.0
 		_supply_guards()
+		_supply_sites()
 
 
 ## Advances the settlement by `hours` (water, crops, meals, arrivals).
@@ -470,10 +786,16 @@ func simulate(hours: float) -> void:
 	var here := members().filter(func(s: Settler) -> bool: return s.has_arrived())
 	# Water
 	water = minf(water + (pump_water_per_hour if pump_working else barrel_water_per_hour) * hours, water_capacity)
-	# Crops: each working farmer turns water into vegetables
+	# Crops: each working farmer turns water into vegetables (one to a farm
+	# spot: more farmers than the fields can take stand idle)
+	var fields := farm_spots().size()
 	for s: Settler in here:
 		if s.role != Settler.Role.FARMER or not s.is_working():
 			continue
+		s.no_field = fields <= 0
+		if s.no_field:
+			continue
+		fields -= 1
 		var need := farmer_water_per_hour * hours
 		if water < need:
 			s.short_of_water = true
@@ -482,7 +804,7 @@ func simulate(hours: float) -> void:
 		water -= need
 		_food_progress += farmer_food_per_hour * hours
 	while _food_progress >= 1.0 and store != null:
-		if store.inventory.add_item(ItemDatabase.get_item(FOOD), 1) < 1:
+		if _add_food(1) < 1:
 			_food_progress = 1.0  # the store's full
 			break
 		_food_progress -= 1.0
@@ -492,7 +814,7 @@ func simulate(hours: float) -> void:
 		if s.next_meal > 0.0:
 			continue
 		if food() >= food_per_meal and water >= water_per_meal:
-			store.inventory.remove_item(FOOD, food_per_meal)
+			_eat(food_per_meal)
 			water -= water_per_meal
 			s.next_meal += meal_every_hours
 			s.unfed_hours = 0.0
@@ -504,6 +826,13 @@ func simulate(hours: float) -> void:
 				settler_lost.emit(s.settler_name, why)
 				notice.emit("%s has left %s: %s" % [s.settler_name, settlement_name, why])
 				s.leave()
+	# Building: each working Builder puts their hours into the current site
+	for s: Settler in here:
+		if s.role != Settler.Role.BUILDER or not s.is_working():
+			continue
+		var site := current_site()
+		if site != null:
+			site.add_work(hours)
 	# Newcomers
 	arrival_in -= hours
 	if arrival_in <= 0.0:
@@ -528,7 +857,7 @@ const LAYOUT := 2
 
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "arrival_in": arrival_in,
-		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT}
+		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid}
 
 
 func load_state(data: Dictionary) -> void:
@@ -539,6 +868,10 @@ func load_state(data: Dictionary) -> void:
 	_food_progress = clampf(_num(data.get("food_progress"), 0.0), 0.0, 1.0)
 	_next_id = maxi(int(_num(data.get("next_id"), 1.0)), _next_id)
 	_apply_claimed_look()
+	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
+	if is_claimed and not plans_laid:
+		# Claimed before settlers could build (Increment 19): lay the plan out now
+		lay_out_plans.call_deferred()
 	if int(_num(data.get("layout"), 1.0)) < LAYOUT:
 		_resettle.call_deferred()
 

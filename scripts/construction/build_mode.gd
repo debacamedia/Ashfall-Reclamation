@@ -15,6 +15,11 @@ extends Node
 ##                     of placing it, undamaged: you get the kit back)
 ##   B                 leave build mode
 ##
+## Inside a settlement you hold, the list also has its buildings
+## (Increment 19.6: bunkhouse, storehouse, guard tower, guard post, farm
+## plot): placing one plans it, as a ConstructionSite your Builders put up
+## once it has its materials. Nothing is used from your backpack.
+##
 ## Shows a see-through ghost at the spot you look at: green if it can go
 ## there, red with the reason if not. Looking at a structure you've built
 ## shows its health and the move/repair/dismantle keys instead.
@@ -37,6 +42,8 @@ signal changed
 var player: PlayerController
 var active := false
 var kits: Array[ItemDefinition] = []
+## Settlement buildings you can plan here (after the kits in the list).
+var plans: Array[StringName] = []
 var selected := 0
 var yaw := 0.0
 ## Under the crosshair: a built structure (move/repair/dismantle) or null.
@@ -87,7 +94,7 @@ func enter() -> bool:
 		return false
 	refresh_kits()
 	var root := ConstructionRules.structures_root(player.get_parent())
-	if kits.is_empty() and (root == null or root.get_child_count() == 0) and not _level_has_props():
+	if kits.is_empty() and plans.is_empty() and (root == null or root.get_child_count() == 0) and not _level_has_props():
 		player.build_refused.emit("No structure kits: craft one first (K)")
 		return false
 	active = true
@@ -124,10 +131,20 @@ func current_kit() -> ItemDefinition:
 	return kits[selected] if selected >= 0 and selected < kits.size() else null
 
 
+## The settlement building selected (or &"" when it's a kit or nothing).
+func current_plan() -> StringName:
+	var i := selected - kits.size()
+	return plans[i] if i >= 0 and i < plans.size() else &""
+
+
+func entry_count() -> int:
+	return kits.size() + plans.size()
+
+
 func select(direction: int) -> void:
-	if kits.is_empty() or moving != null:
+	if entry_count() == 0 or moving != null:
 		return
-	selected = wrapi(selected + direction, 0, kits.size())
+	selected = wrapi(selected + direction, 0, entry_count())
 	yaw = 0.0
 	_rebuild_ghost()
 	update_preview()
@@ -173,12 +190,19 @@ func place() -> Structure:
 		_end_move()
 		changed.emit()
 		return m
+	var plan := current_plan()
+	if plan != &"":
+		if target == null:
+			player.request_place_site(plan, ghost_transform)
+			update_preview()
+			changed.emit()
+		return null
 	var kit := current_kit()
 	if kit == null or target != null:
 		return null
 	var s := player.request_place_structure(kit, ghost_transform, current_variant())
 	refresh_kits()
-	if kits.is_empty():
+	if entry_count() == 0:
 		exit()
 	else:
 		_rebuild_ghost()
@@ -243,10 +267,13 @@ func dismantle() -> bool:
 	return ok
 
 
-## The kits in the inventory (one entry per kind), keeping the selection.
+## The kits in the inventory (one entry per kind), then the settlement
+## buildings you can plan where you stand, keeping the selection.
 func refresh_kits() -> void:
 	var before := current_kit()
+	var before_plan := current_plan()
 	kits.clear()
+	plans.clear()
 	if player == null or player.inventory == null:
 		return
 	for i in player.inventory.slot_count:
@@ -254,8 +281,12 @@ func refresh_kits() -> void:
 		if item != null and item.structure != null and not kits.has(item):
 			kits.append(item)
 	kits.sort_custom(func(a: ItemDefinition, b: ItemDefinition) -> bool: return a.display_name < b.display_name)
+	if player.is_inside_tree() and player.settlement_at(player.global_position) != null:
+		plans = SettlementPlans.placeable()
 	selected = maxi(kits.find(before), 0) if before != null else 0
-	if selected >= kits.size():
+	if before_plan != &"" and plans.has(before_plan):
+		selected = kits.size() + plans.find(before_plan)
+	if selected >= entry_count():
 		selected = 0
 
 
@@ -265,6 +296,8 @@ func refresh_kits() -> void:
 func ghost_definition() -> StructureDefinition:
 	if moving != null:
 		return moving.definition
+	if current_plan() != &"":
+		return SettlementPlans.structure(current_plan())
 	return current_variant()
 
 
@@ -280,7 +313,9 @@ func update_preview() -> void:
 	var exclude: Array[RID] = [player.get_rid()]
 	if moving != null:
 		exclude.append_array(moving.get_collision_rids())
-	var q := PhysicsRayQueryParameters3D.create(from, from + forward * (ConstructionRules.REACH + 1.0), PhysicsLayers.WORLD_SOLID, exclude)
+	var plan := current_plan() if moving == null else &""
+	var reach := Settlement.PLAN_REACH if plan != &"" else ConstructionRules.REACH
+	var q := PhysicsRayQueryParameters3D.create(from, from + forward * (reach + 1.0), PhysicsLayers.WORLD_SOLID, exclude)
 	var hit := space.intersect_ray(q)
 	target = null
 	if moving == null:
@@ -299,7 +334,7 @@ func update_preview() -> void:
 	# of the wall you look at, or the ground at arm's length
 	var point: Vector3
 	if hit.is_empty():
-		point = from + forward * ConstructionRules.REACH
+		point = from + forward * reach
 	else:
 		point = hit["position"]
 		var normal: Vector3 = hit["normal"]
@@ -312,6 +347,10 @@ func update_preview() -> void:
 		_show_ghost(false)
 		return
 	point.y = y
+	if plan != &"":
+		# A building: its near side where you look, its front (door) to you
+		var flat := Vector3(forward.x, 0, forward.z).normalized()
+		point += flat * (def.footprint.z * 0.5)
 	# Face the structure across your view unless you've rotated it yourself
 	var xform := ConstructionRules.snap(point, yaw + rad_to_deg(player.rotation.y))
 	var gy := _ground_y(space, xform.origin, exclude)
@@ -319,13 +358,15 @@ func update_preview() -> void:
 		xform.origin.y = gy
 	# Join onto what's already built nearby (R then sets the joint's angle)
 	snapped_to = null
-	var snap := ConstructionRules.snap_to_built(ConstructionRules.structures_root(player.get_parent()), def, point, yaw, moving)
+	var snap := ConstructionRules.snap_to_built(ConstructionRules.structures_root(player.get_parent()), def, point, yaw, moving) if plan == &"" else {}
 	if not snap.is_empty():
 		xform = snap["xform"]
 		snapped_to = snap["to"]
 	ghost_transform = xform
 	if moving != null:
 		ghost_reason = player.move_refusal_reason(moving, xform)
+	elif plan != &"":
+		ghost_reason = player.site_refusal_reason(plan, xform)
 	else:
 		ghost_reason = player.place_refusal_reason(current_kit(), xform, current_variant())
 	ghost_valid = ghost_reason == ""
@@ -399,6 +440,10 @@ func title_text() -> String:
 		if target is LevelProp:
 			return target.definition.display_name
 		return "%s  ·  %d%%" % [target.definition.display_name, roundi(target.get_health_fraction() * 100.0)]
+	var plan := current_plan()
+	if plan != &"":
+		return "Plan: %s  ·  needs %s%s" % [SettlementPlans.display_name(plan), SettlementPlans.cost_text(SettlementPlans.cost(plan)),
+			"   (%d/%d)" % [selected + 1, entry_count()] if entry_count() > 1 else ""]
 	var kit := current_kit()
 	if kit == null:
 		return "No kits"
@@ -406,7 +451,7 @@ func title_text() -> String:
 	var variant := ""
 	if kit.structure.get_variants().size() > 1:
 		variant = "  ·  %s [V]" % v.variant_name
-	return "%s ×%d%s%s" % [kit.structure.display_name, player.inventory.count_of(kit.id), variant, "   (%d/%d)" % [selected + 1, kits.size()] if kits.size() > 1 else ""]
+	return "%s ×%d%s%s" % [kit.structure.display_name, player.inventory.count_of(kit.id), variant, "   (%d/%d)" % [selected + 1, entry_count()] if entry_count() > 1 else ""]
 
 
 ## The second line: what's possible here, or why not.
@@ -428,6 +473,10 @@ func status_text() -> String:
 		else:
 			parts.append("[X] Dismantle (get back %s)" % StructureDefinition.cost_text(target.definition.dismantle_return))
 		return "   ".join(parts)
+	if current_plan() != &"":
+		if not ghost_valid:
+			return ghost_reason
+		return "Click to plan it here (%s); your Builders put it up" % SettlementPlans.about(current_plan()).to_lower()
 	if current_kit() == null:
 		return "Look at something you've built"
 	if not ghost_valid:
@@ -446,6 +495,11 @@ func _process(_delta: float) -> void:
 	if moving != null and (not is_instance_valid(moving) or moving.is_queued_for_deletion()):
 		moving = null  # broken while we were carrying it
 		_rebuild_ghost()
+	# Walking into or out of a settlement you hold changes what can be planned
+	if moving == null and (player.settlement_at(player.global_position) != null) == plans.is_empty():
+		refresh_kits()
+		_rebuild_ghost()
+		changed.emit()
 	update_preview()
 
 

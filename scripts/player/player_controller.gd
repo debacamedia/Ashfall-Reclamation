@@ -707,6 +707,45 @@ func request_repair_pump(s: Settlement) -> bool:
 	return s != null and s.request_repair_pump(self)
 
 
+## Building at a settlement (Increment 19.6): hand a ConstructionSite the
+## materials it needs from your backpack. Validated by the Settlement.
+func request_deliver_to_site(site: ConstructionSite) -> int:
+	var st := site.settlement() if site != null and is_instance_valid(site) else null
+	return st.request_deliver(self, site) if st != null else 0
+
+
+## Lend a hand at a site that has its materials (a hold of E).
+func request_help_build(site: ConstructionSite) -> bool:
+	var st := site.settlement() if site != null and is_instance_valid(site) else null
+	return st != null and st.request_help_build(self, site)
+
+
+## The claimed settlement `at` is inside (or null).
+func settlement_at(at: Vector3) -> Settlement:
+	for n in get_tree().get_nodes_in_group("settlements"):
+		var st := n as Settlement
+		if st != null and st.is_claimed and Vector2(at.x - st.global_position.x, at.z - st.global_position.z).length() <= st.claim_radius:
+			return st
+	return null
+
+
+## "" if you can plan `plan` at `xform` (build mode), otherwise why not.
+func site_refusal_reason(plan: StringName, xform: Transform3D) -> String:
+	var st := settlement_at(xform.origin)
+	if st == null:
+		return "Plan buildings inside a settlement you hold"
+	return st.site_refusal_reason(self, plan, xform)
+
+
+## Plans a building at `xform` for your settlers to build (validated).
+func request_place_site(plan: StringName, xform: Transform3D) -> ConstructionSite:
+	var st := settlement_at(xform.origin)
+	if st == null:
+		build_refused.emit("Plan buildings inside a settlement you hold")
+		return null
+	return st.request_place_site(self, plan, xform)
+
+
 ## Talking to a settler: a survivor is asked to come to your settlement (the
 ## first you have with a free bed); someone who lives at one opens it.
 func talk_to(settler: Settler) -> void:

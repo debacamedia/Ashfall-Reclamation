@@ -5,9 +5,12 @@ extends CharacterBody3D
 ##
 ##   Farmer   works the fields; the settlement turns that into vegetables
 ##            (with water).
-##   Guard    patrols the guard posts and fights raiders who come near:
-##            with a gun if they have one (yours, or from the armory),
-##            otherwise with a machete.
+##   Guard    stands at a guard post or tower once some are built (until
+##            then, walks the patrol points) and fights raiders who come
+##            near: with a gun if they have one (yours, or from the
+##            armory), otherwise with a machete.
+##   Builder  puts up what's planned at the settlement (ConstructionSites),
+##            once it has its materials (Increment 19.6). A hard hat.
 ##   No job   helps out round the farmhouse.
 ##
 ## Unfed for too long, they stop working; longer, and they leave.
@@ -23,10 +26,10 @@ extends CharacterBody3D
 signal role_changed(role: Role)
 signal armed_changed
 
-enum Role { NONE, FARMER, GUARD }
+enum Role { NONE, FARMER, GUARD, BUILDER }
 enum State { WAIT, TRAVEL, IDLE, WALK, WORK, PATROL, FIGHT, LEAVING, DEAD }
 
-const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard"}
+const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder"}
 ## A guard keeps about this many rounds (topped up from you or the armory).
 const AMMO_TARGET := 60
 const SHOT_SOUNDS := {
@@ -71,6 +74,8 @@ var next_meal := 4.0
 var unfed_hours := 0.0
 ## A farmer with no water to work with.
 var short_of_water := false
+## A farmer with no field free to work (more farmers than farm spots).
+var no_field := false
 var state: State = State.WAIT
 var target: Node3D
 ## Made at runtime (a newcomer), not placed in the world (a survivor).
@@ -146,11 +151,21 @@ func status_text() -> String:
 		return "Hungry: not working"
 	match role:
 		Role.FARMER:
+			if no_field:
+				return "No field free"
 			return "No water to farm" if short_of_water else "Farming"
 		Role.GUARD:
 			if state == State.FIGHT:
 				return "Fighting"
 			return "Guarding" if gun != null else "Guarding (machete)"
+		Role.BUILDER:
+			var site := settlement.current_site()
+			if site != null:
+				return "Building the %s" % site.display_name().to_lower()
+			for other in settlement.sites():
+				if not other.is_supplied():
+					return "Waiting for materials"
+			return "Nothing to build"
 	return "Helping out"
 
 
@@ -301,7 +316,7 @@ func _home_life(delta: float) -> void:
 				target = r
 				_enter(State.FIGHT)
 				return
-	if is_hungry() or role == Role.NONE or (role == Role.FARMER and short_of_water):
+	if is_hungry() or role == Role.NONE or (role == Role.FARMER and (short_of_water or no_field)):
 		_wander(_hangout(), 6.0, delta)
 		return
 	match role:
@@ -309,11 +324,13 @@ func _home_life(delta: float) -> void:
 			_farm(delta)
 		Role.GUARD:
 			_patrol(delta)
+		Role.BUILDER:
+			_build(delta)
 
 
 func _farm(delta: float) -> void:
 	if _goal == Vector3.INF:
-		_goal = _pick(settlement.get_node_or_null("FarmSpots"), 3.0)
+		_goal = _pick_from(settlement.farm_spots(), 3.0)
 		state = State.WALK
 		_state_time = 0.0
 	if state == State.WALK:
@@ -331,14 +348,24 @@ func _farm(delta: float) -> void:
 
 
 func _patrol(delta: float) -> void:
-	var posts := settlement.get_node_or_null("GuardPosts")
 	if _goal == Vector3.INF:
-		var count := posts.get_child_count() if posts != null else 0
-		if count == 0:
-			_goal = _hangout()
+		# A guard post or tower of their own once some are built (one guard
+		# each, in turn); otherwise walk the patrol points
+		var posts := settlement.guard_posts()
+		if not posts.is_empty():
+			var guards := settlement.members().filter(func(s: Settler) -> bool: return s.role == Role.GUARD and s.has_arrived())
+			var mine := maxi(guards.find(self), 0)
+			if mine < posts.size():
+				_goal = posts[mine].global_position
+			else:
+				_goal = _pick_from(settlement.patrol_points(), 2.0)
 		else:
-			_post = (_post + 1 + _rng.randi() % 2) % count
-			_goal = (posts.get_child(_post) as Node3D).global_position
+			var points := settlement.patrol_points()
+			if points.is_empty():
+				_goal = _hangout()
+			else:
+				_post = (_post + 1 + _rng.randi() % 2) % points.size()
+				_goal = points[_post].global_position
 		state = State.WALK
 		_state_time = 0.0
 	if state == State.WALK:
@@ -351,6 +378,44 @@ func _patrol(delta: float) -> void:
 	rotation.y += sin(_state_time * 0.6) * 0.6 * delta  # looking round
 	if _state_time > _state_length:
 		_goal = Vector3.INF
+
+
+## Builders: to the site, then hammering.
+func _build(delta: float) -> void:
+	var site := settlement.current_site()
+	if site == null:
+		_swing(false)
+		_wander(_hangout(), 6.0, delta)
+		return
+	if _goal == Vector3.INF or state == State.IDLE:
+		_goal = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, site.work_point())
+		state = State.WALK
+		_state_time = 0.0
+	if state == State.WALK:
+		_swing(false)
+		if _move_to(_goal, walk_speed, delta) or _state_time > 60.0:
+			state = State.WORK
+			_state_time = 0.0
+			_state_length = _rng.randf_range(10.0, 16.0)
+		return
+	_brake(delta)
+	_face(_next_piece_at(site) - global_position, delta)
+	_swing(true)
+	if _state_time > _state_length:
+		_goal = Vector3.INF
+
+
+func _next_piece_at(site: ConstructionSite) -> Vector3:
+	var i := clampi(site.built, 0, maxi(site.pieces.size() - 1, 0))
+	return site.global_transform * site.pieces[i].origin if not site.pieces.is_empty() else site.global_position
+
+
+## The hammer arm going up and down.
+func _swing(on: bool) -> void:
+	var arm := visual.get_node_or_null("RightArm") as Node3D
+	if arm == null:
+		return
+	arm.rotation.x = (0.26 - 1.1 + absf(sin(_state_time * 5.0)) * 1.1) if on else 0.26
 
 
 func _wander(around: Vector3, radius: float, delta: float) -> void:
@@ -530,6 +595,15 @@ func _hangout() -> Vector3:
 	return h.global_position if h != null else (settlement.global_position if settlement != null else global_position)
 
 
+## One of `spots` at random, nudged up to `jitter` m.
+func _pick_from(spots: Array[Node3D], jitter: float) -> Vector3:
+	if spots.is_empty():
+		return _hangout()
+	var m := spots[_rng.randi() % spots.size()]
+	var p := m.global_position + Vector3(_rng.randf_range(-jitter, jitter), 0, _rng.randf_range(-jitter, jitter))
+	return NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, p)
+
+
 ## A random child of `group` (a Marker3D), nudged up to `jitter` m.
 func _pick(group: Node, jitter: float) -> Vector3:
 	if group == null or group.get_child_count() == 0:
@@ -557,7 +631,8 @@ func _apply_look() -> void:
 func _update_visuals() -> void:
 	if not is_node_ready():
 		return
-	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD], ["Helmet", role == Role.GUARD]]:
+	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD], ["Helmet", role == Role.GUARD],
+			["HardHat", role == Role.BUILDER], ["ToolBelt", role == Role.BUILDER]]:
 		var n := visual.get_node_or_null(pair[0]) as Node3D
 		if n != null:
 			n.visible = pair[1]
@@ -567,6 +642,11 @@ func _update_visuals() -> void:
 	var blade := visual.get_node_or_null("RightArm/Machete") as Node3D
 	if blade != null:
 		blade.visible = gun == null and role == Role.GUARD
+	var hammer := visual.get_node_or_null("RightArm/Hammer") as Node3D
+	if hammer != null:
+		hammer.visible = gun == null and role == Role.BUILDER
+	if role != Role.BUILDER:
+		_swing(false)
 
 
 ## Name and job float over them when you're close.
@@ -648,7 +728,7 @@ func load_state(data: Dictionary) -> void:
 	look_seed = int(Settlement._num(data.get("look"), look_seed))
 	_apply_look()
 	var r := int(Settlement._num(data.get("role"), 0))
-	role = r as Role if r >= 0 and r <= Role.GUARD else Role.NONE
+	role = r as Role if r >= 0 and r <= Role.BUILDER else Role.NONE
 	var raw_p: Variant = data.get("position")
 	if raw_p is Array and raw_p.size() == 3 and raw_p.all(func(v: Variant) -> bool: return (v is float or v is int) and is_finite(float(v))):
 		global_position = Vector3(raw_p[0], raw_p[1], raw_p[2])

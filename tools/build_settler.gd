@@ -97,6 +97,26 @@ func _run() -> void:
 	_box(vest, "Front", Vector3(0.48, 0.42, 0.06), Vector3(0, 1.15, -0.15), olive)
 	_box(vest, "Back", Vector3(0.48, 0.42, 0.06), Vector3(0, 1.15, 0.15), olive)
 	_box(vest, "Pouch", Vector3(0.16, 0.1, 0.05), Vector3(-0.12, 1.0, -0.19), olive)
+	# Builder's hard hat and tool belt
+	var hard := Node3D.new()
+	hard.name = "HardHat"
+	hard.position.y = 1.69
+	_add(v, hard)
+	var hh := MeshInstance3D.new()
+	hh.name = "Shell"
+	var hm2 := SphereMesh.new()
+	hm2.radius = 0.165
+	hm2.height = 0.19
+	hm2.is_hemisphere = true
+	hh.mesh = hm2
+	hh.material_override = _mat("hard_hat", Color(0.92, 0.72, 0.12), 0.5)
+	_add(hard, hh)
+	_box(hard, "Brim", Vector3(0.36, 0.02, 0.4), Vector3(0, 0.005, -0.02), _mat("hard_hat", Color(0.92, 0.72, 0.12), 0.5))
+	var belt := Node3D.new()
+	belt.name = "ToolBelt"
+	_add(v, belt)
+	_box(belt, "Belt", Vector3(0.5, 0.1, 0.3), Vector3(0, 0.86, 0), _mat("leather", Color(0.42, 0.28, 0.16)))
+	_box(belt, "Pouch", Vector3(0.14, 0.16, 0.08), Vector3(0.17, 0.78, -0.16), _mat("leather", Color(0.42, 0.28, 0.16)))
 	var helmet := Node3D.new()
 	helmet.name = "Helmet"
 	helmet.position.y = 1.68
@@ -129,6 +149,12 @@ func _run() -> void:
 	_box(gun, "Body", Vector3(0.06, 0.1, 0.42), Vector3(0, 0.02, -0.12), steel)
 	_box(gun, "Stock", Vector3(0.05, 0.1, 0.18), Vector3(0, -0.01, 0.15), wood)
 	_box(gun, "Grip", Vector3(0.04, 0.12, 0.05), Vector3(0, -0.07, 0.02), steel)
+	var hammer := Node3D.new()
+	hammer.name = "Hammer"
+	hammer.position = Vector3(0, -0.64, -0.04)
+	_add(right, hammer)
+	_box(hammer, "Handle", Vector3(0.035, 0.035, 0.34), Vector3(0, 0, -0.12), wood)
+	_box(hammer, "Head", Vector3(0.05, 0.15, 0.06), Vector3(0, 0.03, -0.3), steel)
 	var mach := Node3D.new()
 	mach.name = "Machete"
 	mach.position = Vector3(0, -0.64, -0.06)

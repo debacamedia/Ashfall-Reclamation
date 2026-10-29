@@ -1,9 +1,10 @@
 class_name SettlementScreen
 extends Control
-## The settlement window (L, Increment 19): your settlement's stocks and the
-## people who live there. Give each a job (farmer, guard), hand guards a
-## spare gun and rounds from your backpack, or take a gun back. Talking to
-## a settler, or using the notice board, opens it too.
+## The settlement window (L, Increment 19): your settlement's stocks, what's
+## being built (19.6) and the people who live there. Give each a job
+## (farmer, guard, builder), hand guards a spare gun and rounds from your
+## backpack, or take a gun back; call off something planned. Talking to a
+## settler, or using the notice board, opens it too.
 ##
 ## While it's open the mouse is free and gameplay input is ignored; the
 ## world keeps running. Built in code by the HUD; every change goes through
@@ -34,6 +35,10 @@ var _refresh_left := 0.0
 var _rows_key := ""
 ## Settler -> {"status": Label, "gun": Label, "give": MenuButton}
 var _rows := {}
+var _sites_list: VBoxContainer
+var _sites_key := ""
+## ConstructionSite -> {"status": Label}
+var _site_rows := {}
 
 
 func _init() -> void:
@@ -93,7 +98,7 @@ func _init() -> void:
 	_body = body
 	# Left: stocks
 	var left := VBoxContainer.new()
-	left.custom_minimum_size.x = 330
+	left.custom_minimum_size.x = 300
 	left.add_theme_constant_override("separation", 6)
 	body.add_child(left)
 	left.add_child(_label("STOCKS", 16, STYLE_COLOR))
@@ -104,7 +109,7 @@ func _init() -> void:
 	_water_bar = ProgressBar.new()
 	_water_bar.name = "WaterBar"
 	_water_bar.show_percentage = false
-	_water_bar.custom_minimum_size = Vector2(300, 10)
+	_water_bar.custom_minimum_size = Vector2(280, 10)
 	var bg := StyleBoxFlat.new()
 	bg.bg_color = Color(0.15, 0.15, 0.14)
 	var fill := StyleBoxFlat.new()
@@ -116,10 +121,31 @@ func _init() -> void:
 	_pump.name = "Pump"
 	_pump.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	left.add_child(_pump)
-	var how := _label("A settlement hour is a minute of play. Farmers turn water into vegetables in the Farm Store (the barn); "
+	var how := _label("A settlement hour is a minute of play. Farmers turn water into vegetables on the Farm Store shelves (the barn); "
 		+ "everyone eats one every 4 hours. Guards take guns and rounds from the Armory Locker (the farmhouse) by themselves.", 13, DIM)
 	how.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	left.add_child(how)
+	# Middle: what's being built
+	var mid := VBoxContainer.new()
+	mid.name = "Building"
+	mid.custom_minimum_size.x = 320
+	mid.add_theme_constant_override("separation", 6)
+	body.add_child(mid)
+	mid.add_child(_label("BUILDING", 16, STYLE_COLOR))
+	var about := _label("Builders put these up in order, once each has its materials: hand them over at the site (E), "
+		+ "or leave them in the Farm Store. Plan a bunkhouse, storehouse, guard tower, guard post or farm plot in build mode (B).", 13, DIM)
+	about.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	mid.add_child(about)
+	var sites_scroll := ScrollContainer.new()
+	sites_scroll.name = "SitesScroll"
+	sites_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	sites_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	mid.add_child(sites_scroll)
+	_sites_list = VBoxContainer.new()
+	_sites_list.name = "Sites"
+	_sites_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_sites_list.add_theme_constant_override("separation", 6)
+	sites_scroll.add_child(_sites_list)
 	# Right: people
 	var right := VBoxContainer.new()
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -237,8 +263,11 @@ func refresh() -> void:
 	lines.append("Fresh Vegetables:  %d / %d   (%s / hour)%s" % [s.food(), cap, _signed(r["food"]),
 		"   Store full" if cap > 0 and s.food() >= cap else ""])
 	lines.append("Water:  %d / %d L   (%s / hour)" % [roundi(s.water), roundi(s.water_capacity), _signed(r["water"])])
-	lines.append("Beds:  %d / %d in use%s" % [people.size(), s.beds, "" if here == people.size() else "  (%d on the way)" % (people.size() - here)])
-	lines.append("Farmers working:  %d" % r["farmers"])
+	lines.append("Beds:  %d / %d in use%s" % [people.size(), s.total_beds(), "" if here == people.size() else "  (%d on the way)" % (people.size() - here)])
+	lines.append("Farmers working:  %d   (fields for %d)" % [r["farmers"], s.farm_spots().size()])
+	var posts := s.guard_posts().size()
+	if posts > 0:
+		lines.append("Guard posts:  %d" % posts)
 	lines.append("Armory:  %s" % _armory_text(s))
 	if s.free_beds() <= 0:
 		lines.append("Newcomers:  no free bed")
@@ -250,6 +279,7 @@ func refresh() -> void:
 	_water_bar.value = s.water / s.water_capacity * 100.0
 	_pump.text = "Pump: running" if s.pump_working else "Pump: broken. Repair it in the pump house with %s." % Settlement.pump_parts_text()
 	_pump.add_theme_color_override("font_color", GOOD if s.pump_working else BAD)
+	_refresh_sites(s)
 	# People: rebuild the rows when who's here or what they have changes
 	people.sort_custom(func(a: Settler, b: Settler) -> bool:
 		return (a == focus) if (a == focus) != (b == focus) else a.settler_name < b.settler_name)
@@ -304,7 +334,7 @@ func _build_rows(people: Array[Settler]) -> void:
 		var jobs := HBoxContainer.new()
 		jobs.add_theme_constant_override("separation", 6)
 		col.add_child(jobs)
-		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.NONE]:
+		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.NONE]:
 			var b := Button.new()
 			b.name = "Job_%s" % Settler.ROLE_NAMES[r]
 			b.text = Settler.ROLE_NAMES[r]
@@ -314,13 +344,12 @@ func _build_rows(people: Array[Settler]) -> void:
 			b.add_theme_font_size_override("font_size", 14)
 			b.pressed.connect(func() -> void: request_role(p, r))
 			jobs.add_child(b)
+		var gun := _label("", 14, DIM)
+		gun.name = "Gun"
+		col.add_child(gun)
 		var arms := HBoxContainer.new()
 		arms.add_theme_constant_override("separation", 6)
 		col.add_child(arms)
-		var gun := _label("", 14, DIM)
-		gun.name = "Gun"
-		gun.custom_minimum_size.x = 210
-		arms.add_child(gun)
 		var give := MenuButton.new()
 		give.name = "GiveGun"
 		give.text = "Give a gun"
@@ -351,6 +380,64 @@ func _build_rows(people: Array[Settler]) -> void:
 		take.pressed.connect(func() -> void: request_take_gun(p))
 		arms.add_child(take)
 		_rows[p] = {"status": status, "gun": gun, "give": give}
+
+
+func _refresh_sites(s: Settlement) -> void:
+	var sites := s.sites()
+	var key := ""
+	for site in sites:
+		key += str(site.get_instance_id()) + "|"
+	if key != _sites_key:
+		_sites_key = key
+		for c in _sites_list.get_children():
+			_sites_list.remove_child(c)
+			c.queue_free()
+		_site_rows.clear()
+		if sites.is_empty():
+			_sites_list.add_child(_label("Nothing planned.", 15, DIM))
+		for site in sites:
+			var row := HBoxContainer.new()
+			row.name = "Site_%s" % site.name
+			row.add_theme_constant_override("separation", 6)
+			_sites_list.add_child(row)
+			var col := VBoxContainer.new()
+			col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.add_child(col)
+			var title := site.display_name()
+			if site.plan_id == &"fence":
+				title = "%s (%d m)" % [title, site.pieces.size() * 4]
+			col.add_child(_label(title, 15, TEXT))
+			var st := _label("", 13, DIM)
+			st.name = "Status"
+			st.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			col.add_child(st)
+			var off := Button.new()
+			off.name = "CallOff"
+			off.text = "Call off"
+			off.focus_mode = Control.FOCUS_NONE
+			off.add_theme_font_size_override("font_size", 13)
+			off.tooltip_text = "Stop building this: what was handed over goes back in the stores"
+			off.pressed.connect(func() -> void: request_cancel_site(site))
+			row.add_child(off)
+			_site_rows[site] = {"status": st}
+	var builders := s.count_role(Settler.Role.BUILDER)
+	var current := s.current_site()
+	for site: ConstructionSite in _site_rows:
+		if not is_instance_valid(site):
+			continue
+		var st: Label = _site_rows[site]["status"]
+		if not site.is_supplied():
+			st.text = "Needs " + SettlementPlans.cost_text(site.missing())
+			st.add_theme_color_override("font_color", BAD)
+		elif site == current and builders > 0:
+			st.text = "Being built: %d%%" % roundi(site.progress() * 100.0)
+			st.add_theme_color_override("font_color", GOOD)
+		elif builders == 0:
+			st.text = "Ready: make someone a Builder  (%d%%)" % roundi(site.progress() * 100.0)
+			st.add_theme_color_override("font_color", STYLE_COLOR)
+		else:
+			st.text = "Ready, next in line  (%d%%)" % roundi(site.progress() * 100.0)
+			st.add_theme_color_override("font_color", TEXT)
 
 
 ## Spare guns in your backpack: [slot index, item].
@@ -406,6 +493,13 @@ func request_give_gun(p: Settler, index: int) -> void:
 func request_give_ammo(p: Settler) -> void:
 	if settlement != null:
 		settlement.request_give_ammo(player, p)
+	refresh()
+
+
+func request_cancel_site(site: ConstructionSite) -> void:
+	if settlement != null and is_instance_valid(site):
+		settlement.request_cancel_site(player, site)
+	_sites_key = ""
 	refresh()
 
 

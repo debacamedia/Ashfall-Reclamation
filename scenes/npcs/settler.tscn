@@ -90,221 +90,286 @@ size = Vector3(0.48, 0.42, 0.06)
 [sub_resource type="BoxMesh" id="BoxMesh_oq1u1"]
 size = Vector3(0.16, 0.1, 0.05)
 
-[sub_resource type="SphereMesh" id="SphereMesh_0l8mv"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0l8mv"]
+albedo_color = Color(0.92, 0.72, 0.12, 1)
+roughness = 0.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_ufklg"]
+radius = 0.165
+height = 0.19
+is_hemisphere = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_3mugy"]
+size = Vector3(0.36, 0.02, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b77j5"]
+albedo_color = Color(0.42, 0.28, 0.16, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_w0txd"]
+size = Vector3(0.5, 0.1, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i85kr"]
+size = Vector3(0.14, 0.16, 0.08)
+
+[sub_resource type="SphereMesh" id="SphereMesh_d8gev"]
 radius = 0.17
 height = 0.2
 is_hemisphere = true
 
-[sub_resource type="BoxMesh" id="BoxMesh_ufklg"]
+[sub_resource type="BoxMesh" id="BoxMesh_i3h67"]
 size = Vector3(0.13, 0.62, 0.14)
 
-[sub_resource type="BoxMesh" id="BoxMesh_3mugy"]
+[sub_resource type="BoxMesh" id="BoxMesh_qy5fl"]
 size = Vector3(0.1, 0.1, 0.1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_b77j5"]
+[sub_resource type="BoxMesh" id="BoxMesh_3fmmh"]
 size = Vector3(0.13, 0.62, 0.14)
 
-[sub_resource type="BoxMesh" id="BoxMesh_w0txd"]
+[sub_resource type="BoxMesh" id="BoxMesh_p80lc"]
 size = Vector3(0.1, 0.1, 0.1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i85kr"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sjtrs"]
 albedo_color = Color(0.2, 0.2, 0.21, 1)
 roughness = 0.5
 
-[sub_resource type="BoxMesh" id="BoxMesh_d8gev"]
+[sub_resource type="BoxMesh" id="BoxMesh_675kh"]
 size = Vector3(0.06, 0.1, 0.42)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i3h67"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3fpo3"]
 albedo_color = Color(0.38, 0.25, 0.14, 1)
 roughness = 0.9
 
-[sub_resource type="BoxMesh" id="BoxMesh_qy5fl"]
+[sub_resource type="BoxMesh" id="BoxMesh_ncscg"]
 size = Vector3(0.05, 0.1, 0.18)
 
-[sub_resource type="BoxMesh" id="BoxMesh_3fmmh"]
+[sub_resource type="BoxMesh" id="BoxMesh_8ngqw"]
 size = Vector3(0.04, 0.12, 0.05)
 
-[sub_resource type="BoxMesh" id="BoxMesh_p80lc"]
+[sub_resource type="BoxMesh" id="BoxMesh_l7jy4"]
+size = Vector3(0.035, 0.035, 0.34)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ko4fu"]
+size = Vector3(0.05, 0.15, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2f4jf"]
 size = Vector3(0.04, 0.04, 0.14)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sjtrs"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_st0a4"]
 albedo_color = Color(0.72, 0.72, 0.72, 1)
 roughness = 0.35
 
-[sub_resource type="BoxMesh" id="BoxMesh_675kh"]
+[sub_resource type="BoxMesh" id="BoxMesh_nfyoy"]
 size = Vector3(0.015, 0.07, 0.5)
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3fpo3"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lj1j8"]
 radius = 0.45
 height = 1.8
 
-[node name="Settler" type="CharacterBody3D" unique_id=805507622]
+[node name="Settler" type="CharacterBody3D" unique_id=312682839]
 collision_layer = 8
 collision_mask = 15
 floor_max_angle = 0.80285144
 script = ExtResource("1_4br5w")
 
-[node name="BodyShape" type="CollisionShape3D" parent="." unique_id=1058304399]
+[node name="BodyShape" type="CollisionShape3D" parent="." unique_id=1623683039]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
 shape = SubResource("CapsuleShape3D_u5n6r")
 
-[node name="HeadShape" type="CollisionShape3D" parent="." unique_id=805836940]
+[node name="HeadShape" type="CollisionShape3D" parent="." unique_id=725278797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 shape = SubResource("SphereShape3D_law43")
 metadata/damage_multiplier = 2.0
 
-[node name="Visual" type="Node3D" parent="." unique_id=892454009]
+[node name="Visual" type="Node3D" parent="." unique_id=1767029687]
 unique_name_in_owner = true
 
-[node name="LegL" type="MeshInstance3D" parent="Visual" unique_id=735352692]
+[node name="LegL" type="MeshInstance3D" parent="Visual" unique_id=1570388677]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.42, 0)
 material_override = SubResource("StandardMaterial3D_cwrqj")
 mesh = SubResource("BoxMesh_5x7a0")
 
-[node name="BootL" type="MeshInstance3D" parent="Visual" unique_id=2097839046]
+[node name="BootL" type="MeshInstance3D" parent="Visual" unique_id=1613513656]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 0.065, -0.04)
 material_override = SubResource("StandardMaterial3D_c6qn2")
 mesh = SubResource("BoxMesh_dac1r")
 
-[node name="LegR" type="MeshInstance3D" parent="Visual" unique_id=1669490378]
+[node name="LegR" type="MeshInstance3D" parent="Visual" unique_id=1249166602]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.42, 0)
 material_override = SubResource("StandardMaterial3D_cwrqj")
 mesh = SubResource("BoxMesh_ksumr")
 
-[node name="BootR" type="MeshInstance3D" parent="Visual" unique_id=1923720758]
+[node name="BootR" type="MeshInstance3D" parent="Visual" unique_id=1828289656]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.065, -0.04)
 material_override = SubResource("StandardMaterial3D_c6qn2")
 mesh = SubResource("BoxMesh_fj8qw")
 
-[node name="Belt" type="MeshInstance3D" parent="Visual" unique_id=1082060676]
+[node name="Belt" type="MeshInstance3D" parent="Visual" unique_id=57268877]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.84, 0)
 material_override = SubResource("StandardMaterial3D_c6qn2")
 mesh = SubResource("BoxMesh_f2v04")
 
-[node name="Torso" type="MeshInstance3D" parent="Visual" unique_id=2138154930]
+[node name="Torso" type="MeshInstance3D" parent="Visual" unique_id=243225284]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
 material_override = SubResource("StandardMaterial3D_oglop")
 mesh = SubResource("BoxMesh_rvl61")
 metadata/tint = "shirt"
 
-[node name="Neck" type="MeshInstance3D" parent="Visual" unique_id=810426670]
+[node name="Neck" type="MeshInstance3D" parent="Visual" unique_id=1941288469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.44, 0)
 material_override = SubResource("StandardMaterial3D_5lfaw")
 mesh = SubResource("BoxMesh_tgm52")
 metadata/tint = "skin"
 
-[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=2039591277]
+[node name="Head" type="MeshInstance3D" parent="Visual" unique_id=1493649213]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 material_override = SubResource("StandardMaterial3D_5lfaw")
 mesh = SubResource("SphereMesh_p6njn")
 metadata/tint = "skin"
 
-[node name="Hair" type="MeshInstance3D" parent="Visual" unique_id=1635301880]
+[node name="Hair" type="MeshInstance3D" parent="Visual" unique_id=2139608094]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.72, 0.02)
 material_override = SubResource("StandardMaterial3D_g16j5")
 mesh = SubResource("BoxMesh_gk5hp")
 
-[node name="Hat" type="Node3D" parent="Visual" unique_id=2056071552]
+[node name="Hat" type="Node3D" parent="Visual" unique_id=2134087111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.73, 0)
 
-[node name="Brim" type="MeshInstance3D" parent="Visual/Hat" unique_id=1892423596]
+[node name="Brim" type="MeshInstance3D" parent="Visual/Hat" unique_id=818914685]
 material_override = SubResource("StandardMaterial3D_srbe0")
 mesh = SubResource("CylinderMesh_sfbjq")
 
-[node name="Crown" type="MeshInstance3D" parent="Visual/Hat" unique_id=844481507]
+[node name="Crown" type="MeshInstance3D" parent="Visual/Hat" unique_id=1068964253]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
 material_override = SubResource("StandardMaterial3D_srbe0")
 mesh = SubResource("CylinderMesh_l2w1n")
 
-[node name="Vest" type="Node3D" parent="Visual" unique_id=1723611015]
+[node name="Vest" type="Node3D" parent="Visual" unique_id=649727637]
 
-[node name="Front" type="MeshInstance3D" parent="Visual/Vest" unique_id=937876903]
+[node name="Front" type="MeshInstance3D" parent="Visual/Vest" unique_id=1090662774]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, -0.15)
 material_override = SubResource("StandardMaterial3D_npwva")
 mesh = SubResource("BoxMesh_yeuh3")
 
-[node name="Back" type="MeshInstance3D" parent="Visual/Vest" unique_id=51993880]
+[node name="Back" type="MeshInstance3D" parent="Visual/Vest" unique_id=1244030767]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0.15)
 material_override = SubResource("StandardMaterial3D_npwva")
 mesh = SubResource("BoxMesh_3lq78")
 
-[node name="Pouch" type="MeshInstance3D" parent="Visual/Vest" unique_id=874337457]
+[node name="Pouch" type="MeshInstance3D" parent="Visual/Vest" unique_id=175038172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12, 1, -0.19)
 material_override = SubResource("StandardMaterial3D_npwva")
 mesh = SubResource("BoxMesh_oq1u1")
 
-[node name="Helmet" type="Node3D" parent="Visual" unique_id=20386969]
+[node name="HardHat" type="Node3D" parent="Visual" unique_id=295624227]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.69, 0)
+
+[node name="Shell" type="MeshInstance3D" parent="Visual/HardHat" unique_id=1338142753]
+material_override = SubResource("StandardMaterial3D_0l8mv")
+mesh = SubResource("SphereMesh_ufklg")
+
+[node name="Brim" type="MeshInstance3D" parent="Visual/HardHat" unique_id=1020774147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, -0.02)
+material_override = SubResource("StandardMaterial3D_0l8mv")
+mesh = SubResource("BoxMesh_3mugy")
+
+[node name="ToolBelt" type="Node3D" parent="Visual" unique_id=33374452]
+
+[node name="Belt" type="MeshInstance3D" parent="Visual/ToolBelt" unique_id=827294039]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86, 0)
+material_override = SubResource("StandardMaterial3D_b77j5")
+mesh = SubResource("BoxMesh_w0txd")
+
+[node name="Pouch" type="MeshInstance3D" parent="Visual/ToolBelt" unique_id=1630155622]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17, 0.78, -0.16)
+material_override = SubResource("StandardMaterial3D_b77j5")
+mesh = SubResource("BoxMesh_i85kr")
+
+[node name="Helmet" type="Node3D" parent="Visual" unique_id=694437698]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.68, 0)
 
-[node name="Shell" type="MeshInstance3D" parent="Visual/Helmet" unique_id=1580082490]
+[node name="Shell" type="MeshInstance3D" parent="Visual/Helmet" unique_id=559046357]
 material_override = SubResource("StandardMaterial3D_npwva")
-mesh = SubResource("SphereMesh_0l8mv")
+mesh = SubResource("SphereMesh_d8gev")
 
-[node name="LeftArm" type="Node3D" parent="Visual" unique_id=1147110073]
+[node name="LeftArm" type="Node3D" parent="Visual" unique_id=923587265]
 transform = Transform3D(1, 0, 0, 0, 0.9855848, -0.16918235, 0, 0.16918235, 0.9855848, -0.31, 1.36, 0)
 
-[node name="UpperArm" type="MeshInstance3D" parent="Visual/LeftArm" unique_id=1859506237]
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/LeftArm" unique_id=1349425385]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
 material_override = SubResource("StandardMaterial3D_oglop")
-mesh = SubResource("BoxMesh_ufklg")
+mesh = SubResource("BoxMesh_i3h67")
 metadata/tint = "shirt"
 
-[node name="Hand" type="MeshInstance3D" parent="Visual/LeftArm" unique_id=1023081404]
+[node name="Hand" type="MeshInstance3D" parent="Visual/LeftArm" unique_id=1379308876]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, 0)
 material_override = SubResource("StandardMaterial3D_5lfaw")
-mesh = SubResource("BoxMesh_3mugy")
+mesh = SubResource("BoxMesh_qy5fl")
 metadata/tint = "skin"
 
-[node name="RightArm" type="Node3D" parent="Visual" unique_id=219745421]
+[node name="RightArm" type="Node3D" parent="Visual" unique_id=121353732]
 transform = Transform3D(1, 0, 0, 0, 0.96638995, -0.25708055, 0, 0.25708055, 0.96638995, 0.31, 1.36, 0)
 
-[node name="UpperArm" type="MeshInstance3D" parent="Visual/RightArm" unique_id=57982708]
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/RightArm" unique_id=1045159670]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
 material_override = SubResource("StandardMaterial3D_oglop")
-mesh = SubResource("BoxMesh_b77j5")
+mesh = SubResource("BoxMesh_3fmmh")
 metadata/tint = "shirt"
 
-[node name="Hand" type="MeshInstance3D" parent="Visual/RightArm" unique_id=1617317420]
+[node name="Hand" type="MeshInstance3D" parent="Visual/RightArm" unique_id=1493750955]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, 0)
 material_override = SubResource("StandardMaterial3D_5lfaw")
-mesh = SubResource("BoxMesh_w0txd")
+mesh = SubResource("BoxMesh_p80lc")
 metadata/tint = "skin"
 
-[node name="Gun" type="Node3D" parent="Visual/RightArm" unique_id=459051754]
+[node name="Gun" type="Node3D" parent="Visual/RightArm" unique_id=1418056194]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, -0.1)
 
-[node name="Body" type="MeshInstance3D" parent="Visual/RightArm/Gun" unique_id=745740604]
+[node name="Body" type="MeshInstance3D" parent="Visual/RightArm/Gun" unique_id=1229943600]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.12)
-material_override = SubResource("StandardMaterial3D_i85kr")
-mesh = SubResource("BoxMesh_d8gev")
-
-[node name="Stock" type="MeshInstance3D" parent="Visual/RightArm/Gun" unique_id=1307841304]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0.15)
-material_override = SubResource("StandardMaterial3D_i3h67")
-mesh = SubResource("BoxMesh_qy5fl")
-
-[node name="Grip" type="MeshInstance3D" parent="Visual/RightArm/Gun" unique_id=909513902]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 0.02)
-material_override = SubResource("StandardMaterial3D_i85kr")
-mesh = SubResource("BoxMesh_3fmmh")
-
-[node name="Machete" type="Node3D" parent="Visual/RightArm" unique_id=216364378]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, -0.06)
-
-[node name="Handle" type="MeshInstance3D" parent="Visual/RightArm/Machete" unique_id=520940311]
-material_override = SubResource("StandardMaterial3D_i3h67")
-mesh = SubResource("BoxMesh_p80lc")
-
-[node name="Blade" type="MeshInstance3D" parent="Visual/RightArm/Machete" unique_id=80270701]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.32)
 material_override = SubResource("StandardMaterial3D_sjtrs")
 mesh = SubResource("BoxMesh_675kh")
 
-[node name="Eyes" type="Marker3D" parent="." unique_id=194836724]
+[node name="Stock" type="MeshInstance3D" parent="Visual/RightArm/Gun" unique_id=834913429]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0.15)
+material_override = SubResource("StandardMaterial3D_3fpo3")
+mesh = SubResource("BoxMesh_ncscg")
+
+[node name="Grip" type="MeshInstance3D" parent="Visual/RightArm/Gun" unique_id=1109972502]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 0.02)
+material_override = SubResource("StandardMaterial3D_sjtrs")
+mesh = SubResource("BoxMesh_8ngqw")
+
+[node name="Hammer" type="Node3D" parent="Visual/RightArm" unique_id=447902617]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, -0.04)
+
+[node name="Handle" type="MeshInstance3D" parent="Visual/RightArm/Hammer" unique_id=699221214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.12)
+material_override = SubResource("StandardMaterial3D_3fpo3")
+mesh = SubResource("BoxMesh_l7jy4")
+
+[node name="Head" type="MeshInstance3D" parent="Visual/RightArm/Hammer" unique_id=2080711211]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -0.3)
+material_override = SubResource("StandardMaterial3D_sjtrs")
+mesh = SubResource("BoxMesh_ko4fu")
+
+[node name="Machete" type="Node3D" parent="Visual/RightArm" unique_id=1283569044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, -0.06)
+
+[node name="Handle" type="MeshInstance3D" parent="Visual/RightArm/Machete" unique_id=1281553771]
+material_override = SubResource("StandardMaterial3D_3fpo3")
+mesh = SubResource("BoxMesh_2f4jf")
+
+[node name="Blade" type="MeshInstance3D" parent="Visual/RightArm/Machete" unique_id=670553197]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.32)
+material_override = SubResource("StandardMaterial3D_st0a4")
+mesh = SubResource("BoxMesh_nfyoy")
+
+[node name="Eyes" type="Marker3D" parent="." unique_id=1407341196]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, -0.1)
 
-[node name="NavAgent" type="NavigationAgent3D" parent="." unique_id=964310931]
+[node name="NavAgent" type="NavigationAgent3D" parent="." unique_id=335241658]
 unique_name_in_owner = true
 path_desired_distance = 0.8
 target_desired_distance = 0.8
@@ -313,11 +378,11 @@ path_max_distance = 3.0
 height = 1.75
 radius = 0.4
 
-[node name="HealthComponent" type="Node" parent="." unique_id=971433724]
+[node name="HealthComponent" type="Node" parent="." unique_id=1359637440]
 unique_name_in_owner = true
 script = ExtResource("2_rxl5q")
 
-[node name="NameLabel" type="Label3D" parent="." unique_id=617686489]
+[node name="NameLabel" type="Label3D" parent="." unique_id=1555469790]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
 pixel_size = 0.0007
@@ -328,24 +393,24 @@ text = "Settler"
 font_size = 40
 outline_size = 10
 
-[node name="Talk" type="Area3D" parent="." unique_id=1936929185]
+[node name="Talk" type="Area3D" parent="." unique_id=1786342493]
 unique_name_in_owner = true
 collision_layer = 16
 collision_mask = 0
 monitoring = false
 script = ExtResource("3_8n6cq")
 
-[node name="Shape" type="CollisionShape3D" parent="Talk" unique_id=1961506311]
+[node name="Shape" type="CollisionShape3D" parent="Talk" unique_id=1211987486]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_3fpo3")
+shape = SubResource("CapsuleShape3D_lj1j8")
 
-[node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=1451302194]
+[node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=1305120936]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 stream = ExtResource("4_2cabu")
 unit_size = 12.0
 
-[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=861995719]
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=1088491952]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 stream = ExtResource("5_mbk1q")

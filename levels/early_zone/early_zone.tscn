@@ -82,16 +82,16 @@ size = Vector3(171.54909, 90, 2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_r8g2b"]
 size = Vector3(100.78722, 90, 2)
 
-[node name="EarlyZone" type="Node3D" unique_id=1235010173]
+[node name="EarlyZone" type="Node3D" unique_id=539927014]
 script = ExtResource("1_2ndb8")
 metadata/region_name = "Early Zone"
 
-[node name="Lighting" type="Node3D" parent="." unique_id=738789286]
+[node name="Lighting" type="Node3D" parent="." unique_id=1740548370]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=580598850]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=478456865]
 environment = ExtResource("2_exaco")
 
-[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=1072023215]
+[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=2009259513]
 transform = Transform3D(0.81915206, 0.35312894, -0.45198444, 0, 0.7880108, 0.6156615, 0.57357645, -0.5043204, 0.64550066, 0, 0, 0)
 light_color = Color(1, 0.93, 0.83, 1)
 light_energy = 1.2
@@ -116,7 +116,7 @@ metadata/region_name = "Halden's Crossing"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 245, 0, -205)
 metadata/region_name = "Saint Mercy Clinic"
 
-[node name="AshCreekFarms" type="Node3D" parent="." unique_id=1182223923 instance=ExtResource("9_rj5mr")]
+[node name="AshCreekFarms" type="Node3D" parent="." unique_id=759722068 instance=ExtResource("9_rj5mr")]
 transform = Transform3D(0.7714025, 0, 0.63634753, 0, 1, 0, -0.63634753, 0, 0.7714025, 307, 0, -106)
 metadata/region_name = "Ash Creek Farms"
 
@@ -132,142 +132,142 @@ metadata/region_name = "Black Ridge Mine"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 400, 0, -680)
 metadata/region_name = "Northwatch Outpost"
 
-[node name="Landmarks" type="Node3D" parent="." unique_id=1587219814]
+[node name="Landmarks" type="Node3D" parent="." unique_id=1744864822]
 
-[node name="Outpost17" type="Marker3D" parent="Landmarks" unique_id=278041990]
+[node name="Outpost17" type="Marker3D" parent="Landmarks" unique_id=1402174848]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 5)
 script = ExtResource("13_7l5ab")
 display_name = "Outpost 17"
 radius = 85.0
 compass_name = "Outpost 17"
 
-[node name="HaldensCrossing" type="Marker3D" parent="Landmarks" unique_id=1306938450]
+[node name="HaldensCrossing" type="Marker3D" parent="Landmarks" unique_id=1456591846]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 450, 2, -275)
 script = ExtResource("13_7l5ab")
 display_name = "Halden's Crossing"
 radius = 115.0
 compass_name = "Halden's"
 
-[node name="SaintMercyClinic" type="Marker3D" parent="Landmarks" unique_id=2099616426]
+[node name="SaintMercyClinic" type="Marker3D" parent="Landmarks" unique_id=419110445]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 245, 2, -205)
 script = ExtResource("13_7l5ab")
 display_name = "Saint Mercy Clinic"
 radius = 50.0
 compass_name = "Saint Mercy"
 
-[node name="AshCreekFarms" type="Marker3D" parent="Landmarks" unique_id=500733044]
+[node name="AshCreekFarms" type="Marker3D" parent="Landmarks" unique_id=1870305746]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 307, 2, -106)
 script = ExtResource("13_7l5ab")
 display_name = "Ash Creek Farms"
 radius = 80.0
 compass_name = "Ash Creek"
 
-[node name="SmugglersGulch" type="Marker3D" parent="Landmarks" unique_id=482388115]
+[node name="SmugglersGulch" type="Marker3D" parent="Landmarks" unique_id=24538717]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 150, 2, -395)
 script = ExtResource("13_7l5ab")
 display_name = "Smuggler's Gulch"
 compass_name = "Smuggler's Gulch"
 
-[node name="BlackRidgeMine" type="Marker3D" parent="Landmarks" unique_id=1887663014]
+[node name="BlackRidgeMine" type="Marker3D" parent="Landmarks" unique_id=1841105838]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 262, 2, -552)
 script = ExtResource("13_7l5ab")
 display_name = "Black Ridge Mine"
 radius = 55.0
 compass_name = "Black Ridge"
 
-[node name="NorthwatchOutpost" type="Marker3D" parent="Landmarks" unique_id=1497886312]
+[node name="NorthwatchOutpost" type="Marker3D" parent="Landmarks" unique_id=1962092035]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 400, 2, -680)
 script = ExtResource("13_7l5ab")
 display_name = "Northwatch Outpost"
 radius = 45.0
 compass_name = "Northwatch"
 
-[node name="Boundary" type="Node3D" parent="." unique_id=779072991]
+[node name="Boundary" type="Node3D" parent="." unique_id=2067588596]
 script = ExtResource("14_84pll")
 polygon = PackedVector2Array(-135, 135, -160, 40, -150, -80, -120, -185, -60, -320, 40, -470, 120, -640, 250, -770, 420, -800, 540, -745, 610, -580, 650, -400, 660, -230, 610, -70, 480, 50, 300, 115, 120, 150, -40, 160)
 edge_kinds = PackedByteArray(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-[node name="Backstop" type="StaticBody3D" parent="Boundary" unique_id=1133286395 groups=["navigation_geometry"]]
+[node name="Backstop" type="StaticBody3D" parent="Boundary" unique_id=676627006 groups=["navigation_geometry"]]
 collision_layer = 2
 collision_mask = 0
 
-[node name="Wall0" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=819935751]
+[node name="Wall0" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1962488532]
 transform = Transform3D(-0.25449336, 0, 0.9670745, 0, 1, 0, -0.9670745, 0, -0.25449336, -153.4312, 35, 104.25522)
 shape = SubResource("BoxShape3D_wrsxo")
 
-[node name="Wall1" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1659819861]
+[node name="Wall1" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=852468905]
 transform = Transform3D(0.08304565, 0, 0.99654573, 0, 1, 0, -0.99654573, 0, 0.08304565, -164.99619, 35, -20.461693)
 shape = SubResource("BoxShape3D_tydno")
 
-[node name="Wall2" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=168555708]
+[node name="Wall2" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1694469501]
 transform = Transform3D(0.27472112, 0, 0.96152395, 0, 1, 0, -0.96152395, 0, 0.27472112, -122.98595, 35, -210.9497)
 shape = SubResource("BoxShape3D_i6vmh")
 
-[node name="Wall3" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=3738981]
+[node name="Wall3" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1022333962]
 transform = Transform3D(-0.406142, 0, -0.91380996, 0, 1, 0, 0.91380996, 0, -0.406142, -87.11191, 35, -337.78906)
 shape = SubResource("BoxShape3D_hchmg")
 
-[node name="Wall4" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=15962627]
+[node name="Wall4" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1011611025]
 transform = Transform3D(0.5547002, 0, 0.83205026, 0, 1, 0, -0.83205026, 0, 0.5547002, -38.039516, 35, -410.62955)
 shape = SubResource("BoxShape3D_k2tq1")
 
-[node name="Wall5" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=2056862309]
+[node name="Wall5" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1964826715]
 transform = Transform3D(0.4257971, 0, 0.90481865, 0, 1, 0, -0.90481865, 0, 0.4257971, 52.74039, 35, -572.2265)
 shape = SubResource("BoxShape3D_f5k7w")
 
-[node name="Wall6" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=226863205]
+[node name="Wall6" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1714032957]
 transform = Transform3D(0.7071067, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, 0.7071067, 163.96446, 35, -729.21936)
 shape = SubResource("BoxShape3D_d3xfe")
 
-[node name="Wall7" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1870946317]
+[node name="Wall7" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=265671813]
 transform = Transform3D(0.9847836, 0, 0.17378518, 0, 1, 0, -0.17378518, 0, 0.9847836, 329.3844, 35, -816.5034)
 shape = SubResource("BoxShape3D_d8h24")
 
-[node name="Wall8" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=2000825482]
+[node name="Wall8" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1820894686]
 transform = Transform3D(0.90906495, 0, -0.4166545, 0, 1, 0, 0.4166545, 0, 0.90906495, 494.43817, 35, -801.0835)
 shape = SubResource("BoxShape3D_dtwku")
 
-[node name="Wall9" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1247920119]
+[node name="Wall9" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=502692373]
 transform = Transform3D(0.3905499, 0, -0.92058176, 0, 1, 0, 0.92058176, 0, 0.3905499, 602.6076, 35, -679.3607)
 shape = SubResource("BoxShape3D_87nxd")
 
-[node name="Wall10" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=573187360]
+[node name="Wall10" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1608359437]
 transform = Transform3D(0.2169304, 0, -0.97618705, 0, 1, 0, 0.97618705, 0, 0.2169304, 661.19836, 35, -497.12003)
 shape = SubResource("BoxShape3D_pwgfa")
 
-[node name="Wall11" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1459237536]
+[node name="Wall11" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1898489503]
 transform = Transform3D(0.05872191, 0, -0.9982744, 0, 1, 0, 0.9982744, 0, 0.05872191, 687.04126, 35, -315.23892)
 shape = SubResource("BoxShape3D_08dqa")
 
-[node name="Wall12" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=690754686]
+[node name="Wall12" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=2610364]
 transform = Transform3D(-0.29827487, 0, -0.95448, 0, 1, 0, 0.95448, 0, -0.29827487, 665.1399, 35, -139.16415)
 shape = SubResource("BoxShape3D_m4hng")
 
-[node name="Wall13" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1429149090]
+[node name="Wall13" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=96915756]
 transform = Transform3D(-0.7348033, 0, -0.67828023, 0, 1, 0, 0.67828023, 0, -0.7348033, 567.4718, 35, 12.805828)
 shape = SubResource("BoxShape3D_ig2s4")
 
-[node name="Wall14" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1501030145]
+[node name="Wall14" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=308173599]
 transform = Transform3D(-0.9405539, 0, -0.33964452, 0, 1, 0, 0.33964452, 0, -0.9405539, 402.7456, 35, 111.91992)
 shape = SubResource("BoxShape3D_1tuci")
 
-[node name="Wall15" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=707098129]
+[node name="Wall15" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=452940124]
 transform = Transform3D(-0.9816154, 0, -0.19086963, 0, 1, 0, 0.19086963, 0, -0.9816154, 216.30405, 35, 163.87354)
 shape = SubResource("BoxShape3D_2fro5")
 
-[node name="Wall16" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1201245404]
+[node name="Wall16" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1857322667]
 transform = Transform3D(-0.9980526, 0, -0.062378325, 0, 1, 0, 0.062378325, 0, -0.9980526, 40.457664, 35, 187.03384)
 shape = SubResource("BoxShape3D_26cx8")
 
-[node name="Wall17" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1111899610]
+[node name="Wall17" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=49740272]
 transform = Transform3D(-0.9670746, 0, 0.25449324, 0, 1, 0, -0.25449324, 0, -0.9670746, -89.95396, 35, 179.9437)
 shape = SubResource("BoxShape3D_r8g2b")
 
-[node name="Structures" type="Node3D" parent="." unique_id=201980561 groups=["navigation_geometry"]]
+[node name="Structures" type="Node3D" parent="." unique_id=1034545668 groups=["navigation_geometry"]]
 
-[node name="Navigation" type="Node3D" parent="." unique_id=2081335918 instance=ExtResource("15_mjj7m")]
+[node name="Navigation" type="Node3D" parent="." unique_id=1294406794 instance=ExtResource("15_mjj7m")]
 
-[node name="Vehicles" type="Node3D" parent="." unique_id=48634995]
+[node name="Vehicles" type="Node3D" parent="." unique_id=216009460]
 
 [node name="CargoTruck" type="VehicleBody3D" parent="Vehicles" unique_id=1059742663 instance=ExtResource("16_b3cwp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.1, 8)
@@ -280,9 +280,9 @@ angular_damp = 0.6
 script = ExtResource("17_krgp3")
 metadata/no_draw_distance = true
 
-[node name="Survivors" type="Node3D" parent="." unique_id=1871587163]
+[node name="Survivors" type="Node3D" parent="." unique_id=1412464866]
 
-[node name="Maya" type="CharacterBody3D" parent="Survivors" unique_id=805507622 instance=ExtResource("18_a2oed")]
+[node name="Maya" type="CharacterBody3D" parent="Survivors" unique_id=312682839 instance=ExtResource("18_a2oed")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 247, 0.05, -193)
 collision_layer = 8
 collision_mask = 15
@@ -292,7 +292,7 @@ settler_name = "Maya"
 greeting = "I hid in the pharmacy when the raiders came. Find somewhere safe to live and I'll come."
 look_seed = 2089350477
 
-[node name="Tomas" type="CharacterBody3D" parent="Survivors" unique_id=1354737376 instance=ExtResource("18_a2oed")]
+[node name="Tomas" type="CharacterBody3D" parent="Survivors" unique_id=1264498192 instance=ExtResource("18_a2oed")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 464, 0.05, -312)
 collision_layer = 8
 collision_mask = 15
@@ -302,7 +302,7 @@ settler_name = "Tomas"
 greeting = "The diner's been my home since the town fell. Got a bed somewhere safer?"
 look_seed = 237880617
 
-[node name="Jeb" type="CharacterBody3D" parent="Survivors" unique_id=1066594999 instance=ExtResource("18_a2oed")]
+[node name="Jeb" type="CharacterBody3D" parent="Survivors" unique_id=1683219145 instance=ExtResource("18_a2oed")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 278, 0.05, -528.6)
 collision_layer = 8
 collision_mask = 15
@@ -312,7 +312,7 @@ settler_name = "Old Jeb"
 greeting = "Forty years I worked this mine. Find me a bed that isn't down a hole and I'm yours."
 look_seed = 3356092309
 
-[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=2144672250]
+[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=237421574]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 14)
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=1105365724 instance=ExtResource("20_ccc3e")]
@@ -328,22 +328,22 @@ script = ExtResource("23_ilgni")
 player = NodePath("../Player")
 game_mode = NodePath("../GameMode")
 
-[node name="GameMode" type="Node" parent="." unique_id=1314474850 node_paths=PackedStringArray("spawn_point", "players")]
+[node name="GameMode" type="Node" parent="." unique_id=391823394 node_paths=PackedStringArray("spawn_point", "players")]
 script = ExtResource("24_2s421")
 spawn_point = NodePath("../PlayerSpawn")
 players = [NodePath("../Player")]
 
-[node name="StormEffects" type="CanvasLayer" parent="." unique_id=156111574]
+[node name="StormEffects" type="CanvasLayer" parent="." unique_id=1205239533]
 script = ExtResource("25_460o1")
 
-[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=294935959]
+[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=2011188985]
 unique_name_in_owner = true
 stream = ExtResource("26_45eli")
 volume_db = -2.0
 autoplay = true
 bus = &"Ambience"
 
-[node name="DistantWind" type="AudioStreamPlayer" parent="." unique_id=2070839257]
+[node name="DistantWind" type="AudioStreamPlayer" parent="." unique_id=1486025900]
 stream = ExtResource("27_0y000")
 volume_db = -14.0
 autoplay = true

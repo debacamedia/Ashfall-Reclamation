@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 19.5 (Ash Creek Farms laid out again, food shelves)
+## Current state: Increment 19.6 (settlers build)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -35,6 +35,7 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 
   See [`docs/increments/19_ash_creek_settlement.md`](docs/increments/19_ash_creek_settlement.md).
 - **Increment 19.5:** **Ash Creek Farms laid out again.** The railway no longer runs through the farm: the farm sits beside the tracks, facing them, with a **level crossing** where its lane crosses (and at the main road near Halden's). The lane comes in under a gateway arch into a **yard**: the farmhouse at the back, the barn and silo on one side, the tool shed, pump house and water tower on the other, four **fields** in a row behind. **Food shelves** along the barn's back wall hold **1,200 vegetables** (was 240), with crates of produce showing as it fills; the settlement screen shows food against capacity. Old saves carry over. See [`docs/increments/19_5_farm_layout.md`](docs/increments/19_5_farm_layout.md).
+- **Increment 19.6:** **settlers build.** Claiming Ash Creek lays out its plan as outlines: a **fence round the yard**, a **fence round the fields** and a **guard post at each corner**. Hand over materials at an outline (E), or leave them in the Farm Store, and settlers with the new **Builder** job put it up (fences a 4 m length at a time); hold E to help. In **build mode (B)** inside the farm you can plan a **Bunkhouse** (four more beds), **Storehouse** (1,200 more food), **Guard Tower**, **Guard Post** or **Farm Plot** (two more farmers). Guards take a post each; the settlement screen has a Building column. See [`docs/increments/19_6_settlers_build.md`](docs/increments/19_6_settlers_build.md).
 - **Resource Pack 3:** weathered brick, cracked asphalt, tar-paper roofs and painted containers; shop signs, raider graffiti and decals across Halden's Crossing and Outpost 17; bullet impacts that sound like the surface; crafting, salvage, pickup, reload and container sounds; town ambience. See [`docs/art/ashfall_pack_v3/INTEGRATION.md`](docs/art/ashfall_pack_v3/INTEGRATION.md) for what's integrated and what's only imported.
 
 ## Run it

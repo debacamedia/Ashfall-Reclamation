@@ -1,0 +1,75 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/settlement/settlement_building.gd" id="1_il3sc"]
+[ext_resource type="Resource" path="res://resources/structures/settlement/farm_fence.tres" id="2_ds25m"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/structure_hit.tres" id="3_17gsj"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="4_l58cx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_t1obw"]
+size = Vector3(0.14, 1.35, 0.14)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c1i28"]
+size = Vector3(0.14, 1.35, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_w32iv"]
+size = Vector3(0.14, 1.35, 0.14)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y00f8"]
+size = Vector3(0.14, 1.35, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mi05m"]
+size = Vector3(4, 0.1, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8271o"]
+size = Vector3(4, 0.1, 0.06)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nuqhq"]
+size = Vector3(4, 1.2, 0.16)
+
+[node name="FarmFence" type="Node3D" unique_id=1824676076]
+script = ExtResource("1_il3sc")
+definition = ExtResource("2_ds25m")
+
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=1878863085]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("3_17gsj")
+volume_db = -2.0
+unit_size = 4.0
+bus = &"SFX"
+
+[node name="Body" type="StaticBody3D" parent="." unique_id=1677074570]
+collision_layer = 2
+collision_mask = 0
+
+[node name="PostL" type="MeshInstance3D" parent="Body" unique_id=1539807319]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.93, 0.675, 0)
+material_override = ExtResource("4_l58cx")
+mesh = SubResource("BoxMesh_t1obw")
+
+[node name="PostLCol" type="CollisionShape3D" parent="Body" unique_id=404316366]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.93, 0.675, 0)
+shape = SubResource("BoxShape3D_c1i28")
+
+[node name="PostR" type="MeshInstance3D" parent="Body" unique_id=1656916721]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.93, 0.675, 0)
+material_override = ExtResource("4_l58cx")
+mesh = SubResource("BoxMesh_w32iv")
+
+[node name="PostRCol" type="CollisionShape3D" parent="Body" unique_id=452625984]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.93, 0.675, 0)
+shape = SubResource("BoxShape3D_y00f8")
+
+[node name="RailLow" type="MeshInstance3D" parent="Body" unique_id=1091111628]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0.05)
+material_override = ExtResource("4_l58cx")
+mesh = SubResource("BoxMesh_mi05m")
+
+[node name="RailHigh" type="MeshInstance3D" parent="Body" unique_id=1693540357]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.05)
+material_override = ExtResource("4_l58cx")
+mesh = SubResource("BoxMesh_8271o")
+
+[node name="Panel" type="CollisionShape3D" parent="Body" unique_id=942020011]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.03)
+shape = SubResource("BoxShape3D_nuqhq")

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_if217"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_i8a70"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="3_k7t5o"]
+
+[resource]
+script = ExtResource("3_k7t5o")
+id = &"farm_plot"
+display_name = "Farm Plot"
+scene_path = "res://scenes/settlement/farm_plot.tscn"
+footprint = Vector3(12.2, 0.6, 10.2)
+blocks_navigation = false
+repair_cost = Dictionary[ExtResource("1_if217"), int]({
+ExtResource("2_i8a70"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_if217"), int]({
+ExtResource("2_i8a70"): 2
+})
+movable = false
