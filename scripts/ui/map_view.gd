@@ -312,6 +312,11 @@ func markers() -> Array[Dictionary]:
 		if t != null:
 			out.append({"kind": "truck", "name": "Your truck" if t.driver == null else "Your truck (you're driving)",
 				"at": Vector2(t.global_position.x, t.global_position.z), "heading": t.map_heading()})
+	for n in tree.get_nodes_in_group("settlements"):
+		var s := n as Settlement
+		if s != null and s.raid_phase != Settlement.RaidPhase.NONE and s._raid_marker != null:
+			var at := s._raid_marker.global_position
+			out.append({"kind": "raid", "name": "Raiders (%s)" % ("at the farm" if s.raid_active() else "coming"), "at": Vector2(at.x, at.z)})
 	if _knowledge != null:
 		for pin in _knowledge.pins:
 			out.append({"kind": "pin", "name": "Pin %d" % pin["number"], "number": pin["number"], "at": pin["at"]})
@@ -376,6 +381,10 @@ func _draw_overlay() -> void:
 	for m in all:
 		if m["kind"] == "truck":
 			draw_icon(ci, "truck", to_screen(m["at"]), TRUCK_COLOR, "", -float(m["heading"]))
+	for m in all:
+		if m["kind"] == "raid":
+			draw_icon(ci, "raid", to_screen(m["at"]), Settlement.RAID_COLOR, "!")
+			_label(ci, font, to_screen(m["at"]) + Vector2(0, 26), "Raiders", SMALL_SIZE, Settlement.RAID_COLOR)
 	for m in all:
 		if m["kind"] == "pin":
 			draw_icon(ci, "pin", to_screen(m["at"]), MapKnowledge.pin_color(m["number"]), str(m["number"]))
@@ -475,6 +484,10 @@ static func draw_icon(ci: CanvasItem, kind: String, at: Vector2, color := Color.
 			ring.append(pts[0])
 			ci.draw_polyline(ring, outline, 2.0)
 			ci.draw_line(at + Vector2(-6, -4).rotated(angle), at + Vector2(6, -4).rotated(angle), outline, 2.0)
+		"raid":
+			ci.draw_circle(at, 12.0, outline)
+			ci.draw_circle(at, 10.5, color)
+			_icon_text(ci, at, text, Color(1, 1, 1))
 		"settler":
 			ci.draw_circle(at, 4.0, outline)
 			ci.draw_circle(at, 3.0, color)

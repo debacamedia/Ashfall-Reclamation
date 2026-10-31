@@ -504,6 +504,12 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump
 		Vector3(0, 0, -32)])
 	_markers(st, "", [["ArrivalPoint", Vector3(0, 0, 74)], ["Hangout", Vector3(-2, 0, -6.5)]])
 	_markers(st, "WoodSpots", WOODLOT_SPOTS)  # where Woodcutters work (19.7)
+	# Raids (20): where raiders come from, and where everyone else shelters
+	_markers(st, "RaidPoints", [Vector3(110, 0, -20), Vector3(-110, 0, 10), Vector3(-60, 0, 90)])
+	var labels := ["the east", "the west", "across the tracks"]
+	for i in 3:
+		st.get_node("RaidPoints").get_child(i).set_meta("label", labels[i])
+	_markers(st, "", [["Shelter", Vector3(-2.4, 0, -16.5)]])
 	var people := Node3D.new()
 	people.name = "Settlers"
 	st.add_child(people)

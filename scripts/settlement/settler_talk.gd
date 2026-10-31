@@ -15,6 +15,8 @@ func _ready() -> void:
 func get_prompt(_interactor: Node3D) -> String:
 	if settler == null:
 		return "Talk"
+	if settler.is_down():
+		return "Help %s up (uses a Bandage or Medkit)" % settler.settler_name
 	if settler.settlement == null:
 		return "Talk to %s" % settler.settler_name
 	return "Talk to %s (%s)" % [settler.settler_name, settler.role_name()]
@@ -22,6 +24,11 @@ func get_prompt(_interactor: Node3D) -> String:
 
 func get_block_reason(interactor: Node3D) -> String:
 	return "" if interactor is PlayerController and settler != null and not settler.is_dead() else "Can't do that"
+
+
+func _process(_delta: float) -> void:
+	# Helping someone up takes a moment; talking is a tap
+	hold_time = 2.0 if settler != null and settler.is_down() else 0.0
 
 
 func _perform(interactor: Node3D) -> void:

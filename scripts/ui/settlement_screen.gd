@@ -270,6 +270,16 @@ func refresh() -> void:
 	if posts > 0:
 		lines.append("Guard posts:  %d" % posts)
 	lines.append("Armory:  %s" % _armory_text(s))
+	match s.raid_phase:
+		Settlement.RaidPhase.WARNED:
+			lines.append("RAIDERS COMING from %s: %d, in about %d min" % [s.raid_from_name, s.raid_size, maxi(ceili(s.next_raid_in * s.hour_seconds / 60.0), 1)])
+		Settlement.RaidPhase.ACTIVE:
+			lines.append("RAID UNDER WAY: %d raider%s left" % [s.raiders.size(), "" if s.raiders.size() == 1 else "s"])
+		_:
+			lines.append("Raiders:  none in sight")
+	var down := s.members().filter(func(m: Settler) -> bool: return m.is_down()).size()
+	if down > 0:
+		lines.append("Wounded:  %d down, help them up (E, a Bandage)" % down)
 	if s.free_beds() <= 0:
 		lines.append("Newcomers:  no free bed")
 	elif s.food() < s.arrival_food_needed:

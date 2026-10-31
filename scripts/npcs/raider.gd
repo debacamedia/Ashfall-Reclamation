@@ -12,6 +12,11 @@ extends CharacterBody3D
 ##   SEARCH  going to the last known / heard position and looking around
 ##   DEAD    fallen; despawns after a while
 ##
+## Raids (Increment 20): a raider sent by a settlement's raid (join_raid)
+## jogs in to the settlement's stores, hacking through fences in the way,
+## fights any settler it sees (they go down wounded, not dead), grabs what it
+## can carry and runs back out. Killed, it drops what it took.
+##
 ## AUTHORITY: AI, perception and damage run only where the game state lives
 ## (single-player, or the co-op host). Clients will just replicate transform,
 ## state and health.
@@ -71,7 +76,8 @@ enum State { IDLE, WANDER, CHASE, ATTACK, SEARCH, DEAD }
 var state: State = State.IDLE
 ## Wander area centre. Set by the spawner; defaults to the starting position.
 var home_position := Vector3.INF
-var target: PlayerController = null
+## A player, or a settler during a raid.
+var target: Node3D = null
 var last_known_position := Vector3.ZERO
 
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -110,6 +116,17 @@ var _arm_tween: Tween
 
 var _step_distance := 0.0
 
+enum RaidPhase { NONE, APPROACH, LOOT, FLEE }
+## The settlement this raider is raiding (or null), and how far along.
+var raid: Settlement = null
+var raid_phase: RaidPhase = RaidPhase.NONE
+var raid_exit := Vector3.ZERO
+## What it's carrying off: item id -> count.
+var carried := {}
+## Snagged on a door frame or another raider: a step aside.
+var _unstick_left := 0.0
+var _unstick_dir := Vector3.ZERO
+
 
 func _ready() -> void:
 	add_to_group("enemies")
@@ -147,11 +164,16 @@ func _physics_process(delta: float) -> void:
 
 	match state:
 		State.IDLE:
-			_brake(delta)
-			if _state_time >= _state_duration:
-				_enter(State.WANDER)
+			if raid != null:
+				_process_raid(delta)
+			else:
+				_brake(delta)
+				if _state_time >= _state_duration:
+					_enter(State.WANDER)
 		State.WANDER:
-			if _move_to(_move_goal, walk_speed, delta) or _state_time > 20.0:
+			if raid != null:
+				_process_raid(delta)
+			elif _move_to(_move_goal, walk_speed, delta) or _state_time > 20.0:
 				_enter(State.IDLE)
 		State.CHASE:
 			_process_chase(delta)
@@ -172,6 +194,33 @@ func is_dead() -> bool:
 
 func get_state_name() -> String:
 	return State.keys()[state]
+
+
+## Joins `s`'s raid: in to its stores, then back out to `exit_point`.
+func join_raid(s: Settlement, exit_point: Vector3) -> void:
+	raid = s
+	raid_phase = RaidPhase.APPROACH
+	raid_exit = exit_point
+	home_position = exit_point
+	_enter(State.IDLE)
+
+
+## Alive, and not down: something to fight.
+static func is_alive_target(t: Node3D) -> bool:
+	if t == null or not is_instance_valid(t) or not t.is_inside_tree():
+		return false
+	if t.has_method("is_down") and bool(t.call("is_down")):
+		return false
+	return t.has_method("is_dead") and not bool(t.call("is_dead"))
+
+
+## Where to look at `t` (a player's head, a settler's eyes).
+static func aim_point(t: Node3D) -> Vector3:
+	if t is PlayerController:
+		return (t as PlayerController).head.global_position
+	if t is Settler:
+		return (t as Settler).eyes.global_position
+	return t.global_position + Vector3.UP * 1.5
 
 
 ## Starts chasing `player` immediately (used when hit, or by scripted events).
@@ -201,11 +250,11 @@ func hear_noise(origin: Vector3, radius: float, _source: Node) -> void:
 	_show_alert()
 
 
-## True if this raider can currently see `player`.
-func can_see(player: PlayerController) -> bool:
-	if player == null or player.is_dead():
+## True if this raider can currently see `player` (or a settler).
+func can_see(player: Node3D) -> bool:
+	if not is_alive_target(player):
 		return false
-	var target_point := player.head.global_position
+	var target_point := aim_point(player)
 	var to_target := target_point - eyes.global_position
 	var distance := to_target.length()
 	if distance > sight_range:
@@ -229,7 +278,7 @@ func _enter(new_state: State) -> void:
 	match new_state:
 		State.IDLE:
 			_state_duration = _rng.randf_range(idle_time_min, idle_time_max)
-			target = null if (target != null and target.is_dead()) else target
+			target = target if is_alive_target(target) else null
 		State.WANDER:
 			_move_goal = _pick_wander_point()
 		State.ATTACK:
@@ -240,7 +289,7 @@ func _enter(new_state: State) -> void:
 
 
 func _process_chase(delta: float) -> void:
-	if target == null or target.is_dead():
+	if not is_alive_target(target):
 		target = null
 		_enter(State.IDLE)
 		return
@@ -293,14 +342,14 @@ func _process_attack(delta: float) -> void:
 	_brake(delta)
 	if break_target != null and is_instance_valid(break_target):
 		_face(break_target.global_position - global_position, delta)
-	elif target != null and not target.is_dead():
+	elif is_alive_target(target):
 		_face(target.global_position - global_position, delta)
 	if not _strike_done and _state_time >= attack_windup:
 		_strike_done = true
 		_strike()
 	if _state_time >= attack_windup + attack_recovery:
 		_attack_cooldown = 0.0
-		if target == null or target.is_dead():
+		if not is_alive_target(target):
 			target = null
 			_enter(State.IDLE)
 		else:
@@ -329,7 +378,7 @@ func _strike() -> void:
 		_play(_swing_sound)
 		attacked.emit(target, hit)
 		return
-	if target != null and not target.is_dead():
+	if is_alive_target(target):
 		var to_target := target.global_position - global_position
 		var flat := Vector3(to_target.x, 0.0, to_target.z)
 		var in_front := flat.length() < 0.01 or rad_to_deg((-global_basis.z).angle_to(flat)) <= attack_hit_angle_degrees
@@ -337,7 +386,9 @@ func _strike() -> void:
 			var info := DamageInfo.create(attack_damage, DamageInfo.Type.MELEE, self)
 			info.hit_position = target.global_position + Vector3.UP
 			info.direction = flat.normalized()
-			target.health.apply_damage(info)
+			var h := HealthComponent.find_on(target)
+			if h != null:
+				h.apply_damage(info)
 			hit = true
 	_play_strike()
 	_play(_swing_sound)
@@ -382,9 +433,9 @@ func _distance_to_structure(s: Structure) -> float:
 # ---------------------------------------------------------------- perception
 
 func _update_perception() -> void:
-	if target != null and target.is_dead():
+	if target != null and not is_alive_target(target):
 		target = null
-	var best: PlayerController = null
+	var best: Node3D = null
 	var best_distance := INF
 	for node in get_tree().get_nodes_in_group("players"):
 		var player := node as PlayerController
@@ -394,8 +445,20 @@ func _update_perception() -> void:
 		if d < best_distance:
 			best = player
 			best_distance = d
+	# Raiding: settlers in sight are fair game too (players first)
+	if best == null and raid != null:
+		for node in get_tree().get_nodes_in_group("settlers"):
+			var st := node as Settler
+			if st == null or st.settlement != raid or not st.has_arrived() or not can_see(st):
+				continue
+			var d := global_position.distance_to(st.global_position)
+			if d < best_distance:
+				best = st
+				best_distance = d
 	if best == null:
 		return
+	if target is PlayerController and best is Settler and is_alive_target(target):
+		return  # stay on the player
 	var was_calm := state in [State.IDLE, State.WANDER, State.SEARCH]
 	target = best
 	last_known_position = best.global_position
@@ -483,6 +546,14 @@ func _on_damaged(_amount: float, info: DamageInfo) -> void:
 	tween.tween_property(visual, "rotation:x", 0.0, 0.2)
 	if info.source is PlayerController:
 		alert_to(info.source as PlayerController)
+	elif info.source is Settler and raid != null and is_alive_target(info.source as Node3D) and state != State.ATTACK:
+		# A guard shooting at us: go for them (unless we're after a player)
+		if not (target is PlayerController and is_alive_target(target)):
+			target = info.source as Node3D
+			last_known_position = target.global_position
+			_time_since_seen = 0.0
+			if state != State.CHASE:
+				_enter(State.CHASE)
 
 
 func _on_died(_info: DamageInfo) -> void:
@@ -501,6 +572,7 @@ func _on_died(_info: DamageInfo) -> void:
 	tween.tween_property(right_arm, "rotation:x", deg_to_rad(-30.0), 0.5)
 	_play(_death_sound)
 	_drop_loot()
+	_drop_carried()
 	killed.emit(self)
 	get_tree().create_timer(despawn_time).timeout.connect(queue_free)
 
@@ -542,6 +614,89 @@ func _update_footsteps(delta: float) -> void:
 	if _step_distance >= step_length:
 		_step_distance = 0.0
 		_play(_footstep_sound)
+
+
+# ---------------------------------------------------------------- raids
+
+func _process_raid(delta: float) -> void:
+	if not is_instance_valid(raid):
+		raid = null
+		return
+	match raid_phase:
+		RaidPhase.APPROACH:
+			var goal := raid.raid_goal()
+			if _break_through(goal, delta):
+				return
+			if _move_to(goal, run_speed * 0.7, delta):
+				raid_phase = RaidPhase.LOOT
+				_state_time = 0.0
+		RaidPhase.LOOT:
+			_brake(delta)
+			if _state_time > 4.0:
+				carried = raid.raid_steal(self)
+				raid_phase = RaidPhase.FLEE
+				_state_time = 0.0
+		RaidPhase.FLEE:
+			if _break_through(raid_exit, delta):
+				return
+			if _move_to(raid_exit, run_speed, delta) or Vector2(raid_exit.x - global_position.x, raid_exit.z - global_position.z).length() < 3.0:
+				raid.raid_escaped(self)
+				raid = null
+				queue_free()
+
+
+## Hacking through a fence (or anything built) that stops us reaching
+## `goal`. True while busy with it.
+func _break_through(goal: Vector3, delta: float) -> bool:
+	if _unstick_left > 0.0:
+		_unstick_left -= delta
+		var weight := 1.0 - exp(-acceleration * delta)
+		velocity.x = lerpf(velocity.x, _unstick_dir.x * walk_speed, weight)
+		velocity.z = lerpf(velocity.z, _unstick_dir.z * walk_speed, weight)
+		return true
+	if break_target != null and (not is_instance_valid(break_target) or break_target.is_queued_for_deletion()):
+		break_target = null
+	if break_target != null:
+		if _distance_to_structure(break_target) <= attack_range + 0.4:
+			_brake(delta)
+			_face(break_target.global_position - global_position, delta)
+			if _attack_cooldown <= 0.0 and _state_time > 0.3:
+				_enter(State.ATTACK)
+		else:
+			_move_to(break_target.global_position, run_speed, delta)
+		return true
+	var moved := get_real_velocity()
+	_stuck_time = _stuck_time + delta if Vector2(moved.x, moved.z).length() < 0.6 and _state_time > 1.0 else 0.0
+	if _stuck_time > 1.2:
+		_stuck_time = 0.0
+		var blocker := _structure_in_way(goal)
+		if blocker != null:
+			break_target = blocker
+			return true
+		# Not a wall: snagged on a corner or someone. Step aside and go on.
+		var to := Vector3(goal.x - global_position.x, 0, goal.z - global_position.z).normalized()
+		_unstick_dir = (to.cross(Vector3.UP) * (1.0 if _rng.randf() < 0.5 else -1.0) - to * 0.5).normalized()
+		_unstick_left = 0.7
+		_repath_timer = 0.0
+		return true
+	return false
+
+
+## Killed while carrying loot: it falls where it dies.
+func _drop_carried() -> void:
+	if carried.is_empty():
+		return
+	var parent := get_parent() if get_parent() != null else get_tree().current_scene
+	var i := 0
+	for id: StringName in carried:
+		var item := ItemDatabase.get_item(id)
+		if item != null and int(carried[id]) > 0:
+			var p := Pickup.spawn(parent, item, int(carried[id]), global_position + Vector3(0.5 * i, 0.3, 0.3))
+			p.animate = true
+			i += 1
+	if raid != null and is_instance_valid(raid):
+		raid.raid_recovered(carried)
+	carried = {}
 
 
 func _drop_loot() -> void:

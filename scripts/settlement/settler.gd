@@ -16,6 +16,11 @@ extends CharacterBody3D
 ##   No job   helps out round the farmhouse.
 ##
 ## Unfed for too long, they stop working; longer, and they leave.
+##
+## Raids (Increment 20): while raiders are at the settlement, everyone but
+## the guards shelters in the farmhouse. A settler beaten by raiders goes
+## down wounded instead of dying: help them up (E, with a Bandage or a
+## Medkit). Left down for `Settlement.bleed_out_hours`, they die.
 ## Survivors waiting elsewhere (Saint Mercy, Halden's, Black Ridge) come when
 ## you ask, once you have somewhere with a free bed. They walk with you; left
 ## alone, they turn up at the end of the farm's lane and walk in.
@@ -29,7 +34,7 @@ signal role_changed(role: Role)
 signal armed_changed
 
 enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER }
-enum State { WAIT, TRAVEL, IDLE, WALK, WORK, PATROL, FIGHT, LEAVING, DEAD }
+enum State { WAIT, TRAVEL, IDLE, WALK, WORK, PATROL, FIGHT, LEAVING, DEAD, DOWN }
 
 const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder", Role.WOODCUTTER: "Woodcutter"}
 ## A guard keeps about this many rounds (topped up from you or the armory).
@@ -76,6 +81,8 @@ var next_meal := 4.0
 var unfed_hours := 0.0
 ## A farmer with no water to work with.
 var short_of_water := false
+## Hours spent down, wounded (Increment 20).
+var down_hours := 0.0
 ## A farmer with no field free to work (more farmers than farm spots).
 var no_field := false
 var state: State = State.WAIT
@@ -124,7 +131,12 @@ func _ready() -> void:
 # ---------------------------------------------------------------- state
 
 func is_dead() -> bool:
-	return health.is_dead()
+	return health.is_dead() and state != State.DOWN
+
+
+## Down, wounded by raiders: alive, but needs helping up.
+func is_down() -> bool:
+	return state == State.DOWN
 
 
 ## They live at their settlement now (not still on the way).
@@ -134,7 +146,7 @@ func has_arrived() -> bool:
 
 ## Fed, at home, with a job.
 func is_working() -> bool:
-	return has_arrived() and not is_dead() and role != Role.NONE and not is_hungry()
+	return has_arrived() and not is_dead() and not is_down() and role != Role.NONE and not is_hungry()
 
 
 func is_hungry() -> bool:
@@ -149,6 +161,10 @@ func status_text() -> String:
 		return "Waiting"
 	if not _arrived:
 		return "On the way"
+	if is_down():
+		return "Wounded: help them up (E, a Bandage)"
+	if settlement.raid_active() and role != Role.GUARD:
+		return "Sheltering from the raid"
 	if is_hungry():
 		return "Hungry: not working"
 	match role:
@@ -242,7 +258,7 @@ func leave() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
-	if state == State.DEAD:
+	if state == State.DEAD or state == State.DOWN:
 		_brake(delta)
 		move_and_slide()
 		return
@@ -320,6 +336,13 @@ func _home_life(delta: float) -> void:
 				target = r
 				_enter(State.FIGHT)
 				return
+	# A raid: into the farmhouse, everyone but the guards
+	if settlement.raid_active() and role != Role.GUARD:
+		var shelter := settlement.get_node_or_null("Shelter") as Node3D
+		_swing(false)
+		visual.rotation.x = 0.0
+		_wander(shelter.global_position if shelter != null else _hangout(), 1.5, delta)
+		return
 	if is_hungry() or role == Role.NONE or (role == Role.FARMER and (short_of_water or no_field)):
 		_wander(_hangout(), 6.0, delta)
 		return
@@ -718,7 +741,47 @@ func _on_damaged(_amount: float, info: DamageInfo) -> void:
 		_enter(State.FIGHT)
 
 
-func _on_died(_info: DamageInfo) -> void:
+func _on_died(info: DamageInfo) -> void:
+	# Beaten by raiders at home: down, not dead
+	if has_arrived() and info != null and info.source is Node and (info.source as Node).is_in_group("enemies"):
+		_go_down()
+		return
+	_die_for_good()
+
+
+func _go_down() -> void:
+	target = null
+	_swing(false)
+	_enter(State.DOWN)
+	down_hours = 0.0
+	collision_layer = 0
+	var tween := create_tween()
+	tween.tween_property(visual, "rotation:x", deg_to_rad(-80.0), 0.5)
+	if settlement != null:
+		settlement.on_settler_down(self)
+
+
+## Helped up (by the Settlement, after a player bandages them).
+func help_up(health_fraction := 0.5) -> void:
+	if not is_down():
+		return
+	health.revive(health_fraction)
+	down_hours = 0.0
+	collision_layer = PhysicsLayers.NPCS
+	visual.rotation = Vector3.ZERO
+	_enter(State.IDLE)
+	_update_visuals()
+
+
+## Left down too long.
+func bleed_out() -> void:
+	if not is_down():
+		return
+	state = State.DEAD
+	_die_for_good()
+
+
+func _die_for_good() -> void:
 	var home := settlement
 	_enter(State.DEAD)
 	talk.enabled = false
@@ -764,6 +827,7 @@ func save_state() -> Dictionary:
 		"gun": String(gun.id) if gun != null else "", "ammo": ammo + magazine,
 		"health": health.current_health, "next_meal": next_meal, "unfed": unfed_hours,
 		"gone": _gone or is_dead() or state == State.LEAVING,
+		"down": is_down(), "down_hours": down_hours,
 	}
 
 
@@ -805,6 +869,9 @@ func load_state(data: Dictionary) -> void:
 		_enter(State.IDLE)
 	visual.rotation = Vector3.ZERO
 	_update_visuals()
+	if _arrived and data.get("down") is bool and data["down"]:
+		_go_down()
+		down_hours = maxf(Settlement._num(data.get("down_hours"), 0.0), 0.0)
 
 
 func _vanish_now() -> void:

@@ -751,6 +751,9 @@ func request_place_site(plan: StringName, xform: Transform3D) -> ConstructionSit
 func talk_to(settler: Settler) -> void:
 	if settler == null or is_dead():
 		return
+	if settler.is_down() and settler.settlement != null:
+		settler.settlement.request_help_up(self, settler)
+		return
 	if settler.settlement == null:
 		var home := best_settlement_for_recruit()
 		if home != null:

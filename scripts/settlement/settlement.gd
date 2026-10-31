@@ -13,6 +13,12 @@ extends Node3D
 ##     survivors you meet elsewhere can be sent here,
 ##   - guards patrol and shoot raiders; arm them from your backpack or by
 ##     stocking the Armory Locker, which they take from themselves,
+##   - raids (Increment 20): every couple of days raiders come for the
+##     stores, with a warning a couple of hours ahead (a notice, a red marker
+##     on the compass and map). Guards fight from their posts; everyone else
+##     shelters in the farmhouse. Settlers beaten by raiders go down wounded
+##     (help them up with a bandage). Raiders who get away take food and
+##     planks with them; killed, they drop it.
 ##   - Builders put up what's planned (Increment 19.6): the settlement's own
 ##     fences and guard posts, laid out when you claim it, and the buildings
 ##     you place in build mode (B): ConstructionSites under "Sites". You
@@ -41,6 +47,11 @@ signal refused(reason: String)
 signal notice(text: String)
 ## A building went up.
 signal built(site_name: String)
+## Raiders are on their way (Increment 20): from where, how many.
+signal raid_warned(from_name: String, size: int)
+signal raid_started
+## The raid's over: {"size", "killed", "escaped", "stolen": {id: n}, "wounded": [names]}
+signal raid_ended(report: Dictionary)
 
 const SETTLER_SCENE := "res://scenes/npcs/settler.tscn"
 const FOOD := &"vegetables"
@@ -49,6 +60,10 @@ const PLANK := &"wood_plank"
 const CLAIMED_COLOR := Color(0.45, 0.9, 0.45)
 ## Repairing the pump takes these from your backpack.
 const PUMP_PARTS := {&"scrap_metal": 3, &"metal_pipe": 2, &"spring": 1}
+const RAIDER_SCENE := "res://scenes/enemies/raider.tscn"
+const VETERAN_SCENE := "res://scenes/enemies/raider_veteran.tscn"
+## Raids on the compass and the map.
+const RAID_COLOR := Color(1.0, 0.3, 0.25)
 const SITE_SCENE := "res://scenes/settlement/construction_site.tscn"
 ## How far from you a building can be planned (m).
 const PLAN_REACH := 14.0
@@ -81,6 +96,17 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 ## Wood Planks a working Woodcutter adds to the stores each hour (19.7).
 @export var woodcutter_planks_per_hour := 3.0
 
+@export_group("Raids")
+## A raid comes about this often (settlement hours), give or take a quarter.
+@export var raid_every_hours := 48.0
+## Warning before raiders arrive (hours).
+@export var raid_warning_hours := 2.0
+## What one raider can carry off: vegetables and Wood Planks.
+@export var raid_carry_food := 15
+@export var raid_carry_planks := 8
+## A settler left down this long (hours) dies.
+@export var bleed_out_hours := 12.0
+
 @export_group("Water and food")
 @export var water_capacity := 200.0
 ## Litres an hour from the repaired pump, and from the rain barrel before.
@@ -112,6 +138,19 @@ var _next_id := 1
 var _armory_check := 0.0
 ## The settlement's own plan has been laid out as sites (on claiming).
 var plans_laid := false
+
+enum RaidPhase { NONE, WARNED, ACTIVE }
+var raid_phase: RaidPhase = RaidPhase.NONE
+## Hours until the next raid arrives (counts down; the warning comes
+## `raid_warning_hours` before).
+var next_raid_in := -1.0
+var raid_size := 0
+## Where they're coming from (global), and its name ("the east").
+var raid_from := Vector3.ZERO
+var raid_from_name := ""
+var raiders: Array[Raider] = []
+var raid_report := {}
+var _raid_marker: Landmark
 ## Raider spawners stopped when it was claimed (restarted if a load unclaims it).
 var _stopped_spawners: Array[EnemySpawner] = []
 
@@ -545,6 +584,7 @@ func request_claim(player: Node3D) -> bool:
 		store.inventory.add_item(ItemDatabase.get_item(FOOD), starting_food - store.inventory.count_of(FOOD))
 	_apply_claimed_look()
 	lay_out_plans()
+	_schedule_raid()
 	claimed.emit()
 	notice.emit("%s is yours. Settlers will come when there's food and a bed (L: settlement)" % settlement_name)
 	return true
@@ -809,8 +849,9 @@ func _physics_process(delta: float) -> void:
 		_supply_sites()
 
 
-## Advances the settlement by `hours` (water, crops, meals, arrivals).
+## Advances the settlement by `hours` (water, crops, meals, arrivals, raids).
 func simulate(hours: float) -> void:
+	_simulate_raids(hours)
 	var here := members().filter(func(s: Settler) -> bool: return s.has_arrived())
 	# Water
 	water = minf(water + (pump_water_per_hour if pump_working else barrel_water_per_hour) * hours, water_capacity)
@@ -884,6 +925,198 @@ func simulate(hours: float) -> void:
 			spawn_newcomer()
 
 
+# ---------------------------------------------------------------- raids
+
+func raid_active() -> bool:
+	return raid_phase == RaidPhase.ACTIVE
+
+
+func _schedule_raid() -> void:
+	next_raid_in = raid_every_hours * randf_range(0.75, 1.25)
+
+
+func _simulate_raids(hours: float) -> void:
+	if not is_claimed:
+		return
+	if next_raid_in < 0.0:
+		_schedule_raid()
+	match raid_phase:
+		RaidPhase.NONE:
+			next_raid_in -= hours
+			if next_raid_in <= raid_warning_hours:
+				warn_raid()
+		RaidPhase.WARNED:
+			next_raid_in -= hours
+			if next_raid_in <= 0.0:
+				start_raid()
+		RaidPhase.ACTIVE:
+			raiders.assign(raiders.filter(func(r: Raider) -> bool: return is_instance_valid(r) and not r.is_dead() and r.raid == self))
+			if raiders.is_empty():
+				end_raid()
+			elif _raid_marker != null:
+				var c := Vector3.ZERO
+				for r in raiders:
+					c += r.global_position
+				_raid_marker.global_position = c / raiders.size() + Vector3.UP * 2.0
+	# The wounded: down too long, they die
+	for s in members():
+		if s.is_down():
+			s.down_hours += hours
+			if s.down_hours >= bleed_out_hours:
+				notice.emit("%s died of their wounds" % s.settler_name)
+				s.bleed_out()
+
+
+## Raiders are seen coming: a notice and a marker, `raid_warning_hours`
+## before they arrive (or `in_hours` if given).
+func warn_raid(in_hours := -1.0) -> void:
+	if not is_claimed or raid_phase != RaidPhase.NONE:
+		return
+	if in_hours >= 0.0:
+		next_raid_in = in_hours
+	var points := get_node_or_null("RaidPoints")
+	if points == null or points.get_child_count() == 0:
+		return
+	var p := points.get_child(randi() % points.get_child_count()) as Node3D
+	raid_from = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, p.global_position)
+	raid_from_name = str(p.get_meta("label", "the wilds"))
+	raid_size = clampi(2 + members().size() / 2, 2, 8)
+	raid_phase = RaidPhase.WARNED
+	raid_report = {"size": raid_size, "killed": 0, "escaped": 0, "stolen": {}, "wounded": []}
+	_make_raid_marker()
+	raid_warned.emit(raid_from_name, raid_size)
+	notice.emit("Raiders seen coming for %s from %s: %d of them, about %d min away" % [settlement_name, raid_from_name, raid_size, maxi(ceili(next_raid_in * hour_seconds / 60.0), 1)])
+
+
+## They're here: raiders appear where they were seen and come in.
+func start_raid() -> void:
+	if raid_phase == RaidPhase.NONE:
+		warn_raid(0.0)
+	if raid_phase != RaidPhase.WARNED:
+		return
+	raid_phase = RaidPhase.ACTIVE
+	next_raid_in = 0.0
+	raiders.clear()
+	var parent := get_parent().get_parent() if get_parent() != null and get_parent().get_parent() != null else get_parent()
+	for i in raid_size:
+		var veteran := i % 4 == 3
+		var r := (load(VETERAN_SCENE if veteran else RAIDER_SCENE) as PackedScene).instantiate() as Raider
+		r.name = "Raider_%s_%d" % [settlement_id, i]
+		parent.add_child(r)
+		var off := Vector3(cos(i * 2.4) * 2.5, 0.1, sin(i * 2.4) * 2.5)
+		r.global_position = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, raid_from + off) + Vector3.UP * 0.1
+		r.join_raid(self, raid_from)
+		r.killed.connect(_on_raider_killed)
+		raiders.append(r)
+	raid_started.emit()
+	notice.emit("Raiders at %s!" % settlement_name)
+
+
+func _on_raider_killed(r: Raider) -> void:
+	if r.raid == self or raiders.has(r):
+		raid_report["killed"] = int(raid_report.get("killed", 0)) + 1
+
+
+## A raider at the stores grabs what it can carry. Returns {item id: n}.
+func raid_steal(_r: Raider) -> Dictionary:
+	var took := {}
+	for pair in [[FOOD, raid_carry_food], [PLANK, raid_carry_planks]]:
+		var left: int = pair[1]
+		for st in stores():
+			var n := mini(st.inventory.count_of(pair[0]), left)
+			if n > 0:
+				st.inventory.remove_item(pair[0], n)
+				left -= n
+		var got: int = pair[1] - left
+		if got > 0:
+			took[pair[0]] = got
+			var stolen: Dictionary = raid_report.get("stolen", {})
+			stolen[pair[0]] = int(stolen.get(pair[0], 0)) + got
+			raid_report["stolen"] = stolen
+	return took
+
+
+## Killed with loot: it's dropped, so it isn't lost.
+func raid_recovered(items: Dictionary) -> void:
+	var stolen: Dictionary = raid_report.get("stolen", {})
+	for id in items:
+		stolen[id] = maxi(int(stolen.get(id, 0)) - int(items[id]), 0)
+	raid_report["stolen"] = stolen
+
+
+func raid_escaped(r: Raider) -> void:
+	raid_report["escaped"] = int(raid_report.get("escaped", 0)) + 1
+	raiders.erase(r)
+
+
+func on_settler_down(s: Settler) -> void:
+	var w: Array = raid_report.get("wounded", [])
+	if not w.has(s.settler_name):
+		w.append(s.settler_name)
+	raid_report["wounded"] = w
+	notice.emit("%s is down, wounded: help them up (E, a Bandage)" % s.settler_name)
+
+
+## Every raider dead or gone: the report.
+func end_raid() -> void:
+	raid_phase = RaidPhase.NONE
+	raiders.clear()
+	_schedule_raid()
+	if _raid_marker != null:
+		_raid_marker.name = "OldRaidMarker"
+		_raid_marker.queue_free()
+		_raid_marker = null
+	raid_ended.emit(raid_report)
+	notice.emit(raid_summary(raid_report))
+
+
+static func raid_summary(rep: Dictionary) -> String:
+	var parts: PackedStringArray = ["Raid over: %d killed" % int(rep.get("killed", 0))]
+	if int(rep.get("escaped", 0)) > 0:
+		parts.append("%d got away" % int(rep.get("escaped", 0)))
+	var stolen: Dictionary = rep.get("stolen", {})
+	var lost: PackedStringArray = []
+	for id in stolen:
+		if int(stolen[id]) > 0:
+			var item := ItemDatabase.get_item(StringName(str(id)))
+			lost.append("%d %s" % [int(stolen[id]), item.display_name if item != null else str(id)])
+	if not lost.is_empty():
+		parts.append("they took " + " and ".join(lost))
+	var w: Array = rep.get("wounded", [])
+	if not w.is_empty():
+		parts.append("wounded: " + ", ".join(w))
+	return ", ".join(parts)
+
+
+## Where raiders head: the front of the Farm Store.
+func raid_goal() -> Vector3:
+	if store == null:
+		return global_position
+	return NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, store.global_position + store.global_basis.z * 1.3)
+
+
+## Helping a downed settler up uses a Bandage (or a Medkit) from `player`.
+func request_help_up(player: PlayerController, s: Settler) -> bool:
+	var reason := _member_reason(player, s)
+	if reason == "" and not s.is_down():
+		reason = "%s isn't hurt" % s.settler_name
+	var with := &""
+	if reason == "":
+		for id in [&"bandage", &"medkit"]:
+			if player.inventory.count_of(id) > 0:
+				with = id
+				break
+		if with == &"":
+			reason = "You need a Bandage or a Medkit to help %s up" % s.settler_name
+	if reason != "":
+		refused.emit(reason)
+		return false
+	player.inventory.remove_item(with, 1)
+	s.help_up(0.5 if with == &"bandage" else 1.0)
+	notice.emit("%s is back on their feet" % s.settler_name)
+	return true
+
+
 ## Called by a settler that died here.
 func on_settler_died(s: Settler) -> void:
 	settler_lost.emit(s.settler_name, "killed")
@@ -900,7 +1133,9 @@ const LAYOUT := 2
 
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "arrival_in": arrival_in,
-		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress}
+		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress,
+		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
+		"raid_from_name": raid_from_name, "raid_size": raid_size}
 
 
 func load_state(data: Dictionary) -> void:
@@ -913,6 +1148,19 @@ func load_state(data: Dictionary) -> void:
 	_apply_claimed_look()
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
 	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
+	# Raids: a raid under way when saved comes back as raiders seen close by
+	next_raid_in = _num(data.get("next_raid_in"), -1.0)
+	if _raid_marker != null:
+		_raid_marker.name = "OldRaidMarker"
+		_raid_marker.queue_free()
+		_raid_marker = null
+	raid_phase = RaidPhase.NONE
+	raiders.clear()
+	if is_claimed and data.get("raid_warned") is bool and data["raid_warned"]:
+		var rf: Variant = data.get("raid_from")
+		next_raid_in = clampf(next_raid_in, 0.25, raid_warning_hours)
+		_restore_raid(Vector3(rf[0], rf[1], rf[2]) if rf is Array and rf.size() == 3 else global_position,
+			str(data.get("raid_from_name", "")), int(_num(data.get("raid_size"), 2)))
 	if is_claimed and not plans_laid:
 		# Claimed before settlers could build (Increment 19): lay the plan out now
 		lay_out_plans.call_deferred()
@@ -932,6 +1180,29 @@ func _resettle() -> void:
 			s.global_position = h.global_position + Vector3((i % 3 - 1) * 1.2, 0.1, (i / 3) * 1.2)
 			s.velocity = Vector3.ZERO
 			i += 1
+
+
+func _restore_raid(from: Vector3, from_name: String, size: int) -> void:
+	raid_phase = RaidPhase.WARNED
+	raid_from = from
+	raid_from_name = from_name if from_name != "" else "the wilds"
+	raid_size = clampi(size, 2, 8)
+	raid_report = {"size": raid_size, "killed": 0, "escaped": 0, "stolen": {}, "wounded": []}
+	_make_raid_marker()
+
+
+func _make_raid_marker() -> void:
+	if _raid_marker != null:
+		_raid_marker.name = "OldRaidMarker"
+		_raid_marker.queue_free()
+	_raid_marker = Landmark.new()
+	_raid_marker.name = "RaidMarker"
+	_raid_marker.display_name = "Raiders"
+	_raid_marker.compass_name = "Raiders"
+	_raid_marker.radius = 0.0
+	_raid_marker.marker_color = RAID_COLOR
+	add_child(_raid_marker)
+	_raid_marker.position = to_local(raid_from) + Vector3.UP * 2.0 if is_inside_tree() else raid_from
 
 
 static func _num(v: Variant, fallback: float) -> float:
