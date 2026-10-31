@@ -263,6 +263,7 @@ func refresh() -> void:
 	lines.append("Fresh Vegetables:  %d / %d   (%s / hour)%s" % [s.food(), cap, _signed(r["food"]),
 		"   Store full" if cap > 0 and s.food() >= cap else ""])
 	lines.append("Water:  %d / %d L   (%s / hour)" % [roundi(s.water), roundi(s.water_capacity), _signed(r["water"])])
+	lines.append("Wood Planks:  %d   (%s / hour)" % [s.planks(), _signed(r["planks"])])
 	lines.append("Beds:  %d / %d in use%s" % [people.size(), s.total_beds(), "" if here == people.size() else "  (%d on the way)" % (people.size() - here)])
 	lines.append("Farmers working:  %d   (fields for %d)" % [r["farmers"], s.farm_spots().size()])
 	var posts := s.guard_posts().size()
@@ -334,7 +335,7 @@ func _build_rows(people: Array[Settler]) -> void:
 		var jobs := HBoxContainer.new()
 		jobs.add_theme_constant_override("separation", 6)
 		col.add_child(jobs)
-		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.NONE]:
+		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.NONE]:
 			var b := Button.new()
 			b.name = "Job_%s" % Settler.ROLE_NAMES[r]
 			b.text = Settler.ROLE_NAMES[r]

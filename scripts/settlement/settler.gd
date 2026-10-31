@@ -11,6 +11,8 @@ extends CharacterBody3D
 ##            armory), otherwise with a machete.
 ##   Builder  puts up what's planned at the settlement (ConstructionSites),
 ##            once it has its materials (Increment 19.6). A hard hat.
+##   Woodcutter  cuts timber at the settlement's woodlot: Wood Planks in the
+##            stores every hour (Increment 19.7). An axe.
 ##   No job   helps out round the farmhouse.
 ##
 ## Unfed for too long, they stop working; longer, and they leave.
@@ -26,10 +28,10 @@ extends CharacterBody3D
 signal role_changed(role: Role)
 signal armed_changed
 
-enum Role { NONE, FARMER, GUARD, BUILDER }
+enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER }
 enum State { WAIT, TRAVEL, IDLE, WALK, WORK, PATROL, FIGHT, LEAVING, DEAD }
 
-const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder"}
+const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder", Role.WOODCUTTER: "Woodcutter"}
 ## A guard keeps about this many rounds (topped up from you or the armory).
 const AMMO_TARGET := 60
 const SHOT_SOUNDS := {
@@ -166,6 +168,8 @@ func status_text() -> String:
 				if not other.is_supplied():
 					return "Waiting for materials"
 			return "Nothing to build"
+		Role.WOODCUTTER:
+			return "Cutting wood" if not settlement.wood_spots().is_empty() else "No woodlot here"
 	return "Helping out"
 
 
@@ -326,6 +330,8 @@ func _home_life(delta: float) -> void:
 			_patrol(delta)
 		Role.BUILDER:
 			_build(delta)
+		Role.WOODCUTTER:
+			_cut_wood(delta)
 
 
 func _farm(delta: float) -> void:
@@ -403,6 +409,47 @@ func _build(delta: float) -> void:
 	_swing(true)
 	if _state_time > _state_length:
 		_goal = Vector3.INF
+
+
+## Woodcutters: to a spot in the woodlot, then chopping at the nearest tree.
+func _cut_wood(delta: float) -> void:
+	var spots := settlement.wood_spots()
+	if spots.is_empty():
+		_swing(false)
+		_wander(_hangout(), 6.0, delta)
+		return
+	if _goal == Vector3.INF or state == State.IDLE:
+		_goal = _pick_from(spots, 1.5)
+		state = State.WALK
+		_state_time = 0.0
+	if state == State.WALK:
+		_swing(false)
+		if _move_to(_goal, walk_speed, delta) or _state_time > 60.0:
+			state = State.WORK
+			_state_time = 0.0
+			_state_length = _rng.randf_range(10.0, 18.0)
+		return
+	_brake(delta)
+	var tree := _nearest_tree(7.0)
+	if tree != null:
+		_face(tree.global_position - global_position, delta)
+	_swing(true)
+	if _state_time > _state_length:
+		_goal = Vector3.INF
+
+
+func _nearest_tree(within: float) -> Node3D:
+	var best: Node3D = null
+	var best_d := within
+	for n in get_tree().get_nodes_in_group("timber"):
+		var t := n as Timber
+		if t == null or t.cut:
+			continue
+		var d := t.global_position.distance_to(global_position)
+		if d < best_d:
+			best = t
+			best_d = d
+	return best
 
 
 func _next_piece_at(site: ConstructionSite) -> Vector3:
@@ -645,7 +692,10 @@ func _update_visuals() -> void:
 	var hammer := visual.get_node_or_null("RightArm/Hammer") as Node3D
 	if hammer != null:
 		hammer.visible = gun == null and role == Role.BUILDER
-	if role != Role.BUILDER:
+	var axe := visual.get_node_or_null("RightArm/Axe") as Node3D
+	if axe != null:
+		axe.visible = gun == null and role == Role.WOODCUTTER
+	if role != Role.BUILDER and role != Role.WOODCUTTER:
 		_swing(false)
 
 
@@ -728,7 +778,7 @@ func load_state(data: Dictionary) -> void:
 	look_seed = int(Settlement._num(data.get("look"), look_seed))
 	_apply_look()
 	var r := int(Settlement._num(data.get("role"), 0))
-	role = r as Role if r >= 0 and r <= Role.BUILDER else Role.NONE
+	role = r as Role if r >= 0 and r <= Role.WOODCUTTER else Role.NONE
 	var raw_p: Variant = data.get("position")
 	if raw_p is Array and raw_p.size() == 3 and raw_p.all(func(v: Variant) -> bool: return (v is float or v is int) and is_finite(float(v))):
 		global_position = Vector3(raw_p[0], raw_p[1], raw_p[2])

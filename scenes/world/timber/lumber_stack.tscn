@@ -1,0 +1,204 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/salvage_pile.gd" id="1_fb8nd"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_65pys"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="3_3aep6"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="4_pvmol"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5p4b7"]
+size = Vector3(2.6, 0.9, 1.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7jthx"]
+size = Vector3(0.12, 0.1, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vry31"]
+size = Vector3(0.12, 0.1, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rswg7"]
+size = Vector3(0.12, 0.1, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ewg71"]
+size = Vector3(0.12, 0.1, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dedsv"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8o15q"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t1yc6"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_us530"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rxigs"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2l0px"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q7tgk"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i1nhi"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_b1v4w"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cov2x"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_666nk"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8vqkl"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rry0m"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qgpcc"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ao1k4"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7e3gm"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0cw4j"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_or7aw"]
+size = Vector3(2.5, 0.06, 0.2)
+
+[node name="LumberStack" type="Area3D" unique_id=609752699]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_fb8nd")
+yields = Dictionary[ExtResource("2_65pys"), int]({
+ExtResource("3_3aep6"): 10
+})
+pile_name = "Lumber Stack"
+salvage_time = 2.0
+focus_offset = Vector3(0, 0.4, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1129981853]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("BoxShape3D_5p4b7")
+
+[node name="Model" type="Node3D" parent="." unique_id=2125386104]
+unique_name_in_owner = true
+
+[node name="Bearer0" type="MeshInstance3D" parent="Model" unique_id=700254631]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 0.05, 0)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_7jthx")
+
+[node name="Bearer1" type="MeshInstance3D" parent="Model" unique_id=2040602574]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.37, 0.05, 0)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_vry31")
+
+[node name="Bearer2" type="MeshInstance3D" parent="Model" unique_id=1839043303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36, 0.05, 0)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_rswg7")
+
+[node name="Bearer3" type="MeshInstance3D" parent="Model" unique_id=617467525]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.09, 0.05, 0)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_ewg71")
+
+[node name="Plank0" type="MeshInstance3D" parent="Model" unique_id=542367586]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, -0.46)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_dedsv")
+
+[node name="Plank1" type="MeshInstance3D" parent="Model" unique_id=1088065147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, -0.23)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_8o15q")
+
+[node name="Plank2" type="MeshInstance3D" parent="Model" unique_id=527587313]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_t1yc6")
+
+[node name="Plank3" type="MeshInstance3D" parent="Model" unique_id=2112874821]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0.23)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_us530")
+
+[node name="Plank4" type="MeshInstance3D" parent="Model" unique_id=2097124256]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0.46)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_rxigs")
+
+[node name="Plank5" type="MeshInstance3D" parent="Model" unique_id=1672089270]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.2, -0.36)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_2l0px")
+
+[node name="Plank6" type="MeshInstance3D" parent="Model" unique_id=882451737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.2, -0.13)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_q7tgk")
+
+[node name="Plank7" type="MeshInstance3D" parent="Model" unique_id=1353546108]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.2, 0.1)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_i1nhi")
+
+[node name="Plank8" type="MeshInstance3D" parent="Model" unique_id=1898492300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.2, 0.33)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_b1v4w")
+
+[node name="Plank9" type="MeshInstance3D" parent="Model" unique_id=376028424]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, -0.46)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_cov2x")
+
+[node name="Plank10" type="MeshInstance3D" parent="Model" unique_id=1477759452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, -0.23)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_666nk")
+
+[node name="Plank11" type="MeshInstance3D" parent="Model" unique_id=383725089]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_8vqkl")
+
+[node name="Plank12" type="MeshInstance3D" parent="Model" unique_id=1464540004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0.23)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_rry0m")
+
+[node name="Plank13" type="MeshInstance3D" parent="Model" unique_id=323892387]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0.46)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_qgpcc")
+
+[node name="Plank14" type="MeshInstance3D" parent="Model" unique_id=839445068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.34, -0.36)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_ao1k4")
+
+[node name="Plank15" type="MeshInstance3D" parent="Model" unique_id=312321036]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.34, -0.13)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_7e3gm")
+
+[node name="Plank16" type="MeshInstance3D" parent="Model" unique_id=2123431198]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.34, 0.1)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_0cw4j")
+
+[node name="Plank17" type="MeshInstance3D" parent="Model" unique_id=829972598]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.34, 0.33)
+material_override = ExtResource("4_pvmol")
+mesh = SubResource("BoxMesh_or7aw")

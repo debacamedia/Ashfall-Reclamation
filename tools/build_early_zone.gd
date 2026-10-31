@@ -100,6 +100,14 @@ const SURVIVORS := [
 		"Forty years I worked this mine. Find me a bed that isn't down a hole and I'm yours."],
 ]
 
+## Wood to chop out in the open (Increment 19.7): [centre (x, z), radius,
+## dead trees, fallen logs]. Kept clear of places, roads, the railway and rocks.
+const TIMBER := [
+	[Vector2(160, 20), 30.0, 6, 2], [Vector2(195, -120), 28.0, 6, 2], [Vector2(400, -40), 28.0, 6, 2],
+	[Vector2(520, -60), 32.0, 6, 2], [Vector2(330, -330), 30.0, 6, 2], [Vector2(90, -140), 30.0, 6, 2],
+	[Vector2(560, -400), 30.0, 6, 2], [Vector2(310, -455), 28.0, 6, 2],
+]
+
 ## Signposts: [position (x, z), [destinations…]]
 const SIGNPOSTS := [
 	[Vector2(8, 80), ["HaldensCrossing", "AshCreekFarms"]],
@@ -994,6 +1002,48 @@ func _rock_fits(p: Vector2, r: float, hill: bool, placed: Array[Vector3]) -> boo
 	return true
 
 
+## Dead trees and fallen logs in clusters (TIMBER): persist nodes in the
+## zone scene, so each is saved by its path.
+func _timber() -> Node3D:
+	var root := Node3D.new()
+	root.name = "Timber"
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1977
+	# Where the rocks are (from rocks.scn)
+	var placed: Array[Vector3] = []
+	var rocks := (load(OUT + "rocks.scn") as PackedScene).instantiate()
+	for b in rocks.get_children():
+		var mi := b.get_node_or_null("Mesh") as MeshInstance3D
+		if b is Node3D and mi != null:
+			placed.append(Vector3((b as Node3D).position.x, (b as Node3D).position.z, maxf(mi.scale.x, mi.scale.z)))
+	rocks.free()
+	var tree_scene := load("res://scenes/world/timber/dead_tree.tscn") as PackedScene
+	var log_scene := load("res://scenes/world/timber/fallen_log.tscn") as PackedScene
+	var n := 0
+	for c in TIMBER:
+		for kind in ["tree", "log"]:
+			var want: int = c[2] if kind == "tree" else c[3]
+			var made := 0
+			var tries := 0
+			while made < want and tries < want * 60:
+				tries += 1
+				var ang := rng.randf() * TAU
+				var p: Vector2 = c[0] + Vector2(cos(ang), sin(ang)) * sqrt(rng.randf()) * float(c[1])
+				var r := 1.2 if kind == "tree" else 2.4
+				if not _rock_fits(p, r, false, placed):
+					continue
+				placed.append(Vector3(p.x, p.y, r))
+				var t := (tree_scene if kind == "tree" else log_scene).instantiate() as Node3D
+				t.name = "%s%d" % ["DeadTree" if kind == "tree" else "FallenLog", n]
+				var s := rng.randf_range(0.85, 1.2) if kind == "tree" else 1.0
+				t.transform = Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * s), Vector3(p.x, 0, p.y))
+				root.add_child(t)
+				n += 1
+				made += 1
+	print("  timber: %d trees and logs" % n)
+	return root
+
+
 ## Pebbles and dry scrub over the open ground (no collision).
 func _scatter() -> Node3D:
 	var root := Node3D.new()
@@ -1135,6 +1185,8 @@ func _zone(bake := true) -> void:
 	edge.edge_kinds = _boundary.edge_kinds
 	zone.add_child(edge)
 	edge.add_child(_backstop())
+	# Wood to chop (19.7)
+	zone.add_child(_timber())
 	# Built things, the player and the game
 	var structures := Node3D.new()
 	structures.name = "Structures"

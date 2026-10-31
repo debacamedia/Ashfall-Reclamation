@@ -44,6 +44,7 @@ signal built(site_name: String)
 
 const SETTLER_SCENE := "res://scenes/npcs/settler.tscn"
 const FOOD := &"vegetables"
+const PLANK := &"wood_plank"
 ## Your settlements on the compass and the map.
 const CLAIMED_COLOR := Color(0.45, 0.9, 0.45)
 ## Repairing the pump takes these from your backpack.
@@ -76,6 +77,10 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 ## Vegetables in the store before a newcomer will come.
 @export var arrival_food_needed := 4
 
+@export_group("Wood")
+## Wood Planks a working Woodcutter adds to the stores each hour (19.7).
+@export var woodcutter_planks_per_hour := 3.0
+
 @export_group("Water and food")
 @export var water_capacity := 200.0
 ## Litres an hour from the repaired pump, and from the rain barrel before.
@@ -102,6 +107,7 @@ var pump_working := false
 ## Hours until the next newcomer may arrive.
 var arrival_in := 0.0
 var _food_progress := 0.0
+var _plank_progress := 0.0
 var _next_id := 1
 var _armory_check := 0.0
 ## The settlement's own plan has been laid out as sites (on claiming).
@@ -194,6 +200,25 @@ func patrol_points() -> Array[Node3D]:
 			if c is Node3D:
 				out.append(c)
 	return out
+
+
+## Where Woodcutters work: the woodlot's spots (19.7).
+func wood_spots() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var g := get_node_or_null("WoodSpots")
+	if g != null:
+		for c in g.get_children():
+			if c is Node3D:
+				out.append(c)
+	return out
+
+
+## Wood Planks in the stores.
+func planks() -> int:
+	var n := 0
+	for st in stores():
+		n += st.inventory.count_of(PLANK)
+	return n
 
 
 ## Where farmers work: two to a field (the farm's own, then farm plots).
@@ -484,10 +509,13 @@ func rates() -> Dictionary:
 	var pop := members().filter(func(s: Settler) -> bool: return s.has_arrived())
 	var farmers := mini(pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.FARMER).size(), farm_spots().size())
 	var meals := pop.size() / meal_every_hours
+	var cutters := pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.WOODCUTTER).size() if not wood_spots().is_empty() else 0
 	return {
 		"water": (pump_water_per_hour if pump_working else barrel_water_per_hour) - farmers * farmer_water_per_hour - meals * water_per_meal,
 		"food": farmers * farmer_food_per_hour - meals * food_per_meal,
 		"farmers": farmers,
+		"planks": cutters * woodcutter_planks_per_hour,
+		"woodcutters": cutters,
 	}
 
 
@@ -826,6 +854,21 @@ func simulate(hours: float) -> void:
 				settler_lost.emit(s.settler_name, why)
 				notice.emit("%s has left %s: %s" % [s.settler_name, settlement_name, why])
 				s.leave()
+	# Wood: each working Woodcutter cuts planks into the stores
+	if not wood_spots().is_empty():
+		for s: Settler in here:
+			if s.role == Settler.Role.WOODCUTTER and s.is_working():
+				_plank_progress += woodcutter_planks_per_hour * hours
+		while _plank_progress >= 1.0:
+			var added := 0
+			for st in stores():
+				added = st.inventory.add_item(ItemDatabase.get_item(PLANK), 1)
+				if added > 0:
+					break
+			if added < 1:
+				_plank_progress = 1.0  # the stores are full
+				break
+			_plank_progress -= 1.0
 	# Building: each working Builder puts their hours into the current site
 	for s: Settler in here:
 		if s.role != Settler.Role.BUILDER or not s.is_working():
@@ -857,7 +900,7 @@ const LAYOUT := 2
 
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "arrival_in": arrival_in,
-		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid}
+		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress}
 
 
 func load_state(data: Dictionary) -> void:
@@ -869,6 +912,7 @@ func load_state(data: Dictionary) -> void:
 	_next_id = maxi(int(_num(data.get("next_id"), 1.0)), _next_id)
 	_apply_claimed_look()
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
+	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
 	if is_claimed and not plans_laid:
 		# Claimed before settlers could build (Increment 19): lay the plan out now
 		lay_out_plans.call_deferred()

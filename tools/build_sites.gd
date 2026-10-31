@@ -49,6 +49,16 @@ const LOOT := {
 const FIELD_X := [-36.0, -12.0, 12.0, 36.0]
 const FIELD_Z := -50.0
 const FIELD_SIZE := Vector2(22, 20)
+## Wood (19.7): the woodlot east of the yard (a Woodcutter works it), dead
+## trees and fallen logs round the farm [x, z, yaw, scale].
+const WOODLOT_TREES := [[56, -8, 10, 1.0], [62, -5, 80, 1.15], [58, 2, 200, 0.9], [65, 3, 140, 1.05],
+	[60, 9, 300, 1.1], [54, 6, 30, 0.95], [67, -9, 250, 1.0], [64, 13, 170, 0.9]]
+const WOODLOT_LOGS := [[57, -1, 30], [66, 8, -50]]
+const WOODLOT_SPOTS := [Vector3(55, 0, -4), Vector3(60, 0, 5), Vector3(63, 0, -2), Vector3(58, 0, 11)]
+const FARM_TREES := [[-56, 20, 40, 1.05], [-62, -4, 160, 0.95], [-58, -30, 280, 1.1], [-30, -72, 90, 1.0],
+	[5, -74, 220, 0.9], [-8, -78, 10, 1.15]]
+const FARM_LOGS := [[-54, 8, 70], [-14, -70, 10], [-66, -18, -20]]
+
 ## Ash Creek's plan (19.6), laid out as sites when you claim it: fence runs
 ## [name, from, to] in 4 m lengths (round the yard, with gaps for the
 ## gateway and the track to the fields; round the fields, with a gate),
@@ -385,6 +395,26 @@ func _ash_creek() -> Kit:
 	k.pickup("wood_plank", 3, "YardPlanks", null, Vector3(10, 0, 12))
 	# The fields, in a row behind the farmhouse
 	_fields(k)
+	# Wood (19.7): the woodlot, trees and logs round the farm, a lumber stack
+	var timber := k.group("Timber", false)
+	var n := 0
+	for tw: Array in WOODLOT_TREES + FARM_TREES:
+		var tree := (load("res://scenes/world/timber/dead_tree.tscn") as PackedScene).instantiate() as Node3D
+		tree.name = ("WoodlotTree%d" % n) if n < WOODLOT_TREES.size() else ("DeadTree%d" % (n - WOODLOT_TREES.size()))
+		tree.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(tw[2])).scaled(Vector3.ONE * float(tw[3])), Vector3(tw[0], 0, tw[1]))
+		timber.add_child(tree)
+		n += 1
+	n = 0
+	for tl: Array in WOODLOT_LOGS + FARM_LOGS:
+		var lg := (load("res://scenes/world/timber/fallen_log.tscn") as PackedScene).instantiate() as Node3D
+		lg.name = ("WoodlotLog%d" % n) if n < WOODLOT_LOGS.size() else ("FallenLog%d" % (n - WOODLOT_LOGS.size()))
+		lg.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(tl[2])), Vector3(tl[0], 0, tl[1]))
+		timber.add_child(lg)
+		n += 1
+	var stack := (load("res://scenes/world/timber/lumber_stack.tscn") as PackedScene).instantiate() as Node3D
+	stack.name = "LumberStack"
+	stack.position = Vector3(-16, 0, -11)
+	k.groups["SalvagePiles"].add_child(stack)
 	# A gateway arch where the lane comes in, high enough for the truck
 	var gate := k.solid_body(k.groups["Props"], "Gateway", Transform3D(Basis.IDENTITY, Vector3(0, 0, 36)))
 	for x in [-3.7, 3.7]:
@@ -473,6 +503,7 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump
 	_markers(st, "GuardPosts", [Vector3(-4.5, 0, 32), Vector3(5, 0, 32), Vector3(-31, 0, 6), Vector3(42, 0, 16),
 		Vector3(0, 0, -32)])
 	_markers(st, "", [["ArrivalPoint", Vector3(0, 0, 74)], ["Hangout", Vector3(-2, 0, -6.5)]])
+	_markers(st, "WoodSpots", WOODLOT_SPOTS)  # where Woodcutters work (19.7)
 	var people := Node3D.new()
 	people.name = "Settlers"
 	st.add_child(people)

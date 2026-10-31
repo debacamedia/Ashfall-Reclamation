@@ -1,0 +1,101 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/timber.gd" id="1_75kdt"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/albedo.png" id="2_5y1t5"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/normal.png" id="3_4bx6a"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/roughness.png" id="4_ocvla"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_873tk"]
+size = Vector3(4.4, 0.9, 1.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n8nr3"]
+size = Vector3(4.2, 0.6, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_untnd"]
+resource_name = "AF_wood_weathered"
+albedo_color = Color(0.5, 0.42, 0.36, 1)
+albedo_texture = ExtResource("2_5y1t5")
+roughness = 0.85
+roughness_texture = ExtResource("4_ocvla")
+normal_enabled = true
+normal_texture = ExtResource("3_4bx6a")
+uv1_scale = Vector3(0.43, 0.43, 0.43)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pprd4"]
+top_radius = 0.26
+bottom_radius = 0.32
+height = 4.2
+radial_segments = 8
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h4061"]
+albedo_color = Color(0.72, 0.58, 0.4, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jdsfa"]
+top_radius = 0.27
+bottom_radius = 0.27
+height = 0.02
+radial_segments = 8
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_0gr1g"]
+top_radius = 0.31
+bottom_radius = 0.31
+height = 0.02
+radial_segments = 8
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_al4xm"]
+top_radius = 0.03
+bottom_radius = 0.08
+height = 1.1
+radial_segments = 8
+rings = 1
+
+[node name="FallenLog" type="Area3D" unique_id=1479543501]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_75kdt")
+timber_name = "Fallen Log"
+wood = 6
+chop_time = 2.5
+focus_offset = Vector3(0, 1, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=363894374]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("BoxShape3D_873tk")
+
+[node name="Standing" type="Node3D" parent="." unique_id=363143520]
+unique_name_in_owner = true
+
+[node name="Body" type="StaticBody3D" parent="Standing" unique_id=92437609]
+collision_layer = 2
+collision_mask = 0
+
+[node name="LogShape" type="CollisionShape3D" parent="Standing/Body" unique_id=1885149229]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("BoxShape3D_n8nr3")
+
+[node name="Trunk" type="MeshInstance3D" parent="Standing" unique_id=1817554055]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0.3, 0)
+material_override = SubResource("StandardMaterial3D_untnd")
+mesh = SubResource("CylinderMesh_pprd4")
+
+[node name="End" type="MeshInstance3D" parent="Standing" unique_id=146229108]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -2.1, 0.3, 0)
+material_override = SubResource("StandardMaterial3D_h4061")
+mesh = SubResource("CylinderMesh_jdsfa")
+
+[node name="End2" type="MeshInstance3D" parent="Standing" unique_id=1995979875]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 2.1, 0.3, 0)
+material_override = SubResource("StandardMaterial3D_h4061")
+mesh = SubResource("CylinderMesh_0gr1g")
+
+[node name="Stub" type="MeshInstance3D" parent="Standing" unique_id=1975085040]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0.6, 0.65, 0.35)
+material_override = SubResource("StandardMaterial3D_untnd")
+mesh = SubResource("CylinderMesh_al4xm")

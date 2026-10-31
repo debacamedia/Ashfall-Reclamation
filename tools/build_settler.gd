@@ -155,6 +155,12 @@ func _run() -> void:
 	_add(right, hammer)
 	_box(hammer, "Handle", Vector3(0.035, 0.035, 0.34), Vector3(0, 0, -0.12), wood)
 	_box(hammer, "Head", Vector3(0.05, 0.15, 0.06), Vector3(0, 0.03, -0.3), steel)
+	var axe := Node3D.new()
+	axe.name = "Axe"
+	axe.position = Vector3(0, -0.64, -0.04)
+	_add(right, axe)
+	_box(axe, "Haft", Vector3(0.035, 0.035, 0.55), Vector3(0, 0, -0.2), wood)
+	_box(axe, "Head", Vector3(0.025, 0.16, 0.12), Vector3(0, 0.05, -0.45), steel)
 	var mach := Node3D.new()
 	mach.name = "Machete"
 	mach.position = Vector3(0, -0.64, -0.06)
