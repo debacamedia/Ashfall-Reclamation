@@ -468,6 +468,20 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump
 	k.box(pump_body, "Head", Vector3(0.34, 0.24, 0.3), Vector3(0, 1.2, 0), "rust")
 	k.box(pump_body, "Handle", Vector3(0.06, 0.06, 0.7), Vector3(0, 1.32, 0.3), "metal_dark", 0.0, false)
 	k.box(pump_body, "Spout", Vector3(0.1, 0.1, 0.3), Vector3(-0.2, 1.05, 0), "rust", 90.0, false)
+	# Upgrades (20.1): a pressure tank (Bigger Pump), then a motor (Motor Pump)
+	var up2 := Node3D.new()
+	up2.name = "Upgrade2"
+	up2.visible = false
+	pump_body.add_child(up2)
+	k.box(up2, "PressureTank", Vector3(0.4, 0.8, 0.4), Vector3(0.45, 0.4, -0.1), "metal_dark", 0.0, false)
+	k.box(up2, "Pipe", Vector3(0.45, 0.08, 0.08), Vector3(0.22, 0.75, -0.1), "rust", 0.0, false)
+	var motor := Node3D.new()
+	motor.name = "Motor"
+	motor.visible = false
+	pump_body.add_child(motor)
+	k.box(motor, "Engine", Vector3(0.5, 0.4, 0.45), Vector3(-0.1, 0.2, -0.55), "olive", 0.0, false)
+	k.box(motor, "Exhaust", Vector3(0.06, 0.6, 0.06), Vector3(-0.25, 0.7, -0.65), "rust", 0.0, false)
+	k.box(motor, "Belt", Vector3(0.05, 0.5, 0.05), Vector3(0.05, 0.55, -0.3), "metal_dark", 0.0, false)
 	var pump := WaterPump.new()
 	pump.name = "WaterPump"
 	pump.position = pump_at + Vector3(0, 0.9, 0)

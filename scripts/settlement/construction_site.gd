@@ -28,6 +28,8 @@ const HELP_HOLD := 1.5
 @export var plan_id: StringName = &"bunkhouse"
 ## The settlement plan this came from ("" = placed by a player).
 @export var key := ""
+## Putting back something raiders broke (20.1).
+@export var rebuild := false
 
 ## Where each piece will stand (relative to this node).
 var pieces: Array[Transform3D] = []
@@ -66,7 +68,7 @@ func configure(plan: StringName, local_pieces: Array[Transform3D], plan_key := "
 
 
 func display_name() -> String:
-	return SettlementPlans.display_name(plan_id)
+	return SettlementPlans.display_name(plan_id) + (" (rebuild)" if rebuild else "")
 
 
 func total_cost() -> Dictionary:
@@ -342,7 +344,7 @@ func save_state() -> Dictionary:
 	var d := {}
 	for id: StringName in delivered:
 		d[String(id)] = delivered[id]
-	return {"plan": String(plan_id), "key": key, "at": _xf_to_array(transform), "pieces": ps,
+	return {"plan": String(plan_id), "key": key, "rebuild": rebuild, "at": _xf_to_array(transform), "pieces": ps,
 		"built": built, "delivered": d, "work": work}
 
 
@@ -351,6 +353,7 @@ func load_state(data: Dictionary) -> void:
 	if SettlementPlans.has(plan):
 		plan_id = plan
 	key = str(data.get("key", ""))
+	rebuild = data.get("rebuild") is bool and data["rebuild"]
 	var at: Variant = _xf_from_array(data.get("at"))
 	if at != null:
 		transform = at

@@ -63,6 +63,16 @@ func _markers(group: String) -> Array[Node3D]:
 	return out
 
 
+## Broken by raiders: the settlement puts it back on the building list.
+func destroy() -> void:
+	if is_queued_for_deletion():
+		return
+	var st := settlement()
+	if st != null:
+		st.on_building_destroyed(self)
+	super.destroy()
+
+
 func dismantle_block_reason() -> String:
 	if storage != null:
 		if storage.inventory.get_free_slot_count() < storage.inventory.slot_count:

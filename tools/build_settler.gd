@@ -34,7 +34,7 @@ func _run() -> void:
 	var body := CollisionShape3D.new()
 	body.name = "BodyShape"
 	var cap := CapsuleShape3D.new()
-	cap.radius = 0.35
+	cap.radius = 0.2  # inside the navmesh's agent radius (0.25), so they fit its doorways and corners (20.1)
 	cap.height = 1.45
 	body.shape = cap
 	body.position.y = 0.725

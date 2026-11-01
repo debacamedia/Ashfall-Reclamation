@@ -277,6 +277,9 @@ func refresh() -> void:
 			lines.append("RAID UNDER WAY: %d raider%s left" % [s.raiders.size(), "" if s.raiders.size() == 1 else "s"])
 		_:
 			lines.append("Raiders:  none in sight")
+	var hurt := s.damaged_structures().size()
+	if hurt > 0:
+		lines.append("Repairs:  %d damaged (Builders mend them with materials from the stores)" % hurt)
 	var down := s.members().filter(func(m: Settler) -> bool: return m.is_down()).size()
 	if down > 0:
 		lines.append("Wounded:  %d down, help them up (E, a Bandage)" % down)
@@ -288,7 +291,12 @@ func refresh() -> void:
 		lines.append("Next newcomer:  in about %d min" % ceili(maxf(s.arrival_in, 0.0) * s.hour_seconds / 60.0))
 	_stocks.text = "\n".join(lines)
 	_water_bar.value = s.water / s.water_capacity * 100.0
-	_pump.text = "Pump: running" if s.pump_working else "Pump: broken. Repair it in the pump house with %s." % Settlement.pump_parts_text()
+	if s.pump_working:
+		var up := s.next_pump_upgrade()
+		_pump.text = "Pump: %s, %d L an hour" % [Settlement.PUMP_LEVELS[s.pump_level][0], roundi(s.pump_rate())] \
+			+ ("" if up.is_empty() else ". Upgrade to a %s (%d L an hour) in the pump house with %s." % [up[0], roundi(float(up[2])), Settlement.parts_text(up[1])])
+	else:
+		_pump.text = "Pump: broken. Repair it in the pump house with %s." % Settlement.pump_parts_text()
 	_pump.add_theme_color_override("font_color", GOOD if s.pump_working else BAD)
 	_refresh_sites(s)
 	# People: rebuild the rows when who's here or what they have changes

@@ -60,6 +60,14 @@ const PLANK := &"wood_plank"
 const CLAIMED_COLOR := Color(0.45, 0.9, 0.45)
 ## Repairing the pump takes these from your backpack.
 const PUMP_PARTS := {&"scrap_metal": 3, &"metal_pipe": 2, &"spring": 1}
+## Pump upgrades (Increment 20.1), by level: 1 is the repaired pump.
+## [name, parts, litres an hour, tank size]
+const PUMP_LEVELS := [
+	["Broken", {}, 0.0, 200.0],
+	["Hand Pump", {}, 12.0, 200.0],
+	["Bigger Pump", {&"metal_pipe": 4, &"spring": 2, &"scrap_metal": 6}, 24.0, 300.0],
+	["Motor Pump", {&"electronics": 2, &"metal_plate": 2, &"metal_pipe": 2, &"fuel": 2}, 40.0, 400.0],
+]
 const RAIDER_SCENE := "res://scenes/enemies/raider.tscn"
 const VETERAN_SCENE := "res://scenes/enemies/raider_veteran.tscn"
 ## Raids on the compass and the map.
@@ -95,6 +103,8 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 @export_group("Wood")
 ## Wood Planks a working Woodcutter adds to the stores each hour (19.7).
 @export var woodcutter_planks_per_hour := 3.0
+## Health a Builder puts back into something damaged, an hour (20.1).
+@export var builder_repair_per_hour := 400.0
 
 @export_group("Raids")
 ## A raid comes about this often (settlement hours), give or take a quarter.
@@ -130,6 +140,8 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 var is_claimed := false
 var water := 0.0
 var pump_working := false
+## 0 broken, 1 repaired, 2 and 3 upgraded (PUMP_LEVELS).
+var pump_level := 0
 ## Hours until the next newcomer may arrive.
 var arrival_in := 0.0
 var _food_progress := 0.0
@@ -282,6 +294,83 @@ func sites() -> Array[ConstructionSite]:
 			if site != null and not site.is_queued_for_deletion():
 				out.append(site)
 	return out
+
+
+## What a Builder should do now: mend something damaged (if the stores can
+## pay for it, or it's already paid for), else the current site. Null for
+## nothing.
+func builder_job() -> Node3D:
+	for s in damaged_structures():
+		if s.has_meta("repair_paid") or _stores_have(s.definition.repair_cost):
+			return s
+	return current_site()
+
+
+## Built things here that raiders have hurt, worst first (20.1).
+func damaged_structures() -> Array[Structure]:
+	var out: Array[Structure] = []
+	if not is_inside_tree():
+		return out
+	for n in get_tree().get_nodes_in_group("structures"):
+		var s := n as Structure
+		if s == null or s is LevelProp or s.is_queued_for_deletion() or not s.is_damaged() or not _within(s.global_position):
+			continue
+		if s.definition == null or s.definition.repair_cost.is_empty():
+			continue
+		out.append(s)
+	out.sort_custom(func(a: Structure, b: Structure) -> bool: return a.get_health_fraction() < b.get_health_fraction())
+	return out
+
+
+func _stores_have(cost: Dictionary) -> bool:
+	for item: ItemDefinition in cost:
+		var have := 0
+		for st in stores():
+			have += st.inventory.count_of(item.id)
+		if have < int(cost[item]):
+			return false
+	return true
+
+
+func _take_from_stores(cost: Dictionary) -> void:
+	for item: ItemDefinition in cost:
+		var left := int(cost[item])
+		for st in stores():
+			var n := mini(st.inventory.count_of(item.id), left)
+			if n > 0:
+				st.inventory.remove_item(item.id, n)
+				left -= n
+
+
+## A Builder mends `s` for `hours` (paying its repair cost from the stores
+## once, when they start on it).
+func repair_with_stores(s: Structure, hours: float) -> bool:
+	if not s.has_meta("repair_paid"):
+		if not _stores_have(s.definition.repair_cost):
+			return false
+		_take_from_stores(s.definition.repair_cost)
+		s.set_meta("repair_paid", true)
+	s.health = minf(s.health + builder_repair_per_hour * hours, s.get_max_health())
+	if not s.is_damaged():
+		s.remove_meta("repair_paid")
+		s.repaired.emit()
+	return true
+
+
+## Raiders broke something settlers built: it goes back on the list (20.1).
+func on_building_destroyed(b: SettlementBuilding) -> void:
+	if b.definition == null or sites_root == null:
+		return
+	var plan := &"fence" if b.definition.id == &"farm_fence" else b.definition.id
+	if not SettlementPlans.has(plan):
+		return
+	var pieces: Array[Transform3D] = [Transform3D.IDENTITY]
+	var site := _new_site(plan, pieces, "Rebuild%d" % _next_id)
+	_next_id += 1
+	site.rebuild = true
+	site.transform = sites_root.global_transform.affine_inverse() * b.global_transform
+	sites_root.add_child.call_deferred(site)
+	notice.emit("Raiders broke a %s: it's on the building list to put back" % SettlementPlans.display_name(plan).to_lower())
 
 
 ## The site Builders work on now: the first with all its materials.
@@ -550,7 +639,7 @@ func rates() -> Dictionary:
 	var meals := pop.size() / meal_every_hours
 	var cutters := pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.WOODCUTTER).size() if not wood_spots().is_empty() else 0
 	return {
-		"water": (pump_water_per_hour if pump_working else barrel_water_per_hour) - farmers * farmer_water_per_hour - meals * water_per_meal,
+		"water": pump_rate() - farmers * farmer_water_per_hour - meals * water_per_meal,
 		"food": farmers * farmer_food_per_hour - meals * food_per_meal,
 		"farmers": farmers,
 		"planks": cutters * woodcutter_planks_per_hour,
@@ -646,9 +735,77 @@ func request_repair_pump(player: Node3D) -> bool:
 	for id: StringName in PUMP_PARTS:
 		pc.inventory.remove_item(id, PUMP_PARTS[id])
 	pump_working = true
+	pump_level = 1
+	_apply_pump_look()
 	pump_repaired.emit()
 	notice.emit("The pump's running: %s has water" % settlement_name)
 	return true
+
+
+## Litres an hour into the tank now.
+func pump_rate() -> float:
+	if not pump_working:
+		return barrel_water_per_hour
+	return maxf(float(PUMP_LEVELS[clampi(maxi(pump_level, 1), 1, PUMP_LEVELS.size() - 1)][2]), pump_water_per_hour if pump_level <= 1 else 0.0)
+
+
+## The next upgrade: [name, parts, rate, tank], or [] when there's none.
+func next_pump_upgrade() -> Array:
+	if not pump_working or pump_level + 1 >= PUMP_LEVELS.size():
+		return []
+	return PUMP_LEVELS[maxi(pump_level, 1) + 1]
+
+
+static func parts_text(parts: Dictionary) -> String:
+	var out := []
+	for id: StringName in parts:
+		var item := ItemDatabase.get_item(id)
+		out.append("%d %s" % [parts[id], item.display_name if item != null else String(id)])
+	return ", ".join(out)
+
+
+func upgrade_refusal_reason(player: Node3D) -> String:
+	var pc := player as PlayerController
+	if pc == null or pc.is_dead():
+		return "Can't do that now"
+	if not pump_working:
+		return "Repair the pump first"
+	var up := next_pump_upgrade()
+	if up.is_empty():
+		return "The pump's as good as it gets"
+	for id: StringName in up[1]:
+		if pc.inventory == null or pc.inventory.count_of(id) < up[1][id]:
+			return "Needs %s" % parts_text(up[1])
+	return ""
+
+
+## Fits the next upgrade with parts from `player` (validated).
+func request_upgrade_pump(player: Node3D) -> bool:
+	var reason := upgrade_refusal_reason(player)
+	if reason != "":
+		refused.emit(reason)
+		return false
+	var up := next_pump_upgrade()
+	var pc := player as PlayerController
+	for id: StringName in up[1]:
+		pc.inventory.remove_item(id, up[1][id])
+	pump_level = maxi(pump_level, 1) + 1
+	_apply_pump_look()
+	notice.emit("%s fitted: %d L of water an hour, a %d L tank" % [up[0], roundi(float(up[2])), roundi(float(up[3]))])
+	return true
+
+
+## The tank size and the pump head's extra parts follow the level.
+func _apply_pump_look() -> void:
+	var level := clampi(pump_level if pump_working else 0, 0, PUMP_LEVELS.size() - 1)
+	water_capacity = maxf(float(PUMP_LEVELS[level][3]), 200.0)
+	water = minf(water, water_capacity)
+	var head := get_node_or_null("PumpHead")
+	if head != null:
+		for pair in [["Upgrade2", 2], ["Motor", 3]]:
+			var n := head.get_node_or_null(pair[0]) as Node3D
+			if n != null:
+				n.visible = level >= int(pair[1])
 
 
 # ---------------------------------------------------------------- jobs and guns
@@ -854,7 +1011,7 @@ func simulate(hours: float) -> void:
 	_simulate_raids(hours)
 	var here := members().filter(func(s: Settler) -> bool: return s.has_arrived())
 	# Water
-	water = minf(water + (pump_water_per_hour if pump_working else barrel_water_per_hour) * hours, water_capacity)
+	water = minf(water + pump_rate() * hours, water_capacity)
 	# Crops: each working farmer turns water into vegetables (one to a farm
 	# spot: more farmers than the fields can take stand idle)
 	var fields := farm_spots().size()
@@ -910,9 +1067,13 @@ func simulate(hours: float) -> void:
 				_plank_progress = 1.0  # the stores are full
 				break
 			_plank_progress -= 1.0
-	# Building: each working Builder puts their hours into the current site
+	# Building: each working Builder mends what's damaged, else puts their
+	# hours into the current site
 	for s: Settler in here:
 		if s.role != Settler.Role.BUILDER or not s.is_working():
+			continue
+		var job := builder_job()
+		if job is Structure and repair_with_stores(job as Structure, hours):
 			continue
 		var site := current_site()
 		if site != null:
@@ -1132,7 +1293,7 @@ const LAYOUT := 2
 
 
 func save_state() -> Dictionary:
-	return {"claimed": is_claimed, "water": water, "pump": pump_working, "arrival_in": arrival_in,
+	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
 		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
 		"raid_from_name": raid_from_name, "raid_size": raid_size}
@@ -1140,8 +1301,10 @@ func save_state() -> Dictionary:
 
 func load_state(data: Dictionary) -> void:
 	is_claimed = data.get("claimed") is bool and data["claimed"]
-	water = clampf(_num(data.get("water"), 0.0), 0.0, water_capacity)
 	pump_working = data.get("pump") is bool and data["pump"]
+	pump_level = clampi(int(_num(data.get("pump_level"), 1.0 if pump_working else 0.0)), 1 if pump_working else 0, PUMP_LEVELS.size() - 1) if pump_working else 0
+	_apply_pump_look()  # the tank's size first, then what's in it
+	water = clampf(_num(data.get("water"), 0.0), 0.0, water_capacity)
 	arrival_in = _num(data.get("arrival_in"), arrival_every_hours)
 	_food_progress = clampf(_num(data.get("food_progress"), 0.0), 0.0, 1.0)
 	_next_id = maxi(int(_num(data.get("next_id"), 1.0)), _next_id)

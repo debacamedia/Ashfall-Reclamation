@@ -101,6 +101,12 @@ var _repath := 0.0
 var _label_check := 0.0
 var _travel_check := 0.0
 var _post := 0
+var _stuck := 0
+var _probe_left := 0.0
+var _probe_from := Vector3.INF
+var _probe_next := Vector3.INF
+var _side_left := 0.0
+var _side_dir := Vector3.ZERO
 var _gone := false
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _rng := RandomNumberGenerator.new()
@@ -177,6 +183,9 @@ func status_text() -> String:
 				return "Fighting"
 			return "Guarding" if gun != null else "Guarding (machete)"
 		Role.BUILDER:
+			var job := settlement.builder_job()
+			if job is Structure:
+				return "Mending the %s" % (job as Structure).definition.display_name.to_lower()
 			var site := settlement.current_site()
 			if site != null:
 				return "Building the %s" % site.display_name().to_lower()
@@ -313,7 +322,7 @@ func _travel(delta: float) -> void:
 				_arrive()
 				return
 			velocity = Vector3.ZERO
-	_move_to(dest, walk_speed, delta)
+	_move_to(dest, walk_speed * 1.5, delta)  # a brisk walk to their new home (20.1)
 
 
 func _arrive() -> void:
@@ -411,13 +420,15 @@ func _patrol(delta: float) -> void:
 
 ## Builders: to the site, then hammering.
 func _build(delta: float) -> void:
-	var site := settlement.current_site()
-	if site == null:
+	var job := settlement.builder_job()
+	if job == null:
 		_swing(false)
 		_wander(_hangout(), 6.0, delta)
 		return
-	if _goal == Vector3.INF or state == State.IDLE:
-		_goal = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, site.work_point())
+	var site := job as ConstructionSite
+	var spot := site.work_point() if site != null else job.global_position + job.global_basis.z * 1.3
+	if _goal == Vector3.INF or state == State.IDLE or _goal.distance_to(spot) > 6.0:
+		_goal = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, spot)
 		state = State.WALK
 		_state_time = 0.0
 	if state == State.WALK:
@@ -428,7 +439,7 @@ func _build(delta: float) -> void:
 			_state_length = _rng.randf_range(10.0, 16.0)
 		return
 	_brake(delta)
-	_face(_next_piece_at(site) - global_position, delta)
+	_face((_next_piece_at(site) if site != null else job.global_position) - global_position, delta)
 	_swing(true)
 	if _state_time > _state_length:
 		_goal = Vector3.INF
@@ -605,8 +616,11 @@ func _shoot(t: Node3D) -> void:
 # ---------------------------------------------------------------- movement
 
 func _move_to(point: Vector3, speed: float, delta: float) -> bool:
+	# Keep to the path already chosen while the goal stays put: asking again
+	# every moment can flip between two equal ways round a building, and
+	# they'd dither at the fork (20.1)
 	_repath -= delta
-	if _repath <= 0.0 or agent.target_position.distance_to(point) > 1.0:
+	if agent.target_position.distance_to(point) > 1.0 or (_repath <= 0.0 and agent.is_navigation_finished()):
 		agent.target_position = point
 		_repath = 0.3
 	if Vector2(point.x - global_position.x, point.z - global_position.z).length() <= agent.target_desired_distance:
@@ -618,11 +632,58 @@ func _move_to(point: Vector3, speed: float, delta: float) -> bool:
 	if dir.length() < 0.05 and agent.is_navigation_finished():
 		dir = Vector3(point.x - global_position.x, 0, point.z - global_position.z)
 	dir = dir.normalized()
+	# Snagged on a door frame or a table (Increment 20.1): step aside; still
+	# stuck after a few tries, hop to the next point on the path
+	if _side_left > 0.0:
+		_side_left -= delta
+		dir = _side_dir
+	# Judged by how much closer they got to the next point on the path in the
+	# last moment (0.4 s), not by speed this instant: pressed against a corner they
+	# jitter back and forth, and stepping aside doesn't get them any closer
+	_probe_left -= delta
+	if _probe_left <= 0.0:
+		_probe_left = 0.4
+		# Nothing to judge mid-step, or with a new point to head for
+		if _side_left <= 0.0 and _probe_from != Vector3.INF and _probe_next.distance_to(next) < 0.1:
+			var gained := Vector2(next.x - _probe_from.x, next.z - _probe_from.z).length() - Vector2(next.x - global_position.x, next.z - global_position.z).length()
+			if gained >= speed * 0.4 * 0.3:
+				_stuck = maxi(_stuck - 1, 0)
+			else:
+				_stuck += 1
+				if _stuck >= 4:
+					# A few tries and still getting nowhere: hop on to the next point
+					_stuck = 0
+					var hop := NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, next)
+					if hop.distance_to(global_position) < 3.0:
+						global_position = hop + Vector3.UP * 0.05
+						velocity = Vector3.ZERO
+				else:
+					_side_dir = (dir.cross(Vector3.UP) * _away_from_wall(dir) - dir * 0.3).normalized()
+					_side_left = 0.4
+					_probe_left = 0.4
+					agent.target_position = point + Vector3(0.01 * _stuck, 0, 0)  # a fresh path from here
+		_probe_from = global_position if _side_left <= 0.0 else Vector3.INF
+		_probe_next = next
 	var weight := 1.0 - exp(-acceleration * delta)
 	velocity.x = lerpf(velocity.x, dir.x * speed, weight)
 	velocity.z = lerpf(velocity.z, dir.z * speed, weight)
 	_face(dir, delta)
 	return false
+
+
+## Which way to step aside (+1 or -1 along dir × up): away from the wall
+## they've walked into, so a doorway's jamb sends them into the doorway. With
+## nothing to go by, either way.
+func _away_from_wall(dir: Vector3) -> float:
+	var side := dir.cross(Vector3.UP)
+	for i in get_slide_collision_count():
+		var k := get_slide_collision(i)
+		if k.get_normal().y < 0.5:
+			var off := k.get_position() - global_position
+			var along := side.dot(Vector3(off.x, 0, off.z))
+			if absf(along) > 0.005:
+				return -signf(along)
+	return 1.0 if _rng.randf() < 0.5 else -1.0
 
 
 func _brake(delta: float) -> void:
