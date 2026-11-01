@@ -101,91 +101,91 @@ height = 0.16
 radial_segments = 14
 rings = 1
 
-[node name="CookingStove" type="Area3D" unique_id=163654763]
+[node name="CookingStove" type="Area3D" unique_id=915362804]
 collision_layer = 16
 collision_mask = 0
 monitoring = false
 script = ExtResource("1_wguxl")
 station = 3
 
-[node name="Shape" type="CollisionShape3D" parent="." unique_id=1041117069]
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=2098011180]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 shape = SubResource("BoxShape3D_yynry")
 
-[node name="Body" type="StaticBody3D" parent="." unique_id=1491225959]
+[node name="Body" type="StaticBody3D" parent="." unique_id=1265501598]
 collision_layer = 2
 collision_mask = 0
 
-[node name="BodyShape" type="CollisionShape3D" parent="Body" unique_id=1252160020]
+[node name="BodyShape" type="CollisionShape3D" parent="Body" unique_id=866000133]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
 shape = SubResource("BoxShape3D_48c86")
 
-[node name="Firebox" type="MeshInstance3D" parent="Body" unique_id=1690758478]
+[node name="Firebox" type="MeshInstance3D" parent="Body" unique_id=1363281138]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
 material_override = SubResource("StandardMaterial3D_ceua3")
 mesh = SubResource("BoxMesh_u5msp")
 
-[node name="Top" type="MeshInstance3D" parent="Body" unique_id=131287505]
+[node name="Top" type="MeshInstance3D" parent="Body" unique_id=911452235]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.825, 0)
 material_override = SubResource("StandardMaterial3D_gof6u")
 mesh = SubResource("BoxMesh_wwhkr")
 
-[node name="Leg" type="MeshInstance3D" parent="Body" unique_id=1813730842]
+[node name="Leg" type="MeshInstance3D" parent="Body" unique_id=1610326953]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.06, -0.25)
 material_override = SubResource("StandardMaterial3D_ceua3")
 mesh = SubResource("BoxMesh_jf4bu")
 
-[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="Body" unique_id=2061567784]
+[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="Body" unique_id=1654117772]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.06, 0.25)
 material_override = SubResource("StandardMaterial3D_ceua3")
 mesh = SubResource("BoxMesh_nwpp1")
 
-[node name="@MeshInstance3D@6" type="MeshInstance3D" parent="Body" unique_id=926565833]
+[node name="@MeshInstance3D@6" type="MeshInstance3D" parent="Body" unique_id=905211215]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 0.06, -0.25)
 material_override = SubResource("StandardMaterial3D_ceua3")
 mesh = SubResource("BoxMesh_5ruim")
 
-[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="Body" unique_id=271011873]
+[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="Body" unique_id=450239611]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 0.06, 0.25)
 material_override = SubResource("StandardMaterial3D_ceua3")
 mesh = SubResource("BoxMesh_ubyq8")
 
-[node name="Door" type="MeshInstance3D" parent="Body" unique_id=127885106]
+[node name="Door" type="MeshInstance3D" parent="Body" unique_id=849370908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, 0.45, 0.335)
 material_override = SubResource("StandardMaterial3D_gof6u")
 mesh = SubResource("BoxMesh_5pg5k")
 
-[node name="Glow" type="MeshInstance3D" parent="Body" unique_id=974916368]
+[node name="Glow" type="MeshInstance3D" parent="Body" unique_id=980448671]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, 0.37, 0.347)
 material_override = SubResource("StandardMaterial3D_dd0oe")
 mesh = SubResource("BoxMesh_wh35d")
 
-[node name="Handle" type="MeshInstance3D" parent="Body" unique_id=236875177]
+[node name="Handle" type="MeshInstance3D" parent="Body" unique_id=72895439]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, 0.5, 0.355)
 material_override = SubResource("StandardMaterial3D_3a2y6")
 mesh = SubResource("BoxMesh_p76ah")
 
-[node name="OvenDoor" type="MeshInstance3D" parent="Body" unique_id=2142186384]
+[node name="OvenDoor" type="MeshInstance3D" parent="Body" unique_id=605257299]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 0.45, 0.335)
 material_override = SubResource("StandardMaterial3D_gof6u")
 mesh = SubResource("BoxMesh_jf2ap")
 
-[node name="Chimney" type="MeshInstance3D" parent="Body" unique_id=977641543]
+[node name="Chimney" type="MeshInstance3D" parent="Body" unique_id=798829810]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.32, 1.6, -0.22)
 material_override = SubResource("StandardMaterial3D_ceua3")
 mesh = SubResource("CylinderMesh_8wcvt")
 
-[node name="Pot" type="MeshInstance3D" parent="Body" unique_id=883073237]
+[node name="Pot" type="MeshInstance3D" parent="Body" unique_id=266255874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.95, 0)
 material_override = SubResource("StandardMaterial3D_xssut")
 mesh = SubResource("CylinderMesh_3174u")
 
-[node name="PotStew" type="MeshInstance3D" parent="Body" unique_id=1606319530]
+[node name="PotStew" type="MeshInstance3D" parent="Body" unique_id=1028184959]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 1.045, 0)
 material_override = SubResource("StandardMaterial3D_6phnx")
 mesh = SubResource("CylinderMesh_ssxbm")
 
-[node name="Kettle" type="MeshInstance3D" parent="Body" unique_id=799832910]
+[node name="Kettle" type="MeshInstance3D" parent="Body" unique_id=623824318]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 0.93, 0.08)
 material_override = SubResource("StandardMaterial3D_vq76l")
 mesh = SubResource("CylinderMesh_bua3d")

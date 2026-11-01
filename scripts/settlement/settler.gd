@@ -33,10 +33,11 @@ extends CharacterBody3D
 signal role_changed(role: Role)
 signal armed_changed
 
-enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER }
+enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER, COOK, RANCHER }
 enum State { WAIT, TRAVEL, IDLE, WALK, WORK, PATROL, FIGHT, LEAVING, DEAD, DOWN }
 
-const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder", Role.WOODCUTTER: "Woodcutter"}
+const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder", Role.WOODCUTTER: "Woodcutter",
+	Role.COOK: "Cook", Role.RANCHER: "Rancher"}
 ## A guard keeps about this many rounds (topped up from you or the armory).
 const AMMO_TARGET := 60
 const SHOT_SOUNDS := {
@@ -195,6 +196,10 @@ func status_text() -> String:
 			return "Nothing to build"
 		Role.WOODCUTTER:
 			return "Cutting wood" if not settlement.wood_spots().is_empty() else "No woodlot here"
+		Role.COOK:
+			return settlement.cook_status()
+		Role.RANCHER:
+			return settlement.rancher_status()
 	return "Helping out"
 
 
@@ -372,6 +377,10 @@ func _home_life(delta: float) -> void:
 			_build(delta)
 		Role.WOODCUTTER:
 			_cut_wood(delta)
+		Role.COOK:
+			_cook(delta)
+		Role.RANCHER:
+			_tend(delta)
 
 
 func _farm(delta: float) -> void:
@@ -475,6 +484,49 @@ func _cut_wood(delta: float) -> void:
 	var tree := _nearest_tree(7.0)
 	if tree != null:
 		_face(tree.global_position - global_position, delta)
+	_swing(true)
+	if _state_time > _state_length:
+		_goal = Vector3.INF
+
+
+## Cooks (21.5): at the kitchen's stove, stirring.
+func _cook(delta: float) -> void:
+	var spots: Array[Node3D] = []
+	for k in settlement.kitchens():
+		spots.append_array(k.cook_spots())
+	if spots.is_empty():
+		_swing(false)
+		_wander(_hangout(), 6.0, delta)
+		return
+	_work_at(spots, 0.3, delta)
+
+
+## Ranchers (21.5): from pen to pen, at the troughs.
+func _tend(delta: float) -> void:
+	var spots: Array[Node3D] = []
+	for pen in settlement.pens():
+		spots.append_array(pen.tend_spots())
+	if spots.is_empty():
+		_swing(false)
+		_wander(_hangout(), 6.0, delta)
+		return
+	_work_at(spots, 0.8, delta)
+
+
+## Walk to one of `spots`, then work there a while (swinging), then another.
+func _work_at(spots: Array[Node3D], jitter: float, delta: float) -> void:
+	if _goal == Vector3.INF or state == State.IDLE:
+		_goal = _pick_from(spots, jitter)
+		state = State.WALK
+		_state_time = 0.0
+	if state == State.WALK:
+		_swing(false)
+		if _move_to(_goal, walk_speed, delta) or _state_time > 60.0:
+			state = State.WORK
+			_state_time = 0.0
+			_state_length = _rng.randf_range(10.0, 18.0)
+		return
+	_brake(delta)
 	_swing(true)
 	if _state_time > _state_length:
 		_goal = Vector3.INF
@@ -790,7 +842,8 @@ func _update_visuals() -> void:
 	if not is_node_ready():
 		return
 	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD], ["Helmet", role == Role.GUARD],
-			["HardHat", role == Role.BUILDER], ["ToolBelt", role == Role.BUILDER]]:
+			["HardHat", role == Role.BUILDER], ["ToolBelt", role == Role.BUILDER],
+			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK], ["CowboyHat", role == Role.RANCHER]]:
 		var n := visual.get_node_or_null(pair[0]) as Node3D
 		if n != null:
 			n.visible = pair[1]
@@ -806,7 +859,7 @@ func _update_visuals() -> void:
 	var axe := visual.get_node_or_null("RightArm/Axe") as Node3D
 	if axe != null:
 		axe.visible = gun == null and role == Role.WOODCUTTER
-	if role != Role.BUILDER and role != Role.WOODCUTTER:
+	if role != Role.BUILDER and role != Role.WOODCUTTER and role != Role.COOK and role != Role.RANCHER:
 		_swing(false)
 
 
@@ -938,7 +991,7 @@ func load_state(data: Dictionary) -> void:
 	look_seed = int(Settlement._num(data.get("look"), look_seed))
 	_apply_look()
 	var r := int(Settlement._num(data.get("role"), 0))
-	role = r as Role if r >= 0 and r <= Role.WOODCUTTER else Role.NONE
+	role = r as Role if r >= 0 and r <= Role.RANCHER else Role.NONE
 	var raw_p: Variant = data.get("position")
 	if raw_p is Array and raw_p.size() == 3 and raw_p.all(func(v: Variant) -> bool: return (v is float or v is int) and is_finite(float(v))):
 		global_position = Vector3(raw_p[0], raw_p[1], raw_p[2])

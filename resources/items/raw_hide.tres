@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/raw_hide.png" id="1_8214t"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_plx4t"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_8214t"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/raw_hide.tscn" id="3_cniph"]
+
+[resource]
+script = ExtResource("2_8214t")
+id = &"raw_hide"
+display_name = "Raw Hide"
+description = "A cow's hide, salted and rolled. Kept for making clothing and armour later."
+icon = ExtResource("1_8214t")
+max_stack = 10
+weight = 2.0
+base_value = 8
+world_model = ExtResource("3_cniph")
+pickup_sound = ExtResource("1_plx4t")

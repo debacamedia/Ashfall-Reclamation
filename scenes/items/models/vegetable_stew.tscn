@@ -48,34 +48,34 @@ roughness = 0.3
 [sub_resource type="BoxMesh" id="BoxMesh_s4hhw"]
 size = Vector3(0.012, 0.006, 0.13)
 
-[node name="Stew" type="Node3D" unique_id=2034632953]
+[node name="Stew" type="Node3D" unique_id=354021697]
 
-[node name="Bowl" type="MeshInstance3D" parent="." unique_id=183359363]
+[node name="Bowl" type="MeshInstance3D" parent="." unique_id=686261630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_in8hh")
 mesh = SubResource("CylinderMesh_hgcnc")
 
-[node name="Stew" type="MeshInstance3D" parent="." unique_id=1587801566]
+[node name="Stew" type="MeshInstance3D" parent="." unique_id=1259022411]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
 material_override = SubResource("StandardMaterial3D_c7mcr")
 mesh = SubResource("CylinderMesh_ckmvy")
 
-[node name="Carrot" type="MeshInstance3D" parent="." unique_id=711976403]
+[node name="Carrot" type="MeshInstance3D" parent="." unique_id=1328296781]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.025, 0.062, 0.01)
 material_override = SubResource("StandardMaterial3D_8m1db")
 mesh = SubResource("BoxMesh_p0mo5")
 
-[node name="Carrot2" type="MeshInstance3D" parent="." unique_id=21731491]
+[node name="Carrot2" type="MeshInstance3D" parent="." unique_id=186227618]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 0.062, -0.02)
 material_override = SubResource("StandardMaterial3D_8m1db")
 mesh = SubResource("BoxMesh_qlnc1")
 
-[node name="Cabbage" type="MeshInstance3D" parent="." unique_id=1668317463]
+[node name="Cabbage" type="MeshInstance3D" parent="." unique_id=1203348746]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.005, 0.062, 0.035)
 material_override = SubResource("StandardMaterial3D_mv8n8")
 mesh = SubResource("BoxMesh_eaut8")
 
-[node name="Spoon" type="MeshInstance3D" parent="." unique_id=2108489103]
+[node name="Spoon" type="MeshInstance3D" parent="." unique_id=1751097252]
 transform = Transform3D(0.8660254, -0.21130913, 0.45315388, 0, 0.90630776, 0.42261827, -0.5, -0.36599815, 0.7848855, 0.05, 0.085, -0.02)
 material_override = SubResource("StandardMaterial3D_wde4r")
 mesh = SubResource("BoxMesh_s4hhw")

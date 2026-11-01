@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/egg.png" id="1_inngf"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_ir3vk"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_inngf"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/egg.tscn" id="3_d3xju"]
+
+[resource]
+script = ExtResource("2_inngf")
+id = &"egg"
+display_name = "Egg"
+description = "Laid by the farm's chickens. Fry two on a stove, or leave them in the stores for a Cook."
+category = 10
+icon = ExtResource("1_inngf")
+max_stack = 30
+weight = 0.06
+world_model = ExtResource("3_d3xju")
+pickup_sound = ExtResource("1_ir3vk")

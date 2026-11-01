@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_3icmx"]
+[ext_resource type="Texture2D" path="res://assets/icons/meat_stew.png" id="1_fkcfs"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_fkcfs"]
+[ext_resource type="AudioStream" path="res://assets/audio/eat.wav" id="3_wly2l"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/meat_stew.tscn" id="4_mfph2"]
+
+[resource]
+script = ExtResource("2_fkcfs")
+id = &"meat_stew"
+display_name = "Meat Stew"
+description = "Meat and vegetables, stewed for hours. The most filling thing there is. In a settlement's fridge it feeds five."
+category = 10
+icon = ExtResource("1_fkcfs")
+max_stack = 5
+weight = 0.7
+base_value = 18
+world_model = ExtResource("4_mfph2")
+pickup_sound = ExtResource("1_3icmx")
+food_value = 75.0
+settler_meals = 5.0
+use_time = 2.5
+use_sound = ExtResource("3_wly2l")

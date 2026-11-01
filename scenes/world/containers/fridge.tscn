@@ -1,0 +1,120 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/salvage_container.gd" id="1_tkkyt"]
+[ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="2_58a8u"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/crate_open.wav" id="3_qlgm6"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/crate_close.wav" id="4_spfhn"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_f04j4"]
+size = Vector3(0.85, 1.8, 0.9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eu151"]
+size = Vector3(0.8, 1.75, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kauxm"]
+albedo_color = Color(0.88, 0.88, 0.84, 1)
+metallic = 0.2
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="BoxMesh_sis3o"]
+size = Vector3(0.8, 1.7, 0.66)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i64o1"]
+albedo_color = Color(0.12, 0.12, 0.12, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_n028d"]
+size = Vector3(0.7, 1.55, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_n1qcd"]
+size = Vector3(0.76, 0.04, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_unyvp"]
+size = Vector3(0.8, 1.7, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_008er"]
+albedo_color = Color(0.8, 0.8, 0.82, 1)
+metallic = 0.9
+roughness = 0.25
+
+[sub_resource type="BoxMesh" id="BoxMesh_bvf63"]
+size = Vector3(0.03, 0.4, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_j6jpv"]
+size = Vector3(0.18, 0.04, 0.01)
+
+[node name="Fridge" type="Area3D" unique_id=604898912]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_tkkyt")
+container_name = "Fridge"
+search_time = 0.0
+lid_open_rotation = Vector3(0, -100, 0)
+focus_offset = Vector3(0, 1, 0.3)
+
+[node name="Shape" type="CollisionShape3D" parent="." unique_id=1331650248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0.1)
+shape = SubResource("BoxShape3D_f04j4")
+
+[node name="Body" type="StaticBody3D" parent="." unique_id=680515969]
+collision_layer = 2
+collision_mask = 0
+
+[node name="BodyShape" type="CollisionShape3D" parent="Body" unique_id=1345659156]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+shape = SubResource("BoxShape3D_eu151")
+
+[node name="Cabinet" type="MeshInstance3D" parent="Body" unique_id=1662699792]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, -0.02)
+material_override = SubResource("StandardMaterial3D_kauxm")
+mesh = SubResource("BoxMesh_sis3o")
+
+[node name="Inside" type="MeshInstance3D" parent="Body" unique_id=1893893670]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0.31)
+material_override = SubResource("StandardMaterial3D_i64o1")
+mesh = SubResource("BoxMesh_n028d")
+
+[node name="Plinth" type="MeshInstance3D" parent="Body" unique_id=1267619185]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.02)
+material_override = SubResource("StandardMaterial3D_i64o1")
+mesh = SubResource("BoxMesh_n1qcd")
+
+[node name="Lid" type="Node3D" parent="." unique_id=1154853506]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0, 0.33)
+
+[node name="Door" type="MeshInstance3D" parent="Lid" unique_id=1839515267]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.88, 0)
+material_override = SubResource("StandardMaterial3D_kauxm")
+mesh = SubResource("BoxMesh_unyvp")
+
+[node name="Handle" type="MeshInstance3D" parent="Lid" unique_id=343572766]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72, 1.1, 0.04)
+material_override = SubResource("StandardMaterial3D_008er")
+mesh = SubResource("BoxMesh_bvf63")
+
+[node name="Badge" type="MeshInstance3D" parent="Lid" unique_id=1822469791]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.6, 0.03)
+material_override = SubResource("StandardMaterial3D_008er")
+mesh = SubResource("BoxMesh_j6jpv")
+
+[node name="Inventory" type="Node" parent="." unique_id=773203225]
+unique_name_in_owner = true
+script = ExtResource("2_58a8u")
+slot_count = 30
+max_weight = 0.0
+
+[node name="OpenSound" type="AudioStreamPlayer3D" parent="." unique_id=935086307]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+stream = ExtResource("3_qlgm6")
+unit_size = 5.0
+bus = &"SFX"
+
+[node name="CloseSound" type="AudioStreamPlayer3D" parent="." unique_id=1224808489]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+stream = ExtResource("4_spfhn")
+unit_size = 5.0
+bus = &"SFX"

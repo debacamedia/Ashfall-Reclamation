@@ -60,6 +60,17 @@ signal raid_ended(report: Dictionary)
 const SETTLER_SCENE := "res://scenes/npcs/settler.tscn"
 const FOOD := &"vegetables"
 const PLANK := &"wood_plank"
+const WOOD := &"wood"
+const MEAT := &"raw_meat"
+const EGG := &"egg"
+const HIDE := &"raw_hide"
+## The farm's animals (21.5): hours a vegetable feeds one, hours between
+## births for each pair, hours between eggs (chickens), what one butchered gives.
+const ANIMALS := {
+	&"chicken": {"one": "chicken", "many": "chickens", "feed_hours": 24.0, "breed_hours": 12.0, "egg_hours": 12.0, "meat": 2, "hide": 0},
+	&"pig": {"one": "pig", "many": "pigs", "feed_hours": 8.0, "breed_hours": 24.0, "egg_hours": 0.0, "meat": 5, "hide": 0},
+	&"cow": {"one": "cow", "many": "cows", "feed_hours": 6.0, "breed_hours": 48.0, "egg_hours": 0.0, "meat": 8, "hide": 1},
+}
 ## Your settlements on the compass and the map.
 const CLAIMED_COLOR := Color(0.45, 0.9, 0.45)
 ## Repairing the pump takes these from your backpack.
@@ -136,6 +147,10 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 @export var meal_every_hours := 4.0
 @export var food_per_meal := 1
 @export var water_per_meal := 2.0
+## A Cook (21.5): dishes an hour, and vegetables left in the stores for the
+## animals and anyone eating them raw.
+@export var cook_dishes_per_hour := 2.0
+@export var cook_keeps_vegetables := 10
 ## Unfed this long (hours), a settler stops working…
 @export var hungry_after_hours := 1.0
 ## …and this long, they leave.
@@ -838,11 +853,23 @@ func _member_reason(player: Node3D, s: Settler) -> String:
 
 func request_set_role(player: Node3D, s: Settler, role: Settler.Role) -> bool:
 	var reason := _member_reason(player, s)
+	if reason == "":
+		reason = role_refusal_reason(role)
 	if reason != "":
 		refused.emit(reason)
 		return false
 	s.set_role(role)
 	return true
+
+
+## Why nobody can be given `role` here yet ("" if they can): a Cook needs a
+## Kitchen, a Rancher a pen (21.5).
+func role_refusal_reason(role: Settler.Role) -> String:
+	if role == Settler.Role.COOK and kitchens().is_empty():
+		return "Build a Kitchen first: plan one in build mode (B)"
+	if role == Settler.Role.RANCHER and pens().is_empty():
+		return "Build a Chicken Coop, Pig Pen or Cow Pasture first: plan one in build mode (B)"
+	return ""
 
 
 ## Gives `s` the spare gun in `player`'s backpack slot `index`. Their old gun
@@ -1062,8 +1089,7 @@ func simulate(hours: float) -> void:
 		s.next_meal -= hours
 		if s.next_meal > 0.0:
 			continue
-		if food() >= food_per_meal and water >= water_per_meal:
-			_eat(food_per_meal)
+		if water >= water_per_meal and _take_meal():
 			water -= water_per_meal
 			s.next_meal += meal_every_hours
 			s.unfed_hours = 0.0
@@ -1071,7 +1097,7 @@ func simulate(hours: float) -> void:
 			s.next_meal = 0.0
 			s.unfed_hours += hours
 			if s.unfed_hours >= leave_after_hours:
-				var why := "nothing to eat" if food() < food_per_meal else "no water"
+				var why := "nothing to eat" if food() < food_per_meal and fridge_meals() < 1.0 else "no water"
 				settler_lost.emit(s.settler_name, why)
 				notice.emit("%s has left %s: %s" % [s.settler_name, settlement_name, why])
 				s.leave()
@@ -1090,6 +1116,9 @@ func simulate(hours: float) -> void:
 				_plank_progress = 1.0  # the stores are full
 				break
 			_plank_progress -= 1.0
+	# The animals and the kitchen (21.5)
+	_simulate_animals(hours, here)
+	_simulate_cooking(hours, here)
 	# Building: each working Builder mends what's damaged, else puts their
 	# hours into the current site
 	for s: Settler in here:
@@ -1105,8 +1134,291 @@ func simulate(hours: float) -> void:
 	arrival_in -= hours
 	if arrival_in <= 0.0:
 		arrival_in = arrival_every_hours
-		if free_beds() > 0 and food() >= arrival_food_needed:
+		if free_beds() > 0 and food() + fridge_meals() >= arrival_food_needed:
 			spawn_newcomer()
+
+
+# ---------------------------------------------------------------- animals and the kitchen (21.5)
+
+var _meal_credit := 0.0
+var _cook_progress := 0.0
+var _cook_state := ""
+
+
+func kitchens() -> Array[SettlementBuilding]:
+	var out: Array[SettlementBuilding] = []
+	for b in buildings():
+		if b.is_kitchen():
+			out.append(b)
+	return out
+
+
+func pens() -> Array[SettlementBuilding]:
+	var out: Array[SettlementBuilding] = []
+	for b in buildings():
+		if b.is_pen():
+			out.append(b)
+	return out
+
+
+func fridges() -> Array[SalvageContainer]:
+	var out: Array[SalvageContainer] = []
+	for k in kitchens():
+		out.append(k.fridge)
+	return out
+
+
+## Settler meals waiting in the fridges (cooked food), plus any part-eaten.
+func fridge_meals() -> float:
+	var n := _meal_credit
+	for f in fridges():
+		for i in f.inventory.slot_count:
+			var item := f.inventory.get_slot_item(i)
+			if item != null and item.settler_meals > 0.0:
+				n += item.settler_meals * f.inventory.get_slot_quantity(i)
+	return n
+
+
+## Animals here by kind: {&"chicken": [have, room], ...}.
+func animal_counts() -> Dictionary:
+	var out := {}
+	for pen in pens():
+		var c: Array = out.get(pen.animal_kind, [0, 0])
+		out[pen.animal_kind] = [int(c[0]) + pen.count(), int(c[1]) + pen.animal_capacity]
+	return out
+
+
+## One settler's meal: what's cooked first (a dish feeds several), else a
+## vegetable. False with nothing to eat.
+func _take_meal() -> bool:
+	if _meal_credit >= 1.0:
+		_meal_credit -= 1.0
+		return true
+	for f in fridges():
+		for i in f.inventory.slot_count:
+			var item := f.inventory.get_slot_item(i)
+			if item != null and item.settler_meals > 0.0:
+				f.inventory.remove_item(item.id, 1)
+				_meal_credit += item.settler_meals - 1.0
+				return true
+	if food() >= food_per_meal:
+		_eat(food_per_meal)
+		return true
+	return false
+
+
+func _stores_count(id: StringName) -> int:
+	var n := 0
+	for st in stores():
+		n += st.inventory.count_of(id)
+	return n
+
+
+func _take_id(id: StringName, n: int) -> void:
+	var item := ItemDatabase.get_item(id)
+	if item != null and n > 0:
+		_take_from_stores({item: n})
+
+
+## Puts `n` of `id` in the stores; returns how many fitted.
+func _put_in_stores(id: StringName, n: int) -> int:
+	var item := ItemDatabase.get_item(id)
+	var added := 0
+	for st in stores():
+		if added >= n:
+			break
+		st.inventory.max_weight = 0.0
+		added += st.inventory.add_item(item, n - added)
+	return added
+
+
+## Raw Meat (and a Raw Hide from a cow) from one butchered `kind`.
+static func butcher_yield(kind: StringName) -> Dictionary:
+	var spec: Dictionary = ANIMALS.get(kind, {})
+	var out := {MEAT: int(spec.get("meat", 0))}
+	if int(spec.get("hide", 0)) > 0:
+		out[HIDE] = int(spec["hide"])
+	return out
+
+
+static func _yield_text(y: Dictionary) -> String:
+	var parts: PackedStringArray = []
+	for id in y:
+		if int(y[id]) > 0:
+			var item := ItemDatabase.get_item(id)
+			parts.append("%d %s" % [int(y[id]), item.display_name if item != null else String(id)])
+	return " and ".join(parts)
+
+
+## The pens: a pair turns up in a new one; a working Rancher feeds them from
+## the stores, collects eggs and butchers the spares once a pen is full.
+## Unfed, they don't breed or lay (they don't starve).
+func _simulate_animals(hours: float, here: Array) -> void:
+	var rancher: Settler = null
+	for s: Settler in here:
+		if s.role == Settler.Role.RANCHER and s.is_working():
+			rancher = s
+			break
+	for pen in pens():
+		var spec: Dictionary = ANIMALS.get(pen.animal_kind, {})
+		if spec.is_empty():
+			continue
+		if pen.animal_count < 0:
+			pen.set_count(2)
+			notice.emit("A pair of %s has arrived at the %s" % [spec["many"], pen.definition.display_name.to_lower()])
+			continue
+		if rancher == null or pen.count() == 0:
+			pen.animals_fed = false
+			continue
+		pen.feed_owed += pen.count() * hours / float(spec["feed_hours"])
+		while pen.feed_owed >= 1.0 and _stores_count(FOOD) > 0:
+			_take_id(FOOD, 1)
+			pen.feed_owed -= 1.0
+		pen.feed_owed = minf(pen.feed_owed, 3.0)
+		pen.animals_fed = pen.feed_owed < 2.0
+		if not pen.animals_fed:
+			continue
+		# Eggs
+		if float(spec["egg_hours"]) > 0.0:
+			pen.egg_progress += pen.count() * hours / float(spec["egg_hours"])
+			var eggs := floori(pen.egg_progress)
+			if eggs > 0:
+				pen.egg_progress -= _put_in_stores(EGG, eggs)
+				pen.egg_progress = minf(pen.egg_progress, 2.0)
+		# Births: one for each pair, every breed_hours
+		if pen.count() >= 2 and pen.count() < pen.animal_capacity:
+			pen.breed_progress += hours / float(spec["breed_hours"]) * floorf(pen.count() / 2.0)
+			while pen.breed_progress >= 1.0 and pen.count() < pen.animal_capacity:
+				pen.breed_progress -= 1.0
+				pen.set_count(pen.count() + 1)
+		else:
+			pen.breed_progress = 0.0
+		# Full: butcher down to half (a pair at least), so they breed again
+		if pen.count() >= pen.animal_capacity:
+			var keep := maxi(2, pen.animal_capacity / 2)
+			var n := pen.count() - keep
+			var got := {}
+			var one := butcher_yield(pen.animal_kind)
+			for id in one:
+				got[id] = int(one[id]) * n
+				_put_in_stores(id, got[id])
+			pen.set_count(keep)
+			notice.emit("%s butchered %d %s: %s into the stores" % [rancher.settler_name, n, spec["many"], _yield_text(got)])
+
+
+func rancher_status() -> String:
+	if pens().is_empty():
+		return "No pens to tend"
+	if pens().all(func(p: SettlementBuilding) -> bool: return p.count() == 0):
+		return "No animals yet"
+	if pens().any(func(p: SettlementBuilding) -> bool: return p.count() > 0 and not p.animals_fed) and _stores_count(FOOD) == 0:
+		return "No vegetables to feed them"
+	return "Tending the animals"
+
+
+## A working Cook makes `cook_dishes_per_hour` dishes into a fridge: the most
+## filling one the stores have the makings of (each burns a Wood Plank,
+## which they cut from Wood if there are no planks), leaving
+## `cook_keeps_vegetables` in the stores.
+func _simulate_cooking(hours: float, here: Array) -> void:
+	var cooks := here.filter(func(s: Settler) -> bool: return s.role == Settler.Role.COOK and s.is_working()).size()
+	if cooks == 0 or kitchens().is_empty():
+		_cook_state = "" if kitchens().is_empty() else _cook_state
+		return
+	_cook_progress += cooks * cook_dishes_per_hour * hours
+	while _cook_progress >= 1.0:
+		if not _cook_one():
+			_cook_progress = minf(_cook_progress, 1.0)
+			return
+		_cook_progress -= 1.0
+
+
+## The dishes a Cook can make, most filling first.
+static func cook_recipes() -> Array[RecipeDefinition]:
+	var out: Array[RecipeDefinition] = []
+	for r in RecipeDatabase.all_recipes():
+		if r.station == RecipeDefinition.Station.STOVE and r.output != null and r.output.settler_meals > 0.0:
+			out.append(r)
+	out.sort_custom(func(a: RecipeDefinition, b: RecipeDefinition) -> bool:
+		return a.output.settler_meals > b.output.settler_meals \
+			if not is_equal_approx(a.output.settler_meals, b.output.settler_meals) else a.output.food_value > b.output.food_value)
+	return out
+
+
+func _cook_one() -> bool:
+	var all := fridges()
+	var fridge: SalvageContainer = all[0] if not all.is_empty() else null
+	if fridge == null:
+		_cook_state = "No kitchen"
+		return false
+	var any_makings := false
+	for r in cook_recipes():
+		var ok := true
+		for item: ItemDefinition in r.inputs:
+			if item.id == PLANK:
+				continue
+			var have := _stores_count(item.id) - (cook_keeps_vegetables if item.id == FOOD else 0)
+			if have < r.inputs[item]:
+				ok = false
+				break
+		if not ok:
+			continue
+		any_makings = true
+		for f in all:
+			if f.inventory.can_add(r.output, r.output_quantity) >= r.output_quantity:
+				fridge = f
+				break
+		if fridge.inventory.can_add(r.output, r.output_quantity) < r.output_quantity:
+			_cook_state = "Fridge full"
+			return false
+		# Fuel: a plank, cut from wood if need be
+		if _stores_count(PLANK) < 1:
+			if _stores_count(WOOD) < 1:
+				_cook_state = "No planks or wood for the stove"
+				return false
+			_take_id(WOOD, 1)
+			_put_in_stores(PLANK, 2)
+		for item: ItemDefinition in r.inputs:
+			_take_id(item.id, r.inputs[item])
+		fridge.inventory.max_weight = 0.0
+		fridge.inventory.add_item(r.output, r.output_quantity)
+		_cook_state = "Cooking %s" % r.output.display_name.to_lower()
+		return true
+	if not any_makings:
+		_cook_state = "Nothing to cook: needs vegetables, meat or eggs in the stores"
+	return false
+
+
+func cook_status() -> String:
+	if kitchens().is_empty():
+		return "No kitchen"
+	return _cook_state if _cook_state != "" else "Cooking"
+
+
+## You butcher an animal (hold E): its meat (and hide) go in your backpack,
+## or the stores if you're full.
+func request_butcher(player: PlayerController, animal: FarmAnimal) -> bool:
+	var reason := ""
+	if player == null or player.is_dead():
+		reason = "Can't do that now"
+	elif animal == null or not is_instance_valid(animal) or animal.pen == null or not pens().has(animal.pen):
+		reason = "That's not yours to butcher"
+	elif not is_claimed:
+		reason = "Not yours"
+	if reason != "":
+		refused.emit(reason)
+		return false
+	var got := butcher_yield(animal.kind)
+	var spill := false
+	for id in got:
+		var item := ItemDatabase.get_item(id)
+		var left := int(got[id]) - player.inventory.add_item(item, int(got[id]))
+		if left > 0:
+			spill = true
+			_put_in_stores(id, left)
+	animal.pen.remove_animal(animal)
+	notice.emit("You butchered a %s: %s%s" % [ANIMALS[animal.kind]["one"], _yield_text(got), " (what didn't fit is in the stores)" if spill else ""])
+	return true
 
 
 # ---------------------------------------------------------------- raids
@@ -1532,6 +1844,7 @@ const LAYOUT := 2
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
 		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress,
+		"meal_credit": _meal_credit, "cook_progress": _cook_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
 		"raid_from_name": raid_from_name, "raid_size": raid_size,
 		"clock": clock_hours, "log": log_entries.duplicate(true), "left_at": left_at_hour, "back_at": back_at_hour}
@@ -1549,6 +1862,8 @@ func load_state(data: Dictionary) -> void:
 	_apply_claimed_look()
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
 	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
+	_meal_credit = clampf(_num(data.get("meal_credit"), 0.0), 0.0, 10.0)
+	_cook_progress = clampf(_num(data.get("cook_progress"), 0.0), 0.0, 1.0)
 	# The log and its clock (20.5)
 	clock_hours = maxf(_num(data.get("clock"), 0.0), 0.0)
 	left_at_hour = _num(data.get("left_at"), -1.0)

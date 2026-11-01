@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_u6lpq"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_r6th3"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_1ajs4"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_8fao3"]
+
+[resource]
+script = ExtResource("4_8fao3")
+id = &"kitchen"
+display_name = "Kitchen"
+scene_path = "res://scenes/settlement/kitchen.tscn"
+max_health = 1500.0
+footprint = Vector3(8.2, 4.6, 6.2)
+repair_cost = Dictionary[ExtResource("1_u6lpq"), int]({
+ExtResource("2_r6th3"): 4,
+ExtResource("3_1ajs4"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_u6lpq"), int]({
+ExtResource("2_r6th3"): 8,
+ExtResource("3_1ajs4"): 3
+})
+movable = false

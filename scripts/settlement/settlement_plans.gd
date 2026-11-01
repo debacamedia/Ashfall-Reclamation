@@ -6,7 +6,8 @@ extends RefCounted
 ## SettlementBuildings.
 ##
 ## Some plans you place yourself in build mode (B) inside a settlement you
-## hold: the bunkhouse, storehouse, guard tower, guard post and farm plot.
+## hold: the bunkhouse, storehouse, guard tower, guard post and farm plot,
+## and (21.5) the kitchen, chicken coop, pig pen and cow pasture.
 ## Fences come with the settlement's own plan (laid out when you claim it),
 ## as runs of 4 m lengths.
 ##
@@ -28,6 +29,15 @@ const PLANS := {
 		"cost": {&"wood_plank": 6, &"cloth": 4, &"scrap_metal": 2}, "about": "A sandbagged spot for a guard"},
 	&"farm_plot": {"name": "Farm Plot", "structure": "farm_plot", "placeable": true, "hours": 2.0,
 		"cost": {&"wood_plank": 4, &"scrap_metal": 2, &"vegetables": 10}, "about": "A new field: work for two more farmers"},
+	# Increment 21.5: a kitchen for a Cook, pens for a Rancher
+	&"kitchen": {"name": "Kitchen", "structure": "kitchen", "placeable": true, "hours": 5.0,
+		"cost": {&"wood_plank": 24, &"scrap_metal": 8, &"metal_pipe": 2, &"electronics": 1}, "about": "A stove and a fridge: hire a Cook. You can cook there too"},
+	&"chicken_coop": {"name": "Chicken Coop", "structure": "chicken_coop", "placeable": true, "hours": 3.0,
+		"cost": {&"wood_plank": 12, &"scrap_metal": 4, &"cloth": 2}, "about": "Room for 8 chickens: a pair arrives once it's built. Eggs and meat"},
+	&"pig_pen": {"name": "Pig Pen", "structure": "pig_pen", "placeable": true, "hours": 3.0,
+		"cost": {&"wood_plank": 16, &"scrap_metal": 6}, "about": "Room for 6 pigs: a pair arrives once it's built. Meat"},
+	&"cow_pasture": {"name": "Cow Pasture", "structure": "cow_pasture", "placeable": true, "hours": 4.0,
+		"cost": {&"wood_plank": 28, &"scrap_metal": 8}, "about": "Room for 4 cows: a pair arrives once it's built. Meat and hides"},
 	&"fence": {"name": "Fence", "structure": "farm_fence", "placeable": false, "hours": 0.25,
 		"cost": {&"wood_plank": 1}, "about": "Split-rail fence, in 4 m lengths"},
 }

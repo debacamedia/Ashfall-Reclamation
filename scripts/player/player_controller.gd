@@ -443,7 +443,7 @@ func _use_refusal_reason(item: ItemDefinition) -> String:
 				return "Already at full health"
 		ItemDefinition.Category.FOOD:
 			if item.food_value <= 0.0:
-				return "Can't eat that"
+				return "Cook it first"
 			if hunger.missing() < 1.0:
 				return "You're full"
 		_:

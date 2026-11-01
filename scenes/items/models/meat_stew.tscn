@@ -1,0 +1,84 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_87csp"]
+albedo_color = Color(0.55, 0.57, 0.6, 1)
+metallic = 0.6
+roughness = 0.45
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_37jgs"]
+top_radius = 0.085
+bottom_radius = 0.06
+height = 0.06
+radial_segments = 14
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ed61k"]
+albedo_color = Color(0.42, 0.2, 0.1, 1)
+roughness = 0.6
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wwhjb"]
+top_radius = 0.078
+bottom_radius = 0.078
+height = 0.01
+radial_segments = 14
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_apgqp"]
+albedo_color = Color(0.5, 0.25, 0.15, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_vroai"]
+size = Vector3(0.026, 0.018, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wnkfu"]
+size = Vector3(0.026, 0.018, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wqsb6"]
+size = Vector3(0.026, 0.018, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6w4fw"]
+size = Vector3(0.026, 0.018, 0.022)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0afej"]
+albedo_color = Color(0.9, 0.5, 0.15, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_dv6ys"]
+size = Vector3(0.018, 0.012, 0.018)
+
+[node name="MeatStew" type="Node3D" unique_id=1723488609]
+
+[node name="Bowl" type="MeshInstance3D" parent="." unique_id=1283561938]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+material_override = SubResource("StandardMaterial3D_87csp")
+mesh = SubResource("CylinderMesh_37jgs")
+
+[node name="Stew" type="MeshInstance3D" parent="." unique_id=1082814289]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
+material_override = SubResource("StandardMaterial3D_ed61k")
+mesh = SubResource("CylinderMesh_wwhjb")
+
+[node name="Chunk0" type="MeshInstance3D" parent="." unique_id=550347725]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.035, 0.064, 0)
+material_override = SubResource("StandardMaterial3D_apgqp")
+mesh = SubResource("BoxMesh_vroai")
+
+[node name="Chunk1" type="MeshInstance3D" parent="." unique_id=1307693820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0045095575, 0.064, 0.03470827)
+material_override = SubResource("StandardMaterial3D_apgqp")
+mesh = SubResource("BoxMesh_wnkfu")
+
+[node name="Chunk2" type="MeshInstance3D" parent="." unique_id=1944444842]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.033837937, 0.064, -0.008943939)
+material_override = SubResource("StandardMaterial3D_apgqp")
+mesh = SubResource("BoxMesh_wqsb6")
+
+[node name="Chunk3" type="MeshInstance3D" parent="." unique_id=2086395857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.013229221, 0.064, -0.032403514)
+material_override = SubResource("StandardMaterial3D_apgqp")
+mesh = SubResource("BoxMesh_6w4fw")
+
+[node name="Carrot" type="MeshInstance3D" parent="." unique_id=2089739431]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.063, 0)
+material_override = SubResource("StandardMaterial3D_0afej")
+mesh = SubResource("BoxMesh_dv6ys")

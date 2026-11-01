@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_ubd75"]
+[ext_resource type="Resource" path="res://resources/items/egg.tres" id="2_qah3i"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="3_0mbaj"]
+[ext_resource type="Resource" path="res://resources/items/fried_eggs.tres" id="4_lrwna"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_lhugi"]
+
+[resource]
+script = ExtResource("5_lhugi")
+id = &"fried_eggs"
+category = 8
+station = 3
+inputs = Dictionary[ExtResource("1_ubd75"), int]({
+ExtResource("2_qah3i"): 2,
+ExtResource("3_0mbaj"): 1
+})
+output = ExtResource("4_lrwna")

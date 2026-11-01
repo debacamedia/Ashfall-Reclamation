@@ -34,6 +34,9 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, S
 @export var heal_amount := 0.0
 ## Food: how much eating one fills you up (PlayerHunger's 0-100, Increment 21).
 @export var food_value := 0.0
+## Cooked food in a settlement's fridge (Increment 21.5): how many settler
+## meals one feeds (a vegetable from the stores feeds one).
+@export var settler_meals := 0.0
 ## Seconds it takes to use one (medkits: 2 s, during which the gun is lowered).
 @export var use_time := 0.0
 ## Sound played when the use completes.

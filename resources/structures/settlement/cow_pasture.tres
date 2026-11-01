@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_rkl1h"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_xwoeh"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_cilpg"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_s7w6f"]
+
+[resource]
+script = ExtResource("4_s7w6f")
+id = &"cow_pasture"
+display_name = "Cow Pasture"
+scene_path = "res://scenes/settlement/cow_pasture.tscn"
+max_health = 600.0
+footprint = Vector3(16.3, 2.85, 12.3)
+repair_cost = Dictionary[ExtResource("1_rkl1h"), int]({
+ExtResource("2_xwoeh"): 2,
+ExtResource("3_cilpg"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_rkl1h"), int]({
+ExtResource("2_xwoeh"): 5,
+ExtResource("3_cilpg"): 2
+})
+movable = false

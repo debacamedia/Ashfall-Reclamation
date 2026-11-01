@@ -9,6 +9,10 @@ extends SceneTree
 ##   bunkhouse     8 × 6 m, two bunk beds (four beds)
 ##   storehouse    12 × 6 m tin shed with a run of shelves (60 slots)
 ##   farm_plot     a 12 × 10 m field with crops, for two farmers
+##   kitchen       8 × 6 m, a cooking stove and a fridge: a Cook works here (21.5)
+##   chicken_coop  a hen house and a wire run, 8 × 6 m: room for 8 chickens
+##   pig_pen       a 10 × 8 m pen with a trough, mud and a shelter: 6 pigs
+##   cow_pasture   a 16 × 12 m paddock with a trough and hay: 4 cows
 ##
 ##   godot --headless --path . -s res://tools/build_settlement_buildings.gd
 
@@ -33,6 +37,10 @@ func _run() -> void:
 	M["soil"] = load("res://levels/early_zone/materials/field_soil.tres")
 	M["crop"] = load("res://levels/early_zone/materials/crop_green.tres")
 	M["cloth"] = load("res://assets/materials/raider_cloth.tres")
+	M["mud"] = _plain(Color(0.28, 0.2, 0.13), 0.95)
+	M["straw"] = _plain(Color(0.78, 0.66, 0.36), 0.95)
+	M["water"] = _plain(Color(0.25, 0.35, 0.4), 0.2)
+	M["wire"] = _plain(Color(0.55, 0.55, 0.55), 0.5)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SCENES))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(DEFS))
 	_fence()
@@ -41,6 +49,10 @@ func _run() -> void:
 	_bunkhouse()
 	_storehouse()
 	_farm_plot()
+	_kitchen()
+	_pen("ChickenCoop", "chicken_coop", "Chicken Coop", &"chicken", 8, Vector2(8, 6), 0.9)
+	_pen("PigPen", "pig_pen", "Pig Pen", &"pig", 6, Vector2(10, 8), 1.0)
+	_pen("CowPasture", "cow_pasture", "Cow Pasture", &"cow", 4, Vector2(16, 12), 1.35)
 	quit()
 
 
@@ -204,6 +216,138 @@ func _farm_plot() -> void:
 	_add(body, crops)
 	_markers(b, "FarmSpots", [Vector3(-3, 0, 0), Vector3(3, 0, 0)])
 	_finish(b, "farm_plot")
+
+
+## The Kitchen (21.5): a stove you (and a Cook) cook at, a fridge for what's
+## cooked, a counter and a table. Markers: CookSpots (where a Cook stands).
+func _kitchen() -> void:
+	var b := _begin("Kitchen", "kitchen", "Kitchen", Vector3(8.2, 4.6, 6.2), 1500.0,
+		{&"wood_plank": 4, &"scrap_metal": 1}, {&"wood_plank": 8, &"scrap_metal": 3})
+	var house := _kit_building(b, Vector2(8, 6), {
+		"wall": "wood", "floor": "wood", "roof": "pitched",
+		"openings": [["S", 0, "door"], ["E", 0, "window"], ["W", 0, "window"], ["N", 2, "window"]],
+	})
+	var stove := (load("res://scenes/world/stations/cooking_stove.tscn") as PackedScene).instantiate() as Node3D
+	stove.name = "Stove"
+	stove.position = Vector3(-2.2, 0, -2.55)
+	_add(b, stove)
+	var fridge := (load("res://scenes/world/containers/fridge.tscn") as PackedScene).instantiate() as Node3D
+	fridge.name = "Fridge"
+	fridge.position = Vector3(3.15, 0, -2.6)
+	_add(b, fridge)
+	fridge.unique_name_in_owner = true
+	_box(house, "Counter", Vector3(2.2, 0.9, 0.6), Vector3(0.6, 0.45, -2.65), M["wood_plain"], true)
+	_box(house, "Table", Vector3(1.6, 0.75, 0.9), Vector3(0.2, 0.375, 0.6), M["wood_plain"], true)
+	_box(house, "Pots", Vector3(0.5, 0.25, 0.35), Vector3(0.1, 1.02, -2.65), M["rust"], false)
+	_markers(b, "CookSpots", [Vector3(-2.2, 0, -1.3)])
+	_finish(b, "kitchen")
+
+
+## A pen for `kind` (21.5): a fence round `size` with a gap on the south side
+## to walk in by, a trough, and something to shelter in. The animals (made
+## at run time by the pen, `animal_capacity` at most) wander inside
+## AnimalArea (a Marker3D whose "size" meta is the space they keep to).
+## TendSpots: where a Rancher stands to feed them.
+func _pen(node_name: String, id: String, display: String, kind: StringName, capacity: int, size: Vector2, height: float) -> void:
+	var b := _begin(node_name, id, display, Vector3(size.x + 0.3, height + 1.5, size.y + 0.3), 600.0,
+		{&"wood_plank": 2, &"scrap_metal": 1}, {&"wood_plank": 5, &"scrap_metal": 2})
+	b.set("animal_kind", kind)
+	b.set("animal_capacity", capacity)
+	var body := _body(b)
+	var hx := size.x / 2.0
+	var hz := size.y / 2.0
+	var gap := 1.4
+	var fence_mat: Material = M["wire"] if kind == &"chicken" else M["wood"]
+	# Posts every 2 m round the edge
+	var posts: Array[Vector3] = []
+	var x := -hx
+	while x <= hx + 0.01:
+		posts.append(Vector3(x, 0, -hz))
+		if absf(x) > gap / 2.0 + 0.1:
+			posts.append(Vector3(x, 0, hz))
+		x += 2.0
+	var z := -hz + 2.0
+	while z < hz - 0.01:
+		posts.append(Vector3(-hx, 0, z))
+		posts.append(Vector3(hx, 0, z))
+		z += 2.0
+	posts.append(Vector3(-gap / 2.0, 0, hz))
+	posts.append(Vector3(gap / 2.0, 0, hz))
+	var i := 0
+	for pp in posts:
+		_box(body, "Post%d" % i, Vector3(0.1, height + 0.1, 0.1), Vector3(pp.x, (height + 0.1) / 2.0, pp.z), M["wood"], false)
+		i += 1
+	# The sides (solid), the front in two halves either side of the way in
+	var rails := [0.35, height - 0.1] if kind != &"chicken" else [0.1, 0.45, height - 0.05]
+	var sides := [[Vector3(0, 0, -hz), size.x, true], [Vector3(-hx, 0, 0), size.y, false], [Vector3(hx, 0, 0), size.y, false]]
+	var half := (size.x - gap) / 2.0
+	sides.append([Vector3(-hx + half / 2.0, 0, hz), half, true])
+	sides.append([Vector3(hx - half / 2.0, 0, hz), half, true])
+	var n := 0
+	for sd in sides:
+		var at: Vector3 = sd[0]
+		var length: float = sd[1]
+		var along_x: bool = sd[2]
+		for r: float in rails:
+			_box(body, "Rail%d" % n, Vector3(length, 0.07, 0.05) if along_x else Vector3(0.05, 0.07, length), at + Vector3(0, r, 0), fence_mat, false)
+			n += 1
+		if kind == &"chicken":
+			# Wire mesh: a thin see-through panel
+			var wire := StandardMaterial3D.new()
+			wire.albedo_color = Color(0.6, 0.6, 0.6, 0.35)
+			wire.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			_box(body, "Wire%d" % n, Vector3(length, height, 0.01) if along_x else Vector3(0.01, height, length), at + Vector3(0, height / 2.0, 0), wire, false)
+			n += 1
+		_shape(body, "Side%d" % n, Vector3(length, height, 0.12) if along_x else Vector3(0.12, height, length), at + Vector3(0, height / 2.0, 0))
+	# Ground
+	var ground := MeshInstance3D.new()
+	ground.name = "Ground"
+	var pm := PlaneMesh.new()
+	pm.size = size - Vector2(0.1, 0.1)
+	ground.mesh = pm
+	ground.material_override = M["straw"] if kind == &"chicken" else M["mud"]
+	ground.position.y = 0.012
+	_add(body, ground)
+	# A trough by the back fence
+	var trough_at := Vector3(hx - 1.4, 0, -hz + 0.6)
+	_box(body, "Trough", Vector3(1.6, 0.35, 0.5), trough_at + Vector3(0, 0.175, 0), M["wood"], true)
+	_box(body, "TroughFill", Vector3(1.45, 0.03, 0.38), trough_at + Vector3(0, 0.34, 0), M["straw"] if kind != &"cow" else M["water"], false)
+	# Shelter
+	match kind:
+		&"chicken":
+			var hut := Vector3(-hx + 1.4, 0, -hz + 1.1)
+			_box(body, "HenHouse", Vector3(2.2, 1.3, 1.6), hut + Vector3(0, 0.85, 0), M["wood"], true)
+			_box(body, "HenRoof", Vector3(2.5, 0.08, 1.9), hut + Vector3(0, 1.55, 0), M["tin"], false)
+			_box(body, "HenLegs", Vector3(2.0, 0.2, 1.4), hut + Vector3(0, 0.1, 0), M["wood"], false)
+			_box(body, "Ramp", Vector3(0.3, 0.05, 0.9), hut + Vector3(0.6, 0.18, 1.1), M["wood"], false)
+		&"pig":
+			var lean := Vector3(-hx + 1.6, 0, -hz + 1.2)
+			_box(body, "ShelterRoof", Vector3(3.0, 0.08, 2.2), lean + Vector3(0, 1.3, 0), M["tin"], false)
+			for c in [Vector2(-1.4, -1.0), Vector2(1.4, -1.0), Vector2(-1.4, 1.0), Vector2(1.4, 1.0)]:
+				_box(body, "ShelterPost%d%d" % [int(c.x > 0), int(c.y > 0)], Vector3(0.1, 1.3, 0.1), lean + Vector3(c.x, 0.65, c.y), M["wood"], false)
+			_box(body, "Mud", Vector3(3.5, 0.02, 2.6), Vector3(1.5, 0.02, 1.0), M["mud"], false)
+		&"cow":
+			var lean := Vector3(-hx + 2.2, 0, -hz + 1.6)
+			_box(body, "ShelterRoof", Vector3(4.2, 0.1, 3.0), lean + Vector3(0, 2.3, 0), M["tin"], false)
+			_box(body, "ShelterBack", Vector3(4.2, 2.3, 0.1), lean + Vector3(0, 1.15, -1.45), M["wood"], true)
+			for c in [-2.0, 2.0]:
+				_box(body, "ShelterPost%d" % int(c > 0), Vector3(0.14, 2.3, 0.14), lean + Vector3(c, 1.15, 1.4), M["wood"], false)
+			for k in 3:
+				_box(body, "HayBale%d" % k, Vector3(1.0, 0.5, 0.6), Vector3(hx - 1.2 - k * 1.1, 0.25, hz - 1.0), M["straw"], true)
+	# Where the animals keep to, and where a Rancher stands
+	var area := Marker3D.new()
+	area.name = "AnimalArea"
+	area.set_meta("size", size - Vector2(1.2, 1.2))
+	_add(b, area)
+	_markers(b, "TendSpots", [trough_at + Vector3(0, 0, 1.0)])
+	_finish(b, id)
+
+
+func _plain(c: Color, rough: float) -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = c
+	m.roughness = rough
+	return m
 
 
 # ---------------------------------------------------------------- helpers

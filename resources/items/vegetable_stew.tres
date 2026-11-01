@@ -10,7 +10,7 @@
 script = ExtResource("2_qsoqq")
 id = &"vegetable_stew"
 display_name = "Vegetable Stew"
-description = "Ash Creek vegetables stewed in a tin bowl. The most filling thing there is. Cook it on a stove or a workbench."
+description = "Ash Creek vegetables stewed in a tin bowl. Cook it on a stove or a workbench: 3 vegetables and a plank for the fire. In a settlement's fridge it feeds four."
 category = 10
 icon = ExtResource("1_qsoqq")
 max_stack = 5
@@ -19,5 +19,6 @@ base_value = 12
 world_model = ExtResource("4_6vyii")
 pickup_sound = ExtResource("1_y1rqj")
 food_value = 60.0
+settler_meals = 4.0
 use_time = 2.5
 use_sound = ExtResource("3_0al6t")

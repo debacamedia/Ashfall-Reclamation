@@ -294,6 +294,22 @@ func refresh() -> void:
 			lines.append("RAID UNDER WAY: %d raider%s left" % [s.raiders.size(), "" if s.raiders.size() == 1 else "s"])
 		_:
 			lines.append("Raiders:  none in sight")
+	# The kitchen and the animals (21.5)
+	if not s.kitchens().is_empty():
+		var dishes := 0
+		for f in s.fridges():
+			for i in f.inventory.slot_count:
+				var it := f.inventory.get_slot_item(i)
+				if it != null and it.settler_meals > 0.0:
+					dishes += f.inventory.get_slot_quantity(i)
+		lines.append("Fridge:  %d dishes  (%d meals; settlers eat these first)" % [dishes, floori(s.fridge_meals())])
+	var herd := s.animal_counts()
+	if not herd.is_empty():
+		var parts: PackedStringArray = []
+		for kind in herd:
+			parts.append("%d / %d %s" % [herd[kind][0], herd[kind][1], Settlement.ANIMALS[kind]["many"]])
+		lines.append("Animals:  " + ",  ".join(parts))
+		lines.append("Eggs:  %d   Raw Meat:  %d   Raw Hides:  %d" % [s._stores_count(Settlement.EGG), s._stores_count(Settlement.MEAT), s._stores_count(Settlement.HIDE)])
 	var hurt := s.damaged_structures().size()
 	if hurt > 0:
 		lines.append("Repairs:  %d damaged (Builders mend them with materials from the stores)" % hurt)
@@ -323,7 +339,7 @@ func refresh() -> void:
 	var key := ""
 	for p in people:
 		key += "%s|%d|%s|" % [p.get_instance_id(), p.role, p.gun.id if p.gun != null else ""]
-	key += str(_spares().size())
+	key += str(_spares().size()) + "|%d|%d" % [s.kitchens().size(), s.pens().size()]
 	if key != _rows_key:
 		_rows_key = key
 		_build_rows(people)
@@ -371,14 +387,18 @@ func _build_rows(people: Array[Settler]) -> void:
 		var jobs := HBoxContainer.new()
 		jobs.add_theme_constant_override("separation", 6)
 		col.add_child(jobs)
-		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.NONE]:
+		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.COOK, Settler.Role.RANCHER, Settler.Role.NONE]:
 			var b := Button.new()
 			b.name = "Job_%s" % Settler.ROLE_NAMES[r]
 			b.text = Settler.ROLE_NAMES[r]
 			b.toggle_mode = true
 			b.button_pressed = p.role == r
 			b.focus_mode = Control.FOCUS_NONE
-			b.add_theme_font_size_override("font_size", 14)
+			b.add_theme_font_size_override("font_size", 13)
+			var why := settlement.role_refusal_reason(r) if settlement != null else ""
+			if why != "" and p.role != r:
+				b.disabled = true
+				b.tooltip_text = why
 			b.pressed.connect(func() -> void: request_role(p, r))
 			jobs.add_child(b)
 		var gun := _label("", 14, DIM)

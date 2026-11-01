@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dn08s"]
+albedo_color = Color(0.85, 0.85, 0.8, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4e3hm"]
+top_radius = 0.1
+bottom_radius = 0.1
+height = 0.012
+radial_segments = 14
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j5tcc"]
+albedo_color = Color(0.45, 0.24, 0.12, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_xak04"]
+size = Vector3(0.14, 0.035, 0.09)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xy80t"]
+albedo_color = Color(0.7, 0.5, 0.3, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_183hi"]
+size = Vector3(0.14, 0.036, 0.015)
+
+[node name="CookedMeat" type="Node3D" unique_id=1086497811]
+
+[node name="Plate" type="MeshInstance3D" parent="." unique_id=932694308]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, 0)
+material_override = SubResource("StandardMaterial3D_dn08s")
+mesh = SubResource("CylinderMesh_4e3hm")
+
+[node name="Slab" type="MeshInstance3D" parent="." unique_id=1052677117]
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 0, 0.03, 0)
+material_override = SubResource("StandardMaterial3D_j5tcc")
+mesh = SubResource("BoxMesh_xak04")
+
+[node name="Fat" type="MeshInstance3D" parent="." unique_id=147425856]
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 0, 0.03, 0.045)
+material_override = SubResource("StandardMaterial3D_xy80t")
+mesh = SubResource("BoxMesh_183hi")

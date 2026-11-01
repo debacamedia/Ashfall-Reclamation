@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_kykga"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_1fgmf"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_tw5qn"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_vq36e"]
+
+[resource]
+script = ExtResource("4_vq36e")
+id = &"chicken_coop"
+display_name = "Chicken Coop"
+scene_path = "res://scenes/settlement/chicken_coop.tscn"
+max_health = 600.0
+footprint = Vector3(8.3, 2.4, 6.3)
+repair_cost = Dictionary[ExtResource("1_kykga"), int]({
+ExtResource("2_1fgmf"): 2,
+ExtResource("3_tw5qn"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_kykga"), int]({
+ExtResource("2_1fgmf"): 5,
+ExtResource("3_tw5qn"): 2
+})
+movable = false

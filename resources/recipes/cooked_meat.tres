@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_ntg5h"]
+[ext_resource type="Resource" path="res://resources/items/raw_meat.tres" id="2_3n45o"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="3_i1ca5"]
+[ext_resource type="Resource" path="res://resources/items/cooked_meat.tres" id="4_ufj12"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_c5rki"]
+
+[resource]
+script = ExtResource("5_c5rki")
+id = &"cooked_meat"
+category = 8
+station = 3
+inputs = Dictionary[ExtResource("1_ntg5h"), int]({
+ExtResource("2_3n45o"): 1,
+ExtResource("3_i1ca5"): 1
+})
+output = ExtResource("4_ufj12")
+craft_time = 3.0

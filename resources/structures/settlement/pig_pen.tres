@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_fvn4e"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_4bqak"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_xg5cd"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_f8jr0"]
+
+[resource]
+script = ExtResource("4_f8jr0")
+id = &"pig_pen"
+display_name = "Pig Pen"
+scene_path = "res://scenes/settlement/pig_pen.tscn"
+max_health = 600.0
+footprint = Vector3(10.3, 2.5, 8.3)
+repair_cost = Dictionary[ExtResource("1_fvn4e"), int]({
+ExtResource("2_4bqak"): 2,
+ExtResource("3_xg5cd"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_fvn4e"), int]({
+ExtResource("2_4bqak"): 5,
+ExtResource("3_xg5cd"): 2
+})
+movable = false

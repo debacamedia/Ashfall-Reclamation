@@ -117,6 +117,28 @@ func _run() -> void:
 	_add(v, belt)
 	_box(belt, "Belt", Vector3(0.5, 0.1, 0.3), Vector3(0, 0.86, 0), _mat("leather", Color(0.42, 0.28, 0.16)))
 	_box(belt, "Pouch", Vector3(0.14, 0.16, 0.08), Vector3(0.17, 0.78, -0.16), _mat("leather", Color(0.42, 0.28, 0.16)))
+	# Cook's apron and chef's hat (21.5)
+	var whites := _mat("whites", Color(0.93, 0.92, 0.88))
+	var apron := Node3D.new()
+	apron.name = "Apron"
+	_add(v, apron)
+	_box(apron, "Bib", Vector3(0.36, 0.3, 0.03), Vector3(0, 1.12, -0.15), whites)
+	_box(apron, "Skirt", Vector3(0.42, 0.42, 0.03), Vector3(0, 0.66, -0.15), whites)
+	var chef := Node3D.new()
+	chef.name = "ChefHat"
+	chef.position.y = 1.7
+	_add(v, chef)
+	_cyl(chef, "Band", 0.15, 0.15, 0.08, Vector3(0, 0.02, 0), whites)
+	_cyl(chef, "Puff", 0.17, 0.14, 0.14, Vector3(0, 0.12, 0), whites)
+	# Rancher's wide-brimmed hat (21.5)
+	var leather := _mat("hat_leather", Color(0.45, 0.3, 0.17))
+	var cowboy := Node3D.new()
+	cowboy.name = "CowboyHat"
+	cowboy.position.y = 1.72
+	_add(v, cowboy)
+	_cyl(cowboy, "Brim", 0.32, 0.32, 0.02, Vector3.ZERO, leather)
+	_cyl(cowboy, "Crown", 0.12, 0.15, 0.15, Vector3(0, 0.08, 0), leather)
+	_cyl(cowboy, "Band", 0.152, 0.152, 0.03, Vector3(0, 0.025, 0), _mat("hat_band", Color(0.15, 0.1, 0.08)))
 	var helmet := Node3D.new()
 	helmet.name = "Helmet"
 	helmet.position.y = 1.68

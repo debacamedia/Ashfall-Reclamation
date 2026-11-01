@@ -41,24 +41,24 @@ height = 0.006
 radial_segments = 14
 rings = 1
 
-[node name="CanBeans" type="Node3D" unique_id=358558580]
+[node name="CanBeans" type="Node3D" unique_id=707215221]
 
-[node name="Tin" type="MeshInstance3D" parent="." unique_id=1270287681]
+[node name="Tin" type="MeshInstance3D" parent="." unique_id=521058711]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
 material_override = SubResource("StandardMaterial3D_c81e0")
 mesh = SubResource("CylinderMesh_1nf2m")
 
-[node name="Label" type="MeshInstance3D" parent="." unique_id=1291925180]
+[node name="Label" type="MeshInstance3D" parent="." unique_id=1103545508]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
 material_override = SubResource("StandardMaterial3D_w2uma")
 mesh = SubResource("CylinderMesh_rhbxm")
 
-[node name="Band" type="MeshInstance3D" parent="." unique_id=719669080]
+[node name="Band" type="MeshInstance3D" parent="." unique_id=1419169500]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
 material_override = SubResource("StandardMaterial3D_57mju")
 mesh = SubResource("CylinderMesh_h7tym")
 
-[node name="RimTop" type="MeshInstance3D" parent="." unique_id=1700137901]
+[node name="RimTop" type="MeshInstance3D" parent="." unique_id=358200236]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.111, 0)
 material_override = SubResource("StandardMaterial3D_c81e0")
 mesh = SubResource("CylinderMesh_pndee")

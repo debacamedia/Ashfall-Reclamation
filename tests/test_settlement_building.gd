@@ -115,7 +115,7 @@ func test_what_settlers_can_build() -> void:
 				check(b.get_node("FarmSpots").get_child_count() == 2 and not def.blocks_navigation, "a farm plot: two farmers, walk across it")
 		b.free()
 	var pl := SettlementPlans.placeable()
-	check(pl.size() == 5 and pl[0] == &"bunkhouse" and pl.has(&"farm_plot") and not pl.has(&"fence"), "five things to plan in build mode")
+	check(pl.size() == 9 and pl[0] == &"bunkhouse" and pl.has(&"farm_plot") and pl.has(&"kitchen") and pl.has(&"cow_pasture") and not pl.has(&"fence"), "nine things to plan in build mode (four more in 21.5)")
 	check(SettlementPlans.cost(&"fence", 9) == {&"wood_plank": 9, &"scrap_metal": 3}, "a fence run: a plank a length, a scrap every four")
 	check(is_equal_approx(SettlementPlans.hours(&"fence", 9), 2.25), "a quarter hour a length")
 

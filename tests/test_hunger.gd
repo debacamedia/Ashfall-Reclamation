@@ -14,7 +14,7 @@ var VEG: ItemDefinition = load("res://resources/items/vegetables.tres")
 var BEANS: ItemDefinition = load("res://resources/items/canned_beans.tres")
 var PEACHES: ItemDefinition = load("res://resources/items/canned_peaches.tres")
 var STEW: ItemDefinition = load("res://resources/items/vegetable_stew.tres")
-var WOOD: ItemDefinition = load("res://resources/items/wood.tres")
+var PLANK: ItemDefinition = load("res://resources/items/wood_plank.tres")
 var STEW_R: RecipeDefinition = load("res://resources/recipes/vegetable_stew.tres")
 
 
@@ -160,14 +160,14 @@ func test_j_picks_what_to_eat() -> void:
 # ---------------------------------------------------------------- cooking
 
 func test_stew_cooks_on_a_stove_or_a_workbench() -> void:
-	check(STEW_R.output == STEW and STEW_R.inputs.get(VEG) == 3 and STEW_R.inputs.get(WOOD) == 1, "3 vegetables and a piece of wood for the fire")
+	check(STEW_R.output == STEW and STEW_R.inputs.get(VEG) == 3 and STEW_R.inputs.get(PLANK) == 1, "3 vegetables and a plank for the fire (a plank since 21.5)")
 	check(STEW_R.can_make_at(RecipeDefinition.Station.STOVE) and STEW_R.can_make_at(RecipeDefinition.Station.WORKBENCH), "on a stove or a workbench")
 	check(not STEW_R.can_make_at(RecipeDefinition.Station.HAND) and not STEW_R.can_make_at(RecipeDefinition.Station.WEAPONS_BENCH), "not by hand, not at the gun bench")
 	var p := _player()
 	var refused := []
 	p.craft_refused.connect(func(r: String) -> void: refused.append(r))
 	p.inventory.add_item(VEG, 6)
-	p.inventory.add_item(WOOD, 2)
+	p.inventory.add_item(PLANK, 2)
 	check(not p.request_craft(STEW_R) and refused.back() == "Needs a Cooking Stove or a Workbench", "by hand: %s" % [refused])
 	var stove := STOVE.instantiate() as CraftingStation
 	stove.position = Vector3(0, 0, -1.4)
@@ -182,12 +182,12 @@ func test_stew_cooks_on_a_stove_or_a_workbench() -> void:
 	check(p.current_station == stove and p.get_crafting_station() == RecipeDefinition.Station.STOVE, "E opens the stove")
 	check(p.request_craft(STEW_R, 2), "cooking two")
 	await _run(p, 60 * 9)
-	check(p.inventory.count_of(&"vegetable_stew") == 2 and p.inventory.count_of(&"vegetables") == 0 and p.inventory.count_of(&"wood") == 0, "two stews (4 s each)")
+	check(p.inventory.count_of(&"vegetable_stew") == 2 and p.inventory.count_of(&"vegetables") == 0 and p.inventory.count_of(&"wood_plank") == 0, "two stews (4 s each)")
 	# And on a workbench
 	p.close_station()
 	stove.queue_free()
 	p.inventory.add_item(VEG, 3)
-	p.inventory.add_item(WOOD, 1)
+	p.inventory.add_item(PLANK, 1)
 	var bench := WORKBENCH.instantiate() as CraftingStation
 	bench.position = Vector3(0, 0, -1.6)
 	add_child(bench)
