@@ -1,6 +1,6 @@
 # Increment 22: clothing and armour
 
-**Status:** complete. 469 automated tests pass in headless Godot 4.7, 8 of them new in `tests/test_armour.gd`.
+**Status:** complete. 461 automated tests pass in headless Godot 4.7, 8 of them new in `tests/test_armour.gd`.
 
 Your picks:
 - **Slots:** head, body and legs.
