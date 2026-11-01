@@ -137,7 +137,7 @@ func _ready() -> void:
 # ---------------------------------------------------------------- state
 
 func is_dead() -> bool:
-	return health.is_dead() and state != State.DOWN
+	return state == State.DEAD or (health.is_dead() and state != State.DOWN)
 
 
 ## Down, wounded by raiders: alive, but needs helping up.
@@ -345,6 +345,14 @@ func _home_life(delta: float) -> void:
 				target = r
 				_enter(State.FIGHT)
 				return
+	# A raid, and no raider in sight: guards go to where the raiders are,
+	# rather than wait at their posts while the barn's emptied (20.5)
+	if role == Role.GUARD and settlement.raid_active() and not is_hungry():
+		var near := _nearest_raid_raider()
+		if near != null:
+			_swing(false)
+			_move_to(near.global_position, run_speed, delta)
+			return
 	# A raid: into the farmhouse, everyone but the guards
 	if settlement.raid_active() and role != Role.GUARD:
 		var shelter := settlement.get_node_or_null("Shelter") as Node3D
@@ -535,6 +543,25 @@ func _find_raider() -> Node3D:
 			continue
 		best = r
 		best_d = d
+	return best
+
+
+## The nearest raider of this settlement's raid that's inside the farm.
+func _nearest_raid_raider() -> Raider:
+	var best: Raider = null
+	var best_d := INF
+	for v: Variant in settlement.raiders:
+		if not is_instance_valid(v):
+			continue
+		var r := v as Raider
+		if r.is_dead():
+			continue
+		if r.global_position.distance_to(settlement.global_position) > settlement.defend_radius:
+			continue
+		var d := r.global_position.distance_to(global_position)
+		if d < best_d:
+			best = r
+			best_d = d
 	return best
 
 
@@ -820,6 +847,14 @@ func _go_down() -> void:
 	tween.tween_property(visual, "rotation:x", deg_to_rad(-80.0), 0.5)
 	if settlement != null:
 		settlement.on_settler_down(self)
+
+
+## Beaten in a raid settled on paper (20.5): down, as if a raider had done it.
+func knock_down() -> void:
+	if is_down() or is_dead():
+		return
+	health.current_health = 0.0
+	_go_down()
 
 
 ## Helped up (by the Settlement, after a player bandages them).

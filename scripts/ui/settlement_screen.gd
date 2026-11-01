@@ -1,7 +1,8 @@
 class_name SettlementScreen
 extends Control
 ## The settlement window (L, Increment 19): your settlement's stocks, what's
-## being built (19.6) and the people who live there. Give each a job
+## being built (19.6), what's happened there (the log, 20.5) and the people
+## who live there. Give each a job
 ## (farmer, guard, builder), hand guards a spare gun and rounds from your
 ## backpack, or take a gun back; call off something planned. Talking to a
 ## settler, or using the notice board, opens it too.
@@ -39,6 +40,8 @@ var _sites_list: VBoxContainer
 var _sites_key := ""
 ## ConstructionSite -> {"status": Label}
 var _site_rows := {}
+var _log_list: VBoxContainer
+var _log_key := ""
 
 
 func _init() -> void:
@@ -146,6 +149,18 @@ func _init() -> void:
 	_sites_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_sites_list.add_theme_constant_override("separation", 6)
 	sites_scroll.add_child(_sites_list)
+	# Under it: the log, with what happened while you were away first (20.5)
+	mid.add_child(_label("LOG", 16, STYLE_COLOR))
+	var log_scroll := ScrollContainer.new()
+	log_scroll.name = "LogScroll"
+	log_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	log_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	mid.add_child(log_scroll)
+	_log_list = VBoxContainer.new()
+	_log_list.name = "Log"
+	_log_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_log_list.add_theme_constant_override("separation", 4)
+	log_scroll.add_child(_log_list)
 	# Right: people
 	var right := VBoxContainer.new()
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -273,6 +288,8 @@ func refresh() -> void:
 	match s.raid_phase:
 		Settlement.RaidPhase.WARNED:
 			lines.append("RAIDERS COMING from %s: %d, in about %d min" % [s.raid_from_name, s.raid_size, maxi(ceili(s.next_raid_in * s.hour_seconds / 60.0), 1)])
+			if not s.player_near():
+				lines.append("You're %d m away: be back within %d m or the guards face them without you" % [snappedi(roundi(s.player_distance()), 10), roundi(s.away_range)])
 		Settlement.RaidPhase.ACTIVE:
 			lines.append("RAID UNDER WAY: %d raider%s left" % [s.raiders.size(), "" if s.raiders.size() == 1 else "s"])
 		_:
@@ -299,6 +316,7 @@ func refresh() -> void:
 		_pump.text = "Pump: broken. Repair it in the pump house with %s." % Settlement.pump_parts_text()
 	_pump.add_theme_color_override("font_color", GOOD if s.pump_working else BAD)
 	_refresh_sites(s)
+	_refresh_log(s)
 	# People: rebuild the rows when who's here or what they have changes
 	people.sort_custom(func(a: Settler, b: Settler) -> bool:
 		return (a == focus) if (a == focus) != (b == focus) else a.settler_name < b.settler_name)
@@ -457,6 +475,43 @@ func _refresh_sites(s: Settlement) -> void:
 		else:
 			st.text = "Ready, next in line  (%d%%)" % roundi(site.progress() * 100.0)
 			st.add_theme_color_override("font_color", TEXT)
+
+
+## The log, newest first. What happened since you last left is headed
+## "While you were away" and shown first.
+func _refresh_log(s: Settlement) -> void:
+	var entries := s.log_entries
+	var away := s.away_entries()
+	var key := "%d|%d|%s" % [entries.size(), away.size(), str(entries[-1].get("hour", 0.0)) if not entries.is_empty() else ""]
+	if key == _log_key:
+		return
+	_log_key = key
+	for c in _log_list.get_children():
+		_log_list.remove_child(c)
+		c.queue_free()
+	if entries.is_empty():
+		_log_list.add_child(_label("Nothing yet.", 14, DIM))
+		return
+	if not away.is_empty():
+		_log_list.add_child(_label("While you were away (since %s)" % Settlement.clock_text(s.left_at_hour), 14, BAD))
+		for i in range(away.size() - 1, -1, -1):
+			_log_list.add_child(_log_line(away[i], TEXT))
+		_log_list.add_child(_label("Earlier", 14, DIM))
+	var shown := 0
+	for i in range(entries.size() - 1, -1, -1):
+		var e: Dictionary = entries[i]
+		if away.has(e):
+			continue
+		_log_list.add_child(_log_line(e, DIM))
+		shown += 1
+		if shown >= 12:
+			break
+
+
+func _log_line(e: Dictionary, color: Color) -> Label:
+	var l := _label("%s   %s" % [Settlement.clock_text(float(e.get("hour", 0.0))), str(e.get("text", ""))], 13, color)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return l
 
 
 ## Spare guns in your backpack: [slot index, item].

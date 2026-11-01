@@ -33,6 +33,9 @@ func _claimed(zone: Node3D) -> Settlement:
 	await wait_physics(5)
 	st.request_claim(p)
 	p.global_position = AWAY
+	# These raids are played out for real, as if you were there (with nobody
+	# within 200 m they're settled on paper since 20.5: test_away.gd)
+	st.away_range = 100000.0
 	await wait_physics(2)
 	return st
 
@@ -152,6 +155,30 @@ func test_guards_fight_them_off_and_dropped_loot_is_kept() -> void:
 	await _free(zone)
 
 
+func test_guards_go_to_raiders_they_cant_see() -> void:
+	# A guard at a post round the far side of the farm: before 20.5 they
+	# stood there while raiders from the other side emptied the barn
+	var zone := await load_zone()
+	var st := await _claimed(zone)
+	st.store.inventory.add_item(VEG, 40)
+	var g := await _newcomer(zone, Settler.Role.GUARD)
+	g.arm(RIFLE, 120)
+	var site := st.get_parent() as Node3D
+	g.global_position = NavigationServer3D.map_get_closest_point(zone.get_world_3d().navigation_map, site.to_global(Vector3(-40, 0, -40))) + Vector3.UP * 0.2
+	st.warn_raid(0.0)
+	st.raid_from = NavigationServer3D.map_get_closest_point(zone.get_world_3d().navigation_map, site.to_global(Vector3(70, 0, 10)))
+	st.raid_size = 2
+	st.start_raid()
+	var r := st.raiders[0]
+	check(not g._can_see(r) or g.global_position.distance_to(r.global_position) > g.guard_range, "out of the guard's sight to start with")
+	var start := g.global_position
+	await wait_physics(240)
+	check(g.global_position.distance_to(start) > 5.0 or g.state == Settler.State.FIGHT, "the guard heads for them (%.0f m)" % g.global_position.distance_to(start))
+	await _wait_raid_over(st, 3600)
+	check(int(st.raid_report["killed"]) == 2 and int(st.raid_report["escaped"]) == 0, "and kills both: %s" % st.raid_report)
+	await _free(zone)
+
+
 func test_settlers_shelter_or_go_down_wounded() -> void:
 	var zone := await load_zone()
 	var st := await _claimed(zone)
@@ -247,6 +274,7 @@ func test_a_raid_on_its_way_is_saved() -> void:
 	check(st2.next_raid_in <= 1.5 and st2.next_raid_in >= 0.25, "about as far off (%.2f h)" % st2.next_raid_in)
 	check(st2.get_node_or_null("RaidMarker") != null, "with its marker")
 	# A raid under way when saved comes back as raiders close by
+	st2.away_range = 100000.0
 	st2.start_raid()
 	check(saves.save_game("raid2", zone2) == OK, "saved mid-raid")
 	await _free(zone2)

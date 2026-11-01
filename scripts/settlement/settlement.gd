@@ -18,7 +18,11 @@ extends Node3D
 ##     on the compass and map). Guards fight from their posts; everyone else
 ##     shelters in the farmhouse. Settlers beaten by raiders go down wounded
 ##     (help them up with a bandage). Raiders who get away take food and
-##     planks with them; killed, they drop it.
+##     planks with them; killed, they drop it. With nobody within
+##     `away_range` when they arrive, the raid's settled on paper
+##     (RaidOnPaper, Increment 20.5) and logged; the log (`log_entries`)
+##     shows on the settlement screen, led by what happened while you were
+##     away.
 ##   - Builders put up what's planned (Increment 19.6): the settlement's own
 ##     fences and guard posts, laid out when you claim it, and the buildings
 ##     you place in build mode (B): ConstructionSites under "Sites". You
@@ -111,6 +115,9 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 @export var raid_every_hours := 48.0
 ## Warning before raiders arrive (hours).
 @export var raid_warning_hours := 2.0
+## No player within this far when raiders arrive: the raid's settled on
+## paper (RaidOnPaper) instead of played out (Increment 20.5).
+@export var away_range := 200.0
 ## What one raider can carry off: vegetables and Wood Planks.
 @export var raid_carry_food := 15
 @export var raid_carry_planks := 8
@@ -162,6 +169,16 @@ var raid_from := Vector3.ZERO
 var raid_from_name := ""
 var raiders: Array[Raider] = []
 var raid_report := {}
+## Settlement hours since it was claimed: the log's clock.
+var clock_hours := 0.0
+## What's happened here, newest last: {"hour", "text", "away"} (20.5).
+var log_entries: Array[Dictionary] = []
+const LOG_KEEP := 40
+## Hour the player last came back within away_range (-1: never left).
+var back_at_hour := -1.0
+var left_at_hour := -1.0
+var _player_near := true
+var _near_check := 0.0
 var _raid_marker: Landmark
 ## Raider spawners stopped when it was claimed (restarted if a load unclaims it).
 var _stopped_spawners: Array[EnemySpawner] = []
@@ -177,6 +194,7 @@ var _stopped_spawners: Array[EnemySpawner] = []
 func _ready() -> void:
 	add_to_group("settlements")
 	add_to_group("persist")
+	notice.connect(_log)
 	for c in [store, armory]:
 		if c != null:
 			c.is_searched = true  # nothing hidden in them: just open
@@ -999,6 +1017,10 @@ func _physics_process(delta: float) -> void:
 	if not is_claimed:
 		return
 	simulate(delta / hour_seconds)
+	_near_check -= delta
+	if _near_check <= 0.0:
+		_near_check = 1.0
+		_check_player_near()
 	_armory_check -= delta
 	if _armory_check <= 0.0:
 		_armory_check = 2.0
@@ -1008,6 +1030,7 @@ func _physics_process(delta: float) -> void:
 
 ## Advances the settlement by `hours` (water, crops, meals, arrivals, raids).
 func simulate(hours: float) -> void:
+	clock_hours += hours
 	_simulate_raids(hours)
 	var here := members().filter(func(s: Settler) -> bool: return s.has_arrived())
 	# Water
@@ -1111,7 +1134,7 @@ func _simulate_raids(hours: float) -> void:
 			if next_raid_in <= 0.0:
 				start_raid()
 		RaidPhase.ACTIVE:
-			raiders.assign(raiders.filter(func(r: Raider) -> bool: return is_instance_valid(r) and not r.is_dead() and r.raid == self))
+			raiders.assign(raiders.filter(func(r: Variant) -> bool: return is_instance_valid(r) and not (r as Raider).is_dead() and (r as Raider).raid == self))
 			if raiders.is_empty():
 				end_raid()
 			elif _raid_marker != null:
@@ -1146,7 +1169,12 @@ func warn_raid(in_hours := -1.0) -> void:
 	raid_report = {"size": raid_size, "killed": 0, "escaped": 0, "stolen": {}, "wounded": []}
 	_make_raid_marker()
 	raid_warned.emit(raid_from_name, raid_size)
-	notice.emit("Raiders seen coming for %s from %s: %d of them, about %d min away" % [settlement_name, raid_from_name, raid_size, maxi(ceili(next_raid_in * hour_seconds / 60.0), 1)])
+	var mins := maxi(ceili(next_raid_in * hour_seconds / 60.0), 1)
+	var text := "Raiders seen coming for %s from %s: %d of them, about %d min away" % [settlement_name, raid_from_name, raid_size, mins]
+	var far := player_distance()
+	if far > away_range:
+		text += ". You're %d m off: be back within %d m by then, or the guards face them without you" % [snappedi(roundi(far), 10), roundi(away_range)]
+	notice.emit(text)
 
 
 ## They're here: raiders appear where they were seen and come in.
@@ -1154,6 +1182,9 @@ func start_raid() -> void:
 	if raid_phase == RaidPhase.NONE:
 		warn_raid(0.0)
 	if raid_phase != RaidPhase.WARNED:
+		return
+	if not player_near():
+		settle_raid_on_paper()
 		return
 	raid_phase = RaidPhase.ACTIVE
 	next_raid_in = 0.0
@@ -1215,7 +1246,8 @@ func on_settler_down(s: Settler) -> void:
 	if not w.has(s.settler_name):
 		w.append(s.settler_name)
 	raid_report["wounded"] = w
-	notice.emit("%s is down, wounded: help them up (E, a Bandage)" % s.settler_name)
+	if not _on_paper:
+		notice.emit("%s is down, wounded: help them up (E, a Bandage)" % s.settler_name)
 
 
 ## Every raider dead or gone: the report.
@@ -1247,6 +1279,211 @@ static func raid_summary(rep: Dictionary) -> String:
 	if not w.is_empty():
 		parts.append("wounded: " + ", ".join(w))
 	return ", ".join(parts)
+
+
+# ---------------------------------------------------------------- while you're away (20.5)
+
+var _on_paper := false
+
+
+## How far the nearest player is (flat), or INF.
+func player_distance() -> float:
+	var best := INF
+	if not is_inside_tree():
+		return best
+	for n in get_tree().get_nodes_in_group("players"):
+		var pl := n as Node3D
+		if pl == null or (pl is PlayerController and (pl as PlayerController).is_dead()):
+			continue
+		best = minf(best, Vector2(pl.global_position.x - global_position.x, pl.global_position.z - global_position.z).length())
+	return best
+
+
+## A player close enough that raids here are played out for real.
+func player_near() -> bool:
+	return player_distance() <= away_range
+
+
+## Raiders arrived and nobody was here: the fight's played out on paper with
+## the guards' real guns, rounds and health, and the result applied.
+func settle_raid_on_paper(seed_value := 0) -> Dictionary:
+	if raid_phase == RaidPhase.NONE:
+		warn_raid(0.0)
+	_on_paper = true
+	var paper := RaidOnPaper.new(seed_value)
+	for i in raid_size:
+		var veteran := i % 4 == 3
+		var stats := _raider_stats(veteran)
+		paper.add_raider("Raider Veteran" if veteran else "Raider", stats[0], stats[1], stats[2])
+	var here := members().filter(func(s: Settler) -> bool: return s.has_arrived() and not s.is_down())
+	for m in here:
+		var s := m as Settler
+		if s.role == Settler.Role.GUARD:
+			paper.add_guard(s.settler_name, s.health.current_health, s.gun.weapon if s.gun != null else null, s.magazine, s.ammo, s)
+		else:
+			paper.add_sheltering(s.settler_name, s.health.current_health, s)
+	var before := {FOOD: _count_in_stores(FOOD), PLANK: _count_in_stores(PLANK)}
+	paper.stores = before.duplicate()
+	paper.carry = {FOOD: raid_carry_food, PLANK: raid_carry_planks}
+	var res := paper.run()
+	# What got carried off leaves the stores
+	for id in before:
+		var gone := int(before[id]) - int(paper.stores.get(id, 0))
+		if gone > 0:
+			_take_from_stores({ItemDatabase.get_item(id): gone})
+	# The guards: rounds spent, hurt or down; anyone else found sheltering
+	for f in paper.guards + paper.sheltering:
+		var s := f.node as Settler
+		if s == null or not is_instance_valid(s):
+			continue
+		if f.weapon != null:
+			s.magazine = f.magazine
+			s.ammo = f.ammo
+		if f.down:
+			s.knock_down()
+		elif f.health < s.health.current_health:
+			s.health.current_health = maxf(f.health, 1.0)
+	var broke := _paper_break_in()
+	raid_report = {"size": raid_size, "killed": res["killed"], "escaped": res["escaped"], "stolen": res["stolen"],
+		"wounded": res["wounded"], "rounds": res["rounds"], "broke": broke, "on_paper": true}
+	_on_paper = false
+	raid_phase = RaidPhase.NONE
+	raiders.clear()
+	_schedule_raid()
+	if _raid_marker != null:
+		_raid_marker.name = "OldRaidMarker"
+		_raid_marker.queue_free()
+		_raid_marker = null
+	raid_ended.emit(raid_report)
+	notice.emit(paper_summary(raid_report, settlement_name))
+	return raid_report
+
+
+## [health, swing damage, seconds between swings] of a raider or a veteran,
+## from their scenes.
+func _raider_stats(veteran: bool) -> Array:
+	var key := "vet" if veteran else "raider"
+	if not _stats_cache.has(key):
+		var r := (load(VETERAN_SCENE if veteran else RAIDER_SCENE) as PackedScene).instantiate() as Raider
+		var h := r.get_node_or_null("HealthComponent") as HealthComponent
+		_stats_cache[key] = [h.max_health if h != null else 80.0, r.attack_damage, r.attack_windup + r.attack_recovery]
+		r.free()
+	return _stats_cache[key]
+
+var _stats_cache := {}
+
+
+func _count_in_stores(id: StringName) -> int:
+	var n := 0
+	for st in stores():
+		n += st.inventory.count_of(id)
+	return n
+
+
+## Raiders hack through what's in their way when there's no way round: on
+## paper, the piece nearest their straight line in, if the navmesh has no
+## way from where they were seen to the stores. Returns what broke.
+func _paper_break_in() -> Array:
+	var broke := []
+	if not is_inside_tree():
+		return broke
+	var goal := raid_goal()
+	var path := NavigationServer3D.map_get_path(get_world_3d().navigation_map, raid_from, goal, true)
+	if not path.is_empty() and path[path.size() - 1].distance_to(goal) < 2.5:
+		return broke
+	var best: Structure = null
+	var best_d := 3.0
+	for n in get_tree().get_nodes_in_group("structures"):
+		var st := n as Structure
+		if st == null or st is LevelProp or st.is_queued_for_deletion() or not _within(st.global_position):
+			continue
+		var d := _flat_distance_to_segment(st.global_position, raid_from, goal)
+		if d < best_d:
+			best = st
+			best_d = d
+	if best != null:
+		broke.append(best.definition.display_name if best.definition != null else "wall")
+		best.apply_damage(best.health + 1.0)
+	return broke
+
+
+static func _flat_distance_to_segment(p: Vector3, a: Vector3, b: Vector3) -> float:
+	var p2 := Vector2(p.x, p.z)
+	var a2 := Vector2(a.x, a.z)
+	var b2 := Vector2(b.x, b.z)
+	var ab := b2 - a2
+	var t := clampf((p2 - a2).dot(ab) / maxf(ab.length_squared(), 0.0001), 0.0, 1.0)
+	return p2.distance_to(a2 + ab * t)
+
+
+## "While you were away, raiders hit Ash Creek Farms: …"
+static func paper_summary(rep: Dictionary, place: String) -> String:
+	var size := int(rep.get("size", 0))
+	var killed := int(rep.get("killed", 0))
+	var escaped := int(rep.get("escaped", 0))
+	var head := "While you were away, %d raiders hit %s" % [size, place]
+	var parts: PackedStringArray = []
+	if escaped == 0:
+		parts.append("the guards killed all %d" % killed if killed > 1 else "the guards killed it" if killed == 1 else "nobody was hurt")
+	else:
+		parts.append("%d killed, %d got away" % [killed, escaped])
+	var stolen: Dictionary = rep.get("stolen", {})
+	var lost: PackedStringArray = []
+	for id in stolen:
+		if int(stolen[id]) > 0:
+			var item := ItemDatabase.get_item(StringName(str(id)))
+			lost.append("%d %s" % [int(stolen[id]), item.display_name if item != null else str(id)])
+	if not lost.is_empty():
+		parts.append("they took " + " and ".join(lost))
+	var broke: Array = rep.get("broke", [])
+	if not broke.is_empty():
+		parts.append("they broke through a " + str(broke[0]).to_lower())
+	var w: Array = rep.get("wounded", [])
+	if not w.is_empty():
+		parts.append("%s %s down, wounded: help them up within 12 hours" % [", ".join(w), "is" if w.size() == 1 else "are"])
+	if int(rep.get("rounds", 0)) > 0:
+		parts.append("the guards fired %d rounds" % int(rep.get("rounds", 0)))
+	return head + ": " + "; ".join(parts)
+
+
+func _log(text: String) -> void:
+	if text.begins_with("Back at "):
+		return  # about the log, not something that happened
+	log_entries.append({"hour": clock_hours, "text": text, "away": not player_near()})
+	while log_entries.size() > LOG_KEEP:
+		log_entries.pop_front()
+
+
+## What's happened since the player was last here, oldest first.
+func away_entries() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if left_at_hour < 0.0:
+		return out
+	for e in log_entries:
+		if bool(e.get("away", false)) and float(e.get("hour", 0.0)) >= left_at_hour - 0.001:
+			out.append(e)
+	return out
+
+
+## "Day 3, 14:00", from the settlement clock (claimed at 08:00 on day 1).
+static func clock_text(hour: float) -> String:
+	var h := floori(hour + 8.0)
+	return "Day %d, %02d:%02d" % [h / 24 + 1, h % 24, floori(fmod(hour + 8.0, 1.0) * 60.0)]
+
+
+func _check_player_near() -> void:
+	var near := player_near()
+	if near == _player_near:
+		return
+	_player_near = near
+	if not near:
+		left_at_hour = clock_hours
+		back_at_hour = -1.0
+		return
+	back_at_hour = clock_hours
+	var n := away_entries().size()
+	if n > 0:
+		notice.emit("Back at %s: %d %s happened while you were away (L for the log)" % [settlement_name, n, "thing" if n == 1 else "things"])
 
 
 ## Where raiders head: the front of the Farm Store.
@@ -1296,7 +1533,8 @@ func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
 		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
-		"raid_from_name": raid_from_name, "raid_size": raid_size}
+		"raid_from_name": raid_from_name, "raid_size": raid_size,
+		"clock": clock_hours, "log": log_entries.duplicate(true), "left_at": left_at_hour, "back_at": back_at_hour}
 
 
 func load_state(data: Dictionary) -> void:
@@ -1311,6 +1549,18 @@ func load_state(data: Dictionary) -> void:
 	_apply_claimed_look()
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
 	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
+	# The log and its clock (20.5)
+	clock_hours = maxf(_num(data.get("clock"), 0.0), 0.0)
+	left_at_hour = _num(data.get("left_at"), -1.0)
+	back_at_hour = _num(data.get("back_at"), -1.0)
+	log_entries.clear()
+	var saved_log: Variant = data.get("log")
+	if saved_log is Array:
+		for e in saved_log:
+			if e is Dictionary and e.get("text") is String:
+				log_entries.append({"hour": _num(e.get("hour"), 0.0), "text": e["text"], "away": e.get("away") is bool and e["away"]})
+	_player_near = not (left_at_hour >= 0.0 and back_at_hour < left_at_hour)  # away when saved
+	_near_check = 0.0
 	# Raids: a raid under way when saved comes back as raiders seen close by
 	next_raid_in = _num(data.get("next_raid_in"), -1.0)
 	if _raid_marker != null:
