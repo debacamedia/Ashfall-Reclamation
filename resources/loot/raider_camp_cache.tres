@@ -12,8 +12,10 @@
 [ext_resource type="Resource" path="res://resources/items/foregrip.tres" id="10_og8tr"]
 [ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="11_3v6jy"]
 [ext_resource type="Resource" path="res://resources/items/gunpowder.tres" id="12_qcu04"]
+[ext_resource type="Resource" path="res://resources/items/canned_beans.tres" id="13_8mgas"]
 [ext_resource type="Resource" path="res://resources/items/gun_barrel.tres" id="13_23kc2"]
 [ext_resource type="Resource" path="res://resources/items/trigger_group.tres" id="14_0aob2"]
+[ext_resource type="Resource" path="res://resources/items/canned_peaches.tres" id="14_x6fyr"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="15_m2mxm"]
 
 [sub_resource type="Resource" id="Resource_crhs1"]
@@ -78,6 +80,16 @@ item = ExtResource("12_qcu04")
 min_quantity = 3
 max_quantity = 6
 
+[sub_resource type="Resource" id="Resource_icruj"]
+script = ExtResource("1_trijk")
+item = ExtResource("13_8mgas")
+weight = 1.5
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_7rt4g"]
+script = ExtResource("1_trijk")
+item = ExtResource("14_x6fyr")
+
 [sub_resource type="Resource" id="Resource_7i1wu"]
 script = ExtResource("1_trijk")
 item = ExtResource("13_23kc2")
@@ -89,6 +101,6 @@ item = ExtResource("14_0aob2")
 [resource]
 script = ExtResource("15_m2mxm")
 guaranteed = Array[ExtResource("1_trijk")]([SubResource("Resource_7i1wu"), SubResource("Resource_f5ki0")])
-entries = Array[ExtResource("1_trijk")]([SubResource("Resource_crhs1"), SubResource("Resource_shb7s"), SubResource("Resource_bbkg2"), SubResource("Resource_oyb2b"), SubResource("Resource_g226u"), SubResource("Resource_r7ioy"), SubResource("Resource_7tqg8"), SubResource("Resource_4wnrf"), SubResource("Resource_bvpl8"), SubResource("Resource_t3niy"), SubResource("Resource_xcm6g")])
+entries = Array[ExtResource("1_trijk")]([SubResource("Resource_crhs1"), SubResource("Resource_shb7s"), SubResource("Resource_bbkg2"), SubResource("Resource_oyb2b"), SubResource("Resource_g226u"), SubResource("Resource_r7ioy"), SubResource("Resource_7tqg8"), SubResource("Resource_4wnrf"), SubResource("Resource_bvpl8"), SubResource("Resource_t3niy"), SubResource("Resource_xcm6g"), SubResource("Resource_icruj"), SubResource("Resource_7rt4g")])
 min_rolls = 3
 max_rolls = 5

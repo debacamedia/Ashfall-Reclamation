@@ -4,12 +4,13 @@
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_soft"]
 [ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_def"]
 [ext_resource type="PackedScene" path="res://scenes/items/models/vegetables.tscn" id="3_model"]
+[ext_resource type="AudioStream" path="res://assets/audio/eat.wav" id="4_g1gcn"]
 
 [resource]
 script = ExtResource("2_def")
 id = &"vegetables"
 display_name = "Fresh Vegetables"
-description = "Cabbages, carrots and potatoes from Ash Creek Farms. Settlers eat one a day; the farmers grow more with water."
+description = "Cabbages, carrots and potatoes from Ash Creek Farms. Settlers eat one every 4 hours; the farmers grow more with water. Eat with J, or cook 3 into a stew."
 category = 10
 icon = ExtResource("0_icon")
 max_stack = 20
@@ -17,3 +18,6 @@ weight = 0.4
 base_value = 3
 world_model = ExtResource("3_model")
 pickup_sound = ExtResource("1_soft")
+food_value = 12.0
+use_time = 1.5
+use_sound = ExtResource("4_g1gcn")

@@ -683,6 +683,31 @@ def structure_break() -> np.ndarray:
     return out
 
 
+def eat(seed: int = 91) -> np.ndarray:
+    """Eating (Increment 21): crunchy bites, ~1.5 s."""
+    rng = np.random.default_rng(seed)
+    out = silence(1.5)
+    for at in [0.05, 0.42, 0.8, 1.12]:
+        crunch = bp(noise(0.12, rng), 900, 4500) * decay(int(0.12 * SR), 0.035)
+        thump = lp(noise(0.08, rng), 220) * decay(int(0.08 * SR), 0.03)
+        place(out, crunch, at + rng.uniform(-0.02, 0.02), rng.uniform(0.6, 1.0))
+        place(out, thump, at, 0.8)
+    return out
+
+
+def eat_can(seed: int = 92) -> np.ndarray:
+    """A tin opened and spooned out (Increment 21), ~2 s."""
+    rng = np.random.default_rng(seed)
+    out = silence(2.0)
+    place(out, metal(0.25, [(1900, 1, 0.05), (3100, 0.6, 0.04), (5200, 0.3, 0.02)], rng), 0.02, 0.8)
+    for at in [0.45, 0.9, 1.35]:
+        scrape = bp(noise(0.18, rng), 2500, 6500) * np.hanning(int(0.18 * SR))
+        place(out, scrape, at, 0.35)
+        thump = lp(noise(0.08, rng), 250) * decay(int(0.08 * SR), 0.03)
+        place(out, thump, at + 0.2, 0.6)
+    return out
+
+
 def main() -> None:
     os.makedirs(OUT, exist_ok=True)
     print("Writing to", os.path.abspath(OUT))
@@ -722,6 +747,8 @@ def main() -> None:
     write("pickup_ammo", pickup_ammo(), -5)
     write("pickup_fuel", pickup_fuel(), -5)
     write("heal", heal(), -5)
+    write("eat", eat())
+    write("eat_can", eat_can())
     for i in range(3):
         write(f"ladder_step_{i + 1}", ladder_step(600 + i), -6)
     write("aim_in", aim_in(), -12)

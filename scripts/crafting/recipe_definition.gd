@@ -7,8 +7,10 @@ extends Resource
 ## (later): the output becomes a weapon, an attachment or a placeable
 ## structure, but the inputs, station and time work the same way.
 
-enum Station { HAND, WORKBENCH, WEAPONS_BENCH }
-enum Category { MATERIALS, COMPONENTS, AMMO, MEDICAL, WEAPONS, ATTACHMENTS, STRUCTURES, GEAR }
+## STOVE (Increment 21): cooking. A stove recipe can also be made at a
+## workbench (a burner on the bench), not by hand.
+enum Station { HAND, WORKBENCH, WEAPONS_BENCH, STOVE }
+enum Category { MATERIALS, COMPONENTS, AMMO, MEDICAL, WEAPONS, ATTACHMENTS, STRUCTURES, GEAR, FOOD }
 
 @export var id: StringName = &"recipe"
 ## Shown in the recipe list; empty = the output's name.
@@ -32,7 +34,7 @@ func get_display_name() -> String:
 
 ## True if this recipe can be made with `at` (HAND = no bench nearby).
 func can_make_at(at: Station) -> bool:
-	return station == Station.HAND or station == at
+	return station == Station.HAND or station == at or (station == Station.STOVE and at == Station.WORKBENCH)
 
 
 static func station_name(s: Station) -> String:
@@ -41,6 +43,8 @@ static func station_name(s: Station) -> String:
 			return "Workbench"
 		Station.WEAPONS_BENCH:
 			return "Weapons Bench"
+		Station.STOVE:
+			return "Cooking Stove"
 	return "Hand"
 
 

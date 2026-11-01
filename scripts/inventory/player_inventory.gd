@@ -61,6 +61,34 @@ func find_best_medical() -> ItemDefinition:
 	return best
 
 
+## The food to eat now for `missing` points of hunger (Increment 21): the
+## most filling one that wastes no more than a little, else the least
+## filling one there is. Null with nothing to eat.
+func find_best_food(missing: float) -> ItemDefinition:
+	var foods: Array[ItemDefinition] = []
+	for i in slot_count:
+		var item := get_slot_item(i)
+		if item != null and item.food_value > 0.0 and not foods.has(item):
+			foods.append(item)
+	if foods.is_empty():
+		return null
+	foods.sort_custom(func(a: ItemDefinition, b: ItemDefinition) -> bool: return a.food_value > b.food_value)
+	for f in foods:
+		if f.food_value <= missing + 8.0:
+			return f
+	return foods.back()
+
+
+## How many things to eat you carry.
+func count_food() -> int:
+	var total := 0
+	for i in slot_count:
+		var item := get_slot_item(i)
+		if item != null and item.food_value > 0.0:
+			total += get_slot_quantity(i)
+	return total
+
+
 func count_medical() -> int:
 	var total := 0
 	for i in slot_count:

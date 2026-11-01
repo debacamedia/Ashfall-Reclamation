@@ -155,6 +155,7 @@ func gather() -> InputFrame:
 		interact_held = false
 	frame.interact = interact_held
 	frame.use_heal = Input.is_action_just_pressed("use_medkit")
+	frame.eat = InputMap.has_action("eat") and Input.is_action_just_pressed("eat")
 	var aim_held := Input.is_action_pressed("aim")
 	if _aim_blocked_until_release:
 		if not aim_held:
@@ -176,6 +177,7 @@ func gather() -> InputFrame:
 		frame.slot = 0
 		frame.cycle = 0
 		frame.use_heal = false
+		frame.eat = false
 	return frame
 
 

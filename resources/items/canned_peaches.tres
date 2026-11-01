@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_metal.tres" id="1_khj6g"]
+[ext_resource type="Texture2D" path="res://assets/icons/canned_peaches.png" id="1_qhoul"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_qhoul"]
+[ext_resource type="AudioStream" path="res://assets/audio/eat_can.wav" id="3_rdgnq"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/canned_peaches.tscn" id="4_6fpax"]
+
+[resource]
+script = ExtResource("2_qhoul")
+id = &"canned_peaches"
+display_name = "Canned Peaches"
+description = "Sliced peaches in syrup. Sweet, a little filling. Eat with J."
+category = 10
+icon = ExtResource("1_qhoul")
+max_stack = 10
+weight = 0.4
+base_value = 5
+world_model = ExtResource("4_6fpax")
+pickup_sound = ExtResource("1_khj6g")
+food_value = 20.0
+use_time = 2.0
+use_sound = ExtResource("3_rdgnq")

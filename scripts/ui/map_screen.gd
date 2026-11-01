@@ -135,6 +135,7 @@ func _init() -> void:
 			["truck", MapView.TRUCK_COLOR, "", "Your truck"],
 			["station", MapView.STATION_COLORS[RecipeDefinition.Station.WORKBENCH], "W", "Workbench"],
 			["station", MapView.STATION_COLORS[RecipeDefinition.Station.WEAPONS_BENCH], "G", "Weapons bench"],
+			["station", MapView.STATION_COLORS[RecipeDefinition.Station.STOVE], "S", "Cooking stove"],
 			["pin", MapKnowledge.pin_color(1), "1", "Your pins"],
 			["built", MapView.BUILT_COLOR, "", "Things you've built"],
 			["storm", MapView.STORM_COLOR, "", "Ash storm edge"]]:

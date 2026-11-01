@@ -61,6 +61,11 @@ var _flash := 0.0
 var _pulse_time := 0.0
 var _trail_fraction := 1.0
 var _bar_width := 0.0
+## Hunger (Increment 21): a thin bar under health, and [J] beside [H].
+var _hunger: PlayerHunger
+var _food_title: Label
+var _food_fill: ColorRect
+var _eat_slot: Label
 ## The compass strip (built in code).
 var compass: CompassBar
 ## The map window, M (built in code, Increment 17).
@@ -79,6 +84,7 @@ var _told_empty := false
 
 func _ready() -> void:
 	_bar_width = _health_fill.size.x
+	_build_food_bar()
 	# Interface size (Increment 16.7): saved, and re-fitted when the window changes
 	_wanted_ui_scale = UiScale.saved()
 	ui_scale = UiScale.apply(get_window(), _wanted_ui_scale)
@@ -126,6 +132,8 @@ func _process(delta: float) -> void:
 		_bind_interactor(player.interactor)
 	if player.inventory != _inventory:
 		_bind_inventory(player.inventory)
+	if player.hunger != _hunger:
+		_bind_hunger(player.hunger)
 	_update_build_panel()
 	if _player_signals_bound != player:
 		_player_signals_bound = player
@@ -210,7 +218,7 @@ func _process(delta: float) -> void:
 	compass.get_node("PlaceBanner").visible = not window_open
 	# The map covers the top of the screen, where the compass is
 	compass.modulate.a = 0.0 if map_screen.visible or settlement_screen.visible else 1.0
-	for c: CanvasItem in [_weapon_strip, _quick_slot, _weapon_label, _ammo_label]:
+	for c: CanvasItem in [_weapon_strip, _quick_slot, _eat_slot, _weapon_label, _ammo_label]:
 		if c != null:
 			c.modulate.a = 0.0 if window_open or driving else 1.0
 	# …and the last two notices move down under the window, clear of its buttons
@@ -432,6 +440,80 @@ func _update_death_screen() -> void:
 		_respawn_prompt.text += "\n\nYour gear is where you fell: follow \"Your gear\" on the compass"
 
 
+# ---------------------------------------------------------------- hunger (21)
+
+const FOOD_COLORS := [Color(0.85, 0.72, 0.4), Color(0.95, 0.6, 0.25), Color(0.95, 0.4, 0.2), Color(0.9, 0.2, 0.15)]
+
+
+func _build_food_bar() -> void:
+	var panel := _health_fill.get_parent() as Control
+	_food_title = Label.new()
+	_food_title.name = "FoodTitle"
+	_food_title.position = Vector2(0, 46)
+	_food_title.size = Vector2(70, 16)
+	_food_title.add_theme_font_size_override("font_size", 12)
+	_food_title.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	_food_title.add_theme_constant_override("outline_size", 5)
+	_food_title.text = "FOOD"
+	_food_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(_food_title)
+	var bg := ColorRect.new()
+	bg.name = "FoodBarBg"
+	bg.color = Color(0, 0, 0, 0.55)
+	bg.position = Vector2(_health_fill.position.x - 2, 51)
+	bg.size = Vector2(_bar_width + 4, 9)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(bg)
+	_food_fill = ColorRect.new()
+	_food_fill.name = "FoodFill"
+	_food_fill.color = FOOD_COLORS[0]
+	_food_fill.position = Vector2(_health_fill.position.x, 53)
+	_food_fill.size = Vector2(_bar_width, 5)
+	_food_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(_food_fill)
+	# [J] FOOD ×n beside [H] MEDKIT ×n
+	_eat_slot = _quick_slot.duplicate() as Label
+	_eat_slot.name = "EatSlotLabel"
+	_eat_slot.unique_name_in_owner = false
+	_eat_slot.offset_left = _quick_slot.offset_left + 190.0
+	_eat_slot.offset_right = _quick_slot.offset_right + 190.0
+	_eat_slot.text = "[J]  FOOD ×0"
+	_quick_slot.get_parent().add_child(_eat_slot)
+
+
+func _bind_hunger(h: PlayerHunger) -> void:
+	if _hunger != null:
+		_hunger.food_changed.disconnect(_on_food_changed)
+		_hunger.stage_changed.disconnect(_on_hunger_stage)
+	_hunger = h
+	if h == null:
+		return
+	h.food_changed.connect(_on_food_changed)
+	h.stage_changed.connect(_on_hunger_stage)
+	_on_food_changed(h.food, h.max_food)
+
+
+func _on_food_changed(food: float, max_food: float) -> void:
+	if _food_fill == null:
+		return
+	var f := clampf(food / maxf(max_food, 0.001), 0.0, 1.0)
+	_food_fill.size.x = _bar_width * f
+	var stage := PlayerHunger.stage_for(f)
+	_food_fill.color = FOOD_COLORS[stage]
+	_food_title.text = "FOOD" if stage <= PlayerHunger.Stage.PECKISH else PlayerHunger.stage_name(stage).to_upper()
+	_food_title.add_theme_color_override("font_color", Color.WHITE if stage <= PlayerHunger.Stage.PECKISH else FOOD_COLORS[stage])
+
+
+func _on_hunger_stage(stage: PlayerHunger.Stage) -> void:
+	match stage:
+		PlayerHunger.Stage.PECKISH:
+			show_notice("You're getting hungry: eat something soon (J)", FOOD_COLORS[1])
+		PlayerHunger.Stage.HUNGRY:
+			show_notice("You're hungry: too weak to sprint. Eat something (J)", FOOD_COLORS[2])
+		PlayerHunger.Stage.STARVING:
+			show_notice("You're starving: slower, and losing health. Eat something (J)", FOOD_COLORS[3])
+
+
 # ---------------------------------------------------------------- weapon
 
 func _bind_weapon(weapon: HitscanWeapon) -> void:
@@ -513,6 +595,10 @@ func _on_inventory_changed(_slots: PackedInt32Array) -> void:
 	var medkits := _inventory.count_medical() if _inventory != null else 0
 	_quick_slot.text = "[H]  MEDKIT ×%d" % medkits
 	_quick_slot.modulate = Color.WHITE if medkits > 0 else Color(1, 1, 1, 0.35)
+	if _eat_slot != null:
+		var food := _inventory.count_food() if _inventory != null else 0
+		_eat_slot.text = "[J]  FOOD ×%d" % food
+		_eat_slot.modulate = Color.WHITE if food > 0 else Color(1, 1, 1, 0.35)
 
 
 func _update_item_use() -> void:

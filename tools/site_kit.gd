@@ -44,6 +44,7 @@ const SCENES := {
 	"toolbox": "res://assets/ashfall_pack_v2/scenes/salvage_toolbox.tscn",
 	"water_tank": "res://assets/ashfall_pack_v2/scenes/water_storage_tank.tscn",
 	"workbench": "res://scenes/world/stations/workbench.tscn",
+	"cooking_stove": "res://scenes/world/stations/cooking_stove.tscn",
 	"weapons_bench": "res://scenes/world/stations/weapons_bench.tscn",
 	"raider": "res://scenes/enemies/raider.tscn",
 	"veteran": "res://scenes/enemies/raider_veteran.tscn",

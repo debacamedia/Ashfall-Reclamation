@@ -26,8 +26,8 @@ const LOOT := {
 	"hospital_supplies": [2, 3, [], [["bandage", 3, 1, 3], ["chemicals", 3, 1, 2], ["cloth", 2, 2, 4], ["medkit", 1, 1, 1], ["electronics", 1, 1, 1]]],
 	"pharmacy": [1, 2, [["bandage", 1, 2, 2]], [["chemicals", 3, 2, 4], ["medkit", 2, 1, 1], ["cloth", 1, 1, 3]]],
 	"farm_shed": [2, 4, [], [["scrap_metal", 3, 2, 4], ["wood_plank", 3, 2, 4], ["spring", 2, 1, 2], ["metal_pipe", 2, 1, 2], ["fuel", 2, 1, 1], ["cloth", 1, 1, 3], ["shotgun_shells", 1, 3, 6]]],
-	"barn_loft": [1, 3, [["shotgun_shells", 1, 6, 12]], [["gun_stock", 1, 1, 1], ["cloth", 2, 2, 4], ["medkit", 1, 1, 1], ["fuel", 1, 1, 2]]],
-	"mine_supplies": [2, 4, [], [["gunpowder", 3, 2, 4], ["fuel", 2, 1, 2], ["metal_plate", 2, 1, 2], ["scrap_metal", 2, 2, 5], ["spring", 1, 1, 2], ["metal_pipe", 2, 1, 2], ["frame_pack", 0.3, 1, 1]]],
+	"barn_loft": [1, 3, [["shotgun_shells", 1, 6, 12]], [["gun_stock", 1, 1, 1], ["cloth", 2, 2, 4], ["medkit", 1, 1, 1], ["fuel", 1, 1, 2], ["canned_beans", 1, 1, 2]]],
+	"mine_supplies": [2, 4, [], [["gunpowder", 3, 2, 4], ["fuel", 2, 1, 2], ["metal_plate", 2, 1, 2], ["scrap_metal", 2, 2, 5], ["spring", 1, 1, 2], ["metal_pipe", 2, 1, 2], ["frame_pack", 0.3, 1, 1], ["canned_beans", 1.5, 1, 2]]],
 	"mine_explosives": [1, 2, [["gunpowder", 1, 3, 5]], [["fuel", 2, 1, 2], ["chemicals", 2, 1, 2], ["spring", 1, 1, 1]]],
 	"mine_office": [1, 3, [], [["electronics", 2, 1, 2], ["pistol_ammo", 2, 6, 12], ["chemicals", 1, 1, 2], ["cloth", 1, 1, 2], ["gun_magazine", 1, 1, 1]]],
 	"smuggler_stash": [3, 5, [["electronics", 1, 1, 2]], [["suppressor", 1, 1, 1], ["extended_mag", 1, 1, 1], ["red_dot", 1, 1, 1], ["scope_4x", 0.5, 1, 1], ["foregrip", 1, 1, 1], ["rifle_ammo", 2, 15, 30], ["pistol_ammo", 2, 10, 20], ["shotgun_shells", 1, 6, 12], ["chemicals", 2, 1, 2], ["gunpowder", 2, 1, 3], ["gun_receiver", 1, 1, 1], ["gun_barrel", 1, 1, 1], ["trigger_group", 1, 1, 1], ["medkit", 1, 1, 1], ["military_pack", 0.4, 1, 1]]],
@@ -40,7 +40,7 @@ const LOOT := {
 	"garrison_ammo": [2, 3, [["rifle_ammo", 1, 30, 60]], [["pistol_ammo", 2, 15, 30], ["shotgun_shells", 2, 10, 20], ["rifle_308", 1, 10, 20], ["gunpowder", 1, 2, 4]]],
 	"garrison_crate": [2, 4, [["medkit", 1, 1, 1]], [["bandage", 2, 2, 4], ["rifle_ammo", 3, 15, 30], ["gun_receiver", 1, 1, 1], ["trigger_group", 1, 1, 1], ["gun_stock", 1, 1, 1], ["metal_plate", 2, 1, 2], ["electronics", 1, 1, 2], ["red_dot", 1, 1, 1], ["military_pack", 0.6, 1, 1]]],
 	# Increment 16.8: Northwatch's stores always have a military pack
-	"quartermaster": [1, 3, [["military_pack", 1, 1, 1]], [["bandage", 2, 2, 4], ["cloth", 2, 2, 5], ["rifle_ammo", 2, 15, 30], ["medkit", 1, 1, 1], ["metal_plate", 1, 1, 2]]],
+	"quartermaster": [1, 3, [["military_pack", 1, 1, 1]], [["bandage", 2, 2, 4], ["cloth", 2, 2, 5], ["rifle_ammo", 2, 15, 30], ["medkit", 1, 1, 1], ["metal_plate", 1, 1, 2], ["canned_beans", 2, 2, 4]]],
 	"officer_locker": [1, 3, [["pistol_ammo", 1, 8, 16]], [["electronics", 2, 1, 2], ["medkit", 1, 1, 1], ["weapons/pistol_item", 1, 1, 1], ["red_dot", 1, 1, 1], ["extended_mag", 1, 1, 1]]],
 	"comms_gear": [1, 2, [["electronics", 1, 2, 3]], [["scope_4x", 1, 1, 1], ["spring", 1, 1, 2], ["metal_plate", 1, 1, 1], ["rifle_308", 1, 5, 10]]],
 }
@@ -287,7 +287,10 @@ func _ash_creek() -> Kit:
 	k.box(k.groups["Buildings"].get_node("Farmhouse"), "Porch", Vector3(10, 0.1, 2.4), Vector3(0, 0.05, 5.2), "wood", 0.0, false)
 	_bed(k, "FarmBed", f, Vector3(-3.5, 0, -2.6))
 	k.container_at_wall("footlocker", "BedroomChest", f, "W", 2.3, "town_household", "Bedroom Chest")
-	k.fixture("KitchenCounter", f, Vector3(2.6, 0, -3.25), Vector3(3.0, 0.9, 0.6), "wood")
+	k.fixture("KitchenCounter", f, Vector3(3.1, 0, -3.25), Vector3(2.0, 0.9, 0.6), "wood")
+	# A cooking stove beside it (Increment 21): stew from the farm's vegetables
+	var stove := k.prop("cooking_stove", "FarmStove", k.at(f, Vector3(1.05, 0, -3.3)), 0, "CraftingStations")
+	stove.name = "FarmStove"
 	k.fixture("KitchenTable", f, Vector3(2.4, 0, 0.8), Vector3(1.4, 0.75, 0.9), "wood")
 	k.container_at_wall("crate", "Pantry", f, "E", 2.6, "town_supplies", "Pantry")
 	k.pile("furniture", "KitchenChair", f, Vector3(-1.4, 0, 2.2), 40)

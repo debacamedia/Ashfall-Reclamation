@@ -93,6 +93,8 @@ enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBI
 @export var sprint_fov_kick := 6.0
 ## Seconds spent sprinting, ever: the hook for hunger later (Increment 16.8).
 var sprint_seconds := 0.0
+## Hunger (Increment 21): made in _ready as the child "Hunger".
+var hunger: PlayerHunger
 var _sprint_amount := 0.0
 @export var crouch_speed := 2.2
 @export var jump_velocity := 4.8
@@ -197,6 +199,11 @@ var weapon: HitscanWeapon
 func _ready() -> void:
 	add_to_group("players")
 	add_to_group("persist")
+	hunger = get_node_or_null("Hunger") as PlayerHunger
+	if hunger == null:
+		hunger = PlayerHunger.new()
+		hunger.name = "Hunger"
+		add_child(hunger)
 	_current_height = stand_height
 	_apply_height(stand_height)
 	_base_fov = camera.fov
@@ -221,6 +228,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if controlled_locally:
 		simulate(player_input.gather(), delta)
+	if not is_dead():
+		hunger.tick(delta, movement_state == MovementState.SPRINTING, health)
 	_update_map(delta)
 	if global_position.y < kill_plane_y and not is_dead():
 		var info := DamageInfo.create(health.max_health * 10.0, DamageInfo.Type.ENVIRONMENT)
@@ -301,6 +310,7 @@ func respawn_at(spawn: Transform3D) -> void:
 	if _death_tween != null:
 		_death_tween.kill()
 	health.revive(1.0)
+	hunger.set_food(maxf(hunger.food, hunger.max_food * 0.6))  # a meal before you set off again
 	global_transform = spawn
 	velocity = Vector3.ZERO
 	head.rotation = Vector3.ZERO
@@ -377,6 +387,15 @@ func request_use_item(item: ItemDefinition) -> bool:
 	return true
 
 
+## Eats the best thing you carry for how hungry you are (the J key).
+func request_eat() -> bool:
+	var food := inventory.find_best_food(hunger.missing()) if inventory != null else null
+	if food == null:
+		item_use_refused.emit("Nothing to eat")
+		return false
+	return request_use_item(food)
+
+
 func cancel_item_use() -> void:
 	if _using_item == null:
 		return
@@ -422,6 +441,11 @@ func _use_refusal_reason(item: ItemDefinition) -> String:
 		ItemDefinition.Category.MEDICAL:
 			if health.current_health >= health.max_health:
 				return "Already at full health"
+		ItemDefinition.Category.FOOD:
+			if item.food_value <= 0.0:
+				return "Can't eat that"
+			if hunger.missing() < 1.0:
+				return "You're full"
 		_:
 			return "Can't use that"
 	return ""
@@ -433,6 +457,12 @@ func _update_item_use(frame: InputFrame, delta: float) -> void:
 			cancel_item_use()
 		elif inventory != null:
 			request_use_item(inventory.find_best_medical())
+		return
+	if frame.eat:
+		if is_using_item():
+			cancel_item_use()
+		else:
+			request_eat()
 		return
 	if not is_using_item():
 		return
@@ -456,6 +486,8 @@ func _finish_item_use() -> void:
 	inventory.remove_item(item.id, 1)
 	if item.heal_amount > 0.0:
 		health.heal(item.heal_amount)
+	if item.food_value > 0.0:
+		hunger.eat(item.food_value)
 	item_use_finished.emit(item)
 
 
@@ -859,6 +891,7 @@ func save_state() -> Dictionary:
 		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
 		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
 		"maps": _maps_data(),
+		"food": hunger.save_state(),
 	}
 
 
@@ -903,6 +936,8 @@ func load_state(data: Dictionary) -> void:
 		weapon.ammo_changed.emit(weapon.ammo_in_magazine, weapon.reserve_ammo)
 	var hp := _number(data.get("health"), health.max_health)
 	health.revive(clampf(hp, 1.0, health.max_health) / health.max_health)
+	# Hunger (Increment 21): older saves start full
+	hunger.load_state(data.get("food"))
 	# The map (Increment 17). Older saves have none: you start mapping afresh
 	var raw_maps: Variant = data.get("maps")
 	for id: String in maps:
@@ -1493,7 +1528,7 @@ func craft_refusal_reason(recipe: RecipeDefinition) -> String:
 	if is_dead() or inventory == null:
 		return "Can't do that now"
 	if not recipe.can_make_at(get_crafting_station()):
-		return "Needs a " + RecipeDefinition.station_name(recipe.station)
+		return "Needs a Cooking Stove or a Workbench" if recipe.station == RecipeDefinition.Station.STOVE else "Needs a " + RecipeDefinition.station_name(recipe.station)
 	for item: ItemDefinition in recipe.inputs:
 		var have := inventory.count_of(item.id)
 		if have < recipe.inputs[item]:
@@ -1770,9 +1805,10 @@ func _target_speed(frame: InputFrame) -> float:
 	var speed := walk_speed
 	if is_crouching:
 		speed = crouch_speed
-	elif frame.sprint and frame.move.y < -0.3 and not frame.fire and not is_aiming and not is_using_item():
-		# Sprint only while moving mostly forward, not while aiming
+	elif frame.sprint and frame.move.y < -0.3 and not frame.fire and not is_aiming and not is_using_item() and hunger.can_sprint():
+		# Sprint only while moving mostly forward, not while aiming (nor hungry)
 		return sprint_speed
+	speed *= hunger.speed_multiplier()
 	if is_using_item():
 		speed *= use_move_multiplier
 	if weapon != null:

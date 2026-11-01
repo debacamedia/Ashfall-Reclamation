@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_metal.tres" id="1_eh3e7"]
+[ext_resource type="Texture2D" path="res://assets/icons/canned_beans.png" id="1_w5fd7"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_w5fd7"]
+[ext_resource type="AudioStream" path="res://assets/audio/eat_can.wav" id="3_cgqa6"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/canned_beans.tscn" id="4_ru4ul"]
+
+[resource]
+script = ExtResource("2_w5fd7")
+id = &"canned_beans"
+display_name = "Canned Beans"
+description = "Baked beans in a dented tin. Filling, and it keeps forever. Eat with J."
+category = 10
+icon = ExtResource("1_w5fd7")
+max_stack = 10
+weight = 0.45
+base_value = 6
+world_model = ExtResource("4_ru4ul")
+pickup_sound = ExtResource("1_eh3e7")
+food_value = 30.0
+use_time = 2.0
+use_sound = ExtResource("3_cgqa6")

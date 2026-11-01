@@ -71,7 +71,7 @@ func test_recipes_are_valid() -> void:
 			check(item != r.output, "%s: doesn't consume its own output" % r.id)
 		check(RecipeDatabase.get_recipe(r.id) == r, "%s found by id" % r.id)
 		stations[r.station] = true
-	check(stations.size() == 3, "recipes for hand, workbench and weapons bench")
+	check(stations.size() == 4, "recipes for hand, workbench, weapons bench and cooking stove (21)")
 	for id in ["wood", "chemicals", "wood_plank", "metal_plate", "metal_pipe", "spring", "gunpowder", "bandage"]:
 		var item := ItemDatabase.get_item(StringName(id))
 		check(item != null and item.icon != null and item.world_model != null, "%s: item with icon and model" % id)

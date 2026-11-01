@@ -9,6 +9,8 @@
 [ext_resource type="Resource" path="res://resources/items/spring.tres" id="7_2fju8"]
 [ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="8_yu6s4"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_crnc8"]
+[ext_resource type="Resource" path="res://resources/items/canned_beans.tres" id="9_p6b7i"]
+[ext_resource type="Resource" path="res://resources/items/canned_peaches.tres" id="10_uem6n"]
 
 [sub_resource type="Resource" id="Resource_1t0eu"]
 script = ExtResource("1_tkvyf")
@@ -52,8 +54,19 @@ item = ExtResource("8_yu6s4")
 min_quantity = 4
 max_quantity = 8
 
+[sub_resource type="Resource" id="Resource_lwvbg"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("9_p6b7i")
+weight = 2.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_oqj20"]
+script = ExtResource("1_tkvyf")
+item = ExtResource("10_uem6n")
+max_quantity = 2
+
 [resource]
 script = ExtResource("9_crnc8")
-entries = Array[ExtResource("1_tkvyf")]([SubResource("Resource_1t0eu"), SubResource("Resource_e6nc4"), SubResource("Resource_8n0ol"), SubResource("Resource_cg7ib"), SubResource("Resource_7fafp"), SubResource("Resource_lr0db"), SubResource("Resource_q3shb")])
+entries = Array[ExtResource("1_tkvyf")]([SubResource("Resource_1t0eu"), SubResource("Resource_e6nc4"), SubResource("Resource_8n0ol"), SubResource("Resource_cg7ib"), SubResource("Resource_7fafp"), SubResource("Resource_lr0db"), SubResource("Resource_q3shb"), SubResource("Resource_lwvbg"), SubResource("Resource_oqj20")])
 min_rolls = 2
 max_rolls = 4

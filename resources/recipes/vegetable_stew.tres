@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_mpum4"]
+[ext_resource type="Resource" path="res://resources/items/vegetables.tres" id="2_exbne"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="3_iswp1"]
+[ext_resource type="Resource" path="res://resources/items/vegetable_stew.tres" id="4_lwi4d"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_yrtnu"]
+
+[resource]
+script = ExtResource("5_yrtnu")
+id = &"vegetable_stew"
+category = 8
+station = 3
+inputs = Dictionary[ExtResource("1_mpum4"), int]({
+ExtResource("2_exbne"): 3,
+ExtResource("3_iswp1"): 1
+})
+output = ExtResource("4_lwi4d")
+craft_time = 4.0

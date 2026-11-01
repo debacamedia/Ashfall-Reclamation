@@ -321,8 +321,8 @@ func _refresh() -> void:
 	_refresh_weapons()
 
 	var item := inv.get_slot_item(selected) if selected >= 0 else null
-	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.weapon == null and not item.is_pack())
-	_use_button.text = "Equip" if item != null and item.weapon != null else ("Wear" if item != null and item.is_pack() else "Use")
+	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.food_value <= 0.0 and item.weapon == null and not item.is_pack())
+	_use_button.text = "Equip" if item != null and item.weapon != null else ("Wear" if item != null and item.is_pack() else ("Eat" if item != null and item.food_value > 0.0 else "Use"))
 	_drop_button.disabled = item == null
 	if item == null:
 		_detail_name.text = "Select an item"
@@ -336,6 +336,11 @@ func _refresh() -> void:
 		"Stack %d / %d  ·  %.1f kg total" % [qty, item.max_stack, item.weight * qty]]
 	if item.heal_amount > 0.0:
 		lines.append("Restores %d health (%.0f s)" % [roundi(item.heal_amount), item.use_time])
+	if item.food_value > 0.0:
+		var h := player.hunger
+		lines.append("Food: fills you %d of 100 (%.1f s to eat)  ·  you're at %d%s" % [roundi(item.food_value), item.use_time,
+			roundi(h.food), "" if h.stage == PlayerHunger.Stage.FED else " (%s)" % PlayerHunger.stage_name(h.stage).to_lower()])
+		lines.append("Right-click or Eat to eat one  ·  J eats the best thing you carry")
 	if item.is_pack():
 		var now := inv as PlayerInventory
 		lines.append("Backpack: %.0f kg, %d slots (you carry %.0f kg, %d slots now)" % [item.pack_carry_weight, item.pack_slots,

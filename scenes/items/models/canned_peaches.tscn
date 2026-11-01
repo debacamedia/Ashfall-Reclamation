@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1rt4v"]
+albedo_color = Color(0.72, 0.72, 0.7, 1)
+metallic = 0.8
+roughness = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_xtnjb"]
+top_radius = 0.042
+bottom_radius = 0.042
+height = 0.11
+radial_segments = 14
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a2hxf"]
+albedo_color = Color(0.95, 0.65, 0.2, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_y7sl7"]
+top_radius = 0.0435
+bottom_radius = 0.0435
+height = 0.08
+radial_segments = 14
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xc24g"]
+albedo_color = Color(0.3, 0.45, 0.25, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qpixt"]
+top_radius = 0.044
+bottom_radius = 0.044
+height = 0.022
+radial_segments = 14
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_votqv"]
+top_radius = 0.043
+bottom_radius = 0.043
+height = 0.006
+radial_segments = 14
+rings = 1
+
+[node name="CanPeaches" type="Node3D" unique_id=1022621957]
+
+[node name="Tin" type="MeshInstance3D" parent="." unique_id=606282751]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
+material_override = SubResource("StandardMaterial3D_1rt4v")
+mesh = SubResource("CylinderMesh_xtnjb")
+
+[node name="Label" type="MeshInstance3D" parent="." unique_id=209720587]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
+material_override = SubResource("StandardMaterial3D_a2hxf")
+mesh = SubResource("CylinderMesh_y7sl7")
+
+[node name="Band" type="MeshInstance3D" parent="." unique_id=1147234525]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+material_override = SubResource("StandardMaterial3D_xc24g")
+mesh = SubResource("CylinderMesh_qpixt")
+
+[node name="RimTop" type="MeshInstance3D" parent="." unique_id=771452112]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.111, 0)
+material_override = SubResource("StandardMaterial3D_1rt4v")
+mesh = SubResource("CylinderMesh_votqv")

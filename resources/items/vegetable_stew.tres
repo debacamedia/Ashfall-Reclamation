@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/vegetable_stew.png" id="1_qsoqq"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_y1rqj"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_qsoqq"]
+[ext_resource type="AudioStream" path="res://assets/audio/eat.wav" id="3_0al6t"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/vegetable_stew.tscn" id="4_6vyii"]
+
+[resource]
+script = ExtResource("2_qsoqq")
+id = &"vegetable_stew"
+display_name = "Vegetable Stew"
+description = "Ash Creek vegetables stewed in a tin bowl. The most filling thing there is. Cook it on a stove or a workbench."
+category = 10
+icon = ExtResource("1_qsoqq")
+max_stack = 5
+weight = 0.6
+base_value = 12
+world_model = ExtResource("4_6vyii")
+pickup_sound = ExtResource("1_y1rqj")
+food_value = 60.0
+use_time = 2.5
+use_sound = ExtResource("3_0al6t")

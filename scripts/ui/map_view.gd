@@ -28,6 +28,7 @@ const TRUCK_COLOR := Color(0.55, 0.8, 1.0)
 const STATION_COLORS := {
 	RecipeDefinition.Station.WORKBENCH: Color(0.78, 0.6, 0.38),
 	RecipeDefinition.Station.WEAPONS_BENCH: Color(0.55, 0.7, 0.85),
+	RecipeDefinition.Station.STOVE: Color(0.9, 0.5, 0.3),
 }
 
 var player: PlayerController
@@ -362,7 +363,7 @@ func _draw_overlay() -> void:
 	for m in all:
 		if m["kind"] == "station":
 			draw_icon(ci, "station", to_screen(m["at"]), STATION_COLORS.get(m["station"], Color.WHITE),
-				"G" if m["station"] == RecipeDefinition.Station.WEAPONS_BENCH else "W")
+				{RecipeDefinition.Station.WEAPONS_BENCH: "G", RecipeDefinition.Station.STOVE: "S"}.get(m["station"], "W"))
 	for m in all:
 		if m["kind"] == "settler":
 			draw_icon(ci, "settler", to_screen(m["at"]), Settlement.CLAIMED_COLOR)

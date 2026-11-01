@@ -209,6 +209,10 @@ func _build_list() -> void:
 	# Recipes you can make here first, then the ones that need another bench
 	var recipes := RecipeDatabase.all_recipes()
 	var available := recipes.filter(func(r: RecipeDefinition) -> bool: return r.can_make_at(here))
+	if here == RecipeDefinition.Station.STOVE:
+		# At a stove, the cooking first (Increment 21)
+		var cooking := available.filter(func(r: RecipeDefinition) -> bool: return r.station == RecipeDefinition.Station.STOVE)
+		available = cooking + available.filter(func(r: RecipeDefinition) -> bool: return r.station != RecipeDefinition.Station.STOVE)
 	var elsewhere := recipes.filter(func(r: RecipeDefinition) -> bool: return not r.can_make_at(here))
 	for r: RecipeDefinition in available:
 		if r.category != last_category:
@@ -279,7 +283,8 @@ func _refresh() -> void:
 		lines.append("%s  %d / %d" % [item.display_name, have, r.inputs[item]] + ("" if have >= r.inputs[item] else "   ✗"))
 	_ingredients.text = "\n".join(lines)
 	_info.text = "%s  ·  %.1f s  ·  %s" % [RecipeDefinition.category_name(r.category), r.craft_time,
-		"by hand or at any bench" if r.station == RecipeDefinition.Station.HAND else "at a " + RecipeDefinition.station_name(r.station)]
+		"by hand or at any bench" if r.station == RecipeDefinition.Station.HAND else
+			("on a cooking stove or a workbench" if r.station == RecipeDefinition.Station.STOVE else "at a " + RecipeDefinition.station_name(r.station))]
 	var reason := player.craft_refusal_reason(r)
 	if _message_left <= 0.0:
 		_status.text = reason

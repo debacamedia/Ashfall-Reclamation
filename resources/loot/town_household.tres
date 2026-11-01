@@ -9,6 +9,8 @@
 [ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="7_odwk6"]
 [ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="8_61yhu"]
 [ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_k4d8d"]
+[ext_resource type="Resource" path="res://resources/items/canned_beans.tres" id="9_n7cdf"]
+[ext_resource type="Resource" path="res://resources/items/canned_peaches.tres" id="10_rfbfv"]
 
 [sub_resource type="Resource" id="Resource_81nmf"]
 script = ExtResource("1_y34de")
@@ -48,7 +50,19 @@ script = ExtResource("1_y34de")
 item = ExtResource("8_61yhu")
 max_quantity = 2
 
+[sub_resource type="Resource" id="Resource_n60b7"]
+script = ExtResource("1_y34de")
+item = ExtResource("9_n7cdf")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_0imyi"]
+script = ExtResource("1_y34de")
+item = ExtResource("10_rfbfv")
+weight = 2.0
+max_quantity = 2
+
 [resource]
 script = ExtResource("9_k4d8d")
-entries = Array[ExtResource("1_y34de")]([SubResource("Resource_81nmf"), SubResource("Resource_oa1np"), SubResource("Resource_nhh7g"), SubResource("Resource_a5ocy"), SubResource("Resource_stt0q"), SubResource("Resource_l0mrc"), SubResource("Resource_1a8nj")])
+entries = Array[ExtResource("1_y34de")]([SubResource("Resource_81nmf"), SubResource("Resource_oa1np"), SubResource("Resource_nhh7g"), SubResource("Resource_a5ocy"), SubResource("Resource_stt0q"), SubResource("Resource_l0mrc"), SubResource("Resource_1a8nj"), SubResource("Resource_n60b7"), SubResource("Resource_0imyi")])
 empty_chance = 0.15
