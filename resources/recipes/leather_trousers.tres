@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_6lsif"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="2_8gt00"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_xww3n"]
+[ext_resource type="Resource" path="res://resources/items/leather_trousers.tres" id="4_4yug8"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="5_o2vrv"]
+
+[resource]
+script = ExtResource("5_o2vrv")
+id = &"leather_trousers"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_6lsif"), int]({
+ExtResource("2_8gt00"): 3,
+ExtResource("3_xww3n"): 2
+})
+output = ExtResource("4_4yug8")
+craft_time = 6.0

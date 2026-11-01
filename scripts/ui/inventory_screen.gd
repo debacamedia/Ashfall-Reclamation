@@ -29,6 +29,7 @@ var _slots: Array[InventorySlot] = []
 var weapon_rows: Array[WeaponSlotRow] = []
 ## The backpack slot under them (Increment 16.8).
 var pack_row: PackSlotRow
+var armour_row: ArmourSlotsRow
 ## The grid scrolls when a big backpack has more slots than fit.
 var grid_scroll: ScrollContainer
 var _refresh_left := 0.0
@@ -69,6 +70,16 @@ func _ready() -> void:
 	pack_row.take_off_requested.connect(request_take_off_pack)
 	pack_row.pack_dropped.connect(request_use)
 	column.add_child(pack_row)
+	armour_row = ArmourSlotsRow.new()
+	armour_row.take_off_requested.connect(func(slot: int) -> void:
+		if player != null:
+			player.request_take_off_armour(slot)
+		_refresh())
+	armour_row.repair_requested.connect(func() -> void:
+		if player != null:
+			player.request_repair_armour()
+		_refresh())
+	column.add_child(armour_row)
 	# The backpack grid scrolls (5 rows show) when a big pack has more
 	var body := _grid.get_parent()
 	var at := _grid.get_index()
@@ -150,6 +161,9 @@ func _refresh_weapons() -> void:
 		return
 	if pack_row != null:
 		pack_row.refresh()
+	if armour_row != null:
+		armour_row.player = player
+		armour_row.refresh()
 	var pending := player.weapon_slots.pending_slot if player.weapon_slots != null else 0
 	for row in weapon_rows:
 		var w := player.weapon_slots.get_weapon(row.slot) if player.weapon_slots != null else null
@@ -184,6 +198,12 @@ func request_use(index: int) -> void:
 		# A backpack: put it on (Increment 16.8)
 		player.request_wear_pack(index)
 		selected = -1
+		_refresh()
+		return
+	if item.is_armour():
+		# Clothing and armour: put it on (Increment 22)
+		player.request_wear_armour(index)
+		selected = index if not inv.is_slot_empty(index) else -1
 		_refresh()
 		return
 	if item.weapon != null:
@@ -321,8 +341,8 @@ func _refresh() -> void:
 	_refresh_weapons()
 
 	var item := inv.get_slot_item(selected) if selected >= 0 else null
-	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.food_value <= 0.0 and item.weapon == null and not item.is_pack())
-	_use_button.text = "Equip" if item != null and item.weapon != null else ("Wear" if item != null and item.is_pack() else ("Eat" if item != null and item.food_value > 0.0 else "Use"))
+	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.food_value <= 0.0 and item.weapon == null and not item.is_pack() and not item.is_armour())
+	_use_button.text = "Equip" if item != null and item.weapon != null else ("Wear" if item != null and (item.is_pack() or item.is_armour()) else ("Eat" if item != null and item.food_value > 0.0 else "Use"))
 	_drop_button.disabled = item == null
 	if item == null:
 		_detail_name.text = "Select an item"
@@ -336,6 +356,10 @@ func _refresh() -> void:
 		"Stack %d / %d  ·  %.1f kg total" % [qty, item.max_stack, item.weight * qty]]
 	if item.heal_amount > 0.0:
 		lines.append("Restores %d health (%.0f s)" % [roundi(item.heal_amount), item.use_time])
+	if item.is_armour():
+		lines.append("%s armour: takes %d%% off hits  ·  %d wear%s" % [ArmourSet.SLOT_NAMES[item.armour_slot], roundi(item.armour_protection * 100.0),
+			roundi(item.armour_durability), "" if item.armour_speed >= 1.0 else "  ·  %d%% slower" % roundi((1.0 - item.armour_speed) * 100.0)])
+		lines.append("Right-click or Wear to put it on  ·  repairs: %s at a workbench" % SettlementPlans.cost_text(item.armour_repair))
 	if item.food_value > 0.0:
 		var h := player.hunger
 		lines.append("Food: fills you %d of 100 (%.1f s to eat)  ·  you're at %d%s" % [roundi(item.food_value), item.use_time,

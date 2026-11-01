@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_ncm7a"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_5ojnl"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_xo04o"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_lb32f"]
+
+[resource]
+script = ExtResource("4_lb32f")
+id = &"tanning_rack"
+display_name = "Tanning Rack"
+scene_path = "res://scenes/settlement/tanning_rack.tscn"
+max_health = 400.0
+footprint = Vector3(3.2, 2.4, 1.6)
+repair_cost = Dictionary[ExtResource("1_ncm7a"), int]({
+ExtResource("2_5ojnl"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_ncm7a"), int]({
+ExtResource("2_5ojnl"): 3,
+ExtResource("3_xo04o"): 1
+})
+movable = false

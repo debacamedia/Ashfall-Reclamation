@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_x7hdo"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="2_n3w4b"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_12atj"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="4_wg7fg"]
+[ext_resource type="Resource" path="res://resources/items/scrap_helmet.tres" id="5_cws3q"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_rtrjq"]
+
+[resource]
+script = ExtResource("6_rtrjq")
+id = &"scrap_helmet"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_x7hdo"), int]({
+ExtResource("2_n3w4b"): 1,
+ExtResource("3_12atj"): 4,
+ExtResource("4_wg7fg"): 1
+})
+output = ExtResource("5_cws3q")
+craft_time = 8.0

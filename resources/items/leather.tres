@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_0xw0f"]
+[ext_resource type="Texture2D" path="res://assets/icons/leather.png" id="1_pgx4e"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_pgx4e"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/leather.tscn" id="3_3ax5p"]
+
+[resource]
+script = ExtResource("2_pgx4e")
+id = &"leather"
+display_name = "Leather"
+description = "Tanned hide, ready to cut and stitch. Make clothing and armour from it at a workbench, or mend leather pieces."
+icon = ExtResource("1_pgx4e")
+max_stack = 20
+base_value = 6
+world_model = ExtResource("3_3ax5p")
+pickup_sound = ExtResource("1_0xw0f")

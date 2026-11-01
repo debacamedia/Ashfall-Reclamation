@@ -62,9 +62,27 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, S
 @export var pack_rattle_radius := 0.0
 
 
+@export_group("Armour")
+## Clothing and armour you wear (Increment 22): which slot (0 = not armour).
+@export_enum("None", "Head", "Body", "Legs") var armour_slot := 0
+## The share of a hit it takes off (0.12 = 12%), while it's not worn out.
+@export var armour_protection := 0.0
+## How much damage it can take off before it's worn out and needs repairing.
+@export var armour_durability := 0.0
+## Walking and running speed while it's worn (1 = no slower).
+@export var armour_speed := 1.0
+## Repairing it at a workbench: {item id: count}.
+@export var armour_repair: Dictionary = {}
+
+
 ## A backpack you can wear.
 func is_pack() -> bool:
 	return pack_slots > 0 and pack_carry_weight > 0.0
+
+
+## Something worn in an armour slot (head, body or legs).
+func is_armour() -> bool:
+	return armour_slot > 0 and armour_protection > 0.0
 
 
 func get_label(quantity: int) -> String:

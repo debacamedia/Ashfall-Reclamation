@@ -31,6 +31,10 @@ extends Structure
 
 @onready var storage: SalvageContainer = get_node_or_null("%Storage")
 @onready var fridge: SalvageContainer = get_node_or_null("%Fridge")
+## The Tanning Rack's tub (Increment 22): Raw Hides in, Leather out.
+@onready var rack: SalvageContainer = get_node_or_null("%Rack")
+## Progress (0-1) on the hide being tanned.
+var tan_progress := 0.0
 
 ## Animals in the pen. -1: just built, nobody's arrived yet (the settlement
 ## brings a pair).
@@ -55,6 +59,10 @@ func _ready() -> void:
 		storage.is_searched = true
 		storage.inventory.max_weight = 0.0
 		storage.call("_update_prompt")
+	if rack != null:
+		rack.is_searched = true
+		rack.inventory.max_weight = 0.0
+		rack.call("_update_prompt")
 	if fridge != null:
 		fridge.is_searched = true
 		fridge.inventory.max_weight = 0.0
@@ -184,6 +192,8 @@ func remove_animal(which: FarmAnimal = null) -> void:
 
 func save_state() -> Dictionary:
 	var d := super.save_state()
+	if rack != null:
+		d["tan"] = tan_progress
 	if is_pen():
 		d["animals"] = animal_count
 		d["breed"] = breed_progress
@@ -195,6 +205,8 @@ func save_state() -> Dictionary:
 
 func load_state(data: Dictionary) -> void:
 	super.load_state(data)
+	if rack != null and _is_number(data.get("tan", 0.0)):
+		tan_progress = clampf(float(data.get("tan", 0.0)), 0.0, 1.0)
 	if is_pen() and data.has("animals"):
 		animal_count = clampi(int(data["animals"]) if _is_number(data["animals"]) else 0, -1, animal_capacity)
 		breed_progress = clampf(float(data.get("breed", 0.0)) if _is_number(data.get("breed", 0.0)) else 0.0, 0.0, 1.0)
@@ -207,6 +219,8 @@ func load_state(data: Dictionary) -> void:
 func dismantle_block_reason() -> String:
 	if fridge != null and fridge.inventory.get_free_slot_count() < fridge.inventory.slot_count:
 		return "Empty the fridge first"
+	if rack != null and rack.inventory.get_free_slot_count() < rack.inventory.slot_count:
+		return "Empty the tub first"
 	if storage != null:
 		if storage.inventory.get_free_slot_count() < storage.inventory.slot_count:
 			return "Empty it first"

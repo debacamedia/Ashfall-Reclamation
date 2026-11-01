@@ -1,0 +1,35 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_baua1"]
+albedo_color = Color(0.48, 0.3, 0.17, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_plhu3"]
+size = Vector3(0.12, 0.04, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4u7nm"]
+size = Vector3(0.12, 0.04, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2ond8"]
+albedo_color = Color(0.3, 0.19, 0.11, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_gcxud"]
+size = Vector3(0.28, 0.045, 0.08)
+
+[node name="LeatherTrousers" type="Node3D" unique_id=384199232]
+
+[node name="LegL" type="MeshInstance3D" parent="." unique_id=1047190663]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.02, 0.05)
+material_override = SubResource("StandardMaterial3D_baua1")
+mesh = SubResource("BoxMesh_plhu3")
+
+[node name="LegR" type="MeshInstance3D" parent="." unique_id=1335839293]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.02, 0.05)
+material_override = SubResource("StandardMaterial3D_baua1")
+mesh = SubResource("BoxMesh_4u7nm")
+
+[node name="Waist" type="MeshInstance3D" parent="." unique_id=10797465]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.022, -0.18)
+material_override = SubResource("StandardMaterial3D_2ond8")
+mesh = SubResource("BoxMesh_gcxud")

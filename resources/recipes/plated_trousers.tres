@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_bs0oo"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="2_p6xti"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="3_mnig5"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_gwkoe"]
+[ext_resource type="Resource" path="res://resources/items/plated_trousers.tres" id="5_65oi2"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_yj536"]
+
+[resource]
+script = ExtResource("6_yj536")
+id = &"plated_trousers"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_bs0oo"), int]({
+ExtResource("2_p6xti"): 2,
+ExtResource("3_mnig5"): 1,
+ExtResource("4_gwkoe"): 3
+})
+output = ExtResource("5_65oi2")
+craft_time = 10.0

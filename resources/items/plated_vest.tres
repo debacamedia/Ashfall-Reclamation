@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_cos6c"]
+[ext_resource type="Texture2D" path="res://assets/icons/plated_vest.png" id="1_jrbu3"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_jrbu3"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/plated_vest.tscn" id="3_gfdr8"]
+
+[resource]
+script = ExtResource("2_jrbu3")
+id = &"plated_vest"
+display_name = "Plated Vest"
+description = "Steel plates riveted to a leather vest. Stops a lot, and slows you a little."
+category = 9
+icon = ExtResource("1_jrbu3")
+max_stack = 1
+weight = 6.0
+base_value = 45
+world_model = ExtResource("3_gfdr8")
+pickup_sound = ExtResource("1_cos6c")
+armour_slot = 2
+armour_protection = 0.26
+armour_durability = 400.0
+armour_speed = 0.94
+armour_repair = {
+&"scrap_metal": 2
+}

@@ -53,6 +53,12 @@ signal gun_refused(reason: String)
 signal pack_changed(pack: ItemDefinition)
 ## A backpack request was refused, and why.
 signal pack_refused(reason: String)
+## Clothing and armour (Increment 22): put on / taken off / repaired, or
+## refused and why.
+signal armour_changed
+signal armour_refused(reason: String)
+signal armour_repaired(cost: Dictionary)
+signal armour_worn_out(item: ItemDefinition)
 ## Crafting: one unit started / finished; the queue was cancelled or refused.
 signal crafting_started(recipe: RecipeDefinition, duration: float)
 signal crafting_finished(recipe: RecipeDefinition)
@@ -95,6 +101,11 @@ enum MovementState { IDLE, WALKING, SPRINTING, CROUCHING, AIRBORNE, DEAD, CLIMBI
 var sprint_seconds := 0.0
 ## Hunger (Increment 21): made in _ready as the child "Hunger".
 var hunger: PlayerHunger
+## Clothing and armour you wear (Increment 22).
+var armour := ArmourSet.new()
+## Wear left on pieces you've taken off, by item id, so putting one back on
+## brings its wear back with it (a piece in the grid is just an item).
+var armour_wear_kept := {}
 var _sprint_amount := 0.0
 @export var crouch_speed := 2.2
 @export var jump_velocity := 4.8
@@ -204,6 +215,8 @@ func _ready() -> void:
 		hunger = PlayerHunger.new()
 		hunger.name = "Hunger"
 		add_child(hunger)
+	health.damage_modifier = _armour_absorb
+	armour.changed.connect(func() -> void: armour_changed.emit())
 	_current_height = stand_height
 	_apply_height(stand_height)
 	_base_fov = camera.fov
@@ -892,6 +905,8 @@ func save_state() -> Dictionary:
 		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
 		"maps": _maps_data(),
 		"food": hunger.save_state(),
+		"armour": armour.to_data(),
+		"armour_kept": armour_wear_kept.duplicate(true),
 	}
 
 
@@ -938,6 +953,14 @@ func load_state(data: Dictionary) -> void:
 	health.revive(clampf(hp, 1.0, health.max_health) / health.max_health)
 	# Hunger (Increment 21): older saves start full
 	hunger.load_state(data.get("food"))
+	# Armour (Increment 22): older saves wear none
+	armour.from_data(data.get("armour", {}))
+	armour_wear_kept.clear()
+	var kept: Variant = data.get("armour_kept")
+	if kept is Dictionary:
+		for k in kept:
+			if kept[k] is Array:
+				armour_wear_kept[StringName(str(k))] = (kept[k] as Array).filter(func(v: Variant) -> bool: return (v is float or v is int) and is_finite(float(v)))
 	# The map (Increment 17). Older saves have none: you start mapping afresh
 	var raw_maps: Variant = data.get("maps")
 	for id: String in maps:
@@ -1191,6 +1214,148 @@ func request_wear_pack(index: int) -> bool:
 			inventory.add_item(old, 1)
 		inventory.max_weight = limit
 	pack_changed.emit(item)
+	return true
+
+
+# ---------------------------------------------------------------- armour (22)
+
+## How much of a hit gets past what you wear; tells you when a piece wears out.
+func _armour_absorb(info: DamageInfo) -> float:
+	var fine: Array[int] = []
+	for slot in ArmourSet.SLOTS:
+		if armour.worn(slot) != null and not armour.is_worn_out(slot):
+			fine.append(slot)
+	var through := armour.absorb(info.amount, info.type)
+	for slot in fine:
+		if armour.is_worn_out(slot):
+			armour_worn_out.emit(armour.worn(slot))
+	return through
+
+
+func wear_armour_refusal_reason(index: int) -> String:
+	if is_dead() or inventory == null:
+		return "Can't do that now"
+	var item := inventory.get_slot_item(index)
+	if item == null or not item.is_armour():
+		return "That's not something to wear"
+	if vehicle != null:
+		return "Not while driving"
+	return ""
+
+
+## Puts on the piece in backpack slot `index`; what you had on in that slot
+## goes into its place in the grid.
+func request_wear_armour(index: int) -> bool:
+	var reason := wear_armour_refusal_reason(index)
+	if reason != "":
+		armour_refused.emit(reason)
+		return false
+	var item := inventory.get_slot_item(index)
+	inventory.take_from_slot(index, 1)
+	var old := armour.put_on(item, _kept_wear(item.id))
+	if not old.is_empty():
+		_keep_wear(old)
+		var limit := inventory.max_weight
+		inventory.max_weight = 0.0
+		if inventory.add_to_slot(index, old["item"], 1) == 0:
+			inventory.add_item(old["item"], 1)
+		inventory.max_weight = limit
+	return true
+
+
+func take_off_armour_refusal_reason(slot: int) -> String:
+	if is_dead() or inventory == null:
+		return "Can't do that now"
+	var item := armour.worn(slot)
+	if item == null:
+		return "Nothing worn there"
+	if inventory.can_add(item, 1) < 1:
+		return "No room in your backpack"
+	return ""
+
+
+## Takes off what you wear in `slot` (ArmourSet.HEAD, BODY or LEGS) into the
+## backpack.
+func request_take_off_armour(slot: int) -> bool:
+	var reason := take_off_armour_refusal_reason(slot)
+	if reason != "":
+		armour_refused.emit(reason)
+		return false
+	var old := armour.take_off(slot)
+	_keep_wear(old)
+	inventory.add_item(old["item"], 1)
+	return true
+
+
+func _keep_wear(entry: Dictionary) -> void:
+	if entry.is_empty():
+		return
+	var item: ItemDefinition = entry["item"]
+	if float(entry["wear"]) >= item.armour_durability:
+		return  # as good as new: nothing to remember
+	var list: Array = armour_wear_kept.get(item.id, [])
+	list.append(float(entry["wear"]))
+	armour_wear_kept[item.id] = list
+
+
+## The wear a piece of `id` you're putting on has left (-1: new).
+func _kept_wear(id: StringName) -> float:
+	var list: Array = armour_wear_kept.get(id, [])
+	if list.is_empty():
+		return -1.0
+	var w := float(list.pop_back())
+	if list.is_empty():
+		armour_wear_kept.erase(id)
+	return w
+
+
+## A workbench within reach (for repairs).
+func near_workbench() -> bool:
+	for n in get_tree().get_nodes_in_group("crafting_stations"):
+		var st := n as CraftingStation
+		if st != null and st.station == RecipeDefinition.Station.WORKBENCH and st.global_position.distance_to(global_position) <= 3.5:
+			return true
+	return false
+
+
+## What mending everything you wear would cost: {item id: n}.
+func armour_repair_cost() -> Dictionary:
+	var cost := {}
+	for slot in ArmourSet.SLOTS:
+		var it := armour.worn(slot)
+		if it != null and armour.condition(slot) < 0.999:
+			for id in it.armour_repair:
+				cost[id] = int(cost.get(id, 0)) + int(it.armour_repair[id])
+	return cost
+
+
+func repair_armour_refusal_reason() -> String:
+	if is_dead() or inventory == null:
+		return "Can't do that now"
+	var cost := armour_repair_cost()
+	if cost.is_empty():
+		return "Nothing you wear needs repairing"
+	if not near_workbench():
+		return "Repair it at a workbench"
+	for id in cost:
+		if inventory.count_of(StringName(id)) < int(cost[id]):
+			return "Needs " + SettlementPlans.cost_text(cost)
+	return ""
+
+
+## Repairs everything you wear, at a workbench, with leather or scrap.
+func request_repair_armour() -> bool:
+	var reason := repair_armour_refusal_reason()
+	if reason != "":
+		armour_refused.emit(reason)
+		return false
+	var cost := armour_repair_cost()
+	for id in cost:
+		inventory.remove_item(StringName(id), int(cost[id]))
+	for slot in ArmourSet.SLOTS:
+		if armour.worn(slot) != null:
+			armour.repair(slot)
+	armour_repaired.emit(cost)
 	return true
 
 
@@ -1808,7 +1973,7 @@ func _target_speed(frame: InputFrame) -> float:
 	elif frame.sprint and frame.move.y < -0.3 and not frame.fire and not is_aiming and not is_using_item() and hunger.can_sprint():
 		# Sprint only while moving mostly forward, not while aiming (nor hungry)
 		return sprint_speed
-	speed *= hunger.speed_multiplier()
+	speed *= hunger.speed_multiplier() * armour.speed()
 	if is_using_item():
 		speed *= use_move_multiplier
 	if weapon != null:

@@ -151,6 +151,9 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 ## animals and anyone eating them raw.
 @export var cook_dishes_per_hour := 2.0
 @export var cook_keeps_vegetables := 10
+## A Tanning Rack (22): hours to tan one Raw Hide, and the Leather it gives.
+@export var tan_hours := 4.0
+@export var leather_per_hide := 3
 ## Unfed this long (hours), a settler stops working…
 @export var hungry_after_hours := 1.0
 ## …and this long, they leave.
@@ -936,6 +939,56 @@ func _ammo_name(s: Settler) -> String:
 
 ## Takes `s`'s gun and rounds back: to `player` if they have room, else
 ## into the armory.
+## Gives `s` the armour piece in `player`'s backpack slot `index` (22).
+## What they had on in that slot comes back to you (or the armory).
+func request_give_armour(player: PlayerController, s: Settler, index: int) -> bool:
+	var reason := _member_reason(player, s)
+	var item := player.inventory.get_slot_item(index) if reason == "" and player.inventory != null else null
+	if reason == "" and (item == null or not item.is_armour()):
+		reason = "That's not armour"
+	if reason != "":
+		refused.emit(reason)
+		return false
+	player.inventory.take_from_slot(index, 1)
+	var old := s.armour.put_on(item, player._kept_wear(item.id))
+	if not old.is_empty():
+		_hand_back_armour(old, player)
+	notice.emit("%s is wearing your %s" % [s.settler_name, item.display_name])
+	return true
+
+
+## Takes back everything `s` wears (22).
+func request_take_armour(player: PlayerController, s: Settler) -> bool:
+	var reason := _member_reason(player, s)
+	if reason == "" and s.armour.is_empty():
+		reason = "%s isn't wearing any armour" % s.settler_name
+	if reason != "":
+		refused.emit(reason)
+		return false
+	_return_armour(s, player)
+	return true
+
+
+func _return_armour(s: Settler, player: PlayerController) -> void:
+	for slot in ArmourSet.SLOTS:
+		var old := s.armour.take_off(slot)
+		if not old.is_empty():
+			_hand_back_armour(old, player)
+
+
+## A piece taken off a settler: to you if there's room (its wear kept), else
+## the armory.
+func _hand_back_armour(entry: Dictionary, player: PlayerController) -> void:
+	var item: ItemDefinition = entry["item"]
+	if player != null and player.inventory != null and player.inventory.can_add(item, 1) >= 1:
+		player.inventory.add_item(item, 1)
+		player._keep_wear(entry)
+		return
+	if armory != null:
+		armory.inventory.max_weight = 0.0
+		armory.inventory.add_item(item, 1)
+
+
 func _return_gun(s: Settler, player: PlayerController) -> void:
 	if s.gun == null:
 		return
@@ -980,6 +1033,21 @@ func _supply_guards() -> void:
 				notice.emit("%s took a %s from the armory" % [s.settler_name, best.display_name])
 		if s.gun != null and s.ammo < Settler.AMMO_TARGET / 2:
 			give_ammo_from(inv, s, Settler.AMMO_TARGET)
+		# Armour (22): the best piece for each empty slot
+		for slot in ArmourSet.SLOTS:
+			if s.armour.worn(slot) != null:
+				continue
+			var best: ItemDefinition = null
+			var best_index := -1
+			for i in inv.slot_count:
+				var it := inv.get_slot_item(i)
+				if it != null and it.is_armour() and it.armour_slot == slot and (best == null or it.armour_protection > best.armour_protection):
+					best = it
+					best_index = i
+			if best != null:
+				inv.take_from_slot(best_index, 1)
+				s.armour.put_on(best)
+				notice.emit("%s took a %s from the armory" % [s.settler_name, best.display_name])
 
 
 # ---------------------------------------------------------------- recruiting
@@ -1119,6 +1187,7 @@ func simulate(hours: float) -> void:
 	# The animals and the kitchen (21.5)
 	_simulate_animals(hours, here)
 	_simulate_cooking(hours, here)
+	_simulate_tanning(hours)
 	# Building: each working Builder mends what's damaged, else puts their
 	# hours into the current site
 	for s: Settler in here:
@@ -1304,6 +1373,37 @@ func _simulate_animals(hours: float, here: Array) -> void:
 				_put_in_stores(id, got[id])
 			pen.set_count(keep)
 			notice.emit("%s butchered %d %s: %s into the stores" % [rancher.settler_name, n, spec["many"], _yield_text(got)])
+
+
+func tanning_racks() -> Array[SettlementBuilding]:
+	var out: Array[SettlementBuilding] = []
+	for b in buildings():
+		if b.rack != null:
+			out.append(b)
+	return out
+
+
+## Each Tanning Rack works through the Raw Hides in its tub, one at a time,
+## `tan_hours` each, into Leather in the same tub (22).
+func _simulate_tanning(hours: float) -> void:
+	for b in tanning_racks():
+		var tub := b.rack.inventory
+		if tub.count_of(HIDE) <= 0:
+			b.tan_progress = 0.0
+			continue
+		b.tan_progress += hours / tan_hours
+		while b.tan_progress >= 1.0 and tub.count_of(HIDE) > 0:
+			var leather := ItemDatabase.get_item(&"leather")
+			tub.remove_item(HIDE, 1)
+			var fitted := tub.add_item(leather, leather_per_hide)
+			if fitted < leather_per_hide:
+				# No room: put the hide back and wait
+				tub.remove_item(&"leather", fitted)
+				tub.add_item(ItemDatabase.get_item(HIDE), 1)
+				b.tan_progress = 1.0
+				break
+			b.tan_progress -= 1.0
+			notice.emit("A hide is tanned: %d Leather in the tanning tub" % leather_per_hide)
 
 
 func rancher_status() -> String:
@@ -1631,7 +1731,7 @@ func settle_raid_on_paper(seed_value := 0) -> Dictionary:
 	for m in here:
 		var s := m as Settler
 		if s.role == Settler.Role.GUARD:
-			paper.add_guard(s.settler_name, s.health.current_health, s.gun.weapon if s.gun != null else null, s.magazine, s.ammo, s)
+			paper.add_guard(s.settler_name, s.health.current_health, s.gun.weapon if s.gun != null else null, s.magazine, s.ammo, s).protection = s.armour.protection()
 		else:
 			paper.add_sheltering(s.settler_name, s.health.current_health, s)
 	var before := {FOOD: _count_in_stores(FOOD), PLANK: _count_in_stores(PLANK)}
@@ -1651,6 +1751,8 @@ func settle_raid_on_paper(seed_value := 0) -> Dictionary:
 		if f.weapon != null:
 			s.magazine = f.magazine
 			s.ammo = f.ammo
+		if f.stopped > 0.0:
+			s.armour.wear_down(f.stopped)
 		if f.down:
 			s.knock_down()
 		elif f.health < s.health.current_health:

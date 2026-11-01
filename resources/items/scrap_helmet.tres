@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_8i6t0"]
+[ext_resource type="Texture2D" path="res://assets/icons/scrap_helmet.png" id="1_246de"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_246de"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/scrap_helmet.tscn" id="3_blhwm"]
+
+[resource]
+script = ExtResource("2_246de")
+id = &"scrap_helmet"
+display_name = "Scrap Helmet"
+description = "A beaten steel helmet on a leather liner."
+category = 9
+icon = ExtResource("1_246de")
+max_stack = 1
+weight = 1.5
+base_value = 20
+world_model = ExtResource("3_blhwm")
+pickup_sound = ExtResource("1_8i6t0")
+armour_slot = 1
+armour_protection = 0.12
+armour_durability = 300.0
+armour_repair = {
+&"scrap_metal": 2
+}

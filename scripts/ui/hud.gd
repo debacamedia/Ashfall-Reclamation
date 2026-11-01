@@ -148,6 +148,13 @@ func _process(delta: float) -> void:
 		player.pack_changed.connect(func(pack: ItemDefinition) -> void:
 			show_notice("Wearing your %s: %.0f kg, %d slots" % [pack.display_name if pack != null else "satchel",
 				PlayerInventory.weight_for(pack), PlayerInventory.slots_for(pack)], Color(0.75, 0.9, 1.0)))
+		player.armour_refused.connect(func(reason: String) -> void:
+			show_notice(reason, Color(1.0, 0.5, 0.4))
+			_play_ui(SOUND_DENIED))
+		player.armour_worn_out.connect(func(item: ItemDefinition) -> void:
+			show_notice("Your %s is worn out: repair it at a workbench" % item.display_name, Color(1.0, 0.65, 0.35)))
+		player.armour_repaired.connect(func(cost: Dictionary) -> void:
+			show_notice("Repaired what you wear: used " + SettlementPlans.cost_text(cost), Color(0.8, 0.95, 0.7)))
 		player.pack_refused.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED))

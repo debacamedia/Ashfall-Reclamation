@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_itm6j"]
+albedo_color = Color(0.48, 0.3, 0.17, 1)
+roughness = 0.85
+
+[sub_resource type="SphereMesh" id="SphereMesh_4thf0"]
+radius = 0.12
+height = 0.12
+is_hemisphere = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_7sehr"]
+size = Vector3(0.26, 0.012, 0.09)
+
+[node name="LeatherCap" type="Node3D" unique_id=1443846226]
+
+[node name="Crown" type="MeshInstance3D" parent="." unique_id=1724982397]
+material_override = SubResource("StandardMaterial3D_itm6j")
+mesh = SubResource("SphereMesh_4thf0")
+
+[node name="Brim" type="MeshInstance3D" parent="." unique_id=84193717]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, -0.1)
+material_override = SubResource("StandardMaterial3D_itm6j")
+mesh = SubResource("BoxMesh_7sehr")

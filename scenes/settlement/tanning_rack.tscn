@@ -1,0 +1,189 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/settlement/settlement_building.gd" id="1_u3cwb"]
+[ext_resource type="Resource" path="res://resources/structures/settlement/tanning_rack.tres" id="2_u31th"]
+[ext_resource type="AudioStream" path="res://assets/audio/sets/structure_hit.tres" id="3_x76g1"]
+[ext_resource type="Material" path="res://assets/ashfall_pack_v1/materials/wood_weathered.tres" id="4_mr5r8"]
+[ext_resource type="Script" path="res://scripts/interaction/salvage_container.gd" id="5_b8m4l"]
+[ext_resource type="Script" path="res://scripts/inventory/inventory_component.gd" id="6_6umjc"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_p8mkl"]
+size = Vector3(0.12, 2.1, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cwlis"]
+size = Vector3(0.12, 2.1, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2hurv"]
+size = Vector3(0.12, 2.1, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rx2sv"]
+size = Vector3(0.12, 2.1, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qo8ug"]
+size = Vector3(2.8, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mfmsv"]
+size = Vector3(2.8, 0.1, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6gi23"]
+albedo_color = Color(0.6, 0.42, 0.26, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_pdm2u"]
+size = Vector3(2.2, 1.4, 0.03)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2ubcq"]
+size = Vector3(0.02, 0.02, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_iud4v"]
+size = Vector3(0.02, 0.02, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rc8ex"]
+size = Vector3(0.02, 0.02, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gai73"]
+size = Vector3(0.02, 0.02, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kmva5"]
+size = Vector3(0.02, 0.02, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_m54pr"]
+size = Vector3(0.02, 0.02, 0.06)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ttrl8"]
+size = Vector3(1, 0.9, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7oe87"]
+size = Vector3(0.8, 0.6, 0.8)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_keom1"]
+top_radius = 0.42
+bottom_radius = 0.36
+height = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2fqm6"]
+albedo_color = Color(0.35, 0.25, 0.15, 1)
+roughness = 0.2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pk7ki"]
+top_radius = 0.38
+bottom_radius = 0.38
+height = 0.02
+
+[node name="TanningRack" type="Node3D" unique_id=40412400]
+script = ExtResource("1_u3cwb")
+definition = ExtResource("2_u31th")
+
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=1732876228]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+stream = ExtResource("3_x76g1")
+volume_db = -2.0
+unit_size = 4.0
+bus = &"SFX"
+
+[node name="Body" type="StaticBody3D" parent="." unique_id=73425920]
+collision_layer = 2
+collision_mask = 0
+
+[node name="UprightL" type="MeshInstance3D" parent="Body" unique_id=209178406]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 1.05, -0.3)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_p8mkl")
+
+[node name="UprightLCol" type="CollisionShape3D" parent="Body" unique_id=908384110]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 1.05, -0.3)
+shape = SubResource("BoxShape3D_cwlis")
+
+[node name="UprightR" type="MeshInstance3D" parent="Body" unique_id=955264895]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 1.05, -0.3)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_2hurv")
+
+[node name="UprightRCol" type="CollisionShape3D" parent="Body" unique_id=1797261068]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 1.05, -0.3)
+shape = SubResource("BoxShape3D_rx2sv")
+
+[node name="TopBar" type="MeshInstance3D" parent="Body" unique_id=353063072]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.05, -0.3)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_qo8ug")
+
+[node name="LowBar" type="MeshInstance3D" parent="Body" unique_id=558751452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -0.3)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_mfmsv")
+
+[node name="Hide" type="MeshInstance3D" parent="Body" unique_id=2110056493]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -0.28)
+material_override = SubResource("StandardMaterial3D_6gi23")
+mesh = SubResource("BoxMesh_pdm2u")
+
+[node name="Lace0" type="MeshInstance3D" parent="Body" unique_id=1331575880]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.95, -0.28)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_2ubcq")
+
+[node name="Lace1" type="MeshInstance3D" parent="Body" unique_id=290938092]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.66, 1.95, -0.28)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_iud4v")
+
+[node name="Lace2" type="MeshInstance3D" parent="Body" unique_id=1711574327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22, 1.95, -0.28)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_rc8ex")
+
+[node name="Lace3" type="MeshInstance3D" parent="Body" unique_id=2108345207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 1.95, -0.28)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_gai73")
+
+[node name="Lace4" type="MeshInstance3D" parent="Body" unique_id=955109157]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.66, 1.95, -0.28)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_kmva5")
+
+[node name="Lace5" type="MeshInstance3D" parent="Body" unique_id=1520540931]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.95, -0.28)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("BoxMesh_m54pr")
+
+[node name="Rack" type="Area3D" parent="." unique_id=2010021111]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0, 0.45)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("5_b8m4l")
+container_name = "Tanning Tub"
+search_time = 0.0
+focus_offset = Vector3(0, 0.5, 0)
+
+[node name="Shape" type="CollisionShape3D" parent="Rack" unique_id=1151296214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("BoxShape3D_ttrl8")
+
+[node name="Body" type="StaticBody3D" parent="Rack" unique_id=1779795834]
+collision_layer = 2
+collision_mask = 0
+
+[node name="BodyShape" type="CollisionShape3D" parent="Rack/Body" unique_id=542327971]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("BoxShape3D_7oe87")
+
+[node name="Tub" type="MeshInstance3D" parent="Rack/Body" unique_id=282766039]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+material_override = ExtResource("4_mr5r8")
+mesh = SubResource("CylinderMesh_keom1")
+
+[node name="Liquor" type="MeshInstance3D" parent="Rack/Body" unique_id=85400098]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+material_override = SubResource("StandardMaterial3D_2fqm6")
+mesh = SubResource("CylinderMesh_pk7ki")
+
+[node name="Inventory" type="Node" parent="Rack" unique_id=631483801]
+unique_name_in_owner = true
+script = ExtResource("6_6umjc")
+slot_count = 6
+max_weight = 0.0

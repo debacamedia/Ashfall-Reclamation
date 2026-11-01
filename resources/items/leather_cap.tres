@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_m7rkx"]
+[ext_resource type="Texture2D" path="res://assets/icons/leather_cap.png" id="1_yme3d"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_yme3d"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/leather_cap.tscn" id="3_5ajnh"]
+
+[resource]
+script = ExtResource("2_yme3d")
+id = &"leather_cap"
+display_name = "Leather Cap"
+description = "A stitched leather cap. Takes a little off a blow to the head."
+category = 9
+icon = ExtResource("1_yme3d")
+max_stack = 1
+weight = 0.4
+base_value = 10
+world_model = ExtResource("3_5ajnh")
+pickup_sound = ExtResource("1_m7rkx")
+armour_slot = 1
+armour_protection = 0.06
+armour_durability = 120.0
+armour_repair = {
+&"leather": 1
+}

@@ -13,6 +13,8 @@ extends SceneTree
 ##   chicken_coop  a hen house and a wire run, 8 × 6 m: room for 8 chickens
 ##   pig_pen       a 10 × 8 m pen with a trough, mud and a shelter: 6 pigs
 ##   cow_pasture   a 16 × 12 m paddock with a trough and hay: 4 cows
+##   tanning_rack  a frame with a hide stretched on it and a tub: put Raw Hides
+##                 in the tub and they come out Leather (22)
 ##
 ##   godot --headless --path . -s res://tools/build_settlement_buildings.gd
 
@@ -53,6 +55,7 @@ func _run() -> void:
 	_pen("ChickenCoop", "chicken_coop", "Chicken Coop", &"chicken", 8, Vector2(8, 6), 0.9)
 	_pen("PigPen", "pig_pen", "Pig Pen", &"pig", 6, Vector2(10, 8), 1.0)
 	_pen("CowPasture", "cow_pasture", "Cow Pasture", &"cow", 4, Vector2(16, 12), 1.35)
+	_tanning_rack()
 	quit()
 
 
@@ -341,6 +344,80 @@ func _pen(node_name: String, id: String, display: String, kind: StringName, capa
 	_add(b, area)
 	_markers(b, "TendSpots", [trough_at + Vector3(0, 0, 1.0)])
 	_finish(b, id)
+
+
+## The Tanning Rack (22): a wooden frame with a hide stretched on it, and a
+## tub (%Rack, 6 slots) you put Raw Hides in; the settlement turns them into
+## Leather in the tub, a few hours each.
+func _tanning_rack() -> void:
+	var b := _begin("TanningRack", "tanning_rack", "Tanning Rack", Vector3(3.2, 2.4, 1.6), 400.0,
+		{&"wood_plank": 1}, {&"wood_plank": 3, &"cloth": 1})
+	var body := _body(b)
+	var hide := _plain(Color(0.6, 0.42, 0.26), 0.9)
+	for x in [-1.3, 1.3]:
+		_box(body, "Upright%s" % ("L" if x < 0 else "R"), Vector3(0.12, 2.1, 0.12), Vector3(x, 1.05, -0.3), M["wood"], true)
+	_box(body, "TopBar", Vector3(2.8, 0.1, 0.1), Vector3(0, 2.05, -0.3), M["wood"], false)
+	_box(body, "LowBar", Vector3(2.8, 0.1, 0.1), Vector3(0, 0.45, -0.3), M["wood"], false)
+	_box(body, "Hide", Vector3(2.2, 1.4, 0.03), Vector3(0, 1.25, -0.28), hide, false)
+	for i in 6:
+		_box(body, "Lace%d" % i, Vector3(0.02, 0.02, 0.06), Vector3(-1.1 + i * 0.44, 1.95, -0.28), M["wood"], false)
+	var tub := SalvageContainer.new()
+	tub.name = "Rack"
+	tub.collision_layer = 16
+	tub.collision_mask = 0
+	tub.monitoring = false
+	tub.container_name = "Tanning Tub"
+	tub.search_time = 0.0
+	tub.set("focus_offset", Vector3(0, 0.5, 0))
+	tub.position = Vector3(0.9, 0, 0.45)
+	_add(b, tub)
+	tub.unique_name_in_owner = true
+	var area := CollisionShape3D.new()
+	area.name = "Shape"
+	var ash := BoxShape3D.new()
+	ash.size = Vector3(1.0, 0.9, 1.0)
+	area.shape = ash
+	area.position = Vector3(0, 0.45, 0)
+	_add(tub, area)
+	var tb := StaticBody3D.new()
+	tb.name = "Body"
+	tb.collision_layer = 2
+	tb.collision_mask = 0
+	_add(tub, tb)
+	var tbs := CollisionShape3D.new()
+	tbs.name = "BodyShape"
+	var tbb := BoxShape3D.new()
+	tbb.size = Vector3(0.8, 0.6, 0.8)
+	tbs.shape = tbb
+	tbs.position = Vector3(0, 0.3, 0)
+	_add(tb, tbs)
+	var cyl := MeshInstance3D.new()
+	cyl.name = "Tub"
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.42
+	cm.bottom_radius = 0.36
+	cm.height = 0.6
+	cyl.mesh = cm
+	cyl.material_override = M["wood"]
+	cyl.position.y = 0.3
+	_add(tb, cyl)
+	var liquor := MeshInstance3D.new()
+	liquor.name = "Liquor"
+	var lm := CylinderMesh.new()
+	lm.top_radius = 0.38
+	lm.bottom_radius = 0.38
+	lm.height = 0.02
+	liquor.mesh = lm
+	liquor.material_override = _plain(Color(0.35, 0.25, 0.15), 0.2)
+	liquor.position.y = 0.55
+	_add(tb, liquor)
+	var inv := InventoryComponent.new()
+	inv.name = "Inventory"
+	inv.slot_count = 6
+	inv.max_weight = 0.0
+	_add(tub, inv)
+	inv.unique_name_in_owner = true
+	_finish(b, "tanning_rack")
 
 
 func _plain(c: Color, rough: float) -> StandardMaterial3D:

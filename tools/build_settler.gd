@@ -139,6 +139,31 @@ func _run() -> void:
 	_cyl(cowboy, "Brim", 0.32, 0.32, 0.02, Vector3.ZERO, leather)
 	_cyl(cowboy, "Crown", 0.12, 0.15, 0.15, Vector3(0, 0.08, 0), leather)
 	_cyl(cowboy, "Band", 0.152, 0.152, 0.03, Vector3(0, 0.025, 0), _mat("hat_band", Color(0.15, 0.1, 0.08)))
+	# Armour a guard's given (22): coloured by the settler for leather or plate
+	var hide := _mat("armour", Color(0.42, 0.27, 0.15))
+	var ah := Node3D.new()
+	ah.name = "ArmourHead"
+	ah.position.y = 1.68
+	_add(v, ah)
+	var ahm := MeshInstance3D.new()
+	ahm.name = "Shell"
+	var ahs := SphereMesh.new()
+	ahs.radius = 0.172
+	ahs.height = 0.2
+	ahs.is_hemisphere = true
+	ahm.mesh = ahs
+	ahm.material_override = hide
+	_add(ah, ahm)
+	var ab := Node3D.new()
+	ab.name = "ArmourBody"
+	_add(v, ab)
+	_box(ab, "Coat", Vector3(0.5, 0.58, 0.31), Vector3(0, 1.13, 0), hide)
+	_box(ab, "Collar", Vector3(0.3, 0.06, 0.3), Vector3(0, 1.43, 0), hide)
+	var al := Node3D.new()
+	al.name = "ArmourLegs"
+	_add(v, al)
+	for x in [-0.12, 0.12]:
+		_box(al, "Leg" + ("L" if x < 0 else "R"), Vector3(0.19, 0.6, 0.22), Vector3(x, 0.5, 0), hide)
 	var helmet := Node3D.new()
 	helmet.name = "Helmet"
 	helmet.position.y = 1.68

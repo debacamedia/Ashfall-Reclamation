@@ -55,6 +55,10 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 	# The backpack you had on (Increment 16.8); your satchel stays with you
 	if player.inventory != null and player.inventory.pack != null:
 		stacks.append([player.inventory.pack, 1])
+	# What you wore (Increment 22): its wear is remembered for when it's back on
+	for slot in ArmourSet.SLOTS:
+		if player.armour.worn(slot) != null:
+			stacks.append([player.armour.worn(slot), 1])
 	if stacks.is_empty():
 		return null
 	var cache := (load(SCENE) as PackedScene).instantiate() as DeathCache
@@ -70,6 +74,9 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 	cache.global_position = resting_place(parent, at, player)
 	cache.rotation.y = player.rotation.y
 	# Now take it all off the player
+	for slot in ArmourSet.SLOTS:
+		if player.armour.worn(slot) != null:
+			player._keep_wear(player.armour.take_off(slot))
 	if player.inventory != null:
 		player.inventory.clear()
 		player.inventory.set_pack(null)

@@ -38,6 +38,9 @@ const PLANS := {
 		"cost": {&"wood_plank": 16, &"scrap_metal": 6}, "about": "Room for 6 pigs: a pair arrives once it's built. Meat"},
 	&"cow_pasture": {"name": "Cow Pasture", "structure": "cow_pasture", "placeable": true, "hours": 4.0,
 		"cost": {&"wood_plank": 28, &"scrap_metal": 8}, "about": "Room for 4 cows: a pair arrives once it's built. Meat and hides"},
+	# Increment 22: leather from hides
+	&"tanning_rack": {"name": "Tanning Rack", "structure": "tanning_rack", "placeable": true, "hours": 2.0,
+		"cost": {&"wood_plank": 8, &"scrap_metal": 2, &"cloth": 2}, "about": "Put Raw Hides in its tub: each comes out as 3 Leather after a few hours"},
 	&"fence": {"name": "Fence", "structure": "farm_fence", "placeable": false, "hours": 0.25,
 		"cost": {&"wood_plank": 1}, "about": "Split-rail fence, in 4 m lengths"},
 }

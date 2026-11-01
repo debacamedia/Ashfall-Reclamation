@@ -22,6 +22,9 @@ signal revived
 
 var current_health := 0.0
 var _dead := false
+## Optional: given a hit, returns how much of it gets through (armour,
+## Increment 22). Unset, the whole hit lands.
+var damage_modifier: Callable
 
 
 func _ready() -> void:
@@ -40,6 +43,10 @@ func get_fraction() -> float:
 func apply_damage(info: DamageInfo) -> float:
 	if _dead or invulnerable or info == null or info.amount <= 0.0:
 		return 0.0
+	if damage_modifier.is_valid():
+		info.amount = maxf(float(damage_modifier.call(info)), 0.0)
+		if info.amount <= 0.0:
+			return 0.0
 	var dealt := minf(info.amount, current_health)
 	current_health -= dealt
 	damaged.emit(dealt, info)

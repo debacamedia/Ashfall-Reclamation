@@ -74,6 +74,8 @@ const SKINS := [Color(0.88, 0.72, 0.6), Color(0.72, 0.55, 0.42), Color(0.55, 0.4
 ## Where they live (null for a survivor not yet asked).
 var settlement: Settlement
 var gun: ItemDefinition
+## Clothing and armour (Increment 22): guards can wear it.
+var armour := ArmourSet.new()
 ## Rounds carried, and in the gun.
 var ammo := 0
 var magazine := 0
@@ -128,6 +130,8 @@ func _ready() -> void:
 	_rng.randomize()
 	health.died.connect(_on_died)
 	health.damaged.connect(_on_damaged)
+	health.damage_modifier = func(info: DamageInfo) -> float: return armour.absorb(info.amount, info.type)
+	armour.changed.connect(_update_visuals)
 	_apply_look()
 	_update_visuals()
 	name_label.visible = false
@@ -255,6 +259,8 @@ func disarm() -> void:
 func leave() -> void:
 	if settlement != null and gun != null:
 		settlement._return_gun(self, null)
+	if settlement != null and not armour.is_empty():
+		settlement._return_armour(self, null)
 	var from := settlement
 	settlement = null
 	_arrived = false
@@ -841,12 +847,30 @@ func _apply_look() -> void:
 func _update_visuals() -> void:
 	if not is_node_ready():
 		return
-	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD], ["Helmet", role == Role.GUARD],
+	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD and armour.worn(ArmourSet.BODY) == null],
+			["Helmet", role == Role.GUARD and armour.worn(ArmourSet.HEAD) == null],
 			["HardHat", role == Role.BUILDER], ["ToolBelt", role == Role.BUILDER],
 			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK], ["CowboyHat", role == Role.RANCHER]]:
 		var n := visual.get_node_or_null(pair[0]) as Node3D
 		if n != null:
 			n.visible = pair[1]
+	# What they wear (22): leather brown, or plated grey
+	for pair in [["ArmourHead", ArmourSet.HEAD], ["ArmourBody", ArmourSet.BODY], ["ArmourLegs", ArmourSet.LEGS]]:
+		var n := visual.get_node_or_null(pair[0]) as Node3D
+		if n == null:
+			continue
+		var it := armour.worn(pair[1])
+		n.visible = it != null
+		if it != null:
+			var plated := String(it.id).begins_with("plated") or String(it.id).begins_with("scrap")
+			for c in n.get_children():
+				var mi := c as MeshInstance3D
+				if mi != null:
+					var m := StandardMaterial3D.new()
+					m.albedo_color = Color(0.45, 0.46, 0.48) if plated else Color(0.42, 0.27, 0.15)
+					m.metallic = 0.5 if plated else 0.0
+					m.roughness = 0.6 if plated else 0.9
+					mi.material_override = m
 	var g := visual.get_node_or_null("RightArm/Gun") as Node3D
 	if g != null:
 		g.visible = gun != null
@@ -941,6 +965,8 @@ func _die_for_good() -> void:
 	if home != null:
 		if gun != null:
 			home._return_gun(self, null)
+		if not armour.is_empty():
+			home._return_armour(self, null)
 		home.on_settler_died(self)
 	settlement = null
 	get_tree().create_timer(30.0).timeout.connect(_vanish)
@@ -977,6 +1003,7 @@ func save_state() -> Dictionary:
 		"health": health.current_health, "next_meal": next_meal, "unfed": unfed_hours,
 		"gone": _gone or is_dead() or state == State.LEAVING,
 		"down": is_down(), "down_hours": down_hours,
+		"armour": armour.to_data(),
 	}
 
 
@@ -1002,6 +1029,7 @@ func load_state(data: Dictionary) -> void:
 	var item := ItemDatabase.get_item(StringName(str(data.get("gun", ""))))
 	gun = item if item != null and item.weapon != null else null
 	ammo = maxi(int(Settlement._num(data.get("ammo"), 0)), 0) if gun != null else 0
+	armour.from_data(data.get("armour", {}))
 	magazine = 0
 	next_meal = Settlement._num(data.get("next_meal"), 4.0)
 	unfed_hours = maxf(Settlement._num(data.get("unfed"), 0.0), 0.0)

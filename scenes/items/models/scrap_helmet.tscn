@@ -1,0 +1,62 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b4vv2"]
+albedo_color = Color(0.42, 0.43, 0.45, 1)
+metallic = 0.5
+roughness = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_bwji4"]
+radius = 0.12
+height = 0.12
+is_hemisphere = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n8qug"]
+albedo_color = Color(0.45, 0.3, 0.22, 1)
+metallic = 0.4
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_jfo2j"]
+size = Vector3(0.26, 0.012, 0.26)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mxjtg"]
+size = Vector3(0.015, 0.015, 0.015)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xdr63"]
+size = Vector3(0.015, 0.015, 0.015)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gmfx3"]
+size = Vector3(0.015, 0.015, 0.015)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bd4f5"]
+size = Vector3(0.015, 0.015, 0.015)
+
+[node name="ScrapHelmet" type="Node3D" unique_id=1896203033]
+
+[node name="Crown" type="MeshInstance3D" parent="." unique_id=119879312]
+material_override = SubResource("StandardMaterial3D_b4vv2")
+mesh = SubResource("SphereMesh_bwji4")
+
+[node name="Brim" type="MeshInstance3D" parent="." unique_id=835015500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, 0)
+material_override = SubResource("StandardMaterial3D_n8qug")
+mesh = SubResource("BoxMesh_jfo2j")
+
+[node name="Rivet0" type="MeshInstance3D" parent="." unique_id=1840928549]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.05, 0)
+material_override = SubResource("StandardMaterial3D_n8qug")
+mesh = SubResource("BoxMesh_mxjtg")
+
+[node name="Rivet1" type="MeshInstance3D" parent="." unique_id=1082864197]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.963267e-05, 0.05, 0.09999997)
+material_override = SubResource("StandardMaterial3D_n8qug")
+mesh = SubResource("BoxMesh_xdr63")
+
+[node name="Rivet2" type="MeshInstance3D" parent="." unique_id=2015712736]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.099999875, 0.05, 0.0001592653)
+material_override = SubResource("StandardMaterial3D_n8qug")
+mesh = SubResource("BoxMesh_gmfx3")
+
+[node name="Rivet3" type="MeshInstance3D" parent="." unique_id=27451609]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00023889782, 0.05, -0.09999971)
+material_override = SubResource("StandardMaterial3D_n8qug")
+mesh = SubResource("BoxMesh_bd4f5")

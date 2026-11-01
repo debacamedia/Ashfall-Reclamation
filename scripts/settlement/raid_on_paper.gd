@@ -66,6 +66,9 @@ class Fighter:
 	var cooldown := 0.0
 	var shots := 0
 	var down := false
+	## Armour (22): the share of a hit it takes off, and what it stopped.
+	var protection := 0.0
+	var stopped := 0.0
 
 	func standing() -> bool:
 		return not down and health > 0.0
@@ -254,6 +257,9 @@ func _kill(r: Fighter) -> void:
 
 
 func _hurt(f: Fighter, amount: float) -> void:
+	if f.protection > 0.0 and amount < 9000.0:
+		f.stopped += amount * f.protection
+		amount *= 1.0 - f.protection
 	f.health -= amount
 	if f.health <= 0.0 and not f.down:
 		f.health = 0.0

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/leather_jacket.png" id="1_bit1j"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_x16ir"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_bit1j"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/leather_jacket.tscn" id="3_arfm3"]
+
+[resource]
+script = ExtResource("2_bit1j")
+id = &"leather_jacket"
+display_name = "Leather Jacket"
+description = "A heavy leather jacket from Ash Creek hides. Light, quiet, and turns a machete."
+category = 9
+icon = ExtResource("1_bit1j")
+max_stack = 1
+weight = 2.0
+base_value = 25
+world_model = ExtResource("3_arfm3")
+pickup_sound = ExtResource("1_x16ir")
+armour_slot = 2
+armour_protection = 0.14
+armour_durability = 200.0
+armour_repair = {
+&"leather": 1
+}

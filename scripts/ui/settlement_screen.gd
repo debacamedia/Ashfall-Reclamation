@@ -338,8 +338,8 @@ func refresh() -> void:
 		return (a == focus) if (a == focus) != (b == focus) else a.settler_name < b.settler_name)
 	var key := ""
 	for p in people:
-		key += "%s|%d|%s|" % [p.get_instance_id(), p.role, p.gun.id if p.gun != null else ""]
-	key += str(_spares().size()) + "|%d|%d" % [s.kitchens().size(), s.pens().size()]
+		key += "%s|%d|%s|%s|" % [p.get_instance_id(), p.role, p.gun.id if p.gun != null else "", str(p.armour.slots.size())]
+	key += str(_spares().size()) + "|" + str(_armour_pieces().size()) + "|%d|%d" % [s.kitchens().size(), s.pens().size()]
 	if key != _rows_key:
 		_rows_key = key
 		_build_rows(people)
@@ -349,6 +349,7 @@ func refresh() -> void:
 			(row["status"] as Label).text = p.status_text()
 			(row["status"] as Label).add_theme_color_override("font_color", BAD if p.is_hungry() or p.short_of_water else GOOD)
 			(row["gun"] as Label).text = p.gun_text() if p.role == Settler.Role.GUARD or p.gun != null else ""
+			(row["armour"] as Label).text = p.armour.describe()
 
 
 func _build_rows(people: Array[Settler]) -> void:
@@ -436,7 +437,38 @@ func _build_rows(people: Array[Settler]) -> void:
 		take.disabled = p.gun == null
 		take.pressed.connect(func() -> void: request_take_gun(p))
 		arms.add_child(take)
-		_rows[p] = {"status": status, "gun": gun, "give": give}
+		# Armour (22)
+		var wear := HBoxContainer.new()
+		wear.add_theme_constant_override("separation", 6)
+		col.add_child(wear)
+		var pieces := _armour_pieces()
+		var give_a := MenuButton.new()
+		give_a.name = "GiveArmour"
+		give_a.text = "Give armour"
+		give_a.flat = false
+		give_a.focus_mode = Control.FOCUS_NONE
+		give_a.add_theme_font_size_override("font_size", 14)
+		give_a.disabled = pieces.is_empty()
+		give_a.tooltip_text = "No clothing or armour in your backpack" if pieces.is_empty() else "A piece from your backpack"
+		var popa := give_a.get_popup()
+		for pc in pieces:
+			popa.add_item((pc[1] as ItemDefinition).display_name, pc[0])
+		popa.id_pressed.connect(func(index: int) -> void: request_give_armour(p, index))
+		wear.add_child(give_a)
+		var take_a := Button.new()
+		take_a.name = "TakeArmour"
+		take_a.text = "Take armour back"
+		take_a.focus_mode = Control.FOCUS_NONE
+		take_a.add_theme_font_size_override("font_size", 14)
+		take_a.disabled = p.armour.is_empty()
+		take_a.pressed.connect(func() -> void: request_take_armour(p))
+		wear.add_child(take_a)
+		var worn := _label("", 13, DIM)
+		worn.name = "Armour"
+		worn.clip_text = true
+		worn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		wear.add_child(worn)
+		_rows[p] = {"status": status, "gun": gun, "give": give, "armour": worn}
 
 
 func _refresh_sites(s: Settlement) -> void:
@@ -532,6 +564,30 @@ func _log_line(e: Dictionary, color: Color) -> Label:
 	var l := _label("%s   %s" % [Settlement.clock_text(float(e.get("hour", 0.0))), str(e.get("text", ""))], 13, color)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return l
+
+
+## Clothing and armour in your backpack: [slot index, item] (22).
+func _armour_pieces() -> Array:
+	var out := []
+	if player == null or player.inventory == null:
+		return out
+	for i in player.inventory.slot_count:
+		var it := player.inventory.get_slot_item(i)
+		if it != null and it.is_armour():
+			out.append([i, it])
+	return out
+
+
+func request_give_armour(p: Settler, index: int) -> void:
+	if settlement != null and player != null:
+		settlement.request_give_armour(player, p, index)
+		_rows_key = ""
+
+
+func request_take_armour(p: Settler) -> void:
+	if settlement != null and player != null:
+		settlement.request_take_armour(player, p)
+		_rows_key = ""
 
 
 ## Spare guns in your backpack: [slot index, item].

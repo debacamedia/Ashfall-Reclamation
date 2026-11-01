@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_mgdyn"]
+[ext_resource type="Texture2D" path="res://assets/icons/plated_trousers.png" id="1_tj7qh"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_tj7qh"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/plated_trousers.tscn" id="3_w1wag"]
+
+[resource]
+script = ExtResource("2_tj7qh")
+id = &"plated_trousers"
+display_name = "Plated Trousers"
+description = "Leather trousers with steel plates over the shins and thighs. A little slower."
+category = 9
+icon = ExtResource("1_tj7qh")
+max_stack = 1
+weight = 3.5
+base_value = 30
+world_model = ExtResource("3_w1wag")
+pickup_sound = ExtResource("1_mgdyn")
+armour_slot = 3
+armour_protection = 0.14
+armour_durability = 300.0
+armour_speed = 0.97
+armour_repair = {
+&"scrap_metal": 2
+}

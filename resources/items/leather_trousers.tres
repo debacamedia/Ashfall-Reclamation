@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_5r662"]
+[ext_resource type="Texture2D" path="res://assets/icons/leather_trousers.png" id="1_ftqik"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_ftqik"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/leather_trousers.tscn" id="3_c0vxm"]
+
+[resource]
+script = ExtResource("2_ftqik")
+id = &"leather_trousers"
+display_name = "Leather Trousers"
+description = "Leather trousers with patched knees."
+category = 9
+icon = ExtResource("1_ftqik")
+max_stack = 1
+weight = 1.2
+base_value = 15
+world_model = ExtResource("3_c0vxm")
+pickup_sound = ExtResource("1_5r662")
+armour_slot = 3
+armour_protection = 0.08
+armour_durability = 160.0
+armour_repair = {
+&"leather": 1
+}

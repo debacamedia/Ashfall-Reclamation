@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_ph4wg"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="2_m4qk1"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="3_j1jet"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_qvigs"]
+[ext_resource type="Resource" path="res://resources/items/plated_vest.tres" id="5_tlop6"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_rxdsi"]
+
+[resource]
+script = ExtResource("6_rxdsi")
+id = &"plated_vest"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_ph4wg"), int]({
+ExtResource("2_m4qk1"): 3,
+ExtResource("3_j1jet"): 2,
+ExtResource("4_qvigs"): 4
+})
+output = ExtResource("5_tlop6")
+craft_time = 12.0
