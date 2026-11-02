@@ -354,6 +354,9 @@ func refresh() -> void:
 	if posts > 0:
 		lines.append("Guard posts:  %d" % posts)
 	lines.append("Armory:  %s" % _armory_text(s))
+	if not s.armorer_spots().is_empty():
+		var smiths := s.members().filter(func(m: Settler) -> bool: return m.role == Settler.Role.ARMORER and m.has_arrived()).size()
+		lines.append("Armorer:  %s" % (s.armorer_status() if smiths > 0 else "nobody at the weapons bench (give someone the Armorer job)"))
 	match s.raid_phase:
 		Settlement.RaidPhase.WARNED:
 			lines.append("RAIDERS COMING from %s: %d, in about %d min" % [s.raid_from_name, s.raid_size, maxi(ceili(s.next_raid_in * s.hour_seconds / 60.0), 1)])
@@ -435,6 +438,8 @@ func _how_text(s: Settlement) -> String:
 		parts.append("Farmers turn water into vegetables in the stores.")
 	if not s.mine_spots().is_empty():
 		parts.append("Miners dig Scrap Metal out of the tunnel into the stores.")
+	if not s.armorer_spots().is_empty():
+		parts.append("Armorers make guns and rounds at the weapons bench from the stores' Scrap Metal (and Wood Planks, Electronics, Gunpowder) into the Armory Locker: haul the guns to your other places by truck.")
 	parts.append("Everyone eats a meal every %d hours from the stores%s." % [roundi(s.meal_every_hours),
 		"" if not s.farm_spots().is_empty() else ": bring food (the truck carries plenty)"])
 	parts.append("Guards take guns and rounds from the Armory Locker by themselves; in a raid everyone else shelters in %s." % s.shelter_name)
@@ -521,10 +526,11 @@ func _build_rows(people: Array[Settler]) -> void:
 		status.name = "Status"
 		status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		top.add_child(status)
-		var jobs := HBoxContainer.new()
-		jobs.add_theme_constant_override("separation", 6)
+		var jobs := HFlowContainer.new()  # wraps when there are more jobs than fit (23.5)
+		jobs.add_theme_constant_override("h_separation", 6)
+		jobs.add_theme_constant_override("v_separation", 4)
 		col.add_child(jobs)
-		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.MINER, Settler.Role.COOK, Settler.Role.RANCHER, Settler.Role.NONE]:
+		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.MINER, Settler.Role.ARMORER, Settler.Role.COOK, Settler.Role.RANCHER, Settler.Role.NONE]:
 			var b := Button.new()
 			b.name = "Job_%s" % Settler.ROLE_NAMES[r]
 			b.text = Settler.ROLE_NAMES[r]

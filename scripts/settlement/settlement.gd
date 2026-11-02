@@ -131,6 +131,13 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 @export var woodcutter_planks_per_hour := 3.0
 ## Scrap Metal a working Miner digs out into the stores each hour (23).
 @export var miner_scrap_per_hour := 2.0
+## The armory (23.5): an Armorer keeps the Armory Locker stocked with this
+## many guns, and this many rounds for each kind of gun here…
+@export var armory_gun_target := 4
+@export var armory_round_target := 90
+## …taking this many hours to make a gun, or a batch of rounds.
+@export var armory_gun_hours := 4.0
+@export var armory_ammo_hours := 1.0
 ## Health a Builder puts back into something damaged, an hour (20.1).
 @export var builder_repair_per_hour := 400.0
 
@@ -185,6 +192,11 @@ var arrival_in := 0.0
 var _food_progress := 0.0
 var _plank_progress := 0.0
 var _scrap_progress := 0.0
+## What the Armorer's making (23.5): the item id, and hours put in. Its
+## materials came out of the stores when they started.
+var _armory_job := &""
+var _armory_progress := 0.0
+var _armory_state := ""
 var _next_id := 1
 var _armory_check := 0.0
 ## The settlement's own plan has been laid out as sites (on claiming).
@@ -905,6 +917,8 @@ func request_set_role(player: Node3D, s: Settler, role: Settler.Role) -> bool:
 ## Why nobody can be given `role` here yet ("" if they can): a Cook needs a
 ## Kitchen, a Rancher a pen (21.5).
 func role_refusal_reason(role: Settler.Role) -> String:
+	if role == Settler.Role.ARMORER and armorer_spots().is_empty():
+		return "No weapons bench here: Armorers work at Northwatch's armory"
 	if role == Settler.Role.MINER and mine_spots().is_empty():
 		return "No mine here: Miners work at Black Ridge Mine"
 	if role == Settler.Role.WOODCUTTER and wood_spots().is_empty():
@@ -1245,6 +1259,7 @@ func simulate(hours: float) -> void:
 	_simulate_animals(hours, here)
 	_simulate_cooking(hours, here)
 	_simulate_tanning(hours)
+	_simulate_armory(hours, here)
 	_simulate_first_aid(here)
 	# Building: each working Builder mends what's damaged, else puts their
 	# hours into the current site
@@ -1263,6 +1278,188 @@ func simulate(hours: float) -> void:
 		arrival_in = arrival_every_hours
 		if free_beds() > 0 and food() + fridge_meals() >= arrival_food_needed:
 			spawn_newcomer()
+
+
+# ---------------------------------------------------------------- the armory (23.5)
+
+## The guns an Armorer makes, best first.
+const ARMORY_GUNS := [&"service_rifle", &"shotgun", &"pistol", &"pipe_pistol"]
+
+
+## Where Armorers work: in front of a weapons bench.
+func armorer_spots() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var g := get_node_or_null("ArmorerSpots")
+	if g != null:
+		for c in g.get_children():
+			if c is Node3D:
+				out.append(c)
+	return out
+
+
+## Guns in the Armory Locker.
+func armory_guns() -> int:
+	if armory == null:
+		return 0
+	var n := 0
+	for i in armory.inventory.slot_count:
+		var it := armory.inventory.get_slot_item(i)
+		if it != null and it.weapon != null and not it.weapon.melee:
+			n += armory.inventory.get_slot_quantity(i)
+	return n
+
+
+## "Making a Pistol (40%)", "Armory stocked", or what's missing.
+func armorer_status() -> String:
+	if _armory_job != &"":
+		var it := ItemDatabase.get_item(_armory_job)
+		var total := armory_gun_hours if it != null and it.weapon != null else armory_ammo_hours
+		return "Making %s (%d%%)" % [_a_name(it), roundi(clampf(_armory_progress / total, 0.0, 1.0) * 100.0)]
+	return _armory_state if _armory_state != "" else "Waiting for materials"
+
+
+func _a_name(it: ItemDefinition) -> String:
+	if it == null:
+		return "something"
+	if it.weapon != null:
+		return ("an " if "AEIOU".contains(it.display_name.left(1)) else "a ") + it.display_name
+	return it.display_name
+
+
+func _simulate_armory(hours: float, here: Array) -> void:
+	var spots := armorer_spots().size()
+	if spots <= 0 or armory == null:
+		return
+	var smiths := mini(here.filter(func(s: Settler) -> bool: return s.role == Settler.Role.ARMORER and s.is_working()).size(), spots)
+	if smiths <= 0:
+		return
+	var work := hours * smiths
+	var guard := 0
+	while work > 0.0 and guard < 20:
+		guard += 1
+		if _armory_job == &"" and not _start_armory_job():
+			return
+		var it := ItemDatabase.get_item(_armory_job)
+		var total := armory_gun_hours if it.weapon != null else armory_ammo_hours
+		var step := minf(work, total - _armory_progress)
+		_armory_progress += step
+		work -= step
+		if _armory_progress >= total - 0.0001:
+			_finish_armory_job()
+
+
+## Picks what to make next and takes its materials from the stores. False
+## (with `_armory_state` saying why) if there's nothing to do.
+func _start_armory_job() -> bool:
+	# Rounds first, for the guns here (in the locker or carried by guards)…
+	var kinds := {}
+	for i in armory.inventory.slot_count:
+		var it := armory.inventory.get_slot_item(i)
+		if it != null and it.weapon != null and not it.weapon.melee:
+			kinds[it.weapon.ammo_type] = true
+	for m in members():
+		if m.gun != null and m.gun.weapon != null:
+			kinds[m.gun.weapon.ammo_type] = true
+	var short_of := ""
+	for t: StringName in kinds:
+		var ammo := ItemDatabase.find_ammo_item(t)
+		if ammo == null or armory.inventory.count_of(ammo.id) >= armory_round_target:
+			continue
+		if _commit_recipe_for(ammo.id):
+			_armory_job = ammo.id
+			_armory_progress = 0.0
+			return true
+		short_of = ammo.display_name
+	# …then guns, the best the stores have the makings of
+	if armory_guns() < armory_gun_target:
+		for id: StringName in ARMORY_GUNS:
+			if _commit_recipe_for(id):
+				_armory_job = id
+				_armory_progress = 0.0
+				return true
+		_armory_state = "Nothing to make a gun from: needs Scrap Metal in the stores"
+		return false
+	_armory_state = "Armory stocked" if short_of == "" else "Armory stocked; no makings for %s (it needs Gunpowder)" % short_of
+	return false
+
+
+func _finish_armory_job() -> void:
+	var it := ItemDatabase.get_item(_armory_job)
+	var n := 1
+	if it != null and it.weapon == null:
+		var r := _recipes_for(_armory_job)
+		n = r[0].output_quantity if not r.is_empty() else 1
+	var left := armory.inventory.add_item(it, n) if it != null else n
+	left = n - left
+	if left > 0:
+		_put_in_stores(_armory_job, left)
+	if it != null:
+		notice.emit("The Armorer made %s%s" % [_a_name(it) if it.weapon != null else "%d %s" % [n, it.display_name], " for the Armory Locker" if left <= 0 else ""])
+	_armory_job = &""
+	_armory_progress = 0.0
+
+
+## Recipes that make `id` that an Armorer can follow (by hand, at a
+## workbench or a weapons bench), the biggest batches first.
+func _recipes_for(id: StringName) -> Array[RecipeDefinition]:
+	var out: Array[RecipeDefinition] = []
+	for r in RecipeDatabase.all_recipes():
+		if r.output != null and r.output.id == id and r.station != RecipeDefinition.Station.STOVE:
+			out.append(r)
+	out.sort_custom(func(a: RecipeDefinition, b: RecipeDefinition) -> bool: return a.output_quantity > b.output_quantity)
+	return out
+
+
+## Works out whether the stores have the makings of one batch of `id`,
+## making the parts it needs from what's there (pipes from scrap, a
+## receiver from plate and a spring…). If they do, takes it all out of the
+## stores (anything left over from a part goes back) and returns true.
+func _commit_recipe_for(id: StringName) -> bool:
+	for r in _recipes_for(id):
+		var avail := {}
+		var ok := true
+		for input: ItemDefinition in r.inputs:
+			if not _plan_make(input.id, r.inputs[input], avail, 0):
+				ok = false
+				break
+		if not ok:
+			continue
+		for k: StringName in avail:
+			var d := int(avail[k]) - _stores_count(k)
+			if d < 0:
+				_take_id(k, -d)
+			elif d > 0:
+				_put_in_stores(k, d)
+		return true
+	return false
+
+
+## Plans `count` of `id` out of `avail` (what the stores hold, as it would be
+## after what's planned so far), making what's short from its own recipe.
+func _plan_make(id: StringName, count: int, avail: Dictionary, depth: int) -> bool:
+	if not avail.has(id):
+		avail[id] = _stores_count(id)
+	var use := mini(int(avail[id]), count)
+	avail[id] = int(avail[id]) - use
+	var need := count - use
+	if need <= 0:
+		return true
+	if depth > 5:
+		return false
+	for r in _recipes_for(id):
+		var trial := avail.duplicate()
+		var crafts := ceili(float(need) / r.output_quantity)
+		var ok := true
+		for input: ItemDefinition in r.inputs:
+			if not _plan_make(input.id, r.inputs[input] * crafts, trial, depth + 1):
+				ok = false
+				break
+		if ok:
+			trial[id] = int(trial.get(id, 0)) + crafts * r.output_quantity - need
+			avail.clear()
+			avail.merge(trial)
+			return true
+	return false
 
 
 # ---------------------------------------------------------------- first aid (22.1)
@@ -2092,6 +2289,7 @@ const LAYOUT := 2
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
 		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
+		"armory_job": String(_armory_job), "armory_progress": _armory_progress,
 		"meal_credit": _meal_credit, "cook_progress": _cook_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
 		"raid_from_name": raid_from_name, "raid_size": raid_size,
@@ -2111,6 +2309,9 @@ func load_state(data: Dictionary) -> void:
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
 	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
 	_scrap_progress = clampf(_num(data.get("scrap_progress"), 0.0), 0.0, 1.0)
+	var job := StringName(str(data.get("armory_job", "")))
+	_armory_job = job if job == &"" or ItemDatabase.get_item(job) != null else &""
+	_armory_progress = maxf(_num(data.get("armory_progress"), 0.0), 0.0)
 	_meal_credit = clampf(_num(data.get("meal_credit"), 0.0), 0.0, 10.0)
 	_cook_progress = clampf(_num(data.get("cook_progress"), 0.0), 0.0, 1.0)
 	# The log and its clock (20.5)

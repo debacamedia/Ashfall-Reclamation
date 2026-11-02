@@ -118,6 +118,14 @@ func _run() -> void:
 	lamp.position.y = 1.69
 	_add(v, lamp)
 	_box(lamp, "Lamp", Vector3(0.08, 0.06, 0.04), Vector3(0, 0.06, -0.16), _mat("lamp_glass", Color(1.0, 0.95, 0.7), 0.2))
+	# An Armorer's goggles, pushed up on the forehead (23.5)
+	var gog := Node3D.new()
+	gog.name = "Goggles"
+	gog.position.y = 1.69
+	_add(v, gog)
+	_box(gog, "Strap", Vector3(0.34, 0.04, 0.34), Vector3(0, -0.02, 0), _mat("leather", Color(0.42, 0.28, 0.16)))
+	_box(gog, "LensL", Vector3(0.08, 0.06, 0.04), Vector3(-0.06, -0.01, -0.17), _mat("goggle_glass", Color(0.35, 0.55, 0.5), 0.2))
+	_box(gog, "LensR", Vector3(0.08, 0.06, 0.04), Vector3(0.06, -0.01, -0.17), _mat("goggle_glass", Color(0.35, 0.55, 0.5), 0.2))
 	var belt := Node3D.new()
 	belt.name = "ToolBelt"
 	_add(v, belt)

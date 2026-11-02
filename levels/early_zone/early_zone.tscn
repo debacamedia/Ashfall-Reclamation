@@ -85,16 +85,16 @@ size = Vector3(171.54909, 90, 2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_dw4mt"]
 size = Vector3(100.78722, 90, 2)
 
-[node name="EarlyZone" type="Node3D" unique_id=1998348265]
+[node name="EarlyZone" type="Node3D" unique_id=1964944872]
 script = ExtResource("1_ory7y")
 metadata/region_name = "Early Zone"
 
-[node name="Lighting" type="Node3D" parent="." unique_id=1054188069]
+[node name="Lighting" type="Node3D" parent="." unique_id=2147239693]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=424203973]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=1140120346]
 environment = ExtResource("2_gsck7")
 
-[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=487284099]
+[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=342589023]
 transform = Transform3D(0.81915206, 0.35312894, -0.45198444, 0, 0.7880108, 0.6156615, 0.57357645, -0.5043204, 0.64550066, 0, 0, 0)
 light_color = Color(1, 0.93, 0.83, 1)
 light_energy = 1.2
@@ -127,146 +127,146 @@ metadata/region_name = "Ash Creek Farms"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 150, 0, -395)
 metadata/region_name = "Smuggler's Gulch"
 
-[node name="BlackRidgeMine" type="Node3D" parent="." unique_id=231562120 instance=ExtResource("11_84pll")]
+[node name="BlackRidgeMine" type="Node3D" parent="." unique_id=886530227 instance=ExtResource("11_84pll")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 262, 0, -552)
 metadata/region_name = "Black Ridge Mine"
 
-[node name="NorthwatchOutpost" type="Node3D" parent="." unique_id=1266137765 instance=ExtResource("12_mjj7m")]
+[node name="NorthwatchOutpost" type="Node3D" parent="." unique_id=2043884928 instance=ExtResource("12_mjj7m")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 400, 0, -680)
 metadata/region_name = "Northwatch Outpost"
 
-[node name="Landmarks" type="Node3D" parent="." unique_id=674012097]
+[node name="Landmarks" type="Node3D" parent="." unique_id=1720389994]
 
-[node name="Outpost17" type="Marker3D" parent="Landmarks" unique_id=2032954221]
+[node name="Outpost17" type="Marker3D" parent="Landmarks" unique_id=343467587]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 5)
 script = ExtResource("13_b3cwp")
 display_name = "Outpost 17"
 radius = 85.0
 compass_name = "Outpost 17"
 
-[node name="HaldensCrossing" type="Marker3D" parent="Landmarks" unique_id=1475397621]
+[node name="HaldensCrossing" type="Marker3D" parent="Landmarks" unique_id=510559355]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 450, 2, -275)
 script = ExtResource("13_b3cwp")
 display_name = "Halden's Crossing"
 radius = 115.0
 compass_name = "Halden's"
 
-[node name="SaintMercyClinic" type="Marker3D" parent="Landmarks" unique_id=9849820]
+[node name="SaintMercyClinic" type="Marker3D" parent="Landmarks" unique_id=2027872834]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 245, 2, -205)
 script = ExtResource("13_b3cwp")
 display_name = "Saint Mercy Clinic"
 radius = 50.0
 compass_name = "Saint Mercy"
 
-[node name="AshCreekFarms" type="Marker3D" parent="Landmarks" unique_id=1827882656]
+[node name="AshCreekFarms" type="Marker3D" parent="Landmarks" unique_id=2144121944]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 307, 2, -106)
 script = ExtResource("13_b3cwp")
 display_name = "Ash Creek Farms"
 radius = 80.0
 compass_name = "Ash Creek"
 
-[node name="SmugglersGulch" type="Marker3D" parent="Landmarks" unique_id=962396200]
+[node name="SmugglersGulch" type="Marker3D" parent="Landmarks" unique_id=2097883394]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 150, 2, -395)
 script = ExtResource("13_b3cwp")
 display_name = "Smuggler's Gulch"
 compass_name = "Smuggler's Gulch"
 
-[node name="BlackRidgeMine" type="Marker3D" parent="Landmarks" unique_id=1835914391]
+[node name="BlackRidgeMine" type="Marker3D" parent="Landmarks" unique_id=1896323659]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 262, 2, -552)
 script = ExtResource("13_b3cwp")
 display_name = "Black Ridge Mine"
 radius = 55.0
 compass_name = "Black Ridge"
 
-[node name="NorthwatchOutpost" type="Marker3D" parent="Landmarks" unique_id=364993658]
+[node name="NorthwatchOutpost" type="Marker3D" parent="Landmarks" unique_id=685834674]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 400, 2, -680)
 script = ExtResource("13_b3cwp")
 display_name = "Northwatch Outpost"
 radius = 45.0
 compass_name = "Northwatch"
 
-[node name="Boundary" type="Node3D" parent="." unique_id=1803589222]
+[node name="Boundary" type="Node3D" parent="." unique_id=1648354936]
 script = ExtResource("14_krgp3")
 polygon = PackedVector2Array(-135, 135, -160, 40, -150, -80, -120, -185, -60, -320, 40, -470, 120, -640, 250, -770, 420, -800, 540, -745, 610, -580, 650, -400, 660, -230, 610, -70, 480, 50, 300, 115, 120, 150, -40, 160)
 edge_kinds = PackedByteArray(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-[node name="Backstop" type="StaticBody3D" parent="Boundary" unique_id=1794048264 groups=["navigation_geometry"]]
+[node name="Backstop" type="StaticBody3D" parent="Boundary" unique_id=614477160 groups=["navigation_geometry"]]
 collision_layer = 2
 collision_mask = 0
 
-[node name="Wall0" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=352897717]
+[node name="Wall0" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1122053882]
 transform = Transform3D(-0.25449336, 0, 0.9670745, 0, 1, 0, -0.9670745, 0, -0.25449336, -153.4312, 35, 104.25522)
 shape = SubResource("BoxShape3D_d3xfe")
 
-[node name="Wall1" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1775453994]
+[node name="Wall1" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=3848766]
 transform = Transform3D(0.08304565, 0, 0.99654573, 0, 1, 0, -0.99654573, 0, 0.08304565, -164.99619, 35, -20.461693)
 shape = SubResource("BoxShape3D_d8h24")
 
-[node name="Wall2" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1930670788]
+[node name="Wall2" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=165403561]
 transform = Transform3D(0.27472112, 0, 0.96152395, 0, 1, 0, -0.96152395, 0, 0.27472112, -122.98595, 35, -210.9497)
 shape = SubResource("BoxShape3D_dtwku")
 
-[node name="Wall3" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1730831562]
+[node name="Wall3" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1096310364]
 transform = Transform3D(-0.406142, 0, -0.91380996, 0, 1, 0, 0.91380996, 0, -0.406142, -87.11191, 35, -337.78906)
 shape = SubResource("BoxShape3D_87nxd")
 
-[node name="Wall4" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=2075281172]
+[node name="Wall4" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1284846382]
 transform = Transform3D(0.5547002, 0, 0.83205026, 0, 1, 0, -0.83205026, 0, 0.5547002, -38.039516, 35, -410.62955)
 shape = SubResource("BoxShape3D_pwgfa")
 
-[node name="Wall5" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=133897618]
+[node name="Wall5" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1245419398]
 transform = Transform3D(0.4257971, 0, 0.90481865, 0, 1, 0, -0.90481865, 0, 0.4257971, 52.74039, 35, -572.2265)
 shape = SubResource("BoxShape3D_08dqa")
 
-[node name="Wall6" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1930775010]
+[node name="Wall6" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=660497068]
 transform = Transform3D(0.7071067, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, 0.7071067, 163.96446, 35, -729.21936)
 shape = SubResource("BoxShape3D_m4hng")
 
-[node name="Wall7" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=945445026]
+[node name="Wall7" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=983749231]
 transform = Transform3D(0.9847836, 0, 0.17378518, 0, 1, 0, -0.17378518, 0, 0.9847836, 329.3844, 35, -816.5034)
 shape = SubResource("BoxShape3D_ig2s4")
 
-[node name="Wall8" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1741862723]
+[node name="Wall8" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1134913644]
 transform = Transform3D(0.90906495, 0, -0.4166545, 0, 1, 0, 0.4166545, 0, 0.90906495, 494.43817, 35, -801.0835)
 shape = SubResource("BoxShape3D_1tuci")
 
-[node name="Wall9" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=2021663242]
+[node name="Wall9" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1434557469]
 transform = Transform3D(0.3905499, 0, -0.92058176, 0, 1, 0, 0.92058176, 0, 0.3905499, 602.6076, 35, -679.3607)
 shape = SubResource("BoxShape3D_2fro5")
 
-[node name="Wall10" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=951130434]
+[node name="Wall10" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1230717226]
 transform = Transform3D(0.2169304, 0, -0.97618705, 0, 1, 0, 0.97618705, 0, 0.2169304, 661.19836, 35, -497.12003)
 shape = SubResource("BoxShape3D_26cx8")
 
-[node name="Wall11" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=408842816]
+[node name="Wall11" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1176470736]
 transform = Transform3D(0.05872191, 0, -0.9982744, 0, 1, 0, 0.9982744, 0, 0.05872191, 687.04126, 35, -315.23892)
 shape = SubResource("BoxShape3D_r8g2b")
 
-[node name="Wall12" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=2122623700]
+[node name="Wall12" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=603522377]
 transform = Transform3D(-0.29827487, 0, -0.95448, 0, 1, 0, 0.95448, 0, -0.29827487, 665.1399, 35, -139.16415)
 shape = SubResource("BoxShape3D_kvo46")
 
-[node name="Wall13" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=206710215]
+[node name="Wall13" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1761770428]
 transform = Transform3D(-0.7348033, 0, -0.67828023, 0, 1, 0, 0.67828023, 0, -0.7348033, 567.4718, 35, 12.805828)
 shape = SubResource("BoxShape3D_dlgwe")
 
-[node name="Wall14" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=686053062]
+[node name="Wall14" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1970574648]
 transform = Transform3D(-0.9405539, 0, -0.33964452, 0, 1, 0, 0.33964452, 0, -0.9405539, 402.7456, 35, 111.91992)
 shape = SubResource("BoxShape3D_dilfs")
 
-[node name="Wall15" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1542647191]
+[node name="Wall15" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1218784152]
 transform = Transform3D(-0.9816154, 0, -0.19086963, 0, 1, 0, 0.19086963, 0, -0.9816154, 216.30405, 35, 163.87354)
 shape = SubResource("BoxShape3D_k4k8w")
 
-[node name="Wall16" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=1593108104]
+[node name="Wall16" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=745242629]
 transform = Transform3D(-0.9980526, 0, -0.062378325, 0, 1, 0, 0.062378325, 0, -0.9980526, 40.457664, 35, 187.03384)
 shape = SubResource("BoxShape3D_8eyut")
 
-[node name="Wall17" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=2097469301]
+[node name="Wall17" type="CollisionShape3D" parent="Boundary/Backstop" unique_id=53693876]
 transform = Transform3D(-0.9670746, 0, 0.25449324, 0, 1, 0, -0.25449324, 0, -0.9670746, -89.95396, 35, 179.9437)
 shape = SubResource("BoxShape3D_dw4mt")
 
-[node name="Timber" type="Node3D" parent="." unique_id=1431746994]
+[node name="Timber" type="Node3D" parent="." unique_id=236395544]
 
 [node name="DeadTree0" type="Area3D" parent="Timber" unique_id=733624437 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.53726953, 0, -0.9209098, 0, 1.066177, 0, 0.9209098, 0, -0.53726953, 138.44772, 0, 2.2882786)
@@ -276,7 +276,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree1" type="Area3D" parent="Timber" unique_id=125046696 instance=ExtResource("15_a2oed")]
+[node name="DeadTree1" type="Area3D" parent="Timber" unique_id=181825681 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.086462386, 0, -1.0704322, 0, 1.0739185, 0, 1.0704322, 0, 0.086462386, 144.57114, 0, 7.1582355)
 collision_layer = 16
 collision_mask = 0
@@ -284,7 +284,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree2" type="Area3D" parent="Timber" unique_id=1761529301 instance=ExtResource("15_a2oed")]
+[node name="DeadTree2" type="Area3D" parent="Timber" unique_id=444853905 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.17331058, 0, -0.8571222, 0, 0.8744684, 0, 0.8571222, 0, 0.17331058, 160.22874, 0, 5.437463)
 collision_layer = 16
 collision_mask = 0
@@ -292,7 +292,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree3" type="Area3D" parent="Timber" unique_id=866142055 instance=ExtResource("15_a2oed")]
+[node name="DeadTree3" type="Area3D" parent="Timber" unique_id=1751899847 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.53023934, 0, 0.73799646, 0, 0.9087313, 0, -0.73799646, 0, 0.53023934, 144.57191, 0, 22.481134)
 collision_layer = 16
 collision_mask = 0
@@ -300,7 +300,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree4" type="Area3D" parent="Timber" unique_id=915844799 instance=ExtResource("15_a2oed")]
+[node name="DeadTree4" type="Area3D" parent="Timber" unique_id=1642317624 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.6196154, 0, -0.8968366, 0, 1.0900638, 0, 0.8968366, 0, -0.6196154, 140.01247, 0, 23.679146)
 collision_layer = 16
 collision_mask = 0
@@ -308,7 +308,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree5" type="Area3D" parent="Timber" unique_id=882308112 instance=ExtResource("15_a2oed")]
+[node name="DeadTree5" type="Area3D" parent="Timber" unique_id=448763041 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.934447, 0, 0.50554395, 0, 1.062434, 0, -0.50554395, 0, -0.934447, 168.39948, 0, -8.529076)
 collision_layer = 16
 collision_mask = 0
@@ -327,7 +327,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog7" type="Area3D" parent="Timber" unique_id=1186409674 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog7" type="Area3D" parent="Timber" unique_id=1144713767 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.61089987, 0, 0.7917079, 0, 1, 0, -0.7917079, 0, -0.61089987, 166.47034, 0, 21.940548)
 collision_layer = 16
 collision_mask = 0
@@ -338,7 +338,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree8" type="Area3D" parent="Timber" unique_id=1003113474 instance=ExtResource("15_a2oed")]
+[node name="DeadTree8" type="Area3D" parent="Timber" unique_id=1968304509 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.8613301, 0, -0.5998138, 0, 1.0496029, 0, 0.5998138, 0, 0.8613301, 199.42206, 0, -94.80586)
 collision_layer = 16
 collision_mask = 0
@@ -346,7 +346,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree9" type="Area3D" parent="Timber" unique_id=867490060 instance=ExtResource("15_a2oed")]
+[node name="DeadTree9" type="Area3D" parent="Timber" unique_id=93096138 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.9285945, 0, 0.57257664, 0, 1.0909317, 0, -0.57257664, 0, 0.9285945, 195.3703, 0, -124.04026)
 collision_layer = 16
 collision_mask = 0
@@ -354,7 +354,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree10" type="Area3D" parent="Timber" unique_id=682918380 instance=ExtResource("15_a2oed")]
+[node name="DeadTree10" type="Area3D" parent="Timber" unique_id=1585855585 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.42648405, 0, -0.99448454, 0, 1.0820758, 0, 0.99448454, 0, 0.42648405, 179.67201, 0, -129.3185)
 collision_layer = 16
 collision_mask = 0
@@ -362,7 +362,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree11" type="Area3D" parent="Timber" unique_id=1430526213 instance=ExtResource("15_a2oed")]
+[node name="DeadTree11" type="Area3D" parent="Timber" unique_id=1240190846 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.9497342, 0, -0.02171076, 0, 0.94998235, 0, 0.02171076, 0, -0.9497342, 202.55309, 0, -109.974075)
 collision_layer = 16
 collision_mask = 0
@@ -370,7 +370,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree12" type="Area3D" parent="Timber" unique_id=654069211 instance=ExtResource("15_a2oed")]
+[node name="DeadTree12" type="Area3D" parent="Timber" unique_id=511577724 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.8069135, 0, 0.33163494, 0, 0.87240535, 0, -0.33163494, 0, -0.8069135, 178.59082, 0, -134.8975)
 collision_layer = 16
 collision_mask = 0
@@ -378,7 +378,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree13" type="Area3D" parent="Timber" unique_id=399733318 instance=ExtResource("15_a2oed")]
+[node name="DeadTree13" type="Area3D" parent="Timber" unique_id=1868031319 instance=ExtResource("15_a2oed")]
 transform = Transform3D(1.1554229, 0, -0.08580362, 0, 1.1586045, 0, 0.08580362, 0, 1.1554229, 184.55728, 0, -139.24844)
 collision_layer = 16
 collision_mask = 0
@@ -386,7 +386,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog14" type="Area3D" parent="Timber" unique_id=170103931 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog14" type="Area3D" parent="Timber" unique_id=1383563953 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(0.88685423, 0, -0.46204928, 0, 1, 0, 0.46204928, 0, 0.88685423, 168.07237, 0, -117.59094)
 collision_layer = 16
 collision_mask = 0
@@ -397,7 +397,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog15" type="Area3D" parent="Timber" unique_id=1903557680 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog15" type="Area3D" parent="Timber" unique_id=1348080451 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.96167755, 0, -0.27418303, 0, 1, 0, 0.27418303, 0, -0.96167755, 189.97119, 0, -116.366)
 collision_layer = 16
 collision_mask = 0
@@ -408,7 +408,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree16" type="Area3D" parent="Timber" unique_id=743811949 instance=ExtResource("15_a2oed")]
+[node name="DeadTree16" type="Area3D" parent="Timber" unique_id=1678889892 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.8750122, 0, 0.25845736, 0, 0.9123851, 0, -0.25845736, 0, -0.8750122, 409.01257, 0, -21.733007)
 collision_layer = 16
 collision_mask = 0
@@ -416,7 +416,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree17" type="Area3D" parent="Timber" unique_id=1056114366 instance=ExtResource("15_a2oed")]
+[node name="DeadTree17" type="Area3D" parent="Timber" unique_id=154408938 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.64164793, 0, 0.8180429, 0, 1.0396664, 0, -0.8180429, 0, -0.64164793, 385.77362, 0, -45.81053)
 collision_layer = 16
 collision_mask = 0
@@ -424,7 +424,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree18" type="Area3D" parent="Timber" unique_id=538451095 instance=ExtResource("15_a2oed")]
+[node name="DeadTree18" type="Area3D" parent="Timber" unique_id=487497997 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.068951964, 0, -0.97007614, 0, 0.97252357, 0, 0.97007614, 0, 0.068951964, 405.45987, 0, -54.22936)
 collision_layer = 16
 collision_mask = 0
@@ -432,7 +432,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree19" type="Area3D" parent="Timber" unique_id=993516269 instance=ExtResource("15_a2oed")]
+[node name="DeadTree19" type="Area3D" parent="Timber" unique_id=434763981 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.85819966, 0, 0.08640671, 0, 0.8625386, 0, -0.08640671, 0, -0.85819966, 396.16864, 0, -15.822687)
 collision_layer = 16
 collision_mask = 0
@@ -440,7 +440,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree20" type="Area3D" parent="Timber" unique_id=303992767 instance=ExtResource("15_a2oed")]
+[node name="DeadTree20" type="Area3D" parent="Timber" unique_id=1093125162 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-1.1008828, 0, -0.10362807, 0, 1.1057494, 0, 0.10362807, 0, -1.1008828, 374.1339, 0, -31.465147)
 collision_layer = 16
 collision_mask = 0
@@ -448,7 +448,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree21" type="Area3D" parent="Timber" unique_id=1526090790 instance=ExtResource("15_a2oed")]
+[node name="DeadTree21" type="Area3D" parent="Timber" unique_id=344109549 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.27357122, 0, -0.935418, 0, 0.9746015, 0, 0.935418, 0, 0.27357122, 406.3617, 0, -35.046207)
 collision_layer = 16
 collision_mask = 0
@@ -456,7 +456,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog22" type="Area3D" parent="Timber" unique_id=166494023 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog22" type="Area3D" parent="Timber" unique_id=1006157445 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.9975775, 0, 0.06956382, 0, 1, 0, -0.06956382, 0, -0.9975775, 391.1258, 0, -21.026756)
 collision_layer = 16
 collision_mask = 0
@@ -467,7 +467,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog23" type="Area3D" parent="Timber" unique_id=971728302 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog23" type="Area3D" parent="Timber" unique_id=2575699 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(0.33382708, 0, -0.94263434, 0, 1, 0, 0.94263434, 0, 0.33382708, 404.84027, 0, -27.120045)
 collision_layer = 16
 collision_mask = 0
@@ -478,7 +478,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree24" type="Area3D" parent="Timber" unique_id=383315660 instance=ExtResource("15_a2oed")]
+[node name="DeadTree24" type="Area3D" parent="Timber" unique_id=64795255 instance=ExtResource("15_a2oed")]
 transform = Transform3D(1.1376368, 0, 0.26536757, 0, 1.1681769, 0, -0.26536757, 0, 1.1376368, 535.41565, 0, -50.932194)
 collision_layer = 16
 collision_mask = 0
@@ -486,7 +486,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree25" type="Area3D" parent="Timber" unique_id=2109640488 instance=ExtResource("15_a2oed")]
+[node name="DeadTree25" type="Area3D" parent="Timber" unique_id=2006800027 instance=ExtResource("15_a2oed")]
 transform = Transform3D(1.1547538, 0, 0.3232779, 0, 1.1991518, 0, -0.3232779, 0, 1.1547538, 502.0231, 0, -65.27533)
 collision_layer = 16
 collision_mask = 0
@@ -494,7 +494,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree26" type="Area3D" parent="Timber" unique_id=1015107571 instance=ExtResource("15_a2oed")]
+[node name="DeadTree26" type="Area3D" parent="Timber" unique_id=1514981560 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.5449045, 0, -0.7286193, 0, 0.9098389, 0, 0.7286193, 0, 0.5449045, 523.63165, 0, -43.28901)
 collision_layer = 16
 collision_mask = 0
@@ -502,7 +502,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree27" type="Area3D" parent="Timber" unique_id=1205010238 instance=ExtResource("15_a2oed")]
+[node name="DeadTree27" type="Area3D" parent="Timber" unique_id=570755968 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.072574094, 0, 1.1350212, 0, 1.137339, 0, -1.1350212, 0, 0.072574094, 516.5886, 0, -50.968376)
 collision_layer = 16
 collision_mask = 0
@@ -510,7 +510,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree28" type="Area3D" parent="Timber" unique_id=787854599 instance=ExtResource("15_a2oed")]
+[node name="DeadTree28" type="Area3D" parent="Timber" unique_id=1183822231 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.5534965, 0, -1.0128, 0, 1.154176, 0, 1.0128, 0, -0.5534965, 491.0045, 0, -69.76598)
 collision_layer = 16
 collision_mask = 0
@@ -518,7 +518,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree29" type="Area3D" parent="Timber" unique_id=473357695 instance=ExtResource("15_a2oed")]
+[node name="DeadTree29" type="Area3D" parent="Timber" unique_id=1130417480 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.37496385, 0, 1.0652746, 0, 1.1293396, 0, -1.0652746, 0, -0.37496385, 496.2431, 0, -61.41621)
 collision_layer = 16
 collision_mask = 0
@@ -526,7 +526,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog30" type="Area3D" parent="Timber" unique_id=592104120 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog30" type="Area3D" parent="Timber" unique_id=1848549756 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(0.3783186, 0, 0.92567545, 0, 1, 0, -0.92567545, 0, 0.3783186, 538.27673, 0, -39.987473)
 collision_layer = 16
 collision_mask = 0
@@ -537,7 +537,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog31" type="Area3D" parent="Timber" unique_id=363046324 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog31" type="Area3D" parent="Timber" unique_id=112620890 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.002612576, 0, -0.9999966, 0, 1, 0, 0.9999966, 0, -0.002612576, 489.346, 0, -61.260517)
 collision_layer = 16
 collision_mask = 0
@@ -548,7 +548,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree32" type="Area3D" parent="Timber" unique_id=774040595 instance=ExtResource("15_a2oed")]
+[node name="DeadTree32" type="Area3D" parent="Timber" unique_id=1222347005 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.879953, 0, 0.75981236, 0, 1.1625972, 0, -0.75981236, 0, -0.879953, 338.04935, 0, -355.92438)
 collision_layer = 16
 collision_mask = 0
@@ -556,7 +556,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree33" type="Area3D" parent="Timber" unique_id=960162744 instance=ExtResource("15_a2oed")]
+[node name="DeadTree33" type="Area3D" parent="Timber" unique_id=777290290 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.8526104, 0, 0.3889221, 0, 0.93712586, 0, -0.3889221, 0, 0.8526104, 305.1208, 0, -325.36658)
 collision_layer = 16
 collision_mask = 0
@@ -564,7 +564,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree34" type="Area3D" parent="Timber" unique_id=1722632150 instance=ExtResource("15_a2oed")]
+[node name="DeadTree34" type="Area3D" parent="Timber" unique_id=933444144 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.4019602, 0, -0.79704696, 0, 0.89266783, 0, 0.79704696, 0, 0.4019602, 316.3753, 0, -353.69537)
 collision_layer = 16
 collision_mask = 0
@@ -572,7 +572,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree35" type="Area3D" parent="Timber" unique_id=1641667218 instance=ExtResource("15_a2oed")]
+[node name="DeadTree35" type="Area3D" parent="Timber" unique_id=1815449110 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.80666965, 0, -0.5185832, 0, 0.9589809, 0, 0.5185832, 0, 0.80666965, 312.3908, 0, -331.6101)
 collision_layer = 16
 collision_mask = 0
@@ -580,7 +580,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree36" type="Area3D" parent="Timber" unique_id=624179964 instance=ExtResource("15_a2oed")]
+[node name="DeadTree36" type="Area3D" parent="Timber" unique_id=1438100198 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.68046993, 0, -0.9829162, 0, 1.1954763, 0, 0.9829162, 0, 0.68046993, 304.42188, 0, -320.7169)
 collision_layer = 16
 collision_mask = 0
@@ -588,7 +588,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree37" type="Area3D" parent="Timber" unique_id=1165440045 instance=ExtResource("15_a2oed")]
+[node name="DeadTree37" type="Area3D" parent="Timber" unique_id=1363160031 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-1.0849009, 0, -0.13279858, 0, 1.0929984, 0, 0.13279858, 0, -1.0849009, 317.82983, 0, -320.60068)
 collision_layer = 16
 collision_mask = 0
@@ -596,7 +596,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog38" type="Area3D" parent="Timber" unique_id=289064223 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog38" type="Area3D" parent="Timber" unique_id=1925767901 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.9811049, 0, 0.19347657, 0, 1, 0, -0.19347657, 0, -0.9811049, 312.31342, 0, -345.36667)
 collision_layer = 16
 collision_mask = 0
@@ -607,7 +607,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog39" type="Area3D" parent="Timber" unique_id=1565440681 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog39" type="Area3D" parent="Timber" unique_id=2067256146 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.23347141, 0, -0.97236365, 0, 1, 0, 0.97236365, 0, -0.23347141, 331.2641, 0, -322.34952)
 collision_layer = 16
 collision_mask = 0
@@ -618,7 +618,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree40" type="Area3D" parent="Timber" unique_id=1388007434 instance=ExtResource("15_a2oed")]
+[node name="DeadTree40" type="Area3D" parent="Timber" unique_id=71697131 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.2406652, 0, -0.8548427, 0, 0.8880742, 0, 0.8548427, 0, -0.2406652, 108.87963, 0, -130.14047)
 collision_layer = 16
 collision_mask = 0
@@ -626,7 +626,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree41" type="Area3D" parent="Timber" unique_id=234941021 instance=ExtResource("15_a2oed")]
+[node name="DeadTree41" type="Area3D" parent="Timber" unique_id=1392698605 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.43497866, 0, -0.9606249, 0, 1.0545173, 0, 0.9606249, 0, -0.43497866, 81.96103, 0, -132.10771)
 collision_layer = 16
 collision_mask = 0
@@ -634,7 +634,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree42" type="Area3D" parent="Timber" unique_id=368098516 instance=ExtResource("15_a2oed")]
+[node name="DeadTree42" type="Area3D" parent="Timber" unique_id=1488190353 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-1.0362843, 0, -0.47258282, 0, 1.1389555, 0, 0.47258282, 0, -1.0362843, 83.77459, 0, -145.60425)
 collision_layer = 16
 collision_mask = 0
@@ -642,7 +642,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree43" type="Area3D" parent="Timber" unique_id=1893138167 instance=ExtResource("15_a2oed")]
+[node name="DeadTree43" type="Area3D" parent="Timber" unique_id=1617265291 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.30750364, 0, -0.96941096, 0, 1.0170133, 0, 0.96941096, 0, -0.30750364, 99.00092, 0, -141.11331)
 collision_layer = 16
 collision_mask = 0
@@ -650,7 +650,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree44" type="Area3D" parent="Timber" unique_id=7730025 instance=ExtResource("15_a2oed")]
+[node name="DeadTree44" type="Area3D" parent="Timber" unique_id=131790214 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.8130909, 0, 0.44583982, 0, 0.92730254, 0, -0.44583982, 0, -0.8130909, 89.963264, 0, -163.93115)
 collision_layer = 16
 collision_mask = 0
@@ -658,7 +658,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree45" type="Area3D" parent="Timber" unique_id=789319606 instance=ExtResource("15_a2oed")]
+[node name="DeadTree45" type="Area3D" parent="Timber" unique_id=460056135 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.9400641, 0, 0.65380836, 0, 1.1450702, 0, -0.65380836, 0, -0.9400641, 83.72644, 0, -121.57511)
 collision_layer = 16
 collision_mask = 0
@@ -666,7 +666,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog46" type="Area3D" parent="Timber" unique_id=53009127 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog46" type="Area3D" parent="Timber" unique_id=1957501261 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.9566567, 0, -0.2912181, 0, 1, 0, 0.2912181, 0, -0.9566567, 75.00336, 0, -154.47566)
 collision_layer = 16
 collision_mask = 0
@@ -677,7 +677,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog47" type="Area3D" parent="Timber" unique_id=1413660294 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog47" type="Area3D" parent="Timber" unique_id=764356767 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(0.28039652, 0, 0.9598843, 0, 1, 0, -0.9598843, 0, 0.28039652, 96.67289, 0, -133.48315)
 collision_layer = 16
 collision_mask = 0
@@ -688,7 +688,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree48" type="Area3D" parent="Timber" unique_id=1493868333 instance=ExtResource("15_a2oed")]
+[node name="DeadTree48" type="Area3D" parent="Timber" unique_id=1242515564 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.8743333, 0, -0.2398453, 0, 0.9066336, 0, 0.2398453, 0, -0.8743333, 557.3255, 0, -421.9409)
 collision_layer = 16
 collision_mask = 0
@@ -696,7 +696,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree49" type="Area3D" parent="Timber" unique_id=778713313 instance=ExtResource("15_a2oed")]
+[node name="DeadTree49" type="Area3D" parent="Timber" unique_id=2067831343 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.66151524, 0, 0.64079297, 0, 0.92098755, 0, -0.64079297, 0, -0.66151524, 565.8441, 0, -390.41858)
 collision_layer = 16
 collision_mask = 0
@@ -704,7 +704,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree50" type="Area3D" parent="Timber" unique_id=219215939 instance=ExtResource("15_a2oed")]
+[node name="DeadTree50" type="Area3D" parent="Timber" unique_id=863678930 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.20308541, 0, 1.0561358, 0, 1.0754843, 0, -1.0561358, 0, -0.20308541, 564.36035, 0, -420.09073)
 collision_layer = 16
 collision_mask = 0
@@ -712,7 +712,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree51" type="Area3D" parent="Timber" unique_id=466485901 instance=ExtResource("15_a2oed")]
+[node name="DeadTree51" type="Area3D" parent="Timber" unique_id=806079609 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.39881957, 0, -0.833626, 0, 0.9241154, 0, 0.833626, 0, 0.39881957, 584.5715, 0, -400.50146)
 collision_layer = 16
 collision_mask = 0
@@ -720,7 +720,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree52" type="Area3D" parent="Timber" unique_id=223424183 instance=ExtResource("15_a2oed")]
+[node name="DeadTree52" type="Area3D" parent="Timber" unique_id=2092328517 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.5343739, 0, 0.9441321, 0, 1.084869, 0, -0.9441321, 0, 0.5343739, 560.2004, 0, -392.1355)
 collision_layer = 16
 collision_mask = 0
@@ -728,7 +728,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree53" type="Area3D" parent="Timber" unique_id=729730291 instance=ExtResource("15_a2oed")]
+[node name="DeadTree53" type="Area3D" parent="Timber" unique_id=1914089722 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.4150334, 0, -0.85073185, 0, 0.9465714, 0, 0.85073185, 0, -0.4150334, 581.5128, 0, -403.91788)
 collision_layer = 16
 collision_mask = 0
@@ -736,7 +736,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog54" type="Area3D" parent="Timber" unique_id=64844087 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog54" type="Area3D" parent="Timber" unique_id=1818621903 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(0.73805875, 0, 0.67473644, 0, 1, 0, -0.67473644, 0, 0.73805875, 583.32776, 0, -382.36078)
 collision_layer = 16
 collision_mask = 0
@@ -747,7 +747,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog55" type="Area3D" parent="Timber" unique_id=1705809041 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog55" type="Area3D" parent="Timber" unique_id=2031420810 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.12206854, 0, 0.99252164, 0, 1, 0, -0.99252164, 0, -0.12206854, 537.46625, 0, -411.4615)
 collision_layer = 16
 collision_mask = 0
@@ -758,7 +758,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree56" type="Area3D" parent="Timber" unique_id=765316675 instance=ExtResource("15_a2oed")]
+[node name="DeadTree56" type="Area3D" parent="Timber" unique_id=761951932 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.34591416, 0, -1.0331831, 0, 1.0895522, 0, 1.0331831, 0, -0.34591416, 292.86246, 0, -439.90552)
 collision_layer = 16
 collision_mask = 0
@@ -766,7 +766,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree57" type="Area3D" parent="Timber" unique_id=158370977 instance=ExtResource("15_a2oed")]
+[node name="DeadTree57" type="Area3D" parent="Timber" unique_id=524507811 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.53121895, 0, -0.7557956, 0, 0.9238077, 0, 0.7557956, 0, 0.53121895, 319.12378, 0, -444.11472)
 collision_layer = 16
 collision_mask = 0
@@ -774,7 +774,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree58" type="Area3D" parent="Timber" unique_id=1373361536 instance=ExtResource("15_a2oed")]
+[node name="DeadTree58" type="Area3D" parent="Timber" unique_id=2079774694 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-1.1327522, 0, 0.21395615, 0, 1.1527814, 0, -0.21395615, 0, -1.1327522, 321.00476, 0, -457.63495)
 collision_layer = 16
 collision_mask = 0
@@ -782,7 +782,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree59" type="Area3D" parent="Timber" unique_id=1472797387 instance=ExtResource("15_a2oed")]
+[node name="DeadTree59" type="Area3D" parent="Timber" unique_id=590905502 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.3462004, 0, -1.0827178, 0, 1.1367201, 0, 1.0827178, 0, -0.3462004, 330.26, 0, -452.28342)
 collision_layer = 16
 collision_mask = 0
@@ -790,7 +790,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree60" type="Area3D" parent="Timber" unique_id=2080282826 instance=ExtResource("15_a2oed")]
+[node name="DeadTree60" type="Area3D" parent="Timber" unique_id=1991683539 instance=ExtResource("15_a2oed")]
 transform = Transform3D(0.9367022, 0, -0.4530376, 0, 1.0405066, 0, 0.4530376, 0, 0.9367022, 320.03503, 0, -435.24762)
 collision_layer = 16
 collision_mask = 0
@@ -798,7 +798,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="DeadTree61" type="Area3D" parent="Timber" unique_id=577568341 instance=ExtResource("15_a2oed")]
+[node name="DeadTree61" type="Area3D" parent="Timber" unique_id=134590522 instance=ExtResource("15_a2oed")]
 transform = Transform3D(-0.64813995, 0, -0.719983, 0, 0.96874195, 0, 0.719983, 0, -0.64813995, 313.6496, 0, -448.22894)
 collision_layer = 16
 collision_mask = 0
@@ -806,7 +806,7 @@ monitoring = false
 script = ExtResource("16_navuq")
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog62" type="Area3D" parent="Timber" unique_id=176614808 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog62" type="Area3D" parent="Timber" unique_id=1372753022 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(-0.22549754, 0, -0.97424376, 0, 1, 0, 0.97424376, 0, -0.22549754, 330.01016, 0, -473.3551)
 collision_layer = 16
 collision_mask = 0
@@ -817,7 +817,7 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="FallenLog63" type="Area3D" parent="Timber" unique_id=143388201 instance=ExtResource("17_ccc3e")]
+[node name="FallenLog63" type="Area3D" parent="Timber" unique_id=978309552 instance=ExtResource("17_ccc3e")]
 transform = Transform3D(0.165461, 0, -0.9862163, 0, 1, 0, 0.9862163, 0, 0.165461, 322.88956, 0, -477.8821)
 collision_layer = 16
 collision_mask = 0
@@ -828,11 +828,11 @@ wood = 6
 chop_time = 2.5
 focus_offset = Vector3(0, 1, 0)
 
-[node name="Structures" type="Node3D" parent="." unique_id=1195886280 groups=["navigation_geometry"]]
+[node name="Structures" type="Node3D" parent="." unique_id=329105569 groups=["navigation_geometry"]]
 
-[node name="Navigation" type="Node3D" parent="." unique_id=256680588 instance=ExtResource("18_i7x8f")]
+[node name="Navigation" type="Node3D" parent="." unique_id=908995519 instance=ExtResource("18_i7x8f")]
 
-[node name="Vehicles" type="Node3D" parent="." unique_id=1010442520]
+[node name="Vehicles" type="Node3D" parent="." unique_id=931787014]
 
 [node name="CargoTruck" type="VehicleBody3D" parent="Vehicles" unique_id=1059742663 instance=ExtResource("19_bd06d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.1, 8)
@@ -845,9 +845,9 @@ angular_damp = 0.6
 script = ExtResource("20_ilgni")
 metadata/no_draw_distance = true
 
-[node name="Survivors" type="Node3D" parent="." unique_id=995471698]
+[node name="Survivors" type="Node3D" parent="." unique_id=2137632812]
 
-[node name="Maya" type="CharacterBody3D" parent="Survivors" unique_id=803345403 instance=ExtResource("21_2s421")]
+[node name="Maya" type="CharacterBody3D" parent="Survivors" unique_id=2053761061 instance=ExtResource("21_2s421")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 247, 0.05, -193)
 collision_layer = 8
 collision_mask = 15
@@ -857,7 +857,7 @@ settler_name = "Maya"
 greeting = "I hid in the pharmacy when the raiders came. Find somewhere safe to live and I'll come."
 look_seed = 2089350477
 
-[node name="Tomas" type="CharacterBody3D" parent="Survivors" unique_id=4567697 instance=ExtResource("21_2s421")]
+[node name="Tomas" type="CharacterBody3D" parent="Survivors" unique_id=1922307723 instance=ExtResource("21_2s421")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 464, 0.05, -312)
 collision_layer = 8
 collision_mask = 15
@@ -867,7 +867,7 @@ settler_name = "Tomas"
 greeting = "The diner's been my home since the town fell. Got a bed somewhere safer?"
 look_seed = 237880617
 
-[node name="Jeb" type="CharacterBody3D" parent="Survivors" unique_id=605160688 instance=ExtResource("21_2s421")]
+[node name="Jeb" type="CharacterBody3D" parent="Survivors" unique_id=422446308 instance=ExtResource("21_2s421")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 278, 0.05, -528.6)
 collision_layer = 8
 collision_mask = 15
@@ -877,7 +877,7 @@ settler_name = "Old Jeb"
 greeting = "Forty years I worked this mine. Find me a bed that isn't down a hole and I'm yours."
 look_seed = 3356092309
 
-[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=1765898089]
+[node name="PlayerSpawn" type="Marker3D" parent="." unique_id=753116250]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 14)
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=1105365724 instance=ExtResource("23_45eli")]
@@ -893,22 +893,22 @@ script = ExtResource("26_tydno")
 player = NodePath("../Player")
 game_mode = NodePath("../GameMode")
 
-[node name="GameMode" type="Node" parent="." unique_id=148481841 node_paths=PackedStringArray("spawn_point", "players")]
+[node name="GameMode" type="Node" parent="." unique_id=1027896031 node_paths=PackedStringArray("spawn_point", "players")]
 script = ExtResource("27_i6vmh")
 spawn_point = NodePath("../PlayerSpawn")
 players = [NodePath("../Player")]
 
-[node name="StormEffects" type="CanvasLayer" parent="." unique_id=1621233729]
+[node name="StormEffects" type="CanvasLayer" parent="." unique_id=1306363637]
 script = ExtResource("28_hchmg")
 
-[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=1112184671]
+[node name="Ambience" type="AudioStreamPlayer" parent="." unique_id=1254800085]
 unique_name_in_owner = true
 stream = ExtResource("29_k2tq1")
 volume_db = -2.0
 autoplay = true
 bus = &"Ambience"
 
-[node name="DistantWind" type="AudioStreamPlayer" parent="." unique_id=330406171]
+[node name="DistantWind" type="AudioStreamPlayer" parent="." unique_id=1037142683]
 stream = ExtResource("30_f5k7w")
 volume_db = -14.0
 autoplay = true

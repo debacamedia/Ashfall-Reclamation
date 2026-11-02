@@ -1014,4 +1014,115 @@ func _northwatch() -> Kit:
 	k.pickup("metal_plate", 1, "YardPlate", null, Vector3(-2, 0, 9))
 	k.spawner("GarrisonSpawner", "veteran", 2, 120.0, [Vector2(-2, -4), Vector2(6, 12)])
 	k.spawner("RaiderSpawner", "raider", 2, 45.0, [Vector2(-10, 30), Vector2(14, 32)])
+	_northwatch_settlement(k, a, b)
 	return k
+
+
+## Northwatch Outpost as a settlement (Increment 23.5): clear the garrison and
+## claim it at the notice board in front of the command post. Armorers make
+## guns and rounds at the armory's weapons bench from what's in the stores
+## (scrap from Black Ridge, by truck) into the Armory Locker beside it. The
+## stores are shelves under a lean-to along the east wall; a pump on the
+## water tank by the barracks; beds for four in the barracks.
+func _northwatch_settlement(k: Kit, armory_hut: StaticBody3D, barracks: StaticBody3D) -> void:
+	var st := Settlement.new()
+	st.name = "Settlement"
+	st.settlement_name = "Northwatch Outpost"
+	st.place_name = "Northwatch Outpost"
+	st.settlement_id = &"northwatch"
+	st.place_word = "the outpost"
+	st.claim_hint = "hold E at the notice board in front of the command post"
+	st.shelter_name = "the barracks"
+	st.pump_where = "at the water tank by the barracks"
+	st.store_sign = "STORES"
+	st.claim_radius = 60.0
+	st.defend_radius = 55.0
+	st.starting_food = 8
+	k.root.add_child(st)
+	# Notice board in the yard in front of the command post
+	var board_at := Vector3(5.5, 0, -4.0)
+	var board := k.solid_body(st, "NoticeBoard", Transform3D(Basis.IDENTITY, board_at))
+	for x in [-0.55, 0.55]:
+		k.box(board, "Post", Vector3(0.1, 1.9, 0.1), Vector3(x, 0.95, 0), "wood")
+	k.box(board, "Board", Vector3(1.3, 0.8, 0.06), Vector3(0, 1.4, 0.03), "wood")
+	k.box(board, "Notice", Vector3(0.9, 0.55, 0.01), Vector3(0, 1.42, 0.065), "paint_white")
+	k.box(board, "Roof", Vector3(1.5, 0.06, 0.36), Vector3(0, 1.92, 0.05), "rust")
+	var claim := ClaimPoint.new()
+	claim.name = "ClaimPoint"
+	claim.position = board_at + Vector3(0, 1.4, 0.1)
+	st.add_child(claim)
+	_area(claim, Vector3(1.4, 1.0, 0.4))
+	# A water tank by the barracks, with a hand pump
+	var pump_at := Vector3(-1.0, 0, -9.0)
+	var tank := k.solid_body(st, "PumpHead", Transform3D(Basis.IDENTITY, pump_at))
+	k.box(tank, "Tank", Vector3(1.6, 1.4, 1.6), Vector3(-1.2, 0.7, -0.4), "olive")
+	k.box(tank, "Base", Vector3(0.5, 0.2, 0.5), Vector3(0, 0.1, 0), "metal_dark")
+	k.box(tank, "Column", Vector3(0.22, 0.9, 0.22), Vector3(0, 0.65, 0), "rust")
+	k.box(tank, "Head", Vector3(0.34, 0.24, 0.3), Vector3(0, 1.2, 0), "rust")
+	k.box(tank, "Handle", Vector3(0.06, 0.06, 0.7), Vector3(0, 1.32, 0.3), "metal_dark", 0.0, false)
+	k.box(tank, "Spout", Vector3(0.1, 0.1, 0.3), Vector3(0.2, 1.05, 0), "rust", 90.0, false)
+	var up2 := Node3D.new()
+	up2.name = "Upgrade2"
+	up2.visible = false
+	tank.add_child(up2)
+	k.box(up2, "PressureTank", Vector3(0.4, 0.8, 0.4), Vector3(0.55, 0.4, -0.3), "metal_dark", 0.0, false)
+	var motor := Node3D.new()
+	motor.name = "Motor"
+	motor.visible = false
+	tank.add_child(motor)
+	k.box(motor, "Engine", Vector3(0.5, 0.4, 0.45), Vector3(0.5, 0.2, 0.55), "olive", 0.0, false)
+	k.box(motor, "Exhaust", Vector3(0.06, 0.6, 0.06), Vector3(0.7, 0.7, 0.65), "rust", 0.0, false)
+	var pump := WaterPump.new()
+	pump.name = "WaterPump"
+	pump.position = pump_at + Vector3(0, 0.9, 0)
+	st.add_child(pump)
+	_area(pump, Vector3(0.8, 1.6, 1.0))
+	# The stores: shelves under a lean-to along the inside of the east wall,
+	# facing the yard
+	var shed_at := Vector3(16.6, 0, 11.5)
+	var shed := k.solid_body(st, "StoreShed", Transform3D(Basis(Vector3.UP, -PI / 2.0), shed_at))
+	k.box(shed, "Roof", Vector3(11.6, 0.08, 2.6), Vector3(0, 2.9, 0.2), "rust")
+	k.box(shed, "SideN", Vector3(0.15, 2.8, 2.2), Vector3(-5.6, 1.4, 0), "corrugated")
+	k.box(shed, "SideS", Vector3(0.15, 2.8, 2.2), Vector3(5.6, 1.4, 0), "corrugated")
+	for x in [-5.5, 5.5]:
+		k.box(shed, "Post", Vector3(0.14, 2.85, 0.14), Vector3(x, 1.42, 1.4), "wood", 0.0, false)
+	var store := (load("res://scenes/world/containers/food_shelves.tscn") as PackedScene).instantiate() as Node3D
+	store.name = "FarmStore"
+	store.position = shed_at + Vector3(0.62, 0, 0)
+	store.rotation.y = -PI / 2.0
+	store.set("container_name", "Stores")
+	store.set("object_name", "Stores")
+	st.add_child(store)
+	# The Armory Locker, in the armory beside the weapons bench
+	var locker := k.scene("locker").instantiate() as Node3D
+	locker.name = "Armory"
+	locker.position = k.at(armory_hut, k.against(armory_hut, "S", 1.8, 0.39))
+	locker.rotation.y = k.yaw_in(armory_hut, Kit.facing_from("S"))
+	locker.set("container_name", "Armory Locker")
+	locker.set("object_name", "Armory Locker")
+	st.add_child(locker)
+	# Where Armorers work: at the weapons bench, facing it
+	var smiths := Node3D.new()
+	smiths.name = "ArmorerSpots"
+	st.add_child(smiths)
+	var spot := Marker3D.new()
+	spot.name = "ArmorerSpot0"
+	spot.position = k.at(armory_hut, Vector3(1.3, 0, -0.95))
+	spot.rotation.y = armory_hut.rotation.y
+	smiths.add_child(spot)
+	_markers(st, "GuardPosts", [Vector3(-2.5, 0, 14.5), Vector3(2.5, 0, 15.5), Vector3(15.5, 0, 3.5), Vector3(-15.5, 0, 4.5)])
+	_markers(st, "", [["ArrivalPoint", Vector3(0, 0, 32)], ["Hangout", Vector3(-6, 0, 0)]])
+	_markers(st, "RaidPoints", [Vector3(0, 0, 105), Vector3(105, 0, 10), Vector3(-105, 0, 0)])
+	var labels := ["the road", "the east", "the west"]
+	for j in 3:
+		st.get_node("RaidPoints").get_child(j).set_meta("label", labels[j])
+	_markers(st, "", [["Shelter", k.at(barracks, Vector3(0, 0, 0.6))]])
+	var people := Node3D.new()
+	people.name = "Settlers"
+	st.add_child(people)
+	var plans := Node3D.new()
+	plans.name = "Plans"
+	st.add_child(plans)
+	var sites := Node3D.new()
+	sites.name = "Sites"
+	st.add_child(sites)
