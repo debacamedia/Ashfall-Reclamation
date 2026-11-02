@@ -64,6 +64,7 @@ const WOOD := &"wood"
 const MEAT := &"raw_meat"
 const EGG := &"egg"
 const HIDE := &"raw_hide"
+const SCRAP := &"scrap_metal"
 ## The farm's animals (21.5): hours a vegetable feeds one, hours between
 ## births for each pair, hours between eggs (chickens), what one butchered gives.
 const ANIMALS := {
@@ -97,6 +98,16 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 ## The Landmark (place) this settlement is.
 @export var place_name := "Ash Creek Farms"
 @export var settlement_id: StringName = &"ash_creek"
+## What it is, in a sentence ("the farm", "the mine") (23).
+@export var place_word := "the farm"
+## Where to claim it, for the settlement screen before it's yours (23).
+@export var claim_hint := "hold E at the notice board in front of the farmhouse porch"
+## Where everyone shelters in a raid, for the screen ("the farmhouse") (23).
+@export var shelter_name := "the farmhouse"
+## Where the pump is, for the screen ("in the pump house") (23).
+@export var pump_where := "in the pump house"
+## The sign over the stores' shelves ("" keeps the shelves' own) (23).
+@export var store_sign := ""
 ## Raiders within this far of the board stop you claiming it (m).
 @export var claim_radius := 75.0
 ## Guards defend within this far of the board (m).
@@ -118,6 +129,8 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 @export_group("Wood")
 ## Wood Planks a working Woodcutter adds to the stores each hour (19.7).
 @export var woodcutter_planks_per_hour := 3.0
+## Scrap Metal a working Miner digs out into the stores each hour (23).
+@export var miner_scrap_per_hour := 2.0
 ## Health a Builder puts back into something damaged, an hour (20.1).
 @export var builder_repair_per_hour := 400.0
 
@@ -171,6 +184,7 @@ var pump_level := 0
 var arrival_in := 0.0
 var _food_progress := 0.0
 var _plank_progress := 0.0
+var _scrap_progress := 0.0
 var _next_id := 1
 var _armory_check := 0.0
 ## The settlement's own plan has been laid out as sites (on claiming).
@@ -217,6 +231,10 @@ func _ready() -> void:
 		if c != null:
 			c.is_searched = true  # nothing hidden in them: just open
 			c.call("_update_prompt")
+	if store != null and store_sign != "":
+		var sign := store.get_node_or_null("Body/Sign") as Label3D
+		if sign != null:
+			sign.text = store_sign
 	_apply_claimed_look()
 
 
@@ -298,6 +316,22 @@ func wood_spots() -> Array[Node3D]:
 			if c is Node3D:
 				out.append(c)
 	return out
+
+
+## Where Miners work (23): the rock faces in a mine's tunnel.
+func mine_spots() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var g := get_node_or_null("MineSpots")
+	if g != null:
+		for c in g.get_children():
+			if c is Node3D:
+				out.append(c)
+	return out
+
+
+## Scrap Metal in the stores.
+func scrap() -> int:
+	return _stores_count(SCRAP)
 
 
 ## Wood Planks in the stores.
@@ -674,7 +708,10 @@ func rates() -> Dictionary:
 	var farmers := mini(pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.FARMER).size(), farm_spots().size())
 	var meals := pop.size() / meal_every_hours
 	var cutters := pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.WOODCUTTER).size() if not wood_spots().is_empty() else 0
+	var miners := mini(pop.filter(func(s: Settler) -> bool: return s.is_working() and s.role == Settler.Role.MINER).size(), mine_spots().size())
 	return {
+		"scrap": miners * miner_scrap_per_hour,
+		"miners": miners,
 		"water": pump_rate() - farmers * farmer_water_per_hour - meals * water_per_meal,
 		"food": farmers * farmer_food_per_hour - meals * food_per_meal,
 		"farmers": farmers,
@@ -692,7 +729,7 @@ func claim_refusal_reason(player: Node3D) -> String:
 		return "Can't do that now"
 	var n := raiders_here()
 	if n > 0:
-		return "Raiders are still here (%d left): clear the farm first" % n
+		return "Raiders are still here (%d left): clear %s first" % [n, place_word]
 	return ""
 
 
@@ -745,7 +782,7 @@ func pump_refusal_reason(player: Node3D) -> String:
 	if pc == null or pc.is_dead():
 		return "Can't do that now"
 	if not is_claimed:
-		return "Claim the farm first"
+		return "Claim %s first" % place_word
 	if pump_working:
 		return "The pump's working"
 	for id: StringName in PUMP_PARTS:
@@ -868,6 +905,12 @@ func request_set_role(player: Node3D, s: Settler, role: Settler.Role) -> bool:
 ## Why nobody can be given `role` here yet ("" if they can): a Cook needs a
 ## Kitchen, a Rancher a pen (21.5).
 func role_refusal_reason(role: Settler.Role) -> String:
+	if role == Settler.Role.MINER and mine_spots().is_empty():
+		return "No mine here: Miners work at Black Ridge Mine"
+	if role == Settler.Role.WOODCUTTER and wood_spots().is_empty():
+		return "No woodlot here"
+	if role == Settler.Role.FARMER and farm_spots().is_empty():
+		return "No fields here: plan a Farm Plot in build mode (B)"
 	if role == Settler.Role.COOK and kitchens().is_empty():
 		return "Build a Kitchen first: plan one in build mode (B)"
 	if role == Settler.Role.RANCHER and pens().is_empty():
@@ -1184,6 +1227,20 @@ func simulate(hours: float) -> void:
 				_plank_progress = 1.0  # the stores are full
 				break
 			_plank_progress -= 1.0
+	# Scrap: each working Miner digs it out into the stores (23), one to a
+	# rock face
+	var faces := mine_spots().size()
+	for s: Settler in here:
+		if faces <= 0:
+			break
+		if s.role == Settler.Role.MINER and s.is_working():
+			faces -= 1
+			_scrap_progress += miner_scrap_per_hour * hours
+	while _scrap_progress >= 1.0:
+		if _put_in_stores(SCRAP, 1) < 1:
+			_scrap_progress = 1.0  # the stores are full
+			break
+		_scrap_progress -= 1.0
 	# The animals and the kitchen (21.5)
 	_simulate_animals(hours, here)
 	_simulate_cooking(hours, here)
@@ -1307,7 +1364,7 @@ func fridges() -> Array[SalvageContainer]:
 ## Settler meals waiting in the fridges (cooked food), plus any part-eaten.
 func fridge_meals() -> float:
 	var n := _meal_credit
-	for f in fridges():
+	for f in _meal_containers():
 		for i in f.inventory.slot_count:
 			var item := f.inventory.get_slot_item(i)
 			if item != null and item.settler_meals > 0.0:
@@ -1330,7 +1387,7 @@ func _take_meal() -> bool:
 	if _meal_credit >= 1.0:
 		_meal_credit -= 1.0
 		return true
-	for f in fridges():
+	for f in _meal_containers():
 		for i in f.inventory.slot_count:
 			var item := f.inventory.get_slot_item(i)
 			if item != null and item.settler_meals > 0.0:
@@ -1341,6 +1398,28 @@ func _take_meal() -> bool:
 		_eat(food_per_meal)
 		return true
 	return false
+
+
+## Where cooked dishes are eaten from: the fridges first, then the stores
+## (23: a place with no kitchen lives on stew brought by truck).
+func _meal_containers() -> Array[SalvageContainer]:
+	var out: Array[SalvageContainer] = []
+	out.append_array(fridges())
+	out.append_array(stores())
+	return out
+
+
+## Cooked dishes on the stores' shelves (not the fridge): [dishes, meals].
+func stored_dishes() -> Array:
+	var dishes := 0
+	var meals := 0.0
+	for st in stores():
+		for i in st.inventory.slot_count:
+			var it := st.inventory.get_slot_item(i)
+			if it != null and it.settler_meals > 0.0:
+				dishes += st.inventory.get_slot_quantity(i)
+				meals += it.settler_meals * st.inventory.get_slot_quantity(i)
+	return [dishes, meals]
 
 
 func _stores_count(id: StringName) -> int:
@@ -2012,7 +2091,7 @@ const LAYOUT := 2
 
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
-		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress,
+		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
 		"meal_credit": _meal_credit, "cook_progress": _cook_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
 		"raid_from_name": raid_from_name, "raid_size": raid_size,
@@ -2031,6 +2110,7 @@ func load_state(data: Dictionary) -> void:
 	_apply_claimed_look()
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
 	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
+	_scrap_progress = clampf(_num(data.get("scrap_progress"), 0.0), 0.0, 1.0)
 	_meal_credit = clampf(_num(data.get("meal_credit"), 0.0), 0.0, 10.0)
 	_cook_progress = clampf(_num(data.get("cook_progress"), 0.0), 0.0, 1.0)
 	# The log and its clock (20.5)

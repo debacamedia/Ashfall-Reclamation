@@ -42,6 +42,10 @@ var _sites_key := ""
 var _site_rows := {}
 var _log_list: VBoxContainer
 var _log_key := ""
+## One button per settlement you hold (23): which one the screen shows.
+var _tabs: HBoxContainer
+var _tabs_key := ""
+var _how: Label
 
 
 func _init() -> void:
@@ -77,6 +81,13 @@ func _init() -> void:
 	_title = _label("SETTLEMENT", 26, STYLE_COLOR)
 	_title.name = "Title"
 	header.add_child(_title)
+	var gap := Control.new()
+	gap.custom_minimum_size.x = 24
+	header.add_child(gap)
+	_tabs = HBoxContainer.new()
+	_tabs.name = "Tabs"
+	_tabs.add_theme_constant_override("separation", 6)
+	header.add_child(_tabs)
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(spacer)
@@ -124,10 +135,10 @@ func _init() -> void:
 	_pump.name = "Pump"
 	_pump.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	left.add_child(_pump)
-	var how := _label("A settlement hour is a minute of play. Farmers turn water into vegetables on the Farm Store shelves (the barn); "
-		+ "everyone eats one every 4 hours. Guards take guns and rounds from the Armory Locker (the farmhouse) by themselves.", 13, DIM)
-	how.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	left.add_child(how)
+	_how = _label("", 13, DIM)
+	_how.name = "How"
+	_how.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	left.add_child(_how)
 	# Middle: what's being built
 	var mid := VBoxContainer.new()
 	mid.name = "Building"
@@ -136,7 +147,7 @@ func _init() -> void:
 	body.add_child(mid)
 	mid.add_child(_label("BUILDING", 16, STYLE_COLOR))
 	var about := _label("Builders put these up in order, once each has its materials: hand them over at the site (E), "
-		+ "or leave them in the Farm Store. Plan a bunkhouse, storehouse, guard tower, guard post or farm plot in build mode (B).", 13, DIM)
+		+ "or leave them in the stores. Plan buildings (a bunkhouse, storehouse, guard tower…) in build mode (B).", 13, DIM)
 	about.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	mid.add_child(about)
 	var sites_scroll := ScrollContainer.new()
@@ -190,7 +201,7 @@ func is_open() -> bool:
 func open(s: Settlement = null, who: Settler = null) -> void:
 	if player == null or player.is_dead():
 		return
-	settlement = s if s != null else _first_settlement()
+	settlement = s if s != null else _default_settlement()
 	focus = who
 	visible = true
 	player.player_input.set_ui_open(true)
@@ -206,14 +217,65 @@ func close() -> void:
 		player.player_input.set_ui_open(false)
 
 
-func _first_settlement() -> Settlement:
-	var any: Settlement = null
+## The one you're at, else the nearest you hold, else the nearest (23).
+func _default_settlement() -> Settlement:
+	var best: Settlement = null
+	var best_d := INF
+	var at := player.global_position if player != null else Vector3.ZERO
 	for n in get_tree().get_nodes_in_group("settlements"):
 		var s := n as Settlement
-		if s.is_claimed:
-			return s
-		any = s if any == null else any
-	return any
+		var d := s.global_position.distance_to(at) - (100000.0 if s.is_claimed else 0.0)
+		if d < best_d:
+			best_d = d
+			best = s
+	return best
+
+
+## Settlements you hold, in the order they sit in the zone (23).
+func _held() -> Array[Settlement]:
+	var out: Array[Settlement] = []
+	for n in get_tree().get_nodes_in_group("settlements"):
+		if (n as Settlement).is_claimed:
+			out.append(n)
+	return out
+
+
+## Shows `s` instead (a tab).
+func show_settlement(s: Settlement) -> void:
+	if s == null or s == settlement:
+		return
+	settlement = s
+	focus = null
+	_rows_key = ""
+	_sites_key = ""
+	_log_key = ""
+	refresh()
+
+
+func _refresh_tabs() -> void:
+	var held := _held()
+	if settlement != null and not held.has(settlement):
+		held.append(settlement)
+	var key := ""
+	for h in held:
+		key += "%d:%s|" % [h.get_instance_id(), h == settlement]
+	if key == _tabs_key:
+		return
+	_tabs_key = key
+	for c in _tabs.get_children():
+		_tabs.remove_child(c)
+		c.queue_free()
+	_tabs.visible = held.size() > 1
+	for h in held:
+		var b := Button.new()
+		b.name = "Tab_%s" % h.settlement_id
+		b.text = h.settlement_name
+		b.toggle_mode = true
+		b.button_pressed = h == settlement
+		b.focus_mode = Control.FOCUS_NONE
+		b.add_theme_font_size_override("font_size", 15)
+		b.pressed.connect(func() -> void: show_settlement(h))
+		_tabs.add_child(b)
 
 
 func show_message(text: String) -> void:
@@ -261,13 +323,13 @@ func refresh() -> void:
 	_body.visible = claimed
 	_empty.visible = not claimed
 	_title.text = ("SETTLEMENT  ·  %s" % s.settlement_name.to_upper()) if s != null else "SETTLEMENT"
+	_refresh_tabs()
 	if not claimed:
 		if s == null:
 			_empty.text = "No settlements here."
 		else:
 			var raiders := s.raiders_here()
-			_empty.text = ("You haven't claimed a settlement yet.\n\n%s: clear the raiders, then hold E at the notice board in front of the farmhouse porch to claim it."
-				% s.settlement_name) + ("\n\nRaiders there now: %d" % raiders if raiders > 0 else "")
+			_empty.text = ("%s isn't yours yet.\n\nClear the raiders, then %s to claim it." % [s.settlement_name, s.claim_hint]) + ("\n\nRaiders there now: %d" % raiders if raiders > 0 else "")
 		return
 	# Stocks
 	var r := s.rates()
@@ -277,10 +339,17 @@ func refresh() -> void:
 	var cap := s.food_capacity()
 	lines.append("Fresh Vegetables:  %d / %d   (%s / hour)%s" % [s.food(), cap, _signed(r["food"]),
 		"   Store full" if cap > 0 and s.food() >= cap else ""])
+	var dishes := s.stored_dishes()
+	if dishes[0] > 0 or s.farm_spots().is_empty():
+		lines.append("Cooked food in the stores:  %d dishes   (%d meals)" % [dishes[0], floori(dishes[1])])
 	lines.append("Water:  %d / %d L   (%s / hour)" % [roundi(s.water), roundi(s.water_capacity), _signed(r["water"])])
 	lines.append("Wood Planks:  %d   (%s / hour)" % [s.planks(), _signed(r["planks"])])
 	lines.append("Beds:  %d / %d in use%s" % [people.size(), s.total_beds(), "" if here == people.size() else "  (%d on the way)" % (people.size() - here)])
-	lines.append("Farmers working:  %d   (fields for %d)" % [r["farmers"], s.farm_spots().size()])
+	if not s.farm_spots().is_empty() or r["farmers"] > 0:
+		lines.append("Farmers working:  %d   (fields for %d)" % [r["farmers"], s.farm_spots().size()])
+	if not s.mine_spots().is_empty():
+		lines.append("Scrap Metal:  %d   (%s / hour)" % [s.scrap(), _signed(r["scrap"])])
+		lines.append("Miners working:  %d   (rock faces for %d)" % [r["miners"], s.mine_spots().size()])
 	var posts := s.guard_posts().size()
 	if posts > 0:
 		lines.append("Guard posts:  %d" % posts)
@@ -296,13 +365,15 @@ func refresh() -> void:
 			lines.append("Raiders:  none in sight")
 	# The kitchen and the animals (21.5)
 	if not s.kitchens().is_empty():
-		var dishes := 0
+		var in_fridge := 0
+		var fridge_meals := 0.0
 		for f in s.fridges():
 			for i in f.inventory.slot_count:
 				var it := f.inventory.get_slot_item(i)
 				if it != null and it.settler_meals > 0.0:
-					dishes += f.inventory.get_slot_quantity(i)
-		lines.append("Fridge:  %d dishes  (%d meals; settlers eat these first)" % [dishes, floori(s.fridge_meals())])
+					in_fridge += f.inventory.get_slot_quantity(i)
+					fridge_meals += it.settler_meals * f.inventory.get_slot_quantity(i)
+		lines.append("Fridge:  %d dishes  (%d meals; settlers eat these first)" % [in_fridge, floori(fridge_meals)])
 	var herd := s.animal_counts()
 	if not herd.is_empty():
 		var parts: PackedStringArray = []
@@ -326,13 +397,14 @@ func refresh() -> void:
 	else:
 		lines.append("Next newcomer:  in about %d min" % ceili(maxf(s.arrival_in, 0.0) * s.hour_seconds / 60.0))
 	_stocks.text = "\n".join(lines)
+	_how.text = _how_text(s)
 	_water_bar.value = s.water / s.water_capacity * 100.0
 	if s.pump_working:
 		var up := s.next_pump_upgrade()
 		_pump.text = "Pump: %s, %d L an hour" % [Settlement.PUMP_LEVELS[s.pump_level][0], roundi(s.pump_rate())] \
-			+ ("" if up.is_empty() else ". Upgrade to a %s (%d L an hour) in the pump house with %s." % [up[0], roundi(float(up[2])), Settlement.parts_text(up[1])])
+			+ ("" if up.is_empty() else ". Upgrade to a %s (%d L an hour) %s with %s." % [up[0], roundi(float(up[2])), s.pump_where, Settlement.parts_text(up[1])])
 	else:
-		_pump.text = "Pump: broken. Repair it in the pump house with %s." % Settlement.pump_parts_text()
+		_pump.text = "Pump: broken. Repair it %s with %s." % [s.pump_where, Settlement.pump_parts_text()]
 	_pump.add_theme_color_override("font_color", GOOD if s.pump_working else BAD)
 	_refresh_sites(s)
 	_refresh_log(s)
@@ -354,6 +426,19 @@ func refresh() -> void:
 			(row["status"] as Label).add_theme_color_override("font_color", BAD if p.is_hungry() or p.short_of_water else GOOD)
 			(row["gun"] as Label).text = p.gun_text() if p.role == Settler.Role.GUARD or p.gun != null else ""
 			(row["armour"] as Label).text = p.armour.describe()
+
+
+## How the place works, in a few lines under the stocks (23: per place).
+func _how_text(s: Settlement) -> String:
+	var parts: PackedStringArray = ["A settlement hour is a minute of play."]
+	if not s.farm_spots().is_empty():
+		parts.append("Farmers turn water into vegetables in the stores.")
+	if not s.mine_spots().is_empty():
+		parts.append("Miners dig Scrap Metal out of the tunnel into the stores.")
+	parts.append("Everyone eats a meal every %d hours from the stores%s." % [roundi(s.meal_every_hours),
+		"" if not s.farm_spots().is_empty() else ": bring food (the truck carries plenty)"])
+	parts.append("Guards take guns and rounds from the Armory Locker by themselves; in a raid everyone else shelters in %s." % s.shelter_name)
+	return " ".join(parts)
 
 
 ## A settler's health on their row: a bar and "74 / 100" (22.1).
@@ -380,8 +465,10 @@ func _build_rows(people: Array[Settler]) -> void:
 		c.queue_free()
 	_rows.clear()
 	if people.is_empty():
-		_list.add_child(_label("Nobody lives here yet. Newcomers come when there's a free bed and food; "
-			+ "survivors you meet elsewhere (Saint Mercy, Halden's, Black Ridge) will come if you ask.", 15, DIM))
+		var nobody := _label("Nobody lives here yet. Newcomers come when there's a free bed and food; "
+			+ "survivors you meet out in the world will come if you ask (they go where there's a free bed).", 15, DIM)
+		nobody.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_list.add_child(nobody)
 		return
 	var spares := _spares()
 	for p in people:
@@ -437,7 +524,7 @@ func _build_rows(people: Array[Settler]) -> void:
 		var jobs := HBoxContainer.new()
 		jobs.add_theme_constant_override("separation", 6)
 		col.add_child(jobs)
-		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.COOK, Settler.Role.RANCHER, Settler.Role.NONE]:
+		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.MINER, Settler.Role.COOK, Settler.Role.RANCHER, Settler.Role.NONE]:
 			var b := Button.new()
 			b.name = "Job_%s" % Settler.ROLE_NAMES[r]
 			b.text = Settler.ROLE_NAMES[r]

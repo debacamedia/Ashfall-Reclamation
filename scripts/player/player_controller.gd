@@ -800,7 +800,7 @@ func talk_to(settler: Settler) -> void:
 		settler.settlement.request_help_up(self, settler)
 		return
 	if settler.settlement == null:
-		var home := best_settlement_for_recruit()
+		var home := best_settlement_for_recruit(settler.global_position)
 		if home != null:
 			home.request_recruit(self, settler)
 		else:
@@ -810,16 +810,25 @@ func talk_to(settler: Settler) -> void:
 
 
 ## A claimed settlement with a free bed, else any claimed one, else any.
-func best_settlement_for_recruit() -> Settlement:
+## With several, the nearest to `near` (where the survivor is, 23): Old Jeb
+## at Black Ridge stays at the mine once it's yours.
+func best_settlement_for_recruit(near := Vector3.INF) -> Settlement:
 	var any: Settlement = null
 	var claimed_one: Settlement = null
+	var with_bed: Settlement = null
+	var bed_d := INF
+	var at := near if near != Vector3.INF else global_position
 	for n in get_tree().get_nodes_in_group("settlements"):
 		var s := n as Settlement
 		any = s if any == null else any
 		if s.is_claimed:
 			claimed_one = s if claimed_one == null else claimed_one
-			if s.free_beds() > 0:
-				return s
+			var d := s.global_position.distance_to(at)
+			if s.free_beds() > 0 and d < bed_d:
+				bed_d = d
+				with_bed = s
+	if with_bed != null:
+		return with_bed
 	return claimed_one if claimed_one != null else any
 
 

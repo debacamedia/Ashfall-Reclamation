@@ -819,7 +819,120 @@ func _black_ridge() -> Kit:
 	k.pickup("metal_pipe", 2, "YardPipes", null, Vector3(-1, 0, 12))
 	k.pickup("gunpowder", 1, "YardPowder", null, Vector3(10, 0, -8))
 	k.spawner("RaiderSpawner", "raider", 4, 45.0, [Vector2(26, 2), Vector2(-6, -24), Vector2(2, 30), Vector2(-22, 12)])
+	_black_ridge_settlement(k, o, bh)
 	return k
+
+
+## Black Ridge Mine as a settlement (Increment 23): clear its raiders and claim
+## it at the notice board by the road; Miners dig Scrap Metal out of the
+## tunnel into the stores (shelves under a lean-to in the yard). It has no
+## fields: food comes by truck. A hand pump on the old well for water, the
+## Armory Locker in the mine office, beds for four in the bunkhouse.
+func _black_ridge_settlement(k: Kit, office: StaticBody3D, bunkhouse: StaticBody3D) -> void:
+	var st := Settlement.new()
+	st.name = "Settlement"
+	st.settlement_name = "Black Ridge Mine"
+	st.place_name = "Black Ridge Mine"
+	st.settlement_id = &"black_ridge"
+	st.place_word = "the mine"
+	st.claim_hint = "hold E at the notice board by the road, east of the hoist house"
+	st.shelter_name = "the bunkhouse"
+	st.pump_where = "at the old well"
+	st.claim_radius = 70.0
+	st.defend_radius = 70.0
+	st.starting_food = 8
+	k.root.add_child(st)
+	# Notice board by the road into the yard, facing it
+	var board_at := Vector3(27, 0, 6)
+	var board := k.solid_body(st, "NoticeBoard", Transform3D(Basis(Vector3.UP, PI / 2.0), board_at))
+	for x in [-0.55, 0.55]:
+		k.box(board, "Post", Vector3(0.1, 1.9, 0.1), Vector3(x, 0.95, 0), "wood")
+	k.box(board, "Board", Vector3(1.3, 0.8, 0.06), Vector3(0, 1.4, 0.03), "wood")
+	k.box(board, "Notice", Vector3(0.9, 0.55, 0.01), Vector3(0, 1.42, 0.065), "paint_white")
+	k.box(board, "Roof", Vector3(1.5, 0.06, 0.36), Vector3(0, 1.92, 0.05), "rust")
+	var claim := ClaimPoint.new()
+	claim.name = "ClaimPoint"
+	claim.position = board_at + Vector3(0.1, 1.4, 0)
+	claim.rotation.y = PI / 2.0
+	st.add_child(claim)
+	_area(claim, Vector3(1.4, 1.0, 0.4))
+	# The old well, with a hand pump on it (repaired and upgraded like the farm's)
+	var well_at := Vector3(7.5, 0, 2.5)
+	var well := k.solid_body(st, "PumpHead", Transform3D(Basis.IDENTITY, well_at))
+	k.box(well, "Curb", Vector3(1.4, 0.6, 1.4), Vector3(0, 0.3, 0), "concrete")
+	k.box(well, "Cap", Vector3(1.0, 0.08, 1.0), Vector3(0, 0.64, 0), "metal_dark")
+	k.box(well, "Column", Vector3(0.22, 0.9, 0.22), Vector3(0, 1.1, 0), "rust")
+	k.box(well, "Head", Vector3(0.34, 0.24, 0.3), Vector3(0, 1.65, 0), "rust")
+	k.box(well, "Handle", Vector3(0.06, 0.06, 0.7), Vector3(0, 1.77, 0.3), "metal_dark", 0.0, false)
+	k.box(well, "Spout", Vector3(0.1, 0.1, 0.3), Vector3(-0.2, 1.5, 0), "rust", 90.0, false)
+	var up2 := Node3D.new()
+	up2.name = "Upgrade2"
+	up2.visible = false
+	well.add_child(up2)
+	k.box(up2, "PressureTank", Vector3(0.4, 0.8, 0.4), Vector3(0.95, 0.4, 0.0), "metal_dark", 0.0, false)
+	var motor := Node3D.new()
+	motor.name = "Motor"
+	motor.visible = false
+	well.add_child(motor)
+	k.box(motor, "Engine", Vector3(0.5, 0.4, 0.45), Vector3(-0.95, 0.2, 0.0), "olive", 0.0, false)
+	k.box(motor, "Exhaust", Vector3(0.06, 0.6, 0.06), Vector3(-1.1, 0.7, 0.1), "rust", 0.0, false)
+	var pump := WaterPump.new()
+	pump.name = "WaterPump"
+	pump.position = well_at + Vector3(0, 1.35, 0)
+	st.add_child(pump)
+	_area(pump, Vector3(0.8, 1.6, 1.0))
+	# The stores: shelves under a lean-to in the yard, open to the south
+	var shed_at := Vector3(0, 0, -21)
+	var shed := k.solid_body(st, "StoreShed", Transform3D(Basis.IDENTITY, shed_at))
+	k.box(shed, "Back", Vector3(11.2, 2.8, 0.15), Vector3(0, 1.4, -1.05), "corrugated")
+	k.box(shed, "SideW", Vector3(0.15, 2.8, 2.2), Vector3(-5.6, 1.4, 0), "corrugated")
+	k.box(shed, "SideE", Vector3(0.15, 2.8, 2.2), Vector3(5.6, 1.4, 0), "corrugated")
+	k.box(shed, "Roof", Vector3(11.6, 0.08, 2.8), Vector3(0, 2.9, 0.2), "rust")
+	for x in [-5.5, 5.5]:
+		k.box(shed, "Post", Vector3(0.14, 2.85, 0.14), Vector3(x, 1.42, 1.5), "wood", 0.0, false)
+	var store := (load("res://scenes/world/containers/food_shelves.tscn") as PackedScene).instantiate() as Node3D
+	store.name = "FarmStore"
+	store.position = shed_at + Vector3(0, 0, -0.62)
+	store.set("container_name", "Mine Stores")
+	store.set("object_name", "Mine Stores")
+	st.store_sign = "MINE STORES"
+	st.add_child(store)
+	# Armory Locker in the mine office (the foreman's room)
+	var armory := k.scene("locker").instantiate() as Node3D
+	armory.name = "Armory"
+	armory.position = k.at(office, k.against(office, "N", 0.2, 0.39))
+	armory.rotation.y = k.yaw_in(office, Kit.facing_from("N"))
+	armory.set("container_name", "Armory Locker")
+	armory.set("object_name", "Armory Locker")
+	st.add_child(armory)
+	# Where Miners work: the rock faces down the tunnel (facing in)
+	var faces := Node3D.new()
+	faces.name = "MineSpots"
+	st.add_child(faces)
+	var i := 0
+	for p: Vector3 in [Vector3(-22.6, 0, -6.8), Vector3(-25.2, 0, -5.2), Vector3(-30.6, 0, -6.8), Vector3(-32.2, 0, -5.3)]:
+		var m := Marker3D.new()
+		m.name = "MineSpot%d" % i
+		# Facing the tunnel wall beside them, the rock face (north half: -z)
+		m.transform = Transform3D(Basis(Vector3.UP, 0.0 if p.z < -6.0 else PI), p)
+		faces.add_child(m)
+		i += 1
+	_markers(st, "GuardPosts", [Vector3(34, 0, 0), Vector3(2, 0, 31), Vector3(-6, 0, -29), Vector3(30, 0, -26)])
+	_markers(st, "", [["ArrivalPoint", Vector3(36, 0, 12)], ["Hangout", Vector3(8, 0, 17)]])
+	_markers(st, "RaidPoints", [Vector3(105, 0, 25), Vector3(10, 0, 95), Vector3(70, 0, -85)])
+	var labels := ["the road", "the south", "over the ridge"]
+	for j in 3:
+		st.get_node("RaidPoints").get_child(j).set_meta("label", labels[j])
+	_markers(st, "", [["Shelter", k.at(bunkhouse, Vector3(0, 0, 0.6))]])
+	var people := Node3D.new()
+	people.name = "Settlers"
+	st.add_child(people)
+	var plans := Node3D.new()
+	plans.name = "Plans"
+	st.add_child(plans)
+	var sites := Node3D.new()
+	sites.name = "Sites"
+	st.add_child(sites)
 
 
 # ================================================================ Northwatch Outpost

@@ -33,11 +33,11 @@ extends CharacterBody3D
 signal role_changed(role: Role)
 signal armed_changed
 
-enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER, COOK, RANCHER }
+enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER, COOK, RANCHER, MINER }
 enum State { WAIT, TRAVEL, IDLE, WALK, WORK, PATROL, FIGHT, LEAVING, DEAD, DOWN }
 
 const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder", Role.WOODCUTTER: "Woodcutter",
-	Role.COOK: "Cook", Role.RANCHER: "Rancher"}
+	Role.COOK: "Cook", Role.RANCHER: "Rancher", Role.MINER: "Miner"}
 ## A guard keeps about this many rounds (topped up from you or the armory).
 const AMMO_TARGET := 60
 const SHOT_SOUNDS := {
@@ -110,6 +110,8 @@ var _probe_from := Vector3.INF
 var _probe_next := Vector3.INF
 var _side_left := 0.0
 var _side_dir := Vector3.ZERO
+## Which way a Miner faces at the rock face (23).
+var _work_facing := Vector3.FORWARD
 var _gone := false
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _rng := RandomNumberGenerator.new()
@@ -207,6 +209,8 @@ func status_text() -> String:
 			return settlement.cook_status()
 		Role.RANCHER:
 			return settlement.rancher_status()
+		Role.MINER:
+			return "Mining" if not settlement.mine_spots().is_empty() else "No mine here"
 	return "Helping out"
 
 
@@ -391,6 +395,8 @@ func _home_life(delta: float) -> void:
 			_cook(delta)
 		Role.RANCHER:
 			_tend(delta)
+		Role.MINER:
+			_dig(delta)
 
 
 func _farm(delta: float) -> void:
@@ -497,6 +503,35 @@ func _cut_wood(delta: float) -> void:
 	_swing(true)
 	if _state_time > _state_length:
 		_goal = Vector3.INF
+
+
+## Miners (23): at the rock face in the mine tunnel, swinging a pickaxe.
+func _dig(delta: float) -> void:
+	var spots := settlement.mine_spots()
+	if spots.is_empty():
+		_swing(false)
+		_wander(_hangout(), 6.0, delta)
+		return
+	if _goal == Vector3.INF or state == State.IDLE:
+		# A spot of their own, in turn (one miner to a spot)
+		var miners := settlement.members().filter(func(s: Settler) -> bool: return s.role == Role.MINER and s.has_arrived())
+		var mine := maxi(miners.find(self), 0)
+		_goal = spots[mine % spots.size()].global_position
+		_work_facing = spots[mine % spots.size()].global_basis.z * -1.0
+		state = State.WALK
+		_state_time = 0.0
+	if state == State.WALK:
+		_swing(false)
+		if _move_to(_goal, walk_speed, delta) or _state_time > 60.0:
+			state = State.WORK
+			_state_time = 0.0
+			_state_length = _rng.randf_range(14.0, 24.0)
+		return
+	_brake(delta)
+	_face(_work_facing, delta)
+	_swing(true)
+	if _state_time > _state_length:
+		state = State.IDLE
 
 
 ## Cooks (21.5): at the kitchen's stove, stirring.
@@ -855,8 +890,9 @@ func _update_visuals() -> void:
 		return
 	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD and armour.worn(ArmourSet.BODY) == null],
 			["Helmet", role == Role.GUARD and armour.worn(ArmourSet.HEAD) == null],
-			["HardHat", role == Role.BUILDER], ["ToolBelt", role == Role.BUILDER],
-			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK], ["CowboyHat", role == Role.RANCHER]]:
+			["HardHat", role == Role.BUILDER or role == Role.MINER], ["ToolBelt", role == Role.BUILDER],
+			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK], ["CowboyHat", role == Role.RANCHER],
+			["HeadLamp", role == Role.MINER]]:
 		var n := visual.get_node_or_null(pair[0]) as Node3D
 		if n != null:
 			n.visible = pair[1]
@@ -889,7 +925,10 @@ func _update_visuals() -> void:
 	var axe := visual.get_node_or_null("RightArm/Axe") as Node3D
 	if axe != null:
 		axe.visible = gun == null and role == Role.WOODCUTTER
-	if role != Role.BUILDER and role != Role.WOODCUTTER and role != Role.COOK and role != Role.RANCHER:
+	var pick := visual.get_node_or_null("RightArm/Pickaxe") as Node3D
+	if pick != null:
+		pick.visible = gun == null and role == Role.MINER
+	if role != Role.BUILDER and role != Role.WOODCUTTER and role != Role.COOK and role != Role.RANCHER and role != Role.MINER:
 		_swing(false)
 
 
@@ -1024,7 +1063,7 @@ func load_state(data: Dictionary) -> void:
 	look_seed = int(Settlement._num(data.get("look"), look_seed))
 	_apply_look()
 	var r := int(Settlement._num(data.get("role"), 0))
-	role = r as Role if r >= 0 and r <= Role.RANCHER else Role.NONE
+	role = r as Role if r >= 0 and r <= Role.MINER else Role.NONE
 	var raw_p: Variant = data.get("position")
 	if raw_p is Array and raw_p.size() == 3 and raw_p.all(func(v: Variant) -> bool: return (v is float or v is int) and is_finite(float(v))):
 		global_position = Vector3(raw_p[0], raw_p[1], raw_p[2])

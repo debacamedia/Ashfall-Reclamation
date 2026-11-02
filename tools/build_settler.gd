@@ -112,6 +112,12 @@ func _run() -> void:
 	hh.material_override = _mat("hard_hat", Color(0.92, 0.72, 0.12), 0.5)
 	_add(hard, hh)
 	_box(hard, "Brim", Vector3(0.36, 0.02, 0.4), Vector3(0, 0.005, -0.02), _mat("hard_hat", Color(0.92, 0.72, 0.12), 0.5))
+	# A Miner's lamp on the front of the hard hat (23)
+	var lamp := Node3D.new()
+	lamp.name = "HeadLamp"
+	lamp.position.y = 1.69
+	_add(v, lamp)
+	_box(lamp, "Lamp", Vector3(0.08, 0.06, 0.04), Vector3(0, 0.06, -0.16), _mat("lamp_glass", Color(1.0, 0.95, 0.7), 0.2))
 	var belt := Node3D.new()
 	belt.name = "ToolBelt"
 	_add(v, belt)
@@ -208,6 +214,13 @@ func _run() -> void:
 	_add(right, axe)
 	_box(axe, "Haft", Vector3(0.035, 0.035, 0.55), Vector3(0, 0, -0.2), wood)
 	_box(axe, "Head", Vector3(0.025, 0.16, 0.12), Vector3(0, 0.05, -0.45), steel)
+	# A Miner's pickaxe (23)
+	var pick := Node3D.new()
+	pick.name = "Pickaxe"
+	pick.position = Vector3(0, -0.64, -0.04)
+	_add(right, pick)
+	_box(pick, "Haft", Vector3(0.035, 0.035, 0.6), Vector3(0, 0, -0.22), wood)
+	_box(pick, "Head", Vector3(0.03, 0.34, 0.05), Vector3(0, 0.0, -0.5), steel)
 	var mach := Node3D.new()
 	mach.name = "Machete"
 	mach.position = Vector3(0, -0.64, -0.06)
