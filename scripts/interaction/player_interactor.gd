@@ -72,17 +72,22 @@ func tick(delta: float, interact_held: bool, interactor: Node3D) -> void:
 		if hold_progress >= 1.0:
 			var target := focused
 			_cancel_hold()
-			_attempt(target, interactor)
+			if _attempt(target, interactor) and is_instance_valid(target) and target.repeat_hold and not target.is_queued_for_deletion() and target == focused \
+					and target.hold_time > 0.0 and target.get_block_reason(interactor) == "":
+				# Still held: start the next one straight away
+				_hold_target = target
+				hold_progress = 0.0
 	else:
 		_cancel_hold()
 
 
-func _attempt(target: Interactable, interactor: Node3D) -> void:
+func _attempt(target: Interactable, interactor: Node3D) -> bool:
 	var reason := target.get_block_reason(interactor)
 	if reason != "" or not target.try_interact(interactor, global_position):
 		interaction_refused.emit(target, reason if reason != "" else "Can't reach")
-		return
+		return false
 	interaction_succeeded.emit(target)
+	return true
 
 
 func _set_focus(target: Interactable) -> void:

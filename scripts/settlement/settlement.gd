@@ -1188,6 +1188,7 @@ func simulate(hours: float) -> void:
 	_simulate_animals(hours, here)
 	_simulate_cooking(hours, here)
 	_simulate_tanning(hours)
+	_simulate_first_aid(here)
 	# Building: each working Builder mends what's damaged, else puts their
 	# hours into the current site
 	for s: Settler in here:
@@ -1205,6 +1206,72 @@ func simulate(hours: float) -> void:
 		arrival_in = arrival_every_hours
 		if free_beds() > 0 and food() + fridge_meals() >= arrival_food_needed:
 			spawn_newcomer()
+
+
+# ---------------------------------------------------------------- first aid (22.1)
+
+## Bandages and Medkits left in the stores: the hurt patch themselves up,
+## and the wounded are helped up by whoever's standing, once a raid is over.
+const BANDAGE := &"bandage"
+const MEDKIT := &"medkit"
+## Settlers this far below full health patch themselves up.
+@export var first_aid_below := 20.0
+
+
+func _simulate_first_aid(here: Array) -> void:
+	if raid_phase == RaidPhase.ACTIVE:
+		return
+	var standing := here.filter(func(s: Settler) -> bool: return not s.is_down() and not s.is_dead())
+	# The wounded first: someone standing helps them up
+	for s: Settler in here:
+		if not s.is_down() or standing.is_empty():
+			continue
+		var with := BANDAGE if _stores_count(BANDAGE) > 0 else (MEDKIT if _stores_count(MEDKIT) > 0 else &"")
+		if with == &"":
+			break
+		_take_id(with, 1)
+		s.help_up(0.5 if with == BANDAGE else 1.0)
+		var helper: Settler = standing[0]
+		for h: Settler in standing:
+			if h.role != Settler.Role.GUARD:
+				helper = h
+				break
+		notice.emit("%s helped %s up with a %s from the stores" % [helper.settler_name, s.settler_name,
+			ItemDatabase.get_item(with).display_name])
+		standing.append(s)
+	# The hurt: patch themselves up
+	for s: Settler in standing:
+		if s.state == Settler.State.FIGHT:
+			continue
+		var missing := s.health.max_health - s.health.current_health
+		if missing < first_aid_below:
+			continue
+		var used := {}
+		while missing >= first_aid_below:
+			var with := &""
+			if missing >= 40.0 and _stores_count(MEDKIT) > 0:
+				with = MEDKIT
+			elif _stores_count(BANDAGE) > 0:
+				with = BANDAGE
+			elif _stores_count(MEDKIT) > 0:
+				with = MEDKIT
+			else:
+				break
+			_take_id(with, 1)
+			s.health.heal(ItemDatabase.get_item(with).heal_amount)
+			used[with] = int(used.get(with, 0)) + 1
+			missing = s.health.max_health - s.health.current_health
+		if not used.is_empty():
+			var parts: PackedStringArray = []
+			for id: StringName in used:
+				var n := int(used[id])
+				parts.append("%s%s" % ["a " if n == 1 else "%d " % n, ItemDatabase.get_item(id).display_name + ("" if n == 1 else "s")])
+			notice.emit("%s patched up their wounds with %s from the stores" % [s.settler_name, " and ".join(parts)])
+
+
+## Bandages and Medkits in the stores: [bandages, medkits].
+func first_aid_stock() -> Array:
+	return [_stores_count(BANDAGE), _stores_count(MEDKIT)]
 
 
 # ---------------------------------------------------------------- animals and the kitchen (21.5)

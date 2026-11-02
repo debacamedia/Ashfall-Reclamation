@@ -128,6 +128,9 @@ func _ready() -> void:
 	add_to_group("settlers")
 	add_to_group("persist")
 	_rng.randomize()
+	# Follow the path's corners closely (22.1): turning for the next point
+	# 0.8 m early cut them round a stair's newel post and into it
+	agent.path_desired_distance = 0.45
 	health.died.connect(_on_died)
 	health.damaged.connect(_on_damaged)
 	health.damage_modifier = func(info: DamageInfo) -> float: return armour.absorb(info.amount, info.type)
@@ -302,6 +305,7 @@ func _physics_process(delta: float) -> void:
 		_:
 			_home_life(delta)
 	move_and_slide()
+	NpcStep.step_up(self)
 
 
 func _enter(s: State) -> void:
@@ -708,7 +712,9 @@ func _move_to(point: Vector3, speed: float, delta: float) -> bool:
 	if agent.target_position.distance_to(point) > 1.0 or (_repath <= 0.0 and agent.is_navigation_finished()):
 		agent.target_position = point
 		_repath = 0.3
-	if Vector2(point.x - global_position.x, point.z - global_position.z).length() <= agent.target_desired_distance:
+	# There, and on the same level: not underneath a tower deck (22.1)
+	if Vector2(point.x - global_position.x, point.z - global_position.z).length() <= agent.target_desired_distance \
+			and absf(point.y - global_position.y) < 1.2:
 		_brake(delta)
 		return true
 	var next := agent.get_next_path_position()

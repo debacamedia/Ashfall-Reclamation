@@ -99,35 +99,86 @@ func _guard_tower() -> void:
 		_box(body, "Leg", Vector3(0.22, h, 0.22), Vector3(c.x, h / 2.0, c.y), M["wood"], true)
 		_box(body, "Post", Vector3(0.12, 2.2, 0.12), Vector3(c.x, h + 1.1, c.y), M["wood"], true)
 	_box(body, "Deck", Vector3(3.0, 0.15, 3.0), Vector3(0, h - 0.075, deck_z), M["wood_plain"], true)
+	# Boarded in below the deck (22.1): nobody stands under it thinking
+	# they're at the post above
+	_box(body, "SkirtBack", Vector3(2.9, 1.2, 0.05), Vector3(0, 0.6, deck_z - 1.38), M["wood"], true)
+	_box(body, "SkirtFront", Vector3(2.9, 1.2, 0.05), Vector3(0, 0.6, deck_z + 1.38), M["wood"], true)
+	_box(body, "SkirtLeft", Vector3(0.05, 1.2, 2.9), Vector3(-1.38, 0.6, deck_z), M["wood"], true)
+	_box(body, "SkirtRight", Vector3(0.05, 1.2, 2.9), Vector3(1.38, 0.6, deck_z), M["wood"], true)
+	_shape(body, "UnderDeck", Vector3(2.8, 1.2, 2.8), Vector3(0, 0.6, deck_z))
 	# Rails round the deck, open where the stair arrives (front right)
 	_box(body, "RailBack", Vector3(3.0, 1.0, 0.08), Vector3(0, h + 0.5, deck_z - 1.46), M["wood"], true)
 	_box(body, "RailLeft", Vector3(0.08, 1.0, 3.0), Vector3(-1.46, h + 0.5, deck_z), M["wood"], true)
 	_box(body, "RailRight", Vector3(0.08, 1.0, 3.0), Vector3(1.46, h + 0.5, deck_z), M["wood"], true)
-	_box(body, "RailFront", Vector3(1.6, 1.0, 0.08), Vector3(-0.7, h + 0.5, deck_z + 1.46), M["wood"], true)
+	# The stair is 1.5 m wide between its rails (22.1: narrower, the navmesh
+	# lost the way up), from x0 to x1, clear of the front right leg
+	var x0 := -0.25
+	var x1 := 1.27
+	var xm := (x0 + x1) / 2.0
+	_box(body, "RailFront", Vector3(x0 + 1.5, 1.0, 0.08), Vector3((x0 - 1.5) / 2.0, h + 0.5, deck_z + 1.46), M["wood"], true)
 	_box(body, "Roof", Vector3(3.4, 0.08, 3.4), Vector3(0, h + 2.24, deck_z), M["tin"], true)
-	# The stair: like the wooden stairs you build (2.6 m up over 3.4 m)
+	# The stair: 2.6 m up over 3.4 m. Solid underneath (22.1): with only a
+	# sloping board, the navmesh joined it from the side where it was already
+	# knee-high, and settlers walked into its edge
 	var run := 3.4
 	var length := sqrt(h * h + run * run)
 	var angle := atan2(h, run)
-	var stair := Transform3D(Basis(Vector3.RIGHT, angle), Vector3(0.8, h / 2.0, deck_z + 1.5 + run / 2.0))
-	var ramp := CollisionShape3D.new()
-	ramp.name = "Ramp"
-	var rb := BoxShape3D.new()
-	rb.size = Vector3(1.2, 0.12, length)
-	ramp.shape = rb
-	ramp.transform = stair
-	_add(body, ramp)
+	var z_top := deck_z + 1.5
+	var z_foot := z_top + run
+	var wedge := CollisionShape3D.new()
+	wedge.name = "Ramp"
+	var ws := ConvexPolygonShape3D.new()
+	var pts := PackedVector3Array()
+	for x in [x0, x1]:
+		pts.append(Vector3(x, 0.0, z_foot))
+		pts.append(Vector3(x, h, z_top))
+		pts.append(Vector3(x, 0.0, z_top))
+	ws.points = pts
+	wedge.shape = ws
+	_add(body, wedge)
+	# Boarded sides under the stair
+	for x in [x0 + 0.02, x1 - 0.02]:
+		var panel := MeshInstance3D.new()
+		panel.name = "StairSide"
+		var pm := PrismMesh.new()
+		pm.left_to_right = 1.0  # the high end at the deck (local +x turns to -z)
+		pm.size = Vector3(run, h, 0.04)
+		panel.mesh = pm
+		panel.material_override = M["wood"]
+		panel.transform = Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(x, h / 2.0, z_top + run / 2.0))
+		_add(body, panel)
+	# Handrails down both sides, carried on past the foot by a post (22.1):
+	# the only way on is from the front
+	for x in [x0, x1]:
+		var rail := Transform3D(Basis(Vector3.RIGHT, angle), Vector3(x, h / 2.0, z_top + run / 2.0)) \
+			* Transform3D(Basis.IDENTITY, Vector3(0, 0.5, 0))
+		var rm := MeshInstance3D.new()
+		rm.name = "Handrail"
+		var rbm := BoxMesh.new()
+		rbm.size = Vector3(0.06, 0.9, length)
+		rm.mesh = rbm
+		rm.material_override = M["wood"]
+		rm.transform = rail
+		_add(body, rm)
+		var rc := CollisionShape3D.new()
+		rc.name = "HandrailCol"
+		var rcs := BoxShape3D.new()
+		rcs.size = Vector3(0.06, 0.9, length)
+		rc.shape = rcs
+		rc.transform = rail
+		_add(body, rc)
+		_box(body, "Newel", Vector3(0.1, 1.0, 0.5), Vector3(x, 0.5, z_foot + 0.15), M["wood"], true)
 	for i in 12:
 		var t := (i + 0.5) / 12.0
-		_box(body, "Step%d" % i, Vector3(1.2, 0.06, 0.3), Vector3(0.8, h * (1.0 - t) + 0.03, deck_z + 1.5 + run * t), M["wood_plain"], false)
-	for x in [0.2, 1.4]:
+		_box(body, "Step%d" % i, Vector3(x1 - x0, 0.06, 0.3), Vector3(xm, h * (1.0 - t) + 0.03, z_top + run * t), M["wood_plain"], false)
+	for x in [x0, x1]:
 		var side := MeshInstance3D.new()
 		side.name = "Stringer"
 		var sm := BoxMesh.new()
 		sm.size = Vector3(0.08, 0.25, length)
 		side.mesh = sm
 		side.material_override = M["wood"]
-		side.transform = Transform3D(Basis(Vector3.RIGHT, angle), Vector3(x, h / 2.0, deck_z + 1.5 + run / 2.0))
+		side.transform = Transform3D(Basis(Vector3.RIGHT, angle), Vector3(x, h / 2.0, z_top + run / 2.0))
 		_add(body, side)
 	_markers(b, "GuardSpots", [Vector3(-0.3, h, deck_z - 0.3)])
 	_finish(b, "guard_tower")

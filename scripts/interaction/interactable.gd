@@ -19,6 +19,9 @@ signal interacted(interactor: Node3D)
 @export var object_name := "Object"
 ## Seconds the key must be held (0 = instant press).
 @export var hold_time := 0.0
+## Keep holding to do it again (helping build, 22.1); otherwise let go and
+## press again.
+@export var repeat_hold := false
 ## Furthest an interactor's eyes may be from this object.
 @export var max_distance := 3.0
 @export var enabled := true

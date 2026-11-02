@@ -44,6 +44,7 @@ var _ghosts: Array[Node3D] = []
 var _shapes: Array[CollisionShape3D] = []
 var _label: Label3D
 var _mat: StandardMaterial3D
+var _focus := Vector3.INF
 
 static var _mesh_cache := {}
 
@@ -53,6 +54,7 @@ func _ready() -> void:
 	add_to_group("persist")
 	action_name = "Build"
 	max_distance = 3.5
+	repeat_hold = true
 	_mat = StandardMaterial3D.new()
 	_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -195,6 +197,40 @@ func get_prompt(interactor: Node3D) -> String:
 	return "Help build the %s (%d%%)" % [display_name(), roundi(progress() * 100.0)]
 
 
+## Reach is measured to the nearest edge of the outline (22.1): measured to
+## the middle, only things as small as a guard post could be helped with.
+func is_within_reach(eye_position: Vector3) -> bool:
+	_focus = nearest_point(eye_position)
+	return eye_position.distance_to(_focus) <= max_distance + 0.75
+
+
+func get_focus_point() -> Vector3:
+	return _focus if _focus != Vector3.INF else centre()
+
+
+## The point of the unbuilt outline nearest `from` (world).
+func nearest_point(from: Vector3) -> Vector3:
+	var best := centre()
+	var best_d := INF
+	for i in _shapes.size():
+		var cs := _shapes[i]
+		if cs == null or cs.disabled:
+			continue
+		var box := cs.shape as BoxShape3D
+		if box == null:
+			continue
+		var xf := cs.global_transform
+		var local := xf.affine_inverse() * from
+		var h := box.size * 0.5
+		var clamped := Vector3(clampf(local.x, -h.x, h.x), clampf(local.y, -h.y, h.y), clampf(local.z, -h.z, h.z))
+		var p := xf * clamped
+		var d := p.distance_squared_to(from)
+		if d < best_d:
+			best_d = d
+			best = p
+	return best
+
+
 func get_block_reason(interactor: Node3D) -> String:
 	if is_supplied():
 		return ""
@@ -216,6 +252,7 @@ func _perform(interactor: Node3D) -> void:
 
 func _process(_delta: float) -> void:
 	# A tap hands over materials; once it has them all, holding E helps build
+	# (and keeps helping while it's held, 22.1)
 	hold_time = HELP_HOLD if is_supplied() else 0.0
 
 

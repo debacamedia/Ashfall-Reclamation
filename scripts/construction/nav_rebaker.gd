@@ -121,7 +121,22 @@ func is_busy() -> bool:
 func _ready() -> void:
 	if region == null:
 		region = get_parent() as NavigationRegion3D
-	region.bake_finished.connect(func() -> void: baked.emit())
+	# The tile takes in its new mesh there and then (22.1): left to its own
+	# thread, a mesh that came while it was still taking in the last one was
+	# sometimes dropped, and a new guard tower never reached anyone's paths.
+	# One 100 m tile is quick; the zone-wide map still updates on its thread.
+	NavigationServer3D.region_set_use_async_iterations(region.get_rid(), false)
+	region.bake_finished.connect(_on_bake_finished)
+
+
+## The baked mesh, handed to the navigation server ourselves (22.1): the
+## region didn't always pass a rebaked mesh on (the bake fills in the same
+## mesh, from another thread), so a guard tower could be in the mesh but not
+## in anyone's paths.
+func _on_bake_finished() -> void:
+	if region != null and region.navigation_mesh != null:
+		NavigationServer3D.region_set_navigation_mesh(region.get_rid(), region.navigation_mesh)
+	baked.emit()
 
 
 func _process(delta: float) -> void:

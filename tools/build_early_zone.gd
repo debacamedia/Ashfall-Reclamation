@@ -1311,6 +1311,9 @@ func _nav_template() -> NavigationMesh:
 	nm.agent_height = 1.75
 	nm.agent_radius = 0.25
 	nm.agent_max_climb = 0.25
+	# Nowhere a body won't fit counts as walkable: under a tower deck, a
+	# table, a low roof (22.1)
+	nm.filter_walkable_low_height_spans = true
 	nm.border_size = 1.0
 	nm.edge_max_error = 1.0
 	return nm

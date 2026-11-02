@@ -132,6 +132,9 @@ func _ready() -> void:
 	add_to_group("enemies")
 	add_to_group("noise_listeners")
 	_rng.randomize()
+	# Follow the path's corners closely (22.1): turning for the next point
+	# 0.8 m early cut them round a stair's newel post and into it
+	agent.path_desired_distance = 0.45
 	if home_position == Vector3.INF:
 		home_position = global_position
 	health.damaged.connect(_on_damaged)
@@ -183,6 +186,7 @@ func _physics_process(delta: float) -> void:
 			_process_search(delta)
 
 	move_and_slide()
+	NpcStep.step_up(self)
 	_update_footsteps(delta)
 
 

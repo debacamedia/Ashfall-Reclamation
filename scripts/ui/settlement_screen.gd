@@ -313,9 +313,12 @@ func refresh() -> void:
 	var hurt := s.damaged_structures().size()
 	if hurt > 0:
 		lines.append("Repairs:  %d damaged (Builders mend them with materials from the stores)" % hurt)
+	var aid := s.first_aid_stock()
+	lines.append("First aid:  %d Bandage%s, %d Medkit%s in the stores%s" % [aid[0], "" if aid[0] == 1 else "s", aid[1], "" if aid[1] == 1 else "s",
+		"   (put some in for the hurt)" if aid[0] + aid[1] == 0 else ""])
 	var down := s.members().filter(func(m: Settler) -> bool: return m.is_down()).size()
 	if down > 0:
-		lines.append("Wounded:  %d down, help them up (E, a Bandage)" % down)
+		lines.append("Wounded:  %d down, help them up (E, a Bandage), or leave Bandages in the stores" % down)
 	if s.free_beds() <= 0:
 		lines.append("Newcomers:  no free bed")
 	elif s.food() < s.arrival_food_needed:
@@ -346,10 +349,29 @@ func refresh() -> void:
 	for p: Settler in _rows:
 		if is_instance_valid(p):
 			var row: Dictionary = _rows[p]
+			_show_health(row["health"] as ProgressBar, p)
 			(row["status"] as Label).text = p.status_text()
 			(row["status"] as Label).add_theme_color_override("font_color", BAD if p.is_hungry() or p.short_of_water else GOOD)
 			(row["gun"] as Label).text = p.gun_text() if p.role == Settler.Role.GUARD or p.gun != null else ""
 			(row["armour"] as Label).text = p.armour.describe()
+
+
+## A settler's health on their row: a bar and "74 / 100" (22.1).
+func _show_health(bar: ProgressBar, p: Settler) -> void:
+	var h := p.health
+	var frac := h.get_fraction() if not p.is_dead() else 0.0
+	bar.value = frac * 100.0
+	var fill := bar.get_theme_stylebox("fill") as StyleBoxFlat
+	if fill != null:
+		fill.bg_color = BAD if frac < 0.35 else (Color(0.95, 0.75, 0.3) if frac < 0.7 else GOOD)
+	var text := bar.get_node("Text") as Label
+	if p.is_dead():
+		text.text = "Dead"
+	elif p.is_down():
+		text.text = "Down"
+	else:
+		text.text = "%d / %d" % [ceili(h.current_health), roundi(h.max_health)]
+	bar.tooltip_text = "Health. Hurt settlers patch themselves up with Bandages and Medkits left in the stores"
 
 
 func _build_rows(people: Array[Settler]) -> void:
@@ -381,6 +403,33 @@ func _build_rows(people: Array[Settler]) -> void:
 		var nm := _label(p.settler_name, 18, TEXT)
 		nm.custom_minimum_size.x = 140
 		top.add_child(nm)
+		# Health (22.1)
+		var hp := ProgressBar.new()
+		hp.name = "Health"
+		hp.custom_minimum_size = Vector2(120, 20)
+		hp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		hp.show_percentage = false
+		hp.max_value = 100.0
+		var hp_bg := StyleBoxFlat.new()
+		hp_bg.bg_color = Color(0.06, 0.06, 0.055)
+		hp_bg.set_corner_radius_all(3)
+		hp.add_theme_stylebox_override("background", hp_bg)
+		var hp_fill := StyleBoxFlat.new()
+		hp_fill.bg_color = GOOD
+		hp_fill.set_corner_radius_all(3)
+		hp.add_theme_stylebox_override("fill", hp_fill)
+		var hp_text := _label("", 13, TEXT)
+		hp_text.name = "Text"
+		hp_text.set_anchors_preset(Control.PRESET_FULL_RECT)
+		hp_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		hp_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		hp_text.add_theme_color_override("font_outline_color", Color.BLACK)
+		hp_text.add_theme_constant_override("outline_size", 4)
+		hp.add_child(hp_text)
+		top.add_child(hp)
+		var gap := Control.new()
+		gap.custom_minimum_size.x = 10
+		top.add_child(gap)
 		var status := _label("", 15, GOOD)
 		status.name = "Status"
 		status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -468,7 +517,7 @@ func _build_rows(people: Array[Settler]) -> void:
 		worn.clip_text = true
 		worn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		wear.add_child(worn)
-		_rows[p] = {"status": status, "gun": gun, "give": give, "armour": worn}
+		_rows[p] = {"status": status, "gun": gun, "give": give, "armour": worn, "health": hp}
 
 
 func _refresh_sites(s: Settlement) -> void:
