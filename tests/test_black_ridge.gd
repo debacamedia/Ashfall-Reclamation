@@ -129,7 +129,7 @@ func test_miners_dig_scrap_metal() -> void:
 	mine.simulate(3.0)
 	check(mine.scrap() - before == 12, "two Miners, three hours: 12 Scrap Metal in the stores (%d)" % (mine.scrap() - before))
 	check(mine.rates()["scrap"] == 4.0 and mine.rates()["miners"] == 2, "4 an hour")
-	check(farm.scrap() == 0, "none at the farm")
+	check(farm.store.inventory.count_of(&"scrap_metal") == 0, "none in the farm's own stores")
 	# One to a rock face: a fifth Miner adds nothing
 	for i in 2:
 		await _newcomer(zone, mine, Settler.Role.MINER)

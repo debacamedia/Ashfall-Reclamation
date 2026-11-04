@@ -104,6 +104,10 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 @export var claim_hint := "hold E at the notice board in front of the farmhouse porch"
 ## Where everyone shelters in a raid, for the screen ("the farmhouse") (23).
 @export var shelter_name := "the farmhouse"
+## This place's share of the food on the supply line (24), as a weight
+## against the others' (the screen shows it as a percentage). -1: split by
+## headcount, which every place uses until you set one.
+@export var food_share := -1.0
 ## Where the pump is, for the screen ("in the pump house") (23).
 @export var pump_where := "in the pump house"
 ## The sign over the stores' shelves ("" keeps the shelves' own) (23).
@@ -192,6 +196,10 @@ var arrival_in := 0.0
 var _food_progress := 0.0
 var _plank_progress := 0.0
 var _scrap_progress := 0.0
+var _supply_clock := 0.0
+## Meals the supply line brought here (+) or sent away (-) in its last
+## hourly share-out (24), for the screen.
+var supply_last := 0
 ## What the Armorer's making (23.5): the item id, and hours put in. Its
 ## materials came out of the stores when they started.
 var _armory_job := &""
@@ -407,7 +415,7 @@ func damaged_structures() -> Array[Structure]:
 func _stores_have(cost: Dictionary) -> bool:
 	for item: ItemDefinition in cost:
 		var have := 0
-		for st in stores():
+		for st in _stores_for(item):
 			have += st.inventory.count_of(item.id)
 		if have < int(cost[item]):
 			return false
@@ -417,7 +425,7 @@ func _stores_have(cost: Dictionary) -> bool:
 func _take_from_stores(cost: Dictionary) -> void:
 	for item: ItemDefinition in cost:
 		var left := int(cost[item])
-		for st in stores():
+		for st in _stores_for(item):
 			var n := mini(st.inventory.count_of(item.id), left)
 			if n > 0:
 				st.inventory.remove_item(item.id, n)
@@ -638,12 +646,13 @@ func _site_reason(player: PlayerController, site: ConstructionSite) -> String:
 	return ""
 
 
-## Sites short of materials take them from the stores.
+## Sites short of materials take them from the stores (24: any of your
+## places' stores, this one's first).
 func _supply_sites() -> void:
 	for site in sites():
 		if site.is_supplied():
 			continue
-		for st in stores():
+		for st in shared_stores():
 			site.take_from(st.inventory)
 			if site.is_supplied():
 				notice.emit("The %s has its materials from the stores" % site.display_name().to_lower())
@@ -663,6 +672,168 @@ func raiders_here() -> int:
 				and Vector2(r.global_position.x - global_position.x, r.global_position.z - global_position.z).length() <= claim_radius:
 			n += 1
 	return n
+
+
+# ---------------------------------------------------------------- the supply line (24)
+
+## Your places, linked by the supply line once you hold two or more: this one
+## first, then the others you hold. Unclaimed, just this one.
+func network() -> Array[Settlement]:
+	var out: Array[Settlement] = [self]
+	if not is_claimed or not is_inside_tree():
+		return out
+	for n in get_tree().get_nodes_in_group("settlements"):
+		var st := n as Settlement
+		if st != self and st.is_claimed:
+			out.append(st)
+	return out
+
+
+## Each place's part of the food (0-1), by the shares you've set, or by
+## headcount until you set any (a place with nobody yet counts as one, so
+## newcomers have something to come for).
+func food_shares() -> Dictionary:
+	var net := network()
+	var manual := net.any(func(st: Settlement) -> bool: return st.food_share >= 0.0)
+	var w := {}
+	var total := 0.0
+	for st in net:
+		var x := maxf(st.food_share, 0.0) if manual else float(maxi(st.members().size(), 1))
+		w[st] = x
+		total += x
+	for st in net:
+		w[st] = float(w[st]) / total if total > 0.0 else 1.0 / net.size()
+	return w
+
+
+## True once you've set the shares yourself (not by headcount).
+func food_shares_set() -> bool:
+	return network().any(func(st: Settlement) -> bool: return st.food_share >= 0.0)
+
+
+## Sets this place's share (a weight, 0-100). The first time, every other
+## place on the line keeps what it had by headcount.
+func set_food_share(weight: float) -> void:
+	if not food_shares_set():
+		var now := food_shares()
+		for st: Settlement in now:
+			st.food_share = roundf(float(now[st]) * 100.0)
+	food_share = clampf(weight, 0.0, 100.0)
+
+
+## Back to splitting by headcount, everywhere on the line.
+func reset_food_shares() -> void:
+	for st in network():
+		st.food_share = -1.0
+
+
+## Meals' worth of food in this place's stores: vegetables, and cooked dishes
+## on the shelves (not the kitchen's fridge, which stays where it's cooked).
+func food_meals() -> float:
+	return float(food()) + float(stored_dishes()[1])
+
+
+## Every settlement hour, one place (the first you hold) shares the food out:
+## from places with more than their share to places with less.
+func _simulate_supply(hours: float) -> void:
+	if not is_claimed:
+		return
+	var net := network()
+	if net.size() < 2 or _supply_leader() != self:
+		return
+	_supply_clock += hours
+	if _supply_clock < 1.0:
+		return
+	_supply_clock = 0.0
+	share_out_food()
+
+
+func _supply_leader() -> Settlement:
+	for n in get_tree().get_nodes_in_group("settlements"):
+		if (n as Settlement).is_claimed:
+			return n
+	return null
+
+
+## Moves food between the places on the line to match their shares. Whole
+## vegetables and whole dishes; a full store takes what fits.
+func share_out_food() -> void:
+	var net := network()
+	for st in net:
+		st.supply_last = 0
+	if net.size() < 2:
+		return
+	var shares := food_shares()
+	var have := {}
+	var total := 0.0
+	for st in net:
+		have[st] = st.food_meals()
+		total += float(have[st])
+	if total < 1.0:
+		return
+	for to in net:
+		var want := float(shares[to]) * total - float(have[to])
+		for from in net:
+			if want < 1.0:
+				break
+			if from == to:
+				continue
+			var spare := float(have[from]) - float(shares[from]) * total
+			if spare < 1.0:
+				continue
+			var moved := _move_food(from, to, minf(want, spare))
+			have[from] = float(have[from]) - moved
+			have[to] = float(have[to]) + moved
+			from.supply_last -= roundi(moved)
+			to.supply_last += roundi(moved)
+			want -= moved
+
+
+## Up to `meals` of food from `from`'s stores to `to`'s: vegetables first,
+## then cooked dishes that fit. Returns the meals moved.
+static func _move_food(from: Settlement, to: Settlement, meals: float) -> float:
+	var moved := 0.0
+	var veg := mini(floori(meals), from.food())
+	if veg > 0:
+		var put := to._add_food(veg)
+		from._take_id(FOOD, put)
+		moved += put
+	for st in from.stores():
+		for i in st.inventory.slot_count:
+			var it := st.inventory.get_slot_item(i)
+			while it != null and it.settler_meals > 0.0 and moved + it.settler_meals <= meals + 0.01 and st.inventory.get_slot_item(i) == it:
+				if to._put_in_stores(it.id, 1) < 1:
+					return moved
+				st.inventory.take_from_slot(i, 1)
+				moved += it.settler_meals
+				it = st.inventory.get_slot_item(i)
+	return moved
+
+
+## Every store of every place on the supply line, this place's first.
+func shared_stores() -> Array[SalvageContainer]:
+	var out: Array[SalvageContainer] = []
+	for st in network():
+		out.append_array(st.stores())
+	return out
+
+
+## Every Armory Locker on the supply line, this place's first.
+func shared_armories() -> Array[SalvageContainer]:
+	var out: Array[SalvageContainer] = []
+	for st in network():
+		if st.armory != null:
+			out.append(st.armory)
+	return out
+
+
+## Where settlers here look for `item`: food (and anything eaten or cooked)
+## only in this place's own stores, since the food is split between places
+## by their shares; everything else in any place's stores.
+func _stores_for(item: ItemDefinition) -> Array[SalvageContainer]:
+	if item != null and item.category == ItemDefinition.Category.FOOD:
+		return stores()
+	return shared_stores()
 
 
 # ---------------------------------------------------------------- stocks
@@ -1070,41 +1241,58 @@ func _return_gun(s: Settler, player: PlayerController) -> void:
 
 ## Unarmed guards, or ones low on rounds, help themselves from the armory.
 func _supply_guards() -> void:
-	if armory == null:
+	var lockers := shared_armories()
+	if lockers.is_empty():
 		return
-	var inv := armory.inventory
 	for s in members():
 		if s.role != Settler.Role.GUARD or not s.has_arrived():
 			continue
 		if s.gun == null:
 			var best: ItemDefinition = null
+			var best_at: SalvageContainer = null
 			var best_index := -1
-			for i in inv.slot_count:
-				var it := inv.get_slot_item(i)
-				if it != null and it.weapon != null and not it.weapon.melee and (best == null or it.weapon.tier > best.weapon.tier):
-					best = it
-					best_index = i
+			for locker in lockers:
+				for i in locker.inventory.slot_count:
+					var it := locker.inventory.get_slot_item(i)
+					if it != null and it.weapon != null and not it.weapon.melee and (best == null or it.weapon.tier > best.weapon.tier):
+						best = it
+						best_at = locker
+						best_index = i
 			if best != null:
-				inv.take_from_slot(best_index, 1)
+				best_at.inventory.take_from_slot(best_index, 1)
 				s.arm(best, 0)
-				notice.emit("%s took a %s from the armory" % [s.settler_name, best.display_name])
+				notice.emit("%s took a %s from %s" % [s.settler_name, best.display_name, _locker_name(best_at)])
 		if s.gun != null and s.ammo < Settler.AMMO_TARGET / 2:
-			give_ammo_from(inv, s, Settler.AMMO_TARGET)
+			for locker in lockers:
+				give_ammo_from(locker.inventory, s, Settler.AMMO_TARGET)
 		# Armour (22): the best piece for each empty slot
 		for slot in ArmourSet.SLOTS:
 			if s.armour.worn(slot) != null:
 				continue
 			var best: ItemDefinition = null
+			var best_at: SalvageContainer = null
 			var best_index := -1
-			for i in inv.slot_count:
-				var it := inv.get_slot_item(i)
-				if it != null and it.is_armour() and it.armour_slot == slot and (best == null or it.armour_protection > best.armour_protection):
-					best = it
-					best_index = i
+			for locker in lockers:
+				for i in locker.inventory.slot_count:
+					var it := locker.inventory.get_slot_item(i)
+					if it != null and it.is_armour() and it.armour_slot == slot and (best == null or it.armour_protection > best.armour_protection):
+						best = it
+						best_at = locker
+						best_index = i
 			if best != null:
-				inv.take_from_slot(best_index, 1)
+				best_at.inventory.take_from_slot(best_index, 1)
 				s.armour.put_on(best)
-				notice.emit("%s took a %s from the armory" % [s.settler_name, best.display_name])
+				notice.emit("%s took a %s from %s" % [s.settler_name, best.display_name, _locker_name(best_at)])
+
+
+## "the armory", or "Northwatch Outpost's armory" for another place's (24).
+func _locker_name(locker: SalvageContainer) -> String:
+	if locker == armory:
+		return "the armory"
+	for st in network():
+		if st.armory == locker:
+			return "%s's armory" % st.settlement_name
+	return "the armory"
 
 
 # ---------------------------------------------------------------- recruiting
@@ -1260,6 +1448,7 @@ func simulate(hours: float) -> void:
 	_simulate_cooking(hours, here)
 	_simulate_tanning(hours)
 	_simulate_armory(hours, here)
+	_simulate_supply(hours)
 	_simulate_first_aid(here)
 	# Building: each working Builder mends what's damaged, else puts their
 	# hours into the current site
@@ -1621,7 +1810,7 @@ func stored_dishes() -> Array:
 
 func _stores_count(id: StringName) -> int:
 	var n := 0
-	for st in stores():
+	for st in _stores_for(ItemDatabase.get_item(id)):
 		n += st.inventory.count_of(id)
 	return n
 
@@ -2289,7 +2478,7 @@ const LAYOUT := 2
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
 		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
-		"armory_job": String(_armory_job), "armory_progress": _armory_progress,
+		"armory_job": String(_armory_job), "armory_progress": _armory_progress, "food_share": food_share,
 		"meal_credit": _meal_credit, "cook_progress": _cook_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
 		"raid_from_name": raid_from_name, "raid_size": raid_size,
@@ -2312,6 +2501,9 @@ func load_state(data: Dictionary) -> void:
 	var job := StringName(str(data.get("armory_job", "")))
 	_armory_job = job if job == &"" or ItemDatabase.get_item(job) != null else &""
 	_armory_progress = maxf(_num(data.get("armory_progress"), 0.0), 0.0)
+	food_share = _num(data.get("food_share"), -1.0)
+	if food_share < 0.0:
+		food_share = -1.0
 	_meal_credit = clampf(_num(data.get("meal_credit"), 0.0), 0.0, 10.0)
 	_cook_progress = clampf(_num(data.get("cook_progress"), 0.0), 0.0, 1.0)
 	# The log and its clock (20.5)

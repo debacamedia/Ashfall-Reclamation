@@ -45,6 +45,11 @@ var _log_key := ""
 ## One button per settlement you hold (23): which one the screen shows.
 var _tabs: HBoxContainer
 var _tabs_key := ""
+## The supply line (24): a food share per place you hold.
+var _supply_box: VBoxContainer
+var _supply_list: VBoxContainer
+var _supply_rows := {}
+var _supply_key := ""
 var _how: Label
 
 
@@ -145,6 +150,31 @@ func _init() -> void:
 	mid.custom_minimum_size.x = 320
 	mid.add_theme_constant_override("separation", 6)
 	body.add_child(mid)
+	# The supply line (24), when you hold two places or more
+	_supply_box = VBoxContainer.new()
+	_supply_box.name = "Supply"
+	_supply_box.add_theme_constant_override("separation", 4)
+	_supply_box.visible = false
+	mid.add_child(_supply_box)
+	_supply_box.add_child(_label("SUPPLY LINE", 16, STYLE_COLOR))
+	var sup := _label("Your places share their materials, guns and rounds. Food is split by these shares every settlement hour.", 13, DIM)
+	sup.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_supply_box.add_child(sup)
+	_supply_list = VBoxContainer.new()
+	_supply_list.name = "Shares"
+	_supply_list.add_theme_constant_override("separation", 2)
+	_supply_box.add_child(_supply_list)
+	var reset := Button.new()
+	reset.name = "ByHeadcount"
+	reset.text = "Split by headcount"
+	reset.focus_mode = Control.FOCUS_NONE
+	reset.add_theme_font_size_override("font_size", 13)
+	reset.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	reset.pressed.connect(func() -> void:
+		if settlement != null:
+			settlement.reset_food_shares()
+			refresh())
+	_supply_box.add_child(reset)
 	mid.add_child(_label("BUILDING", 16, STYLE_COLOR))
 	var about := _label("Builders put these up in order, once each has its materials: hand them over at the site (E), "
 		+ "or leave them in the stores. Plan buildings (a bunkhouse, storehouse, guard tower…) in build mode (B).", 13, DIM)
@@ -324,6 +354,7 @@ func refresh() -> void:
 	_empty.visible = not claimed
 	_title.text = ("SETTLEMENT  ·  %s" % s.settlement_name.to_upper()) if s != null else "SETTLEMENT"
 	_refresh_tabs()
+	_refresh_supply()
 	if not claimed:
 		if s == null:
 			_empty.text = "No settlements here."
@@ -343,12 +374,13 @@ func refresh() -> void:
 	if dishes[0] > 0 or s.farm_spots().is_empty():
 		lines.append("Cooked food in the stores:  %d dishes   (%d meals)" % [dishes[0], floori(dishes[1])])
 	lines.append("Water:  %d / %d L   (%s / hour)" % [roundi(s.water), roundi(s.water_capacity), _signed(r["water"])])
-	lines.append("Wood Planks:  %d   (%s / hour)" % [s.planks(), _signed(r["planks"])])
+	var linked := s.network().size() > 1
+	lines.append("Wood Planks:  %d%s   (%s / hour)" % [s.planks(), " in all your places" if linked else "", _signed(r["planks"])])
 	lines.append("Beds:  %d / %d in use%s" % [people.size(), s.total_beds(), "" if here == people.size() else "  (%d on the way)" % (people.size() - here)])
 	if not s.farm_spots().is_empty() or r["farmers"] > 0:
 		lines.append("Farmers working:  %d   (fields for %d)" % [r["farmers"], s.farm_spots().size()])
 	if not s.mine_spots().is_empty():
-		lines.append("Scrap Metal:  %d   (%s / hour)" % [s.scrap(), _signed(r["scrap"])])
+		lines.append("Scrap Metal:  %d%s   (%s / hour)" % [s.scrap(), " in all your places" if s.network().size() > 1 else "", _signed(r["scrap"])])
 		lines.append("Miners working:  %d   (rock faces for %d)" % [r["miners"], s.mine_spots().size()])
 	var posts := s.guard_posts().size()
 	if posts > 0:
@@ -431,6 +463,72 @@ func refresh() -> void:
 			(row["armour"] as Label).text = p.armour.describe()
 
 
+## The food share for each place you hold (24): a slider, its share of the
+## food as a percentage, and the meals there now.
+func _refresh_supply() -> void:
+	var held := _held()
+	_supply_box.visible = held.size() > 1
+	if held.size() < 2:
+		return
+	var key := ""
+	for h in held:
+		key += "%d|" % h.get_instance_id()
+	if key != _supply_key:
+		_supply_key = key
+		_supply_rows.clear()
+		for c in _supply_list.get_children():
+			_supply_list.remove_child(c)
+			c.queue_free()
+		for h in held:
+			var row := HBoxContainer.new()
+			row.name = "Share_%s" % h.settlement_id
+			row.add_theme_constant_override("separation", 8)
+			var nm := _label(h.settlement_name, 14, TEXT)
+			nm.custom_minimum_size.x = 150
+			nm.clip_text = true
+			row.add_child(nm)
+			var slider := HSlider.new()
+			slider.name = "Slider"
+			slider.min_value = 0.0
+			slider.max_value = 100.0
+			slider.step = 5.0
+			slider.custom_minimum_size = Vector2(80, 20)
+			slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			slider.focus_mode = Control.FOCUS_NONE
+			slider.value_changed.connect(func(v: float) -> void:
+				h.set_food_share(v)
+				_update_supply_rows())
+			row.add_child(slider)
+			var pct := _label("", 14, GOOD)
+			pct.name = "Percent"
+			pct.custom_minimum_size.x = 40
+			row.add_child(pct)
+			var have := _label("", 12, DIM)
+			have.name = "Have"
+			row.add_child(have)
+			_supply_list.add_child(row)
+			_supply_rows[h] = {"slider": slider, "pct": pct, "have": have}
+	_update_supply_rows()
+
+
+func _update_supply_rows() -> void:
+	var held := _held()
+	if held.size() < 2:
+		return
+	var shares := held[0].food_shares()
+	var manual := held[0].food_shares_set()
+	for h: Settlement in _supply_rows:
+		if not is_instance_valid(h) or not shares.has(h):
+			continue
+		var row: Dictionary = _supply_rows[h]
+		var share := float(shares[h])
+		(row["slider"] as HSlider).set_value_no_signal(h.food_share if manual else share * 100.0)
+		(row["pct"] as Label).text = "%d%%" % roundi(share * 100.0)
+		var last := h.supply_last
+		(row["have"] as Label).text = "%d meals%s" % [floori(h.food_meals()), "" if last == 0 else "  (%s)" % ("+%d" % last if last > 0 else "%d" % last)]
+		(row["have"] as Label).tooltip_text = "Vegetables and cooked dishes in the stores there; in brackets, what the supply line brought (+) or sent (-) last hour"
+
+
 ## How the place works, in a few lines under the stocks (23: per place).
 func _how_text(s: Settlement) -> String:
 	var parts: PackedStringArray = ["A settlement hour is a minute of play."]
@@ -439,9 +537,9 @@ func _how_text(s: Settlement) -> String:
 	if not s.mine_spots().is_empty():
 		parts.append("Miners dig Scrap Metal out of the tunnel into the stores.")
 	if not s.armorer_spots().is_empty():
-		parts.append("Armorers make guns and rounds at the weapons bench from the stores' Scrap Metal (and Wood Planks, Electronics, Gunpowder) into the Armory Locker: haul the guns to your other places by truck.")
+		parts.append("Armorers make guns and rounds at the weapons bench from the stores' Scrap Metal (and Wood Planks, Electronics, Gunpowder) into the Armory Locker; guards at all your places take them from there.")
 	parts.append("Everyone eats a meal every %d hours from the stores%s." % [roundi(s.meal_every_hours),
-		"" if not s.farm_spots().is_empty() else ": bring food (the truck carries plenty)"])
+		"" if not s.farm_spots().is_empty() else (": food comes down the supply line by this place's share" if s.network().size() > 1 else ": bring food, or claim another place to link them")])
 	parts.append("Guards take guns and rounds from the Armory Locker by themselves; in a raid everyone else shelters in %s." % s.shelter_name)
 	return " ".join(parts)
 
