@@ -43,7 +43,7 @@ func _free(zone: Node) -> void:
 # ---------------------------------------------------------------- layout
 
 func test_the_zone_is_the_game() -> void:
-	check(ProjectSettings.get_setting("application/run/main_scene") == ZONE_PATH, "the game starts in the early zone")
+	check(load("res://scripts/core/boot.gd").GAME_LEVEL == ZONE_PATH, "the game starts in the early zone (after the boot screen, Increment 24.1)")
 	var zone := instance_zone()
 	check(zone is Zone, "zone root script")
 	for n in ["Lighting/WorldEnvironment", "Terrain/Ground", "Terrain/Sea", "Roads/MainRoad", "Roads/Railway", "Rocks",

@@ -37,6 +37,13 @@ extends Node
 ## built structures keep their own names. A site the save knew nothing about
 ## (a town never visited) is listed in "untouched" and left as it is.
 ##
+## AUTOSAVE AND CONTINUE (Increment 24.1): once the boot scene has started
+## the game (autosave_enabled), it's saved to the "autosave" slot every
+## autosave_minutes of play and when you close the window, and the next
+## launch continues from the newest of the autosave and the quick save
+## (continue_game). Saves live in user://saves, outside the project, so
+## pulling an update never touches them.
+##
 ## AUTHORITY: in co-op only the host saves and loads (the world state lives
 ## there); clients will receive the result through normal replication.
 
@@ -48,6 +55,7 @@ signal failed(reason: String)
 const FORMAT := "ashfall_save"
 const SAVE_VERSION := 4
 const QUICK_SLOT := "quicksave"
+const AUTO_SLOT := "autosave"
 ## The level the old Outpost 17 / Halden's Crossing levels became part of.
 const ZONE_LEVEL := "res://levels/early_zone/early_zone.tscn"
 ## Old level -> [its site node in the zone, where the site now stands].
@@ -62,6 +70,90 @@ const SITE_MIGRATION := {
 const PLACES_ADDED_V4 := ["SaintMercyClinic", "AshCreekFarms", "SmugglersGulch", "BlackRidgeMine", "NorthwatchOutpost"]
 
 var save_dir := "user://saves"
+
+## Minutes of play between autosaves.
+@export var autosave_minutes := 5.0
+## Off until the boot scene starts the game (tests and tools never autosave).
+## While on, closing the window saves first.
+var autosave_enabled := false:
+	set(on):
+		autosave_enabled = on
+		autosave_left = autosave_minutes * 60.0
+		if is_inside_tree():
+			get_tree().set_auto_accept_quit(not on)
+## Seconds until the next autosave.
+var autosave_left := 300.0
+
+
+func _process(delta: float) -> void:
+	if not autosave_enabled:
+		return
+	autosave_left -= delta
+	if autosave_left <= 0.0:
+		# Not now (dead, or no game running): try again in half a minute
+		autosave_left = autosave_minutes * 60.0 if autosave() == OK else 30.0
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and autosave_enabled:
+		autosave()
+		get_tree().quit()
+
+
+## Saves to the autosave slot if there's a game to save and you're alive.
+## Quiet when it can't (no notice).
+func autosave() -> Error:
+	var root := get_tree().current_scene
+	if root == null or _player_in(root) == null:
+		return ERR_UNCONFIGURED
+	if (_player_in(root) as PlayerController).is_dead():
+		return ERR_UNAVAILABLE
+	return save_game(AUTO_SLOT)
+
+
+## The slot with the newest save (the autosave or the quick save), or "".
+func latest_slot() -> String:
+	var best := ""
+	var best_time := -1
+	for slot: String in [AUTO_SLOT, QUICK_SLOT]:
+		if has_save(slot):
+			var t := FileAccess.get_modified_time(slot_path(slot))
+			if t > best_time:
+				best = slot
+				best_time = t
+	return best
+
+
+## Loads the newest save. Returns OK, or an error if there's nothing to
+## continue (or it couldn't be loaded: a new game starts instead).
+func continue_game() -> Error:
+	var slot := latest_slot()
+	if slot == "":
+		return ERR_FILE_NOT_FOUND
+	return load_game(slot)
+
+
+## When the newest save was made, for the pause menu: "at 8:40 pm" today,
+## "on 26 Oct" before that ("" if there's none).
+func latest_save_time() -> String:
+	var slot := latest_slot()
+	if slot == "":
+		return ""
+	var bias := int(Time.get_time_zone_from_system().get("bias", 0)) * 60
+	var t := Time.get_datetime_dict_from_unix_time(FileAccess.get_modified_time(slot_path(slot)) + bias)
+	var today := Time.get_date_dict_from_system()
+	if int(t["year"]) != int(today["year"]) or int(t["month"]) != int(today["month"]) or int(t["day"]) != int(today["day"]):
+		const MONTHS := ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+		return "on %d %s" % [int(t["day"]), MONTHS[int(t["month"]) - 1]]
+	var hour := int(t["hour"])
+	return "at %d:%02d %s" % [12 if hour % 12 == 0 else hour % 12, int(t["minute"]), "am" if hour < 12 else "pm"]
+
+
+static func _player_in(root: Node) -> Node:
+	for p in root.get_tree().get_nodes_in_group("players"):
+		if root.is_ancestor_of(p):
+			return p
+	return null
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -1,0 +1,4297 @@
+{
+	"format": "ashfall_save",
+	"level": "res://levels/early_zone/early_zone.tscn",
+	"nodes": [
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					-6.5,
+					0.0,
+					20.5
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/GateSandbagsL",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					6.5,
+					0.0,
+					20.5
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/GateSandbagsR",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					-4.0,
+					0.0,
+					-6.0
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/YardPositionN",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					-5.69999980926514,
+					0.0,
+					-4.30000019073486
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/YardPositionW",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					-3.0,
+					0.0,
+					31.0
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/Chicane1",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					3.0,
+					0.0,
+					35.0
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/Chicane2",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					-3.0,
+					0.0,
+					39.0
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/Chicane3",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					8.0,
+					0.0,
+					4.0
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/YardBarrier",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.978147625923157,
+					0.0,
+					-0.2079117000103,
+					0.0,
+					1.0,
+					0.0,
+					0.2079117000103,
+					0.0,
+					0.978147625923157
+				],
+				"health": 1000.0,
+				"origin": [
+					-14.0,
+					0.0,
+					2.0
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/Crate1",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.990268051624298,
+					0.0,
+					0.139173105359077,
+					0.0,
+					1.0,
+					0.0,
+					-0.139173105359077,
+					0.0,
+					0.990268051624298
+				],
+				"health": 1000.0,
+				"origin": [
+					-14.1999998092651,
+					0.0,
+					3.20000004768372
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/Crate2",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.866025388240814,
+					0.0,
+					-0.5,
+					0.0,
+					1.0,
+					0.0,
+					0.5,
+					0.0,
+					0.866025388240814
+				],
+				"health": 1000.0,
+				"origin": [
+					-14.1000003814697,
+					1.0,
+					2.5
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/Crate3",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					6.0,
+					0.0,
+					-18.5
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/Crate4",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.939692616462708,
+					0.0,
+					-0.342020124197006,
+					0.0,
+					1.0,
+					0.0,
+					0.342020124197006,
+					0.0,
+					0.939692616462708
+				],
+				"health": 1000.0,
+				"origin": [
+					9.0,
+					0.0,
+					-17.5
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/BarracksCrate",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					27.0,
+					0.0,
+					16.0
+				],
+				"scrapped": false,
+				"structure": "fuel_drums"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/DrumsMotorPool",
+			"scene": "res://scenes/world/props/fuel_drums.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.766044437885284,
+					0.0,
+					-0.642787575721741,
+					0.0,
+					1.0,
+					0.0,
+					0.642787575721741,
+					0.0,
+					0.766044437885284
+				],
+				"health": 1000.0,
+				"origin": [
+					10.0,
+					0.0,
+					-4.0
+				],
+				"scrapped": false,
+				"structure": "fuel_drums"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/DrumsYard",
+			"scene": "res://scenes/world/props/fuel_drums.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					14.5,
+					0.0,
+					2.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					17.5,
+					0.0,
+					2.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence2",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					20.5,
+					0.0,
+					2.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence3",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					23.5,
+					0.0,
+					2.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence4",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					26.5,
+					0.0,
+					2.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence5",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					13.0,
+					0.0,
+					3.5
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence6",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					13.0,
+					0.0,
+					6.5
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence7",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					13.0,
+					0.0,
+					9.5
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence8",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					13.0,
+					0.0,
+					12.5
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence9",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					13.0,
+					0.0,
+					15.5
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence10",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					13.0,
+					0.0,
+					18.5
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "Outpost17/Props",
+			"path": "Outpost17/Props/MotorPoolFence11",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-1.0,
+					0.0,
+					0.0000000874227765734759,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000874227765734759,
+					0.0,
+					-1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					19.0,
+					0.0,
+					11.0
+				],
+				"scrapped": false,
+				"structure": "military_truck"
+			},
+			"parent": "Outpost17/Vehicles",
+			"path": "Outpost17/Vehicles/TruckA",
+			"scene": "res://scenes/vehicles/military_truck.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.984807729721069,
+					0.0,
+					-0.173648297786713,
+					0.0,
+					1.0,
+					0.0,
+					0.173648297786713,
+					0.0,
+					-0.984807729721069
+				],
+				"health": 1000.0,
+				"origin": [
+					24.0,
+					0.0,
+					10.0
+				],
+				"scrapped": false,
+				"structure": "military_truck"
+			},
+			"parent": "Outpost17/Vehicles",
+			"path": "Outpost17/Vehicles/TruckB",
+			"scene": "res://scenes/vehicles/military_truck.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					15.0,
+					0.0,
+					32.5
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "Outpost17/FiringRange",
+			"path": "Outpost17/FiringRange/FiringLineN",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					15.0,
+					0.0,
+					39.5
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "Outpost17/FiringRange",
+			"path": "Outpost17/FiringRange/FiringLineS",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.990268051624298,
+					0.0,
+					-0.139173105359077,
+					0.0,
+					1.0,
+					0.0,
+					0.139173105359077,
+					0.0,
+					0.990268051624298
+				],
+				"health": 1000.0,
+				"origin": [
+					11.5,
+					0.0,
+					38.5999984741211
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "Outpost17/FiringRange",
+			"path": "Outpost17/FiringRange/AmmoCrate",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					-24.5,
+					1.33000004291534,
+					13.0
+				],
+				"quantity": 6,
+				"yaw": -2.74016690254211
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WarehouseShelfScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					-24.5,
+					1.33000004291534,
+					8.0
+				],
+				"quantity": 2,
+				"yaw": 2.3212878704071
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WarehouseShelfElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					-24.5,
+					0.180000007152557,
+					3.0
+				],
+				"quantity": 4,
+				"yaw": 0.209439516067505
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WarehouseShelfCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					-21.5,
+					0.0,
+					10.5
+				],
+				"quantity": 1,
+				"yaw": -1.60570311546326
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WarehouseFuel",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					-19.0,
+					0.0,
+					4.0
+				],
+				"quantity": 30,
+				"yaw": 1.01229095458984
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WarehouseAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "medkit",
+				"position": [
+					9.0,
+					1.0,
+					-17.5
+				],
+				"quantity": 1,
+				"yaw": -2.58308744430542
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/BarracksMedkit",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					14.5,
+					0.0,
+					-14.8000001907349
+				],
+				"quantity": 3,
+				"yaw": -2.79252672195435
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/BarracksCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					-9.5,
+					0.0,
+					-17.3999996185303
+				],
+				"quantity": 3,
+				"yaw": 0.226892799139023
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/CommandPostElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					-14.5,
+					0.0,
+					-14.6000003814697
+				],
+				"quantity": 30,
+				"yaw": -2.30383467674255
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/CommandPostAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					21.5,
+					0.0,
+					16.5
+				],
+				"quantity": 1,
+				"yaw": -1.58824944496155
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/MotorPoolFuelA",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					25.5,
+					0.0,
+					6.5
+				],
+				"quantity": 1,
+				"yaw": -1.57079637050629
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/MotorPoolFuelB",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					16.5,
+					0.0,
+					18.0
+				],
+				"quantity": 5,
+				"yaw": 1.69296932220459
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/MotorPoolScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					2.0,
+					0.0,
+					-17.5
+				],
+				"quantity": 4,
+				"yaw": -1.57079637050629
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/YardScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					-6.5,
+					0.0,
+					-7.5
+				],
+				"quantity": 2,
+				"yaw": 1.37881004810333
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/YardCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "medkit",
+				"position": [
+					5.5,
+					0.0,
+					19.5
+				],
+				"quantity": 1,
+				"yaw": 0.488692194223404
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/GateMedkit",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					11.5,
+					0.939999997615814,
+					35.4000015258789
+				],
+				"quantity": 30,
+				"yaw": 0.925024509429932
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/RangeAmmoA",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					11.5,
+					0.939999997615814,
+					36.5999984741211
+				],
+				"quantity": 30,
+				"yaw": 0.942477762699127
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/RangeAmmoB",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					-30.0,
+					0.0,
+					40.0
+				],
+				"quantity": 8,
+				"yaw": 1.83259570598602
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WastelandScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					40.0,
+					0.0,
+					50.0
+				],
+				"quantity": 4,
+				"yaw": 2.00712871551514
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WastelandElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					-45.0,
+					0.0,
+					-30.0
+				],
+				"quantity": 1,
+				"yaw": -2.86233997344971
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WastelandFuel",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					24.0,
+					0.0,
+					55.0
+				],
+				"quantity": 40,
+				"yaw": -0.24434594810009
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WastelandAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "medkit",
+				"position": [
+					-40.0,
+					0.0,
+					52.0
+				],
+				"quantity": 1,
+				"yaw": -0.872664749622345
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WastelandMedkit",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "shotgun_shells",
+				"position": [
+					-10.1000003814697,
+					0.0,
+					-18.2999992370605
+				],
+				"quantity": 12,
+				"yaw": -0.349065840244293
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/CommandPostShells",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scoped_rifle",
+				"position": [
+					-28.5,
+					4.59999990463257,
+					-21.5
+				],
+				"quantity": 1,
+				"yaw": 0.174532935023308
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/TowerMarksmanRifle",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_308",
+				"position": [
+					-27.7000007629395,
+					4.59999990463257,
+					-21.8999996185303
+				],
+				"quantity": 10,
+				"yaw": 0.698131680488586
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/TowerMarksmanAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "pistol_ammo",
+				"position": [
+					10.1999998092651,
+					0.0,
+					-14.0
+				],
+				"quantity": 24,
+				"yaw": 0.261799424886703
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/BarracksPistolAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "gun_barrel",
+				"position": [
+					-11.0,
+					0.0,
+					-18.2000007629395
+				],
+				"quantity": 1,
+				"yaw": 1.30899691581726
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/CommandPostBarrel",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "trigger_group",
+				"position": [
+					-11.8000001907349,
+					0.0,
+					-18.2999992370605
+				],
+				"quantity": 1,
+				"yaw": 0.349065840244293
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/CommandPostTrigger",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scope_4x",
+				"position": [
+					-29.1000003814697,
+					4.59999990463257,
+					-21.8999996185303
+				],
+				"quantity": 1,
+				"yaw": -0.523598790168762
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/TowerScope",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "service_rifle",
+				"position": [
+					36.0,
+					0.0,
+					45.0
+				],
+				"quantity": 1,
+				"yaw": 1.04719758033752
+			},
+			"parent": "Outpost17/Loot",
+			"path": "Outpost17/Loot/WastelandServiceRifle",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/WarehouseCrateNorth",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/WarehouseCrateNorth",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					-17.2000007629395,
+					0.0,
+					13.6000003814697
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "Outpost17/SalvageContainers/WarehouseCrateNorth",
+			"path": "Outpost17/SalvageContainers/WarehouseCrateNorth/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/WarehouseCrateSouth",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/WarehouseCrateSouth",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					-17.2000007629395,
+					0.0,
+					2.40000009536743
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "Outpost17/SalvageContainers/WarehouseCrateSouth",
+			"path": "Outpost17/SalvageContainers/WarehouseCrateSouth/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/WarehouseAmmoCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/WarehouseAmmoCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-1.0,
+					0.0,
+					0.0000000874227765734759,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000874227765734759,
+					0.0,
+					-1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					-21.5,
+					0.0,
+					15.3000001907349
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "Outpost17/SalvageContainers/WarehouseAmmoCrate",
+			"path": "Outpost17/SalvageContainers/WarehouseAmmoCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/BarracksFootlockerWest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/BarracksFootlockerWest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					7.65000009536743,
+					0.0,
+					-15.5
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "Outpost17/SalvageContainers/BarracksFootlockerWest",
+			"path": "Outpost17/SalvageContainers/BarracksFootlockerWest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/BarracksFootlockerEast",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/BarracksFootlockerEast",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					16.3500003814697,
+					0.0,
+					-15.5
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "Outpost17/SalvageContainers/BarracksFootlockerEast",
+			"path": "Outpost17/SalvageContainers/BarracksFootlockerEast/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/BarracksLocker",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/BarracksLocker",
+			"scene": "res://scenes/world/containers/weapons_locker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					14.5,
+					0.0,
+					-18.5
+				],
+				"scrapped": false,
+				"structure": "weapons_locker"
+			},
+			"parent": "Outpost17/SalvageContainers/BarracksLocker",
+			"path": "Outpost17/SalvageContainers/BarracksLocker/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/CommandPostLocker",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/CommandPostLocker",
+			"scene": "res://scenes/world/containers/weapons_locker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					-16.5,
+					0.0,
+					-16.5
+				],
+				"scrapped": false,
+				"structure": "weapons_locker"
+			},
+			"parent": "Outpost17/SalvageContainers/CommandPostLocker",
+			"path": "Outpost17/SalvageContainers/CommandPostLocker/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/MotorPoolToolChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/MotorPoolToolChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					29.5,
+					0.0,
+					12.5
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "Outpost17/SalvageContainers/MotorPoolToolChest",
+			"path": "Outpost17/SalvageContainers/MotorPoolToolChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/RangeAmmoCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/RangeAmmoCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					8.80000019073486,
+					0.0,
+					34.0
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "Outpost17/SalvageContainers/RangeAmmoCrate",
+			"path": "Outpost17/SalvageContainers/RangeAmmoCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/StashSouthWest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/StashSouthWest",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.866025388240814,
+					0.0,
+					-0.5,
+					0.0,
+					1.0,
+					0.0,
+					0.5,
+					0.0,
+					0.866025388240814
+				],
+				"health": 1000.0,
+				"origin": [
+					-33.0,
+					0.0,
+					42.0
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "Outpost17/SalvageContainers/StashSouthWest",
+			"path": "Outpost17/SalvageContainers/StashSouthWest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "Outpost17/SalvageContainers/StashEast",
+				"items": [],
+				"searched": false
+			},
+			"parent": "Outpost17/SalvageContainers",
+			"path": "Outpost17/SalvageContainers/StashEast",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.500000059604645,
+					0.0,
+					0.866025388240814,
+					0.0,
+					1.0,
+					0.0,
+					-0.866025388240814,
+					0.0,
+					-0.500000059604645
+				],
+				"health": 1000.0,
+				"origin": [
+					38.0,
+					0.0,
+					47.0
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "Outpost17/SalvageContainers/StashEast",
+			"path": "Outpost17/SalvageContainers/StashEast/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/WarehousePallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/WarehousePallet2",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/MotorPoolPallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/YardPallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/GatePallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/WastelandPallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/WastelandPallet2",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/BarracksFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/CommandPostFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "Outpost17/SalvagePiles",
+			"path": "Outpost17/SalvagePiles/WastelandFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					-30.4500007629395,
+					0.0,
+					-14.6000003814697
+				],
+				"scrapped": false,
+				"structure": "water_storage_tank"
+			},
+			"parent": "Outpost17/Pack2/Props",
+			"path": "Outpost17/Pack2/Props/WaterTank",
+			"scene": "res://assets/ashfall_pack_v2/scenes/water_storage_tank.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					-30.5,
+					0.0,
+					-12.1999998092651
+				],
+				"scrapped": false,
+				"structure": "portable_generator"
+			},
+			"parent": "Outpost17/Pack2/Props",
+			"path": "Outpost17/Pack2/Props/WaterPumpGenerator",
+			"scene": "res://assets/ashfall_pack_v2/scenes/portable_generator.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					-7.59999990463257,
+					0.0,
+					-15.6000003814697
+				],
+				"scrapped": false,
+				"structure": "field_radio"
+			},
+			"parent": "Outpost17/Pack2/Props",
+			"path": "Outpost17/Pack2/Props/FieldRadio",
+			"scene": "res://assets/ashfall_pack_v2/scenes/field_radio.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					-19.2000007629395,
+					0.0,
+					0.620000004768372
+				],
+				"scrapped": false,
+				"structure": "salvage_toolbox"
+			},
+			"parent": "Outpost17/Pack2/Props",
+			"path": "Outpost17/Pack2/Props/SalvageToolbox",
+			"scene": "res://assets/ashfall_pack_v2/scenes/salvage_toolbox.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					484.700012207031,
+					0.0,
+					-263.200012207031
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierN0",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					508.0,
+					0.0,
+					-263.200012207031
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierNE0",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					475.799987792969,
+					0.0,
+					-252.699996948242
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierW0",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					475.799987792969,
+					0.0,
+					-228.300003051758
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierWS0",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					475.799987792969,
+					0.0,
+					-225.25
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierWS1",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					477.299987792969,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS0",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					480.350006103516,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS1",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					483.399993896484,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS2",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					486.450012207031,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS3",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					489.5,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS4",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					492.549987792969,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS5",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					495.600006103516,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS6",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					498.649993896484,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS7",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					501.700012207031,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS8",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					504.75,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS9",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					507.799987792969,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS10",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					510.850006103516,
+					0.0,
+					-222.5
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierS11",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					512.5,
+					0.0,
+					-245.300003051758
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierE0",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					512.5,
+					0.0,
+					-242.25
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierE1",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					512.5,
+					0.0,
+					-239.199996948242
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierE2",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					512.5,
+					0.0,
+					-236.149993896484
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierE3",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					512.5,
+					0.0,
+					-233.100006103516
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierE4",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					512.5,
+					0.0,
+					-230.050003051758
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierE5",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					512.5,
+					0.0,
+					-227.0
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/BarrierE6",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					490.5,
+					0.0,
+					-259.5
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/SandbagsGateN",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					479.5,
+					0.0,
+					-246.5
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/SandbagsGateW",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.258819073438644,
+					0.0,
+					-0.965925812721252,
+					0.0,
+					1.0,
+					0.0,
+					0.965925812721252,
+					0.0,
+					0.258819073438644
+				],
+				"health": 1000.0,
+				"origin": [
+					505.0,
+					0.0,
+					-252.0
+				],
+				"scrapped": false,
+				"structure": "military_truck"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/CampTruck",
+			"scene": "res://scenes/vehicles/military_truck.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					508.799987792969,
+					0.0,
+					-243.0
+				],
+				"scrapped": false,
+				"structure": "fuel_drums"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/CampDrums",
+			"scene": "res://scenes/world/props/fuel_drums.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.965925812721252,
+					0.0,
+					-0.258819043636322,
+					0.0,
+					1.0,
+					0.0,
+					0.258819043636322,
+					0.0,
+					0.965925812721252
+				],
+				"health": 1000.0,
+				"origin": [
+					497.5,
+					0.0,
+					-236.5
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/CampCrateA",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					0.984807729721069,
+					0.0,
+					0.173648178577423,
+					0.0,
+					1.0,
+					0.0,
+					-0.173648178577423,
+					0.0,
+					0.984807729721069
+				],
+				"health": 1000.0,
+				"origin": [
+					498.600006103516,
+					0.0,
+					-235.899993896484
+				],
+				"scrapped": false,
+				"structure": "wood_crate"
+			},
+			"parent": "HaldensCrossing/RaiderCamp",
+			"path": "HaldensCrossing/RaiderCamp/CampCrateB",
+			"scene": "res://scenes/world/props/wood_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.939692616462708,
+					0.0,
+					-0.342020213603973,
+					0.0,
+					1.0,
+					0.0,
+					0.342020213603973,
+					0.0,
+					-0.939692616462708
+				],
+				"health": 1000.0,
+				"origin": [
+					447.0,
+					0.0,
+					-213.0
+				],
+				"scrapped": false,
+				"structure": "military_truck"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/AbandonedTruck",
+			"scene": "res://scenes/vehicles/military_truck.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					370.0,
+					0.0,
+					-325.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/FarmFence0",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					373.049987792969,
+					0.0,
+					-325.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/FarmFence1",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					376.100006103516,
+					0.0,
+					-325.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/FarmFence2",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					379.149993896484,
+					0.0,
+					-325.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/FarmFence3",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					382.200012207031,
+					0.0,
+					-325.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/FarmFence4",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					385.25,
+					0.0,
+					-325.0
+				],
+				"scrapped": false,
+				"structure": "chain_link_fence_prop"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/FarmFence5",
+			"scene": "res://scenes/world/props/chain_link_fence.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					447.0,
+					0.0,
+					-355.0
+				],
+				"scrapped": false,
+				"structure": "jersey_barrier"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/RoadblockNorth0",
+			"scene": "res://scenes/world/props/jersey_barrier.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					443.5,
+					0.0,
+					-356.5
+				],
+				"scrapped": false,
+				"structure": "sandbag_wall"
+			},
+			"parent": "HaldensCrossing/Street",
+			"path": "HaldensCrossing/Street/RoadblockSandbags",
+			"scene": "res://scenes/world/props/sandbag_wall.tscn"
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/StoreCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/StoreCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					431.5,
+					0.0,
+					-336.0
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/StoreCrate",
+			"path": "HaldensCrossing/SalvageContainers/StoreCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/HouseNWChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/HouseNWChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					433.5,
+					0.0,
+					-320.299987792969
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/HouseNWChest",
+			"path": "HaldensCrossing/SalvageContainers/HouseNWChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/HotelChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/HotelChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					429.399993896484,
+					3.29999995231628,
+					-296.0
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/HotelChest",
+			"path": "HaldensCrossing/SalvageContainers/HotelChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/HotelRoofStash",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/HotelRoofStash",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					439.5,
+					6.71999979019165,
+					-301.5
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/HotelRoofStash",
+			"path": "HaldensCrossing/SalvageContainers/HotelRoofStash/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/MedicineCabinet",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/MedicineCabinet",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					404.799987792969,
+					0.0,
+					-291.0
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/MedicineCabinet",
+			"path": "HaldensCrossing/SalvageContainers/MedicineCabinet/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/ChurchChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/ChurchChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					429.0,
+					0.0,
+					-257.0
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/ChurchChest",
+			"path": "HaldensCrossing/SalvageContainers/ChurchChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/HouseSWChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/HouseSWChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-1.0,
+					0.0,
+					0.0000000874227765734759,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000874227765734759,
+					0.0,
+					-1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					439.5,
+					0.0,
+					-227.399993896484
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/HouseSWChest",
+			"path": "HaldensCrossing/SalvageContainers/HouseSWChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/HouseWChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/HouseWChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-1.0,
+					0.0,
+					0.0000000874227765734759,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000874227765734759,
+					0.0,
+					-1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					406.200012207031,
+					0.0,
+					-257.399993896484
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/HouseWChest",
+			"path": "HaldensCrossing/SalvageContainers/HouseWChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/GarageToolChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/GarageToolChest",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					470.799987792969,
+					0.0,
+					-338.0
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/GarageToolChest",
+			"path": "HaldensCrossing/SalvageContainers/GarageToolChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/GaragePartsBin",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/GaragePartsBin",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					470.799987792969,
+					0.0,
+					-328.5
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/GaragePartsBin",
+			"path": "HaldensCrossing/SalvageContainers/GaragePartsBin/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/DinerCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/DinerCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					469.0,
+					0.0,
+					-318.0
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/DinerCrate",
+			"path": "HaldensCrossing/SalvageContainers/DinerCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/BankSafe",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/BankSafe",
+			"scene": "res://scenes/world/containers/weapons_locker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					469.0,
+					0.0,
+					-299.799987792969
+				],
+				"scrapped": false,
+				"structure": "weapons_locker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/BankSafe",
+			"path": "HaldensCrossing/SalvageContainers/BankSafe/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/FeedCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/FeedCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					485.0,
+					0.0,
+					-294.5
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/FeedCrate",
+			"path": "HaldensCrossing/SalvageContainers/FeedCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/KioskCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/KioskCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-1.0,
+					0.0,
+					0.0000000874227765734759,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000874227765734759,
+					0.0,
+					-1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					466.5,
+					0.0,
+					-246.199996948242
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/KioskCrate",
+			"path": "HaldensCrossing/SalvageContainers/KioskCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/SniperStash",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/SniperStash",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					413.700012207031,
+					9.10000038146973,
+					-241.300003051758
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/SniperStash",
+			"path": "HaldensCrossing/SalvageContainers/SniperStash/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/FarmhouseChest",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/FarmhouseChest",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					378.5,
+					0.0,
+					-339.600006103516
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/FarmhouseChest",
+			"path": "HaldensCrossing/SalvageContainers/FarmhouseChest/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/RelayCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/RelayCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-1.0,
+					0.0,
+					0.0000000874227765734759,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000874227765734759,
+					0.0,
+					-1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					523.799987792969,
+					0.0,
+					-203.399993896484
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/RelayCrate",
+			"path": "HaldensCrossing/SalvageContainers/RelayCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/RaiderCache",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/RaiderCache",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-1.0,
+					0.0,
+					0.0000000874227765734759,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000874227765734759,
+					0.0,
+					-1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					504.0,
+					0.0,
+					-225.5
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/RaiderCache",
+			"path": "HaldensCrossing/SalvageContainers/RaiderCache/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/CampLocker",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/CampLocker",
+			"scene": "res://scenes/world/containers/weapons_locker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					511.0,
+					0.0,
+					-238.0
+				],
+				"scrapped": false,
+				"structure": "weapons_locker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/CampLocker",
+			"path": "HaldensCrossing/SalvageContainers/CampLocker/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/CampFootlocker",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/CampFootlocker",
+			"scene": "res://scenes/world/containers/footlocker.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0,
+					0.0,
+					0.0,
+					0.0,
+					1.0
+				],
+				"health": 1000.0,
+				"origin": [
+					484.0,
+					0.0,
+					-229.399993896484
+				],
+				"scrapped": false,
+				"structure": "footlocker"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/CampFootlocker",
+			"path": "HaldensCrossing/SalvageContainers/CampFootlocker/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"id": "HaldensCrossing/SalvageContainers/CampAmmoCrate",
+				"items": [],
+				"searched": false
+			},
+			"parent": "HaldensCrossing/SalvageContainers",
+			"path": "HaldensCrossing/SalvageContainers/CampAmmoCrate",
+			"scene": "res://scenes/world/containers/supply_crate.tscn"
+		},
+		{
+			"data": {
+				"basis": [
+					-0.0000000437113882867379,
+					0.0,
+					-1.0,
+					0.0,
+					1.0,
+					0.0,
+					1.0,
+					0.0,
+					-0.0000000437113882867379
+				],
+				"health": 1000.0,
+				"origin": [
+					486.5,
+					0.0,
+					-254.0
+				],
+				"scrapped": false,
+				"structure": "supply_crate"
+			},
+			"parent": "HaldensCrossing/SalvageContainers/CampAmmoCrate",
+			"path": "HaldensCrossing/SalvageContainers/CampAmmoCrate/Prop",
+			"scene": ""
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/GaragePallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/StorePallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/HouseNWFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/DinerFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ChurchFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"scrap_metal": 1,
+					"wood": 2
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/HouseSWFurniture",
+			"scene": "res://scenes/world/salvage/broken_furniture.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/FeedPalletA",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/FeedPalletB",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/CampPalletA",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/CampPalletB",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"metal_pipe": 1,
+					"scrap_metal": 6
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ScrapHeapGarage",
+			"scene": "res://scenes/world/salvage/scrap_heap.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"metal_pipe": 1,
+					"scrap_metal": 6
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ScrapHeapCross",
+			"scene": "res://scenes/world/salvage/scrap_heap.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"metal_pipe": 1,
+					"scrap_metal": 6
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ScrapHeapGas",
+			"scene": "res://scenes/world/salvage/scrap_heap.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"metal_pipe": 1,
+					"scrap_metal": 6
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ScrapHeapCamp",
+			"scene": "res://scenes/world/salvage/scrap_heap.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"metal_pipe": 1,
+					"scrap_metal": 6
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ScrapHeapNorth",
+			"scene": "res://scenes/world/salvage/scrap_heap.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"metal_pipe": 1,
+					"scrap_metal": 6
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ScrapHeapSouth",
+			"scene": "res://scenes/world/salvage/scrap_heap.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"electronics": 2,
+					"scrap_metal": 2,
+					"spring": 1
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/AppliancesStore",
+			"scene": "res://scenes/world/salvage/appliance_pile.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"electronics": 2,
+					"scrap_metal": 2,
+					"spring": 1
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/AppliancesDiner",
+			"scene": "res://scenes/world/salvage/appliance_pile.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"electronics": 2,
+					"scrap_metal": 2,
+					"spring": 1
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/RelayElectronics",
+			"scene": "res://scenes/world/salvage/appliance_pile.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"metal_pipe": 1,
+					"scrap_metal": 6
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/ScrapHeapFarm",
+			"scene": "res://scenes/world/salvage/scrap_heap.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"wood": 3
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/FarmPallet",
+			"scene": "res://scenes/world/salvage/wood_pallet.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"electronics": 2,
+					"scrap_metal": 2,
+					"spring": 1
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/AppliancesClinic",
+			"scene": "res://scenes/world/salvage/appliance_pile.tscn"
+		},
+		{
+			"data": {
+				"remaining": {
+					"electronics": 2,
+					"scrap_metal": 2,
+					"spring": 1
+				}
+			},
+			"parent": "HaldensCrossing/SalvagePiles",
+			"path": "HaldensCrossing/SalvagePiles/AppliancesHouseW",
+			"scene": "res://scenes/world/salvage/appliance_pile.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					435.5,
+					1.0,
+					-336.600006103516
+				],
+				"quantity": 4,
+				"yaw": -2.580153465271
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/StoreCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					437.0,
+					0.0,
+					-337.5
+				],
+				"quantity": 5,
+				"yaw": 0.903111279010773
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/StoreScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					471.0,
+					0.949999988079071,
+					-334.0
+				],
+				"quantity": 8,
+				"yaw": 2.97775292396545
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/GarageScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					468.0,
+					0.0,
+					-338.399993896484
+				],
+				"quantity": 2,
+				"yaw": -1.71130061149597
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/GarageFuel",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "metal_pipe",
+				"position": [
+					471.0,
+					0.949999988079071,
+					-336.200012207031
+				],
+				"quantity": 2,
+				"yaw": -0.516100704669952
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/GaragePipes",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "spring",
+				"position": [
+					462.5,
+					0.0,
+					-336.0
+				],
+				"quantity": 2,
+				"yaw": -0.358850806951523
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/GarageSprings",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "chemicals",
+				"position": [
+					409.5,
+					0.899999976158142,
+					-291.5
+				],
+				"quantity": 3,
+				"yaw": -0.156284168362617
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/ClinicChemicals",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "medkit",
+				"position": [
+					406.0,
+					0.699999988079071,
+					-292.0
+				],
+				"quantity": 1,
+				"yaw": -0.300064444541931
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/ClinicMedkit",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					466.0,
+					1.10000002384186,
+					-297.5
+				],
+				"quantity": 3,
+				"yaw": 1.91079497337341
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/BankElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					460.5,
+					0.0,
+					-255.5
+				],
+				"quantity": 3,
+				"yaw": 3.11825489997864
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/GasFuelA",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "fuel",
+				"position": [
+					467.5,
+					0.0,
+					-253.0
+				],
+				"quantity": 2,
+				"yaw": -1.55302464962006
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/GasFuelB",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "cloth",
+				"position": [
+					491.0,
+					0.899999976158142,
+					-293.5
+				],
+				"quantity": 3,
+				"yaw": -0.0451367497444153
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/FeedCloth",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "wood_plank",
+				"position": [
+					492.5,
+					0.0,
+					-288.0
+				],
+				"quantity": 4,
+				"yaw": 2.68755555152893
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/FeedPlanks",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					467.5,
+					1.04999995231628,
+					-316.5
+				],
+				"quantity": 4,
+				"yaw": 1.39173030853271
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/DinerScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					454.0,
+					0.0,
+					-333.0
+				],
+				"quantity": 4,
+				"yaw": -1.54383838176727
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/StreetScrapA",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					420.0,
+					0.0,
+					-271.5
+				],
+				"quantity": 4,
+				"yaw": 2.18463802337646
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/StreetScrapB",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "electronics",
+				"position": [
+					449.5,
+					0.0,
+					-289.5
+				],
+				"quantity": 2,
+				"yaw": -2.10616707801819
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/StreetElectronics",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_308",
+				"position": [
+					433.0,
+					3.29999995231628,
+					-292.5
+				],
+				"quantity": 10,
+				"yaw": 1.62152826786041
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/HotelMarksmanAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "scrap_metal",
+				"position": [
+					439.0,
+					3.29999995231628,
+					-300.0
+				],
+				"quantity": 3,
+				"yaw": 0.666041731834412
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/HotelScrap",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_ammo",
+				"position": [
+					497.5,
+					1.04999995231628,
+					-236.5
+				],
+				"quantity": 30,
+				"yaw": 0.863740205764771
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/CampRifleAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "shotgun_shells",
+				"position": [
+					498.600006103516,
+					1.04999995231628,
+					-235.899993896484
+				],
+				"quantity": 12,
+				"yaw": 1.3932763338089
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/CampShells",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "rifle_308",
+				"position": [
+					484.0,
+					0.0,
+					-251.399993896484
+				],
+				"quantity": 10,
+				"yaw": -0.57865983247757
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/CampMarksmanAmmo",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "gunpowder",
+				"position": [
+					504.0,
+					0.0,
+					-233.0
+				],
+				"quantity": 4,
+				"yaw": -2.99671530723572
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/CampGunpowder",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"item": "bandage",
+				"position": [
+					430.5,
+					1.0,
+					-245.800003051758
+				],
+				"quantity": 2,
+				"yaw": -0.451935589313507
+			},
+			"parent": "HaldensCrossing/Loot",
+			"path": "HaldensCrossing/Loot/ChurchBandage",
+			"scene": "res://scenes/items/pickup.tscn"
+		},
+		{
+			"data": {
+				"health": 100.0,
+				"inventory": [
+					{
+						"id": "scrap_metal",
+						"qty": 4,
+						"slot": 0
+					},
+					{
+						"id": "cloth",
+						"qty": 2,
+						"slot": 1
+					},
+					{
+						"id": "pistol_ammo",
+						"qty": 12,
+						"slot": 2
+					},
+					{
+						"id": "medkit",
+						"qty": 1,
+						"slot": 3
+					}
+				],
+				"loadout": {
+					"equipped": 5,
+					"weapons": [
+						{
+							"attachments": [],
+							"id": "machete",
+							"magazine": 0
+						}
+					]
+				},
+				"magazine": 0,
+				"pitch": 0.0,
+				"position": [
+					440.0,
+					0.00068359449505806,
+					-265.0
+				],
+				"yaw": 0.0
+			},
+			"parent": ".",
+			"path": "Player",
+			"scene": "res://scenes/player/player.tscn"
+		}
+	],
+	"regions": {},
+	"saved_at": "2026-10-26 19:07:58",
+	"version": 3
+}

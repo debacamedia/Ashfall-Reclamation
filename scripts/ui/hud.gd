@@ -72,6 +72,8 @@ var compass: CompassBar
 var map_screen: MapScreen
 ## The settlement window, L (built in code, Increment 19).
 var settlement_screen: SettlementScreen
+## The Esc menu (built in code, Increment 24.1).
+var pause_menu: PauseMenu
 var _settlements_bound := {}
 ## Speed and fuel while you drive (built in code, Increment 18).
 var drive_panel: VBoxContainer
@@ -99,11 +101,17 @@ func _ready() -> void:
 	settlement_screen = SettlementScreen.new()
 	add_child(settlement_screen)
 	_build_drive_panel()
+	pause_menu = PauseMenu.new()
+	add_child(pause_menu)
 	_death_screen.visible = false
 	_damage_vignette.modulate.a = 0.0
 	var saves := get_node_or_null("/root/SaveManager")
 	if saves != null:
-		saves.saved.connect(func(_path: String) -> void: show_notice("Game saved", Color(0.7, 0.95, 0.7)))
+		saves.saved.connect(func(path: String) -> void:
+			if path.get_file().begins_with(saves.AUTO_SLOT):
+				show_notice("Autosaved", Color(0.6, 0.75, 0.6))
+			else:
+				show_notice("Game saved", Color(0.7, 0.95, 0.7)))
 		saves.loaded.connect(func(_path: String) -> void: show_notice("Game loaded", Color(0.7, 0.95, 0.7)))
 		saves.failed.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
@@ -120,6 +128,7 @@ func _process(delta: float) -> void:
 	compass.player = player
 	map_screen.player = player
 	settlement_screen.player = player
+	pause_menu.player = player
 	if player == null:
 		return
 	_bind_settlements()

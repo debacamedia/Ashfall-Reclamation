@@ -2,7 +2,7 @@
 
 Post-apocalyptic first-person survival shooter with base building, settlement management, trading, military and diplomacy. Built in **Godot 4.7** (GDScript, Forward+).
 
-## Current state: Increment 24 (the supply line)
+## Current state: Increment 24.1 (play with Run, autosave and continue)
 - **Increment 1:** first-person character (walk, sprint, crouch, jump) at **Outpost 17**: walled military outpost with a fortified gate, guard towers, enterable buildings, a warehouse, a motor pool and a crouch-only culvert.
 - **Increment 2:** service rifle (full-auto, reload, recoil, spread, muzzle flash, bullet holes), reusable `HealthComponent`, and a **firing range** east of the gate.
 - **Increment 3:** player health, fall damage, burning barrels, a 6 m range tower, damage feedback, death screen, and respawn via `GameMode`.
@@ -47,19 +47,24 @@ Post-apocalyptic first-person survival shooter with base building, settlement ma
 - **Increment 23:** **Black Ridge Mine becomes your second settlement.** Clear its raiders and claim it at the notice board by the road. **Miners** (a new job) dig **2 Scrap Metal an hour** each into the **Mine Stores**, at the four rock faces down the tunnel. The mine has no fields, so **food comes by truck**: settlers now eat cooked dishes left in the stores, not only the fridge. A hand pump on the old well, an Armory Locker in the mine office, four beds in the bunkhouse. **Old Jeb** stays at the mine once it's yours (survivors go to the nearest place with a bed). The **settlement screen (L)** opens on the place you're at, with a **tab for each** of your places. **Raiders come for the mine** like the farm. See [`docs/increments/23_black_ridge.md`](docs/increments/23_black_ridge.md).
 - **Increment 23.5:** **Northwatch Outpost becomes your third settlement, with an armory.** Clear its garrison and claim it at the notice board in front of the command post. **Armorers** (a new job) work at the armory's weapons bench, following the same recipes you do, from what's in Northwatch's Stores into its **Armory Locker**: **rounds** for the guns there (each box needs Gunpowder, made from Chemicals and Wood if there's none), then **guns** up to four, the best the Stores have the makings of. A Sidearm Pistol is 16 Scrap Metal, a Pump Shotgun 17 and 2 Wood Planks, a Service Rifle 16, 2 planks and an Electronics part. Truck the mine's scrap to Northwatch and the guns back to your other places: guards take them from their own Armory Locker. Stores along the east wall, a pump on the water tank, four beds in the barracks; raided like the others. See [`docs/increments/23_5_northwatch.md`](docs/increments/23_5_northwatch.md).
 - **Increment 24:** **the supply line: nothing to deliver between settlements.** Once you hold two places they're linked. **Materials are shared**: builders, repairs, the Armorer, the Cook's fuel and first aid use any of your places' stores (Northwatch's Armorer works straight from the mine's scrap). **Guns and rounds are shared**: unarmed guards anywhere take them from any Armory Locker. **Food is split by shares** every settlement hour: the **SUPPLY LINE** panel on the settlement screen (L) has a slider per place, starting by headcount, with each place's meals and what came or went last hour; "Split by headcount" resets it. See [`docs/increments/24_supply_line.md`](docs/increments/24_supply_line.md).
+- **Increment 24.1:** **play from Run, and one game that carries on through updates.** **Run** in the Project Manager works after every pull: the game's new **boot screen** notices when an update has added scripts or art, says "Getting the update ready", rebuilds Godot's lists (what opening the editor used to do) and restarts by itself. **Autosave** every 5 minutes and when you close the window; each launch **continues your latest save** (the autosave or your F5 quick save). **Esc** opens a **pause menu**: Resume, Save game, Load last save, New game (asks twice), Save and quit. A save made in this update and a real save from 26 October are loaded by the tests every run, so updates keep your game. See [`docs/increments/24_1_run_and_continue.md`](docs/increments/24_1_run_and_continue.md).
 - **Resource Pack 3:** weathered brick, cracked asphalt, tar-paper roofs and painted containers; shop signs, raider graffiti and decals across Halden's Crossing and Outpost 17; bullet impacts that sound like the surface; crafting, salvage, pickup, reload and container sounds; town ambience. See [`docs/art/ashfall_pack_v3/INTEGRATION.md`](docs/art/ashfall_pack_v3/INTEGRATION.md) for what's integrated and what's only imported.
 
 ## Run it
 1. Install Godot 4.7 (standard, not .NET).
 2. Godot Project Manager → **Import** → choose this folder's `project.godot`.
-3. Press **F5**.
+3. Press **Run** in the Project Manager (or open it with **Edit** and press F5).
 
-Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · M map (right-click: pin) · L settlement · H use medkit · J eat · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift or double-tap W sprint · E at the truck's door to drive (W/S, A/D, Space handbrake, T camera, E get out) · Space jump · C/Ctrl crouch · Esc free mouse · F3 debug (fps, draw calls) · Ctrl/Cmd + = / − / 0 interface size.
+The game continues your latest save. Esc → **New game** to start over.
 
-## After pulling an update — important
-Open the project with **Edit** (not **Run**) in Godot's Project Manager, then press F5 or the ▶ button in the editor.
+Controls: WASD move · Mouse look · Left click fire · Right click / Q aim (toggle) · 1–5 / mouse wheel switch weapons (5 = machete) · R reload · E interact · Tab/I inventory · M map (right-click: pin) · L settlement · H use medkit · J eat · K craft · F5 quick save · F9 quick load · Hold E on a road sign to travel · B build mode (click place, wheel/[ ] choose, V variant, R rotate, F move, E repair, X dismantle/scrap) · Shift or double-tap W sprint · E at the truck's door to drive (W/S, A/D, Space handbrake, T camera, E get out) · Space jump · C/Ctrl crouch · Esc pause menu (save, load, new game, quit) · F3 debug (fps, draw calls) · Ctrl/Cmd + = / − / 0 interface size.
 
-**Why:** Godot keeps a cache of script class names in the hidden `.godot/` folder, and only the editor rebuilds it. If an update adds new scripts and you press **Run** in the Project Manager, the cache is stale: the new scripts fail to load, and the game sits frozen on its first frame with a red-tinted screen and placeholder HUD values. Opening the editor once fixes it.
+## After pulling an update
+Press **Run** as usual. If the update added scripts or art, the first launch shows **"Getting the update ready"** for a minute or two and then restarts by itself (Increment 24.1).
+
+**Why:** Godot keeps lists of the game's scripts and imported files in the hidden `.godot/` folder, and only the editor rebuilds them. Before 24.1, pressing **Run** after an update started the game with the old lists: new scripts failed to load and the game froze on a red-tinted screen. The boot screen (`scripts/core/boot.gd`) now checks the lists and runs the editor's import (`godot --headless --import`) when they're out of date. If it ever can't, opening the project once with **Edit** still fixes it.
+
+**Your saves** live outside the project (on a Mac: `~/Library/Application Support/Godot/app_userdata/ASHFALL: Reclamation/saves/`), so pulling never touches them.
 
 ## Tests
 ```
