@@ -115,6 +115,7 @@ func test_raiders_take_from_the_stores_and_run_off() -> void:
 	var st := await _claimed(zone)
 	for site in st.sites():
 		site.queue_free()  # (so the fences don't take the planks first)
+	st.defence_stage = 9  # (nor the defences' next stage, 27.1)
 	await wait_physics(1)
 	st.store.inventory.add_item(VEG, 60 - st.food())
 	st.store.inventory.add_item(PLANK, 20)

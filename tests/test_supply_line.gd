@@ -35,6 +35,7 @@ func _claim(zone: Node3D, st: Settlement) -> void:
 		var m := st.get_node_or_null("Plans/" + site.key)
 		if m != null and m.get_meta("defence", false):
 			site.free()
+	st.defence_stage = 9  # (nor their next stage, 27.1)
 
 
 func _newcomer(zone: Node3D, st: Settlement, role: Settler.Role) -> Settler:

@@ -330,6 +330,8 @@ func guard_posts() -> Array[Node3D]:
 	var out: Array[Node3D] = []
 	for b in buildings():
 		out.append_array(b.guard_spots())
+	# The highest first (27.1): guards man the towers before the posts
+	out.sort_custom(func(x: Node3D, y: Node3D) -> bool: return x.global_position.y > y.global_position.y + 0.5)
 	return out
 
 
@@ -520,29 +522,103 @@ func current_site() -> ConstructionSite:
 
 
 ## Lays out the settlement's own plan (fences, guard posts) as sites, and
-## its defences (27: markers with the "defence" meta). Claimed before the
-## defences were planned, just those.
+## the first stage of its defences (27: markers with the "defence" meta; a
+## "stage" meta, 27.1, for what comes after). Claimed before the defences were
+## planned, just those; laid out before they changed (27.1: the mine's
+## palisade), the changed ones (a "since" meta newer than defences_version).
 func lay_out_plans() -> void:
-	if (plans_laid and defences_laid) or sites_root == null:
+	if sites_root == null:
 		return
-	var defences_only := plans_laid
-	plans_laid = true
-	defences_laid = true
+	if not plans_laid:
+		plans_laid = true
+		defences_laid = true
+		defence_stage = 1
+		defences_version = DEFENCES_VERSION
+		_lay(func(m: Node3D) -> bool: return not m.get_meta("defence", false) or _stage_of(m) == 1)
+	elif not defences_laid:
+		defences_laid = true
+		defence_stage = 1
+		defences_version = DEFENCES_VERSION
+		_lay(func(m: Node3D) -> bool: return m.get_meta("defence", false) and _stage_of(m) == 1)
+	elif defences_version < DEFENCES_VERSION:
+		var was := defences_version
+		defences_version = DEFENCES_VERSION
+		_lay(func(m: Node3D) -> bool: return m.get_meta("defence", false) and _stage_of(m) <= defence_stage and int(m.get_meta("since", 1)) > was, true)
+	_advance_defences()
+
+
+## The defences come in stages (27.1): the next is laid out once nothing's
+## left to build of this one. At the mine, after the palisade: watchtowers,
+## and reinforcing the palisade with scrap.
+const DEFENCES_VERSION := 2
+var defence_stage := 0
+var defences_version := 0
+
+
+static func _stage_of(m: Node) -> int:
+	return int(m.get_meta("stage", 1))
+
+
+func _defence_markers(stage: int) -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var plans := get_node_or_null("Plans")
+	if plans == null:
+		return out
+	for m in plans.get_children():
+		if m is Node3D and m.get_meta("defence", false) and _stage_of(m) == stage:
+			out.append(m)
+	return out
+
+
+## Lays out the next stage of the defences once this one's built.
+func _advance_defences() -> void:
+	# (Not before the plan's laid out, or brought up to date, on loading)
+	if not is_claimed or not plans_laid or not defences_laid or defences_version < DEFENCES_VERSION or sites_root == null:
+		return
+	var next := _defence_markers(defence_stage + 1)
+	if next.is_empty():
+		return
+	var keys := {}
+	for site in sites():
+		keys[site.key] = true
+	for m in _defence_markers(defence_stage):
+		if keys.has(String(m.name)):
+			return
+	defence_stage += 1
+	_lay(func(m: Node3D) -> bool: return m.get_meta("defence", false) and _stage_of(m) == defence_stage)
+	var names: Array[String] = []
+	for m in next:
+		var n := str(SettlementPlans.PLANS[StringName(str(m.get_meta("plan")))]["name"]).to_lower()
+		if SettlementPlans.has(StringName(str(m.get_meta("plan")))) and not names.has(n):
+			names.append(n)
+	notice.emit("%s's defences are built. Next, the Builders start on: %s" % [settlement_name, ", ".join(names)])
+
+
+## Lays out the plan's markers that `want` picks as sites. A site already
+## there for a marker is left, unless `replace` and it's for another plan
+## (27.1): then it's called off, its materials back in the stores.
+func _lay(want: Callable, replace := false) -> void:
 	var plans := get_node_or_null("Plans")
 	if plans == null:
 		return
 	var have := {}
 	for site in sites():
-		have[site.key] = true
+		have[site.key] = site
 	for m in plans.get_children():
 		var mark := m as Node3D
-		if mark == null or have.has(String(mark.name)):
+		if mark == null or not want.call(mark):
 			continue
 		var plan := StringName(str(mark.get_meta("plan", "")))
 		if not SettlementPlans.has(plan):
 			continue
-		if defences_only and not mark.get_meta("defence", false):
-			continue
+		if have.has(String(mark.name)):
+			var old: ConstructionSite = have[String(mark.name)]
+			if not replace or old.plan_id == plan:
+				continue
+			for item: StringName in old.delivered:
+				_put_in_stores(item, int(old.delivered[item]))
+			old.get_parent().remove_child(old)
+			old.queue_free()
 		var pieces: Array[Transform3D] = []
 		var site_xf := mark.transform
 		if mark.has_meta("to"):
@@ -575,7 +651,8 @@ func _new_site(plan: StringName, pieces: Array[Transform3D], key := "") -> Const
 
 func _on_site_finished(site: ConstructionSite) -> void:
 	built.emit(site.display_name())
-	notice.emit("The %s is built" % site.display_name().to_lower() if site.plan_id == &"fence" else "The %s at %s is built" % [site.display_name().to_lower() if site.plan_id == &"gate" else site.display_name(), settlement_name])
+	notice.emit("The %s is built" % site.display_name().to_lower() if site.plan_id == &"fence" else "The %s at %s is built" % [site.display_name().to_lower() if SettlementPlans.is_run(site.plan_id) else site.display_name(), settlement_name])
+	_advance_defences.call_deferred()
 
 
 ## "" if `player` can plan a `plan` at `xform` here, otherwise why not.
@@ -1421,6 +1498,7 @@ func _physics_process(delta: float) -> void:
 		_armory_check = 2.0
 		_supply_guards()
 		_supply_sites()
+		_advance_defences()
 
 
 ## Advances the settlement by `hours` (water, crops, meals, arrivals, raids).
@@ -2603,7 +2681,7 @@ const LAYOUT := 2
 
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
-		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "defences_laid": defences_laid, "chem_progress": _chem_progress, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
+		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "defences_laid": defences_laid, "defence_stage": defence_stage, "defences_version": defences_version, "chem_progress": _chem_progress, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
 		"armory_job": String(_armory_job), "armory_progress": _armory_progress, "food_share": food_share,
 		"meal_credit": _meal_credit, "cook_progress": _cook_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
@@ -2623,6 +2701,9 @@ func load_state(data: Dictionary) -> void:
 	_apply_claimed_look()
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
 	defences_laid = data.get("defences_laid") is bool and data["defences_laid"]
+	# 27.1: saves from 27 laid the first (and then only) stage, version 1
+	defence_stage = int(_num(data.get("defence_stage"), 1.0 if defences_laid else 0.0))
+	defences_version = int(_num(data.get("defences_version"), 1.0 if defences_laid else 0.0))
 	_chem_progress = clampf(_num(data.get("chem_progress"), 0.0), 0.0, 1.0)
 	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
 	_scrap_progress = clampf(_num(data.get("scrap_progress"), 0.0), 0.0, 1.0)
@@ -2659,9 +2740,10 @@ func load_state(data: Dictionary) -> void:
 		next_raid_in = clampf(next_raid_in, 0.25, raid_warning_hours)
 		_restore_raid(Vector3(rf[0], rf[1], rf[2]) if rf is Array and rf.size() == 3 else global_position,
 			str(data.get("raid_from_name", "")), int(_num(data.get("raid_size"), 2)))
-	if is_claimed and not (plans_laid and defences_laid):
-		# Claimed before settlers could build (Increment 19), or before the
-		# defences were planned (27): lay them out now
+	if is_claimed:
+		# Claimed before settlers could build (Increment 19), before the
+		# defences were planned (27) or changed (27.1): lay them out now; and
+		# the next stage of the defences, if this one's done
 		lay_out_plans.call_deferred()
 	if int(_num(data.get("layout"), 1.0)) < LAYOUT:
 		_resettle.call_deferred()

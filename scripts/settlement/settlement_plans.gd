@@ -48,6 +48,19 @@ const PLANS := {
 	# Increment 27: a gate in a settlement's fence
 	&"gate": {"name": "Gate", "structure": "settlement_gate", "placeable": false, "hours": 1.5, "length": 8.0,
 		"cost": {&"wood_plank": 8, &"scrap_metal": 4}, "about": "A double gate, 8 m: it opens for your people; raiders have to break it down"},
+	# Increment 27.1: the mine's palisade, and what comes after it. "replaces":
+	# a piece built where one of these stands takes its place (an upgrade)
+	&"palisade": {"name": "Palisade", "structure": "palisade", "placeable": false, "hours": 0.3, "length": 4.0,
+		"cost": {&"wood_plank": 2, &"scrap_metal": 1}, "replaces": [&"farm_fence"],
+		"about": "Tall sharpened stakes patched with scrap, in 4 m lengths"},
+	&"reinforced_palisade": {"name": "Reinforced Palisade", "structure": "reinforced_palisade", "placeable": false, "hours": 0.3, "length": 4.0,
+		"cost": {&"scrap_metal": 3, &"wood_plank": 1}, "replaces": [&"palisade", &"farm_fence"],
+		"about": "The palisade clad in scrap sheet, banded and spiked: twice as hard to break"},
+	&"palisade_gate": {"name": "Palisade Gate", "structure": "palisade_gate", "placeable": false, "hours": 2.0, "length": 8.0,
+		"cost": {&"wood_plank": 10, &"scrap_metal": 6}, "replaces": [&"settlement_gate"],
+		"about": "A double gate of stakes, 8 m: it opens for your people; raiders have to break it down"},
+	&"watchtower": {"name": "Watchtower", "structure": "watchtower", "placeable": false, "hours": 5.0,
+		"cost": {&"wood_plank": 20, &"scrap_metal": 8, &"metal_pipe": 2}, "about": "A tall guard tower by the wall: a guard up there sees over it"},
 }
 ## Fences also need a Scrap Metal (nails and wire) for every four lengths.
 const FENCE_SCRAP_EVERY := 4
@@ -66,6 +79,21 @@ static func is_run(id: StringName) -> bool:
 ## The length of one piece of a run (m).
 static func piece_length(id: StringName) -> float:
 	return float(PLANS[id]["length"]) if is_run(id) else 4.0
+
+
+## What a piece of this plan takes the place of where it's built (27.1).
+static func replaces(id: StringName) -> Array:
+	return PLANS[id].get("replaces", []) if PLANS.has(id) else []
+
+
+## Whether something better than `structure_id` is planned to stand where it
+## does: a structure that replaces it (27.1).
+static func upgrades_of(structure_id: StringName) -> Array[StringName]:
+	var out: Array[StringName] = []
+	for id: StringName in PLANS:
+		if PLANS[id].get("replaces", []).has(structure_id):
+			out.append(StringName(str(PLANS[id]["structure"])))
+	return out
 
 
 ## The plan that builds structure `structure_id` (a fence for a farm_fence),

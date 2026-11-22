@@ -1,4 +1,4 @@
-extends "res://tests/test_case.gd"
+extends "res://tests/fortify_helpers.gd"
 ## Increment 27: your places fortified, and the Armory's gun mix.
 ##
 ## Each of your three places has defences in its plan, laid out as building
@@ -9,125 +9,6 @@ extends "res://tests/test_case.gd"
 ## for your people and not for raiders, who have to break them down. Miners
 ## dig up Chemicals now and then; the Armorer makes one of each kind of gun,
 ## then rounds for them, then more.
-
-const AWAY := Vector3(120, 0.1, 40)
-const TEST_DIR := "user://test_saves_fortify"
-
-var SCRAP: ItemDefinition = load("res://resources/items/scrap_metal.tres")
-var PLANK: ItemDefinition = load("res://resources/items/wood_plank.tres")
-var ELECTRONICS: ItemDefinition = load("res://resources/items/electronics.tres")
-var CHEMICALS: ItemDefinition = load("res://resources/items/chemicals.tres")
-var CLOTH: ItemDefinition = load("res://resources/items/cloth.tres")
-var VEG: ItemDefinition = load("res://resources/items/vegetables.tres")
-
-var saves: Node
-var _old_dir := ""
-
-
-func _init() -> void:
-	tree_entered.connect(func() -> void:
-		saves = get_node("/root/SaveManager")
-		_old_dir = saves.save_dir
-		saves.save_dir = TEST_DIR
-		_clean())
-	tree_exiting.connect(func() -> void:
-		_clean()
-		saves.autosave_enabled = false
-		saves.save_dir = _old_dir)
-
-
-func _clean() -> void:
-	var d := DirAccess.open(TEST_DIR)
-	if d == null:
-		return
-	for f in d.get_files():
-		d.remove(f)
-
-
-func _place(zone: Node3D, site: String) -> Settlement:
-	return zone.get_node(site + "/Settlement") as Settlement
-
-
-func _player(zone: Node3D) -> PlayerController:
-	return zone.get_node("Player") as PlayerController
-
-
-func _claim(zone: Node3D, st: Settlement) -> void:
-	var p := _player(zone)
-	p.global_position = st.claim_point.global_transform * Vector3(0, -1.35, 1.6)
-	await wait_physics(5)
-	check(st.request_claim(p), "claimed %s (%s)" % [st.settlement_name, st.claim_refusal_reason(p)])
-	st.next_raid_in = 9999.0
-	st.arrival_in = 9999.0
-	p.global_position = AWAY
-	await wait_physics(2)
-
-
-func _newcomer(st: Settlement, role: Settler.Role) -> Settler:
-	var s := st.spawn_newcomer()
-	await wait_physics(70)
-	var p := _player(st.get_parent().get_parent() as Node3D)
-	check(st.request_set_role(p, s, role), "%s: %s (%s)" % [s.settler_name, Settler.ROLE_NAMES[role], st.role_refusal_reason(role)])
-	return s
-
-
-func _free(zone: Node) -> void:
-	remove_child(zone)
-	zone.free()
-	await wait_physics(2)
-
-
-func _keys(st: Settlement) -> Array:
-	return st.sites().map(func(s: ConstructionSite) -> String: return s.key)
-
-
-## Hands every site its materials and puts in all its hours: built.
-func _finish_sites(st: Settlement) -> void:
-	for site in st.sites():
-		site.delivered = site.total_cost().duplicate()
-		site.add_work(site.total_hours())
-	await wait_physics(3)
-
-
-## Waits for the rebake, and for the zone's map to take it in (on its own
-## thread: a moment or two later).
-func _wait_nav(zone: Node3D) -> void:
-	var nav := NavRebaker.find_navigation(_player(zone))
-	var map := zone.get_world_3d().navigation_map
-	for i in 900:
-		await wait_physics(1)
-		if i > 10 and not NavRebaker.any_busy(nav):
-			break
-	var from := NavigationServer3D.map_get_iteration_id(map)
-	for i in 400:
-		await wait_physics(1)
-		if NavigationServer3D.map_get_iteration_id(map) >= from + 2:
-			break
-	await wait_physics(2)
-
-
-func _gate_of(st: Settlement) -> SettlementGate:
-	for n in get_tree().get_nodes_in_group("settlement_gates"):
-		var g := n as SettlementGate
-		if g != null and g.settlement() == st and not g.is_queued_for_deletion():
-			return g
-	return null
-
-
-func _path(zone: Node3D, from: Vector3, to: Vector3) -> PackedVector3Array:
-	var map := zone.get_world_3d().navigation_map
-	return NavigationServer3D.map_get_path(map, NavigationServer3D.map_get_closest_point(map, from), to, true)
-
-
-## How close the path comes to the gate's opening.
-func _closest_to_gate(path: PackedVector3Array, g: SettlementGate) -> float:
-	var best := INF
-	for i in path.size() - 1:
-		var n := maxi(int(path[i].distance_to(path[i + 1]) / 0.5), 1)
-		for j in n + 1:
-			best = minf(best, g.distance_to(path[i].lerp(path[i + 1], float(j) / n)))
-	return best
-
 
 # ---------------------------------------------------------------- the plans
 
@@ -155,7 +36,7 @@ func test_the_defences_are_planned() -> void:
 		check(ends.any(func(e: Vector3) -> bool: return e.distance_to(g.position) < 0.1) and ends.any(func(e: Vector3) -> bool: return e.distance_to(to) < 0.1),
 			"%s fills a gap in the fence, end to end" % g.name)
 	# The mine: a closed ring of fence with a gate
-	var runs := mine.get_node("Plans").get_children().filter(func(m: Node) -> bool: return m.has_meta("to"))
+	var runs := mine.get_node("Plans").get_children().filter(func(m: Node) -> bool: return m.has_meta("to") and int(m.get_meta("stage", 1)) == 1)
 	var length := 0.0
 	for i in runs.size():
 		var a: Node3D = runs[i]
@@ -163,8 +44,8 @@ func test_the_defences_are_planned() -> void:
 		check(a.get_meta("defence", false), "%s is one of the mine's defences" % a.name)
 		check((a.get_meta("to") as Vector3).distance_to(next.position) < 0.01, "%s joins %s" % [a.name, next.name])
 		length += a.position.distance_to(a.get_meta("to"))
-	check(runs.size() == 6 and runs.filter(func(m: Node) -> bool: return m.get_meta("plan") == "gate").size() == 1,
-		"the mine: five runs of fence and a gate, all the way round (%.0f m)" % length)
+	check(runs.size() == 6 and runs.filter(func(m: Node) -> bool: return m.get_meta("plan") == "palisade_gate").size() == 1,
+		"the mine: five runs of palisade (27.1) and a gate, all the way round (%.0f m)" % length)
 	var ring := PackedVector2Array()
 	for r: Node3D in runs:
 		ring.append(Vector2(r.position.x, r.position.z))
@@ -225,14 +106,15 @@ func test_claiming_lays_out_the_defences() -> void:
 		check(keys.has(k), "the mine: %s planned" % k)
 	check(mine.plans_laid and mine.defences_laid and mine.save_state()["defences_laid"] == true, "laid out, and saved as laid out")
 	var gate := mine.sites().filter(func(s: ConstructionSite) -> bool: return s.key == "MineGate")[0] as ConstructionSite
-	check(gate.plan_id == &"gate" and gate.pieces.size() == 1 and gate.total_cost() == {&"wood_plank": 8, &"scrap_metal": 4} and is_equal_approx(gate.total_hours(), 1.5),
-		"its gate: one piece, 8 planks and 4 scrap, an hour and a half's work")
+	check(gate.plan_id == &"palisade_gate" and gate.pieces.size() == 1 and gate.total_cost() == {&"wood_plank": 10, &"scrap_metal": 6} and is_equal_approx(gate.total_hours(), 2.0),
+		"its gate (27.1: a palisade gate): one piece, 10 planks and 6 scrap, two hours' work")
 	var north := mine.sites().filter(func(s: ConstructionSite) -> bool: return s.key == "MineFenceNorth")[0] as ConstructionSite
-	check(north.pieces.size() == 23 and north.total_cost()[&"wood_plank"] == 23 and north.total_cost()[&"scrap_metal"] == 6,
-		"the north side: 23 lengths, 23 planks and 6 scrap (%d)" % north.pieces.size())
+	check(north.plan_id == &"palisade" and north.pieces.size() == 23 and north.total_cost()[&"wood_plank"] == 46 and north.total_cost()[&"scrap_metal"] == 23,
+		"the north side: 23 lengths of palisade, 46 planks and 23 scrap (%d)" % north.pieces.size())
+	check(not keys.any(func(k: String) -> bool: return k.begins_with("MineTower") or k.begins_with("MineReinforce")), "the next stage waits")
 	var pieces := 0
 	for s in mine.sites():
-		if s.plan_id == &"fence":
+		if s.plan_id == &"palisade":
 			pieces += s.pieces.size()
 	check(pieces == 82, "82 lengths of fence in all, 330 m (%d)" % pieces)
 	await _claim(zone, nw)
@@ -280,15 +162,17 @@ func test_builders_go_where_needed() -> void:
 	await _claim(zone, mine)
 	farm.store.inventory.add_item(VEG, 30)
 	var b := await _newcomer(farm, Settler.Role.BUILDER)
-	farm.store.inventory.add_item(PLANK, 200)
-	farm.store.inventory.add_item(SCRAP, 60)
+	farm.store.inventory.add_item(PLANK, 400)
+	farm.store.inventory.add_item(SCRAP, 150)
 	farm._supply_sites()
 	check(not farm.builder_assignment().is_empty() and farm.builder_assignment()[1] == farm and b.status_text().begins_with("Building the fence"),
 		"with the farm's own building to do, at home: %s" % b.status_text())
 	# The farm's all built: off to the mine (its materials from the farm's
-	# stores, down the supply line)
+	# stores, down the supply line). (Its next stage of defences, 27.1, left
+	# out)
 	for s in farm.sites():
 		s.free()
+	farm.defence_stage = 9
 	mine._supply_sites()
 	var a := mine.builder_assignment()
 	var site := a[0] as ConstructionSite if not a.is_empty() else null
@@ -311,6 +195,7 @@ func test_builders_go_where_needed() -> void:
 	# The mine's done too: home again
 	for s in mine.sites():
 		s.free()
+	mine.defence_stage = 9
 	await wait_physics(2)
 	check(farm.builder_assignment().is_empty() and b.status_text() == "Nothing to build", "nothing anywhere: %s" % b.status_text())
 	for i in 300:
@@ -403,7 +288,7 @@ func test_raiders_have_to_break_the_gate_down() -> void:
 	# Broken down: it's back on the building list
 	g.apply_damage(10000.0, r)
 	await wait_physics(3)
-	check(_keys(nw).any(func(k: String) -> bool: return k.begins_with("Rebuild")) and nw.sites()[-1].plan_id == &"gate",
+	check(_keys(nw).any(func(k: String) -> bool: return k.begins_with("Rebuild")) and nw.sites().any(func(s: ConstructionSite) -> bool: return s.plan_id == &"gate"),
 		"broken: a gate goes back on the list to rebuild")
 	await _free(zone)
 
@@ -413,10 +298,10 @@ func test_the_mine_fenced_all_round() -> void:
 	var mine := _place(zone, "BlackRidgeMine")
 	await _claim(zone, mine)
 	await _finish_sites(mine)
-	check(mine.sites().is_empty(), "all built")
+	check(mine.defence_stage == 2 and not _keys(mine).has("MineFenceNorth"), "all built (and the next stage begun)")
 	var fences := get_tree().get_nodes_in_group("settlement_buildings").filter(
-		func(b: Node) -> bool: return (b as SettlementBuilding).settlement() == mine and (b as Structure).definition.id == &"farm_fence")
-	check(fences.size() == 82, "82 lengths of fence (%d)" % fences.size())
+		func(b: Node) -> bool: return (b as SettlementBuilding).settlement() == mine and (b as Structure).definition.id == &"palisade")
+	check(fences.size() == 82, "82 lengths of palisade (%d)" % fences.size())
 	var g := _gate_of(mine)
 	check(g != null and mine.to_local(g.global_position).distance_to(Vector3(44, 0, 15)) < 0.2, "the gate's on the road in")
 	await _wait_nav(zone)

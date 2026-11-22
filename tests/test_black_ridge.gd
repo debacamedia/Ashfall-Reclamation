@@ -273,6 +273,7 @@ func test_the_mine_is_saved() -> void:
 	await _claim(zone, mine)
 	for site in mine.sites():
 		site.free()  # its fence (27) would take the scrap
+	mine.defence_stage = 9  # (and so would the next stage, 27.1)
 	var a := await _newcomer(zone, mine, Settler.Role.MINER)
 	var name_a := a.settler_name
 	mine.store.inventory.add_item(load("res://resources/items/vegetables.tres"), 10)

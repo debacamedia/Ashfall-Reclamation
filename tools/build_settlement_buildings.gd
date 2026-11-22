@@ -17,6 +17,11 @@ extends SceneTree
 ##                 in the tub and they come out Leather (22)
 ##   settlement_gate  an 8 m double gate in a settlement's fence: planks
 ##                 braced with scrap; opens for your people (27)
+##   palisade      4 m of tall sharpened stakes patched with scrap (27.1)
+##   reinforced_palisade  the same clad in scrap sheet, banded, spiked (27.1)
+##   palisade_gate  an 8 m double gate of stakes for a palisade (27.1)
+##   watchtower    a guard tower with its deck at 3.4 m, to see over a
+##                 palisade (27.1)
 ##
 ##   godot --headless --path . -s res://tools/build_settlement_buildings.gd
 
@@ -58,7 +63,12 @@ func _run() -> void:
 	_pen("PigPen", "pig_pen", "Pig Pen", &"pig", 6, Vector2(10, 8), 1.0)
 	_pen("CowPasture", "cow_pasture", "Cow Pasture", &"cow", 4, Vector2(16, 12), 1.35)
 	_tanning_rack()
-	_gate()
+	_gate("SettlementGate", "settlement_gate", "Gate", false)
+	# 27.1: the mine's palisade, its reinforcing, its gate, and watchtowers
+	_palisade(false)
+	_palisade(true)
+	_gate("PalisadeGate", "palisade_gate", "Palisade Gate", true)
+	_tower("Watchtower", "watchtower", "Watchtower", 3.4, 1100.0)
 	quit()
 
 
@@ -92,15 +102,23 @@ func _guard_post() -> void:
 
 
 func _guard_tower() -> void:
+	_tower("GuardTower", "guard_tower", "Guard Tower", 2.6, 900.0)
+
+
+## A guard tower with its deck `h` up (27.1: a Watchtower's is higher, to
+## see over a palisade). The stair keeps the same slope, so it runs further.
+func _tower(node_name: String, id: String, display: String, h: float, health: float) -> void:
 	# Deck at the back half of the footprint, the stair coming down at the front
-	var h := 2.6
 	var deck_z := -1.7
-	var b := _begin("GuardTower", "guard_tower", "Guard Tower", Vector3(3.2, 5.0, 6.6), 900.0,
+	var run := 3.4 * h / 2.6
+	var b := _begin(node_name, id, display, Vector3(3.2, h + 2.4, 3.2 + run), health,
 		{&"wood_plank": 3, &"scrap_metal": 1}, {&"wood_plank": 6, &"scrap_metal": 2})
 	var body := _body(b)
 	for c in [Vector2(-1.4, deck_z - 1.4), Vector2(1.4, deck_z - 1.4), Vector2(-1.4, deck_z + 1.4), Vector2(1.4, deck_z + 1.4)]:
 		_box(body, "Leg", Vector3(0.22, h, 0.22), Vector3(c.x, h / 2.0, c.y), M["wood"], true)
-		_box(body, "Post", Vector3(0.12, 2.2, 0.12), Vector3(c.x, h + 1.1, c.y), M["wood"], true)
+		# (A Watchtower's roof posts aren't solid, 27.1: its guard looks along
+		# the wall past them)
+		_box(body, "Post", Vector3(0.12, 2.2, 0.12), Vector3(c.x, h + 1.1, c.y), M["wood"], h < 3.0)
 	_box(body, "Deck", Vector3(3.0, 0.15, 3.0), Vector3(0, h - 0.075, deck_z), M["wood_plain"], true)
 	# Boarded in below the deck (22.1): nobody stands under it thinking
 	# they're at the post above
@@ -120,10 +138,9 @@ func _guard_tower() -> void:
 	var xm := (x0 + x1) / 2.0
 	_box(body, "RailFront", Vector3(x0 + 1.5, 1.0, 0.08), Vector3((x0 - 1.5) / 2.0, h + 0.5, deck_z + 1.46), M["wood"], true)
 	_box(body, "Roof", Vector3(3.4, 0.08, 3.4), Vector3(0, h + 2.24, deck_z), M["tin"], true)
-	# The stair: 2.6 m up over 3.4 m. Solid underneath (22.1): with only a
-	# sloping board, the navmesh joined it from the side where it was already
-	# knee-high, and settlers walked into its edge
-	var run := 3.4
+	# The stair: 2.6 m up over 3.4 m (a Watchtower's the same slope). Solid
+	# underneath (22.1): with only a sloping board, the navmesh joined it from
+	# the side where it was already knee-high, and settlers walked into its edge
 	var length := sqrt(h * h + run * run)
 	var angle := atan2(h, run)
 	var z_top := deck_z + 1.5
@@ -171,8 +188,9 @@ func _guard_tower() -> void:
 		rc.transform = rail
 		_add(body, rc)
 		_box(body, "Newel", Vector3(0.1, 1.0, 0.5), Vector3(x, 0.5, z_foot + 0.15), M["wood"], true)
-	for i in 12:
-		var t := (i + 0.5) / 12.0
+	var steps := roundi(12 * h / 2.6)
+	for i in steps:
+		var t := (i + 0.5) / steps
 		_box(body, "Step%d" % i, Vector3(x1 - x0, 0.06, 0.3), Vector3(xm, h * (1.0 - t) + 0.03, z_top + run * t), M["wood_plain"], false)
 	for x in [x0, x1]:
 		var side := MeshInstance3D.new()
@@ -183,8 +201,18 @@ func _guard_tower() -> void:
 		side.material_override = M["wood"]
 		side.transform = Transform3D(Basis(Vector3.RIGHT, angle), Vector3(x, h / 2.0, z_top + run / 2.0))
 		_add(body, side)
-	_markers(b, "GuardSpots", [Vector3(-0.3, h, deck_z - 0.3)])
-	_finish(b, "guard_tower")
+	if h > 3.0:
+		# A Watchtower: boarded breastwork round the deck, and its guard stands
+		# at the front of it, looking down over the wall
+		for side in [["BreastBack", Vector3(3.0, 1.1, 0.06), Vector3(0, h + 0.55, deck_z - 1.52)],
+				["BreastLeft", Vector3(0.06, 1.1, 3.0), Vector3(-1.52, h + 0.55, deck_z)],
+				["BreastRight", Vector3(0.06, 1.1, 3.0), Vector3(1.52, h + 0.55, deck_z)]]:
+			_box(body, side[0], side[1], side[2], M["wood_plain"], false)
+		_box(body, "ScrapShield", Vector3(1.6, 0.8, 0.04), Vector3(0.5, h + 0.5, deck_z - 1.56), M["tin"], false)
+		_markers(b, "GuardSpots", [Vector3(-0.3, h, deck_z - 1.25)])
+	else:
+		_markers(b, "GuardSpots", [Vector3(-0.3, h, deck_z - 0.3)])
+	_finish(b, id)
 
 
 func _bunkhouse() -> void:
@@ -478,16 +506,19 @@ func _tanning_rack() -> void:
 ## diagonal brace and scrap sheet on each, hung on heavy posts. The leaves are
 ## AnimatableBody3Ds under pivots at the hinges (%LeafL, %LeafR), in the
 ## "nav_passable" group so the navmesh runs through them.
-func _gate() -> void:
-	var b := _begin("SettlementGate", "settlement_gate", "Gate", Vector3(8.0, 2.1, 0.3), 800.0,
-		{&"wood_plank": 2, &"scrap_metal": 1}, {&"wood_plank": 4, &"scrap_metal": 2})
+func _gate(node_name: String, id: String, display: String, palisade: bool) -> void:
+	var tall := 2.5 if palisade else 1.95
+	var b := _begin(node_name, id, display, Vector3(8.0, 2.8 if palisade else 2.1, 0.4 if palisade else 0.3), 1400.0 if palisade else 800.0,
+		{&"wood_plank": 2, &"scrap_metal": 1}, {&"wood_plank": 5, &"scrap_metal": 3} if palisade else {&"wood_plank": 4, &"scrap_metal": 2})
 	var def: Variant = b.get("definition")
 	b.set_script(load("res://scripts/settlement/settlement_gate.gd"))
 	b.set("definition", def)
 	var body := _body(b)
+	var post_h := 3.0 if palisade else 2.3
+	var post_w := 0.36 if palisade else 0.24
 	for x: float in [-4.08, 4.08]:
-		_box(body, "Post" + ("L" if x < 0 else "R"), Vector3(0.24, 2.3, 0.24), Vector3(x, 1.15, 0), M["wood"], true)
-		_box(body, "Cap" + ("L" if x < 0 else "R"), Vector3(0.32, 0.08, 0.32), Vector3(x, 2.34, 0), M["rust"], false)
+		_box(body, "Post" + ("L" if x < 0 else "R"), Vector3(post_w, post_h, post_w), Vector3(x, post_h / 2.0, 0), M["wood"], true)
+		_box(body, "Cap" + ("L" if x < 0 else "R"), Vector3(post_w + 0.08, 0.08, post_w + 0.08), Vector3(x, post_h + 0.04, 0), M["rust"], false)
 	for side: int in [-1, 1]:
 		var pivot := Node3D.new()
 		pivot.name = "LeafL" if side < 0 else "LeafR"
@@ -498,10 +529,17 @@ func _gate() -> void:
 		leaf.name = "Leaf"
 		leaf.collision_layer = PhysicsLayers.STRUCTURES
 		leaf.collision_mask = 0
+		# 27.1: off, so its collision follows the hinge (the pivot's turned,
+		# not the leaf). With it on, the leaf only moved on screen and the
+		# gateway stayed blocked
+		leaf.sync_to_physics = false
 		_add(pivot, leaf)
 		leaf.add_to_group("nav_passable", true)
 		var dir := float(-side)  # the leaf runs from its hinge toward the middle
 		var w := 3.9
+		if palisade:
+			_palisade_leaf(leaf, dir, w, tall)
+			continue
 		for i in 7:
 			var x := dir * (0.28 + i * 0.56)
 			_box(leaf, "Plank%d" % i, Vector3(0.5, 1.9 - (i % 2) * 0.12, 0.07), Vector3(x, 0.15 + (1.9 - (i % 2) * 0.12) / 2.0, 0), M["wood"], false)
@@ -529,7 +567,122 @@ func _gate() -> void:
 	swing.position = Vector3(0, 1.2, 0)
 	_add(b, swing)
 	swing.unique_name_in_owner = true
-	_finish(b, "settlement_gate")
+	_finish(b, id)
+
+
+## A palisade gate's leaf (27.1): sharpened stakes on two rails, a brace
+## and a scrap sheet, as one mesh per material.
+func _palisade_leaf(leaf: Node3D, dir: float, w: float, tall: float) -> void:
+	var parts := []
+	for i in 12:
+		var x := dir * (0.16 + i * 0.325)
+		var hh := tall - 0.3 - (i % 3) * 0.05
+		parts.append_array(_stake(Vector3(x, 0.1, 0), hh, 0.15))
+	for y in [0.55, 1.75]:
+		parts.append([_boxmesh(Vector3(w, 0.16, 0.1)), Transform3D(Basis.IDENTITY, Vector3(dir * w / 2.0, y, -0.2)), M["wood_plain"]])
+	var bl := sqrt(w * w + 1.2 * 1.2) - 0.1
+	parts.append([_boxmesh(Vector3(bl, 0.14, 0.08)), Transform3D(Basis(Vector3.BACK, atan2(1.2, w) * -dir), Vector3(dir * w / 2.0, 1.15, -0.2)), M["wood_plain"]])
+	parts.append([_boxmesh(Vector3(1.8, 1.0, 0.03)), Transform3D(Basis(Vector3.BACK, 0.03 * dir), Vector3(dir * 2.3, 1.1, 0.17)), M["tin"]])
+	parts.append([_boxmesh(Vector3(w - 0.1, 0.1, 0.03)), Transform3D(Basis.IDENTITY, Vector3(dir * w / 2.0, 0.45, 0.17)), M["rust"]])
+	parts.append([_boxmesh(Vector3(w - 0.1, 0.1, 0.03)), Transform3D(Basis.IDENTITY, Vector3(dir * w / 2.0, 1.9, 0.17)), M["rust"]])
+	_merged(leaf, "Stakes", parts)
+	_shape(leaf, "Panel", Vector3(w, tall - 0.1, 0.4), Vector3(dir * w / 2.0, (tall - 0.1) / 2.0 + 0.05, 0))
+
+
+## 4 m of palisade (27.1): sharpened stakes side by side on two rails inside,
+## patched with scrap sheet outside (+Z). Reinforced: clad in scrap sheet
+## outside, banded with steel and spiked along the top. One mesh per material,
+## so a long run costs few draw calls.
+func _palisade(reinforced: bool) -> void:
+	var id := "reinforced_palisade" if reinforced else "palisade"
+	var b := _begin("ReinforcedPalisade" if reinforced else "Palisade", id, "Reinforced Palisade" if reinforced else "Palisade",
+		Vector3(4.0, 2.7, 0.6 if reinforced else 0.45), 1200.0 if reinforced else 600.0,
+		{&"scrap_metal": 2, &"wood_plank": 1} if reinforced else {&"wood_plank": 1, &"scrap_metal": 1},
+		{&"scrap_metal": 2, &"wood_plank": 1} if reinforced else {&"wood_plank": 1})
+	var body := _body(b)
+	var parts := []
+	for i in 12:
+		var x := -1.83 + i * 0.333
+		var hh := 2.2 + float((i * 7) % 5) * 0.05
+		parts.append_array(_stake(Vector3(x, 0, 0), hh, 0.16))
+	for y in [0.5, 1.8]:
+		parts.append([_boxmesh(Vector3(4.0, 0.18, 0.12)), Transform3D(Basis.IDENTITY, Vector3(0, y, -0.22)), M["wood_plain"]])
+	if reinforced:
+		# Clad in sheet, each panel a little askew, rust and tin by turns
+		for i in 4:
+			var x := -1.5 + i * 1.0
+			var mat: Material = M["tin"] if i % 2 == 0 else M["rust"]
+			parts.append([_boxmesh(Vector3(1.04, 1.9, 0.03)), Transform3D(Basis(Vector3.BACK, (0.015 if i % 2 else -0.02)), Vector3(x, 1.0, 0.2)), mat])
+		for y in [0.35, 1.55]:
+			parts.append([_boxmesh(Vector3(4.0, 0.12, 0.04)), Transform3D(Basis.IDENTITY, Vector3(0, y, 0.235)), M["rust"]])
+		for i in 3:
+			parts.append([_boxmesh(Vector3(0.08, 0.08, 0.05)), Transform3D(Basis.IDENTITY, Vector3(-1.5 + i * 1.5, 0.35, 0.26)), M["wire"]])
+			parts.append([_boxmesh(Vector3(0.08, 0.08, 0.05)), Transform3D(Basis.IDENTITY, Vector3(-1.5 + i * 1.5, 1.55, 0.26)), M["wire"]])
+		# Rebar spikes along the top, leaning out
+		for i in 8:
+			var spike := CylinderMesh.new()
+			spike.top_radius = 0.0
+			spike.bottom_radius = 0.025
+			spike.height = 0.75
+			spike.radial_segments = 4
+			spike.rings = 1
+			var lean := Basis(Vector3.RIGHT, 0.6)
+			parts.append([spike, Transform3D(lean, Vector3(-1.75 + i * 0.5, 2.2, 0.1) + lean * Vector3(0, 0.375, 0)), M["wire"]])
+	else:
+		# Scrap sheets patched on outside, here and there
+		parts.append([_boxmesh(Vector3(1.3, 0.9, 0.03)), Transform3D(Basis(Vector3.BACK, 0.04), Vector3(-1.1, 0.75, 0.18)), M["rust"]])
+		parts.append([_boxmesh(Vector3(1.0, 0.7, 0.03)), Transform3D(Basis(Vector3.BACK, -0.06), Vector3(0.9, 1.45, 0.18)), M["tin"]])
+		parts.append([_boxmesh(Vector3(0.7, 0.5, 0.03)), Transform3D(Basis(Vector3.BACK, 0.1), Vector3(1.55, 0.45, 0.18)), M["rust"]])
+	_merged(body, "Palisade", parts)
+	_shape(body, "Wall", Vector3(4.0, 2.4, 0.5 if reinforced else 0.42), Vector3(0, 1.2, 0.0))
+	_finish(b, id)
+
+
+## A sharpened stake: a post and its point.
+func _stake(at: Vector3, h: float, r: float) -> Array:
+	var post := CylinderMesh.new()
+	post.top_radius = r
+	post.bottom_radius = r * 1.05
+	post.height = h
+	post.radial_segments = 7
+	post.rings = 1
+	var tip := CylinderMesh.new()
+	tip.top_radius = 0.0
+	tip.bottom_radius = r
+	tip.height = 0.38
+	tip.radial_segments = 7
+	tip.rings = 1
+	return [[post, Transform3D(Basis.IDENTITY, at + Vector3(0, h / 2.0, 0)), M["wood"]],
+		[tip, Transform3D(Basis.IDENTITY, at + Vector3(0, h + 0.19, 0)), M["wood"]]]
+
+
+func _boxmesh(size: Vector3) -> BoxMesh:
+	var m := BoxMesh.new()
+	m.size = size
+	return m
+
+
+## Merges [mesh, transform, material] parts into one MeshInstance3D with a
+## surface per material (27.1).
+func _merged(body: Node3D, mesh_name: String, parts: Array) -> void:
+	var tools := {}
+	var order: Array[Material] = []
+	for p: Array in parts:
+		var mat: Material = p[2]
+		if not tools.has(mat):
+			var st := SurfaceTool.new()
+			st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			tools[mat] = st
+			order.append(mat)
+		(tools[mat] as SurfaceTool).append_from(p[0], 0, p[1])
+	var mesh := ArrayMesh.new()
+	for mat in order:
+		(tools[mat] as SurfaceTool).commit(mesh)
+		mesh.surface_set_material(mesh.get_surface_count() - 1, mat)
+	var mi := MeshInstance3D.new()
+	mi.name = mesh_name
+	mi.mesh = mesh
+	_add(body, mi)
 
 
 func _plain(c: Color, rough: float) -> StandardMaterial3D:

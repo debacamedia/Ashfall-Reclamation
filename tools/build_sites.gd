@@ -83,15 +83,32 @@ const GATES := [
 	["GateBack", Vector2(4, -28), Vector2(-4, -28)],
 	["GateField", Vector2(-4, -36), Vector2(4, -36)],
 ]
-## The fence round the mine (27), counterclockwise from above with the
-## outside to each run's +Z, and its gate on the road in from the east.
+## The wall round the mine (27; a palisade since 27.1, was a split-rail
+## fence), counterclockwise from above with the outside to each run's +Z, and
+## its gate on the road in from the east.
 const MINE_FENCE := [
-	["MineFenceEastS", "fence", Vector2(44, 38), Vector2(44, 19)],
-	["MineGate", "gate", Vector2(44, 19), Vector2(44, 11)],
-	["MineFenceEastN", "fence", Vector2(44, 11), Vector2(44, -36)],
-	["MineFenceNorth", "fence", Vector2(44, -36), Vector2(-47, -36)],
-	["MineFenceWest", "fence", Vector2(-47, -36), Vector2(-47, 38)],
-	["MineFenceSouth", "fence", Vector2(-47, 38), Vector2(44, 38)],
+	["MineFenceEastS", "palisade", Vector2(44, 38), Vector2(44, 19)],
+	["MineGate", "palisade_gate", Vector2(44, 19), Vector2(44, 11)],
+	["MineFenceEastN", "palisade", Vector2(44, 11), Vector2(44, -36)],
+	["MineFenceNorth", "palisade", Vector2(44, -36), Vector2(-47, -36)],
+	["MineFenceWest", "palisade", Vector2(-47, -36), Vector2(-47, 38)],
+	["MineFenceSouth", "palisade", Vector2(-47, 38), Vector2(44, 38)],
+]
+## The defences' second stage (27.1), once the first's built: watchtowers
+## hard by the wall (a guard up there sees over it), [name, at, facing out]...
+const MINE_TOWERS := [
+	["MineTowerGateN", Vector2(40.4, 0.5), Vector2(1, 0)],
+	["MineTowerGateS", Vector2(40.4, 29.5), Vector2(1, 0)],
+	["MineTowerNorthwest", Vector2(-43.4, -31), Vector2(-1, 0)],
+	["MineTowerSouthwest", Vector2(-43.4, 33), Vector2(-1, 0)],
+]
+const FARM_TOWERS := [
+	["TowerFrontLeft", Vector2(-8.5, 32.65), Vector2(0, 1)],
+	["TowerFrontRight", Vector2(8.5, 32.65), Vector2(0, 1)],
+]
+const NORTHWATCH_TOWERS := [
+	["TowerGateW", Vector2(-6.45, 14.4), Vector2(0, 1)],
+	["TowerGateE", Vector2(6.45, 14.4), Vector2(0, 1)],
 ]
 const GUARD_POSTS := [
 	["GuardPostFrontLeft", Vector2(-36, 32), Vector2(-1, 1)],
@@ -572,6 +589,8 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump
 	# round (runs go with the outside to their +Z, like the fences)
 	for g: Array in GATES:
 		_plan_run(plans, g[0], "gate", g[1], g[2])
+	# …then (27.1) watchtowers by the front gate
+	_plan_towers(plans, FARM_TOWERS)
 	var sites := Node3D.new()
 	sites.name = "Sites"
 	st.add_child(sites)
@@ -955,6 +974,9 @@ func _black_ridge_settlement(k: Kit, office: StaticBody3D, bunkhouse: StaticBody
 	st.add_child(plans)
 	for f: Array in MINE_FENCE:
 		_plan_run(plans, f[0], f[1], f[2], f[3])
+		# The palisade and its gate replaced 27's fence and gate (27.1):
+		# laid out again in saves that had those
+		(plans.get_child(-1) as Node).set_meta("since", 2)
 	for g: Array in [["MineGatePostN", Vector3(40, 0, 6)], ["MineGatePostS", Vector3(40, 0, 24)]]:
 		var m := Marker3D.new()
 		m.name = g[0]
@@ -962,9 +984,31 @@ func _black_ridge_settlement(k: Kit, office: StaticBody3D, bunkhouse: StaticBody
 		m.set_meta("plan", "guard_post")
 		m.set_meta("defence", true)
 		plans.add_child(m)
+	# Then (27.1), once that's built: watchtowers, and the palisade reinforced
+	# with scrap, length by length where it stands
+	_plan_towers(plans, MINE_TOWERS)
+	for f: Array in MINE_FENCE:
+		if f[1] == "palisade":
+			_plan_run(plans, String(f[0]).replace("MineFence", "MineReinforce"), "reinforced_palisade", f[2], f[3])
+			(plans.get_child(-1) as Node).set_meta("stage", 2)
 	var sites := Node3D.new()
 	sites.name = "Sites"
 	st.add_child(sites)
+
+
+## Watchtowers in a settlement's plan (27.1: the defences' second stage),
+## [name, at (x, z), facing out]. A tower's deck is at its back (-Z), so -Z
+## faces out, to the wall.
+func _plan_towers(plans: Node3D, towers: Array) -> void:
+	for t: Array in towers:
+		var m := Marker3D.new()
+		m.name = t[0]
+		var out: Vector2 = (t[2] as Vector2).normalized()
+		m.transform = Transform3D(Basis(Vector3.UP, atan2(-out.x, -out.y)), Vector3(t[1].x, 0, t[1].y))
+		m.set_meta("plan", "watchtower")
+		m.set_meta("defence", true)
+		m.set_meta("stage", 2)
+		plans.add_child(m)
 
 
 ## A run of fence or gates in a settlement's plan (27: one of its defences),
@@ -1048,7 +1092,8 @@ func _northwatch() -> Kit:
 	k.box(mast, "Shack", Vector3(2.4, 2.2, 2.0), Vector3(2.6, 1.1, 0.4), "olive")
 	# The yard and the way in
 	k.prop("truck", "PatrolTruck", Vector3(0, 0, 3), 90)
-	k.prop("fuel_drums", "YardDrums", Vector3(-6, 0, 14), 0)
+	# (27.1: moved from (-6, 14) for the gate's west watchtower)
+	k.prop("fuel_drums", "YardDrums", Vector3(-13, 0, 15.2), 0)
 	k.prop("sandbags", "GateSandbagsW", Vector3(-5.5, 0, 21), 0)
 	k.prop("sandbags", "GateSandbagsE", Vector3(5.5, 0, 21), 0)
 	k.prop("jersey", "RoadBlock", Vector3(-1.5, 0, 28), 15)
@@ -1172,6 +1217,8 @@ func _northwatch_settlement(k: Kit, armory_hut: StaticBody3D, barracks: StaticBo
 	plans.name = "Plans"
 	st.add_child(plans)
 	_plan_run(plans, "Gate", "gate", Vector2(-4, 18), Vector2(4, 18))
+	# …then (27.1) watchtowers either side of it
+	_plan_towers(plans, NORTHWATCH_TOWERS)
 	var sites := Node3D.new()
 	sites.name = "Sites"
 	st.add_child(sites)

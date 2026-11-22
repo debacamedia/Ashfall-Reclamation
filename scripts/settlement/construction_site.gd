@@ -263,11 +263,32 @@ func _build_piece(i: int) -> void:
 	var root := _structures_root()
 	if def == null or root == null:
 		return
+	var at := global_transform * pieces[i]
+	# 27.1: an upgrade takes the place of what stands there (a palisade for a
+	# fence, a reinforced length for a palisade one); and nothing goes up
+	# where something better already stands (a fence rebuilt where the wall's
+	# been reinforced)
+	var replaced := SettlementPlans.replaces(plan_id)
+	var better := SettlementPlans.upgrades_of(def.id)
+	for n in get_tree().get_nodes_in_group("settlement_buildings"):
+		var old := n as Structure
+		if old == null or old.is_queued_for_deletion() or old.global_position.distance_to(at.origin) > 0.6:
+			continue
+		if better.has(old.definition.id):
+			_hide_piece(i)
+			return
+		if replaced.has(old.definition.id):
+			old.remove_from_group("settlement_buildings")
+			old.queue_free()
 	var s := (load(def.scene_path) as PackedScene).instantiate() as Structure
 	s.name = "%s_%d" % [def.id, (Time.get_ticks_usec() + i * 7) % 100000000]
-	s.transform = root.global_transform.affine_inverse() * (global_transform * pieces[i])
+	s.transform = root.global_transform.affine_inverse() * at
 	root.add_child(s)
 	s._one_shot(load("res://assets/audio/build_place.wav"))
+	_hide_piece(i)
+
+
+func _hide_piece(i: int) -> void:
 	if i < _ghosts.size() and _ghosts[i] != null:
 		_ghosts[i].visible = false
 	if i < _shapes.size() and _shapes[i] != null:

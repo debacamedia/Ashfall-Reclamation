@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_2cio7"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="2_xfx3t"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="3_plsog"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_qw0vs"]
+
+[resource]
+script = ExtResource("4_qw0vs")
+id = &"reinforced_palisade"
+display_name = "Reinforced Palisade"
+scene_path = "res://scenes/settlement/reinforced_palisade.tscn"
+max_health = 1200.0
+footprint = Vector3(4, 2.7, 0.6)
+repair_cost = Dictionary[ExtResource("1_2cio7"), int]({
+ExtResource("2_xfx3t"): 2,
+ExtResource("3_plsog"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_2cio7"), int]({
+ExtResource("2_xfx3t"): 2,
+ExtResource("3_plsog"): 1
+})
+movable = false
