@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_ghi83"]
+[ext_resource type="Resource" path="res://resources/items/metal_plate.tres" id="2_82dol"]
+[ext_resource type="Resource" path="res://resources/items/metal_pipe.tres" id="3_o4mbr"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_elgxk"]
+[ext_resource type="Resource" path="res://resources/items/spring.tres" id="5_p3nnp"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="6_b6ilp"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="7_q4ixt"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="8_yoplu"]
+[ext_resource type="Resource" path="res://resources/items/canned_peaches.tres" id="9_t7gje"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="10_rgqqg"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="11_0ssgv"]
+
+[sub_resource type="Resource" id="Resource_mvlh2"]
+script = ExtResource("1_ghi83")
+item = ExtResource("2_82dol")
+weight = 3.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_5pblo"]
+script = ExtResource("1_ghi83")
+item = ExtResource("3_o4mbr")
+weight = 2.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_yspg7"]
+script = ExtResource("1_ghi83")
+item = ExtResource("4_elgxk")
+weight = 3.0
+min_quantity = 3
+max_quantity = 6
+
+[sub_resource type="Resource" id="Resource_rmjqa"]
+script = ExtResource("1_ghi83")
+item = ExtResource("5_p3nnp")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_vuvfr"]
+script = ExtResource("1_ghi83")
+item = ExtResource("6_b6ilp")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_atxba"]
+script = ExtResource("1_ghi83")
+item = ExtResource("7_q4ixt")
+
+[sub_resource type="Resource" id="Resource_kqp5a"]
+script = ExtResource("1_ghi83")
+item = ExtResource("8_yoplu")
+weight = 2.0
+min_quantity = 2
+max_quantity = 5
+
+[sub_resource type="Resource" id="Resource_3jou0"]
+script = ExtResource("1_ghi83")
+item = ExtResource("9_t7gje")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_hsrtb"]
+script = ExtResource("1_ghi83")
+item = ExtResource("10_rgqqg")
+max_quantity = 3
+
+[resource]
+script = ExtResource("11_0ssgv")
+entries = Array[ExtResource("1_ghi83")]([SubResource("Resource_mvlh2"), SubResource("Resource_5pblo"), SubResource("Resource_yspg7"), SubResource("Resource_rmjqa"), SubResource("Resource_vuvfr"), SubResource("Resource_atxba"), SubResource("Resource_kqp5a"), SubResource("Resource_3jou0"), SubResource("Resource_hsrtb")])
+min_rolls = 2
+max_rolls = 4

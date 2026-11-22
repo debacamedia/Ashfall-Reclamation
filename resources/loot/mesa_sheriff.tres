@@ -1,0 +1,57 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_tjwv8"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="2_ob1y2"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="3_4ws0c"]
+[ext_resource type="Resource" path="res://resources/items/gun_magazine.tres" id="4_rwdpl"]
+[ext_resource type="Resource" path="res://resources/items/scrap_helmet.tres" id="5_nt03c"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="6_ni6sg"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol_item.tres" id="7_lanls"]
+[ext_resource type="Resource" path="res://resources/items/weapons/shotgun_item.tres" id="8_bfiop"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_ge128"]
+
+[sub_resource type="Resource" id="Resource_pf0cw"]
+script = ExtResource("1_tjwv8")
+item = ExtResource("2_ob1y2")
+weight = 2.0
+min_quantity = 6
+max_quantity = 12
+
+[sub_resource type="Resource" id="Resource_vgnd7"]
+script = ExtResource("1_tjwv8")
+item = ExtResource("3_4ws0c")
+weight = 2.0
+min_quantity = 10
+max_quantity = 20
+
+[sub_resource type="Resource" id="Resource_6com0"]
+script = ExtResource("1_tjwv8")
+item = ExtResource("4_rwdpl")
+
+[sub_resource type="Resource" id="Resource_2f3wr"]
+script = ExtResource("1_tjwv8")
+item = ExtResource("5_nt03c")
+weight = 0.6
+
+[sub_resource type="Resource" id="Resource_gi7mk"]
+script = ExtResource("1_tjwv8")
+item = ExtResource("6_ni6sg")
+min_quantity = 8
+max_quantity = 16
+
+[sub_resource type="Resource" id="Resource_kr8m8"]
+script = ExtResource("1_tjwv8")
+item = ExtResource("7_lanls")
+weight = 3.0
+
+[sub_resource type="Resource" id="Resource_jrqsq"]
+script = ExtResource("1_tjwv8")
+item = ExtResource("8_bfiop")
+weight = 2.0
+
+[resource]
+script = ExtResource("9_ge128")
+guaranteed = Array[ExtResource("1_tjwv8")]([SubResource("Resource_gi7mk")])
+one_of = Array[ExtResource("1_tjwv8")]([SubResource("Resource_kr8m8"), SubResource("Resource_jrqsq")])
+entries = Array[ExtResource("1_tjwv8")]([SubResource("Resource_pf0cw"), SubResource("Resource_vgnd7"), SubResource("Resource_6com0"), SubResource("Resource_2f3wr")])
+max_rolls = 2

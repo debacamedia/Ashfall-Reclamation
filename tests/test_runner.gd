@@ -56,6 +56,7 @@ const SUITES := [
 	"res://tests/test_supply_line.gd",
 	"res://tests/test_run_and_continue.gd",
 	"res://tests/test_mid_zone.gd",
+	"res://tests/test_mid_sites.gd",
 ]
 
 

@@ -48,6 +48,7 @@ const SCENES := {
 	"weapons_bench": "res://scenes/world/stations/weapons_bench.tscn",
 	"raider": "res://scenes/enemies/raider.tscn",
 	"veteran": "res://scenes/enemies/raider_veteran.tscn",
+	"marauder": "res://scenes/enemies/raider_marauder.tscn",  # the mid zone (26)
 }
 
 const MATERIALS := {
@@ -82,6 +83,8 @@ const MATERIALS := {
 	"container_red": "res://assets/ashfall_pack_v3/materials/container_paint_red.tres",
 	"container_blue": "res://assets/ashfall_pack_v3/materials/container_paint_blue.tres",
 	"container_olive": "res://assets/ashfall_pack_v3/materials/container_paint_olive.tres",
+	"water": "res://levels/early_zone/materials/sea.tres",
+	"rock_tan": "res://levels/early_zone/materials/rock_tan.tres",
 }
 
 var root: Node3D

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_h5tkd"]
+[ext_resource type="Resource" path="res://resources/items/chemicals.tres" id="2_hytkl"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_joc5y"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="4_6r6ud"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="5_2k3i1"]
+[ext_resource type="Resource" path="res://resources/items/medkit.tres" id="6_d3kml"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_2usxh"]
+
+[sub_resource type="Resource" id="Resource_xtngw"]
+script = ExtResource("1_h5tkd")
+item = ExtResource("2_hytkl")
+weight = 2.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_jggqi"]
+script = ExtResource("1_h5tkd")
+item = ExtResource("3_joc5y")
+weight = 2.0
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_km1vo"]
+script = ExtResource("1_h5tkd")
+item = ExtResource("4_6r6ud")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_kxeey"]
+script = ExtResource("1_h5tkd")
+item = ExtResource("5_2k3i1")
+
+[sub_resource type="Resource" id="Resource_yjbxx"]
+script = ExtResource("1_h5tkd")
+item = ExtResource("6_d3kml")
+weight = 0.6
+
+[sub_resource type="Resource" id="Resource_baqw8"]
+script = ExtResource("1_h5tkd")
+item = ExtResource("2_hytkl")
+max_quantity = 2
+
+[resource]
+script = ExtResource("7_2usxh")
+guaranteed = Array[ExtResource("1_h5tkd")]([SubResource("Resource_baqw8")])
+entries = Array[ExtResource("1_h5tkd")]([SubResource("Resource_xtngw"), SubResource("Resource_jggqi"), SubResource("Resource_km1vo"), SubResource("Resource_kxeey"), SubResource("Resource_yjbxx")])

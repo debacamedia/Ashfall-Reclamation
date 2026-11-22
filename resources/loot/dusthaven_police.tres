@@ -1,0 +1,73 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_nc0h3"]
+[ext_resource type="Resource" path="res://resources/items/rifle_ammo.tres" id="2_tnyy3"]
+[ext_resource type="Resource" path="res://resources/items/shotgun_shells.tres" id="3_kv120"]
+[ext_resource type="Resource" path="res://resources/items/extended_mag.tres" id="4_rmmno"]
+[ext_resource type="Resource" path="res://resources/items/red_dot.tres" id="5_4imq8"]
+[ext_resource type="Resource" path="res://resources/items/scrap_helmet.tres" id="6_jhfvj"]
+[ext_resource type="Resource" path="res://resources/items/plated_vest.tres" id="7_h2j3p"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="8_nedut"]
+[ext_resource type="Resource" path="res://resources/items/weapons/shotgun_item.tres" id="9_egt6x"]
+[ext_resource type="Resource" path="res://resources/items/weapons/service_rifle_item.tres" id="10_jhxpx"]
+[ext_resource type="Resource" path="res://resources/items/weapons/pistol_item.tres" id="11_kyfob"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="12_hvffn"]
+
+[sub_resource type="Resource" id="Resource_t3jhc"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("2_tnyy3")
+weight = 2.0
+min_quantity = 15
+max_quantity = 30
+
+[sub_resource type="Resource" id="Resource_1d2yd"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("3_kv120")
+weight = 2.0
+min_quantity = 8
+max_quantity = 16
+
+[sub_resource type="Resource" id="Resource_mxheh"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("4_rmmno")
+
+[sub_resource type="Resource" id="Resource_ytdyl"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("5_4imq8")
+
+[sub_resource type="Resource" id="Resource_w2v2m"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("6_jhfvj")
+
+[sub_resource type="Resource" id="Resource_pllrv"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("7_h2j3p")
+weight = 0.5
+
+[sub_resource type="Resource" id="Resource_sri61"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("8_nedut")
+min_quantity = 10
+max_quantity = 20
+
+[sub_resource type="Resource" id="Resource_216f3"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("9_egt6x")
+weight = 3.0
+
+[sub_resource type="Resource" id="Resource_pipr7"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("10_jhxpx")
+weight = 2.0
+
+[sub_resource type="Resource" id="Resource_27yl1"]
+script = ExtResource("1_nc0h3")
+item = ExtResource("11_kyfob")
+weight = 2.0
+
+[resource]
+script = ExtResource("12_hvffn")
+guaranteed = Array[ExtResource("1_nc0h3")]([SubResource("Resource_sri61")])
+one_of = Array[ExtResource("1_nc0h3")]([SubResource("Resource_216f3"), SubResource("Resource_pipr7"), SubResource("Resource_27yl1")])
+entries = Array[ExtResource("1_nc0h3")]([SubResource("Resource_t3jhc"), SubResource("Resource_1d2yd"), SubResource("Resource_mxheh"), SubResource("Resource_ytdyl"), SubResource("Resource_w2v2m"), SubResource("Resource_pllrv")])
+max_rolls = 2

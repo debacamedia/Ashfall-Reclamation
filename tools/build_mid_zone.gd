@@ -21,8 +21,8 @@ extends "res://tools/build_early_zone.gd"
 ## Writes levels/mid_zone/ (mid_zone.tscn, terrain.scn, roads.scn,
 ## rocks.scn, navigation.scn, mid_zone_environment.tres, materials/).
 ##
-## The seven places are BLOCKOUTS here: rough shapes where each place
-## stands, with its name on the compass. Increment 26 builds them out.
+## The seven places are site scenes from tools/build_mid_sites.gd (Increment
+## 26); in 25 they were blockouts. Build the sites first.
 ##
 ## Where the map put two of them inside the early zone's edge as built
 ## (Dry River Pump Station and Broken Spur Truck Stop) they've moved east
@@ -127,89 +127,22 @@ func _init() -> void:
 	]
 
 
-# ================================================================ the places (blockouts)
+# ================================================================ the places
 
-## Each place: [material, size, position (local x, z, from the place's
-## centre), yaw] boxes standing on the ground; "cyl" entries are
-## [radius, height] cylinders. Roads through a place are kept clear.
-const BLOCKOUTS := {
-	# A ruined town at the foot of the mesa, its street running north from
-	# the end of the road
-	"RedMesa": [
-		["plaster", Vector3(12, 7, 10), Vector2(-14, 40), 0.0], ["brick", Vector3(10, 9, 12), Vector2(-16, 14), 0.0],
-		["plaster", Vector3(14, 6, 9), Vector2(-15, -14), 0.0], ["concrete_stained", Vector3(11, 12, 11), Vector2(-17, -40), 0.0],
-		["brick", Vector3(12, 8, 10), Vector2(30, 38), 0.0], ["plaster", Vector3(10, 6, 14), Vector2(32, 10), 0.0],
-		["concrete_stained", Vector3(13, 10, 10), Vector2(30, -18), 0.0], ["plaster", Vector3(9, 5, 9), Vector2(28, -44), 0.0],
-		["brick", Vector3(18, 7, 10), Vector2(8, -64), 0.0], ["corrugated", Vector3(8, 4, 6), Vector2(-40, 0), 12.0],
-		["cyl", 3.2, 14.0, Vector2(-38, 30), "rust"],  # water tower
-	],
-	# A reservoir behind a concrete wall, the pump house and its pipes
-	"DryRiverPumpStation": [
-		["concrete", Vector3(56, 3, 2), Vector2(10, -20), 0.0],
-		["concrete", Vector3(24, 3, 2), Vector2(-6, 20), 0.0], ["concrete", Vector3(24, 3, 2), Vector2(26, 20), 0.0],  # a gate in the middle
-		["concrete", Vector3(2, 3, 40), Vector2(-18, 0), 0.0], ["concrete", Vector3(2, 3, 40), Vector2(38, 0), 0.0],
-		["concrete_stained", Vector3(16, 9, 12), Vector2(-4, 36), 0.0], ["metal_dark", Vector3(6, 6, 6), Vector2(14, 36), 0.0],
-		["cyl", 1.0, 30.0, Vector2(-30, 36), "rust"], ["corrugated", Vector3(10, 4, 8), Vector2(30, 38), 0.0],
-	],
-	# Spoil heaps round the pit's edge, the crusher tower and its conveyor
-	"CinderQuarry": [
-		["gravel", Vector3(22, 8, 16), Vector2(-30, -40), 25.0], ["gravel", Vector3(26, 10, 18), Vector2(20, -50), -15.0],
-		["gravel", Vector3(20, 7, 22), Vector2(45, 0), 10.0], ["gravel", Vector3(24, 9, 16), Vector2(18, 45), 30.0],
-		["metal_dark", Vector3(10, 18, 10), Vector2(-40, 20), 0.0], ["rust", Vector3(28, 2, 3), Vector2(-20, 26), -20.0],
-		["corrugated", Vector3(14, 6, 10), Vector2(-58, -10), 0.0], ["concrete_stained", Vector3(9, 4, 7), Vector2(-62, 14), 0.0],
-	],
-	# Engine sheds south of the tracks, the yard office north of them, wagons
-	# on a siding
-	"IronVeinRailYard": [
-		["corrugated", Vector3(44, 10, 16), Vector2(-20, 30), -15.0], ["corrugated", Vector3(40, 9, 14), Vector2(36, 34), -15.0],
-		["brick", Vector3(14, 7, 9), Vector2(-30, -26), -15.0], ["container_red", Vector3(14, 3.6, 3), Vector2(10, 12), -15.0],
-		["container_olive", Vector3(14, 3.6, 3), Vector2(26, 8), -15.0], ["container_blue", Vector3(14, 3.6, 3), Vector2(42, 4), -15.0],
-		["metal_dark", Vector3(6, 14, 6), Vector2(60, -14), 0.0], ["rust", Vector3(10, 5, 8), Vector2(-60, 18), -15.0],
-	],
-	# Two rows of buildings along the main street (the road), a few of them tall
-	"Dusthaven": [
-		["concrete_stained", Vector3(14, 22, 14), Vector2(-26, -50), 0.0], ["plaster", Vector3(12, 8, 18), Vector2(-24, -18), 0.0],
-		["brick", Vector3(12, 12, 14), Vector2(-24, 12), 0.0], ["concrete", Vector3(14, 26, 14), Vector2(-28, 46), 0.0],
-		["plaster", Vector3(12, 7, 16), Vector2(24, -46), 0.0], ["concrete_stained", Vector3(12, 16, 12), Vector2(26, -14), 0.0],
-		["brick", Vector3(14, 9, 18), Vector2(26, 20), 0.0], ["plaster", Vector3(12, 6, 12), Vector2(20, 56), 0.0],
-		["corrugated", Vector3(10, 5, 8), Vector2(-52, 0), 0.0], ["concrete", Vector3(10, 18, 10), Vector2(52, 4), 0.0],
-	],
-	# Fuel canopy, the diner and the garage
-	"BrokenSpurTruckStop": [
-		["paint_white", Vector3(18, 0.6, 12), Vector2(0, 0), 0.0, 5.0],  # the canopy, raised
-		["metal_dark", Vector3(0.5, 5, 0.5), Vector2(-8, -5), 0.0], ["metal_dark", Vector3(0.5, 5, 0.5), Vector2(8, -5), 0.0],
-		["metal_dark", Vector3(0.5, 5, 0.5), Vector2(-8, 5), 0.0], ["metal_dark", Vector3(0.5, 5, 0.5), Vector2(8, 5), 0.0],
-		["plaster", Vector3(18, 5, 10), Vector2(-14, 26), 0.0], ["corrugated", Vector3(14, 6, 12), Vector2(18, 26), 0.0],
-		["container_red", Vector3(12, 3.6, 3), Vector2(-30, -6), 80.0],
-	],
-	# Shacks and scrap walls in a ring, with a lookout
-	"RaiderCampScorch": [
-		["rust", Vector3(30, 3.5, 1), Vector2(0, -38), 0.0], ["rust", Vector3(1, 3.5, 30), Vector2(-38, -10), 0.0],
-		["rust", Vector3(1, 3.5, 26), Vector2(38, -6), 0.0], ["corrugated", Vector3(8, 4, 6), Vector2(-20, -12), 15.0],
-		["corrugated", Vector3(7, 3.5, 6), Vector2(18, -18), -10.0], ["wood", Vector3(9, 4, 7), Vector2(-14, 16), 5.0],
-		["corrugated", Vector3(10, 4.5, 7), Vector2(20, 14), -20.0], ["wood", Vector3(3, 9, 3), Vector2(0, 30), 0.0],
-		["container_olive", Vector3(12, 3.6, 3), Vector2(-30, 26), 40.0],
-	],
+## Each place is a site scene built by tools/build_mid_sites.gd (Increment
+## 26; they were blockouts in 25), placed at its spot in PLACES.
+const SITE_FOLDERS := {
+	"RedMesa": "red_mesa", "DryRiverPumpStation": "dry_river_pump_station", "CinderQuarry": "cinder_quarry",
+	"IronVeinRailYard": "iron_vein_rail_yard", "Dusthaven": "dusthaven",
+	"BrokenSpurTruckStop": "broken_spur_truck_stop", "RaiderCampScorch": "raider_camp_scorch",
 }
 
 
 func _add_places(zone: Node3D) -> void:
-	var blockouts := Node3D.new()
-	blockouts.name = "Blockouts"
-	zone.add_child(blockouts)
 	for key: String in PLACES:
+		var folder: String = SITE_FOLDERS[key]
+		var site := (load("res://levels/%s/%s.tscn" % [folder, folder]) as PackedScene).instantiate() as Node3D
+		site.name = key
 		var c: Vector2 = PLACES[key][1]
-		var body := _solid_body(key)
-		body.position = Vector3(c.x, 0, c.y)
-		body.set_meta("blockout", true)
-		var n := 0
-		for b: Array in BLOCKOUTS.get(key, []):
-			n += 1
-			var at: Vector2 = b[3] if str(b[0]) == "cyl" else b[2]
-			if str(b[0]) == "cyl":
-				_cylinder(body, "Part%d" % n, float(b[1]), float(b[2]), Vector3(at.x, float(b[2]) * 0.5, at.y), str(b[4]))
-				continue
-			var size: Vector3 = b[1]
-			var lift := float(b[4]) if b.size() > 4 else 0.0
-			_box(body, "Part%d" % n, size, Vector3(at.x, lift + size.y * 0.5, at.y), str(b[0]), float(b[3]))
-		blockouts.add_child(body)
+		site.position = Vector3(c.x, 0, c.y)
+		zone.add_child(site)

@@ -60,6 +60,11 @@ enum State { IDLE, WANDER, CHASE, ATTACK, SEARCH, DEAD }
 ## The strike only lands if the target is within this angle in front.
 @export var attack_hit_angle_degrees := 70.0
 
+@export_group("Armour")
+## Share of bullets, blows and blasts its armour stops (Increment 26: the mid
+## zone's Scorch Marauders wear scrap plate). 0 = none.
+@export_range(0.0, 0.6) var armour := 0.0
+
 @export_group("Death")
 @export var despawn_time := 30.0
 ## Items this raider may drop when killed (one is chosen at random).
@@ -139,8 +144,17 @@ func _ready() -> void:
 		home_position = global_position
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
+	if armour > 0.0:
+		health.damage_modifier = armour_blocks
 	alert_label.visible = false
 	_enter(State.IDLE)
+
+
+## What gets through its armour (falls, the storm and the like aren't stopped).
+func armour_blocks(info: DamageInfo) -> float:
+	if info.type in [DamageInfo.Type.BALLISTIC, DamageInfo.Type.MELEE, DamageInfo.Type.EXPLOSIVE]:
+		return info.amount * (1.0 - armour)
+	return info.amount
 
 
 func _physics_process(delta: float) -> void:

@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_twggo"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="2_ewnuv"]
+[ext_resource type="Resource" path="res://resources/items/bandage.tres" id="3_uuftm"]
+[ext_resource type="Resource" path="res://resources/items/pistol_ammo.tres" id="4_7eh51"]
+[ext_resource type="Resource" path="res://resources/items/canned_peaches.tres" id="5_k4eyd"]
+[ext_resource type="Resource" path="res://resources/items/electronics.tres" id="6_0m5td"]
+[ext_resource type="Resource" path="res://resources/items/leather_cap.tres" id="7_a1284"]
+[ext_resource type="Resource" path="res://resources/items/rucksack.tres" id="8_l8y4r"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="9_kygep"]
+
+[sub_resource type="Resource" id="Resource_5opun"]
+script = ExtResource("1_twggo")
+item = ExtResource("2_ewnuv")
+weight = 3.0
+max_quantity = 3
+
+[sub_resource type="Resource" id="Resource_f4itk"]
+script = ExtResource("1_twggo")
+item = ExtResource("3_uuftm")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_ijr3h"]
+script = ExtResource("1_twggo")
+item = ExtResource("4_7eh51")
+weight = 2.0
+min_quantity = 6
+max_quantity = 12
+
+[sub_resource type="Resource" id="Resource_v2pyu"]
+script = ExtResource("1_twggo")
+item = ExtResource("5_k4eyd")
+
+[sub_resource type="Resource" id="Resource_y8g1j"]
+script = ExtResource("1_twggo")
+item = ExtResource("6_0m5td")
+
+[sub_resource type="Resource" id="Resource_3s6ec"]
+script = ExtResource("1_twggo")
+item = ExtResource("7_a1284")
+weight = 0.4
+
+[sub_resource type="Resource" id="Resource_o6wfu"]
+script = ExtResource("1_twggo")
+item = ExtResource("8_l8y4r")
+weight = 0.2
+
+[resource]
+script = ExtResource("9_kygep")
+entries = Array[ExtResource("1_twggo")]([SubResource("Resource_5opun"), SubResource("Resource_f4itk"), SubResource("Resource_ijr3h"), SubResource("Resource_v2pyu"), SubResource("Resource_y8g1j"), SubResource("Resource_3s6ec"), SubResource("Resource_o6wfu")])
+max_rolls = 2

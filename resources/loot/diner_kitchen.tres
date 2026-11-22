@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="LootTable" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/loot_entry.gd" id="1_df5je"]
+[ext_resource type="Resource" path="res://resources/items/canned_peaches.tres" id="2_eqet1"]
+[ext_resource type="Resource" path="res://resources/items/canned_beans.tres" id="3_6t7v0"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="4_630nf"]
+[ext_resource type="Resource" path="res://resources/items/fuel.tres" id="5_fgju8"]
+[ext_resource type="Resource" path="res://resources/items/wood.tres" id="6_srmy8"]
+[ext_resource type="Script" path="res://scripts/inventory/loot_table.gd" id="7_hbl2b"]
+
+[sub_resource type="Resource" id="Resource_04h65"]
+script = ExtResource("1_df5je")
+item = ExtResource("2_eqet1")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_xqy6d"]
+script = ExtResource("1_df5je")
+item = ExtResource("3_6t7v0")
+weight = 2.0
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_hbut4"]
+script = ExtResource("1_df5je")
+item = ExtResource("4_630nf")
+max_quantity = 2
+
+[sub_resource type="Resource" id="Resource_4jqdb"]
+script = ExtResource("1_df5je")
+item = ExtResource("5_fgju8")
+
+[sub_resource type="Resource" id="Resource_silse"]
+script = ExtResource("1_df5je")
+item = ExtResource("6_srmy8")
+min_quantity = 2
+max_quantity = 4
+
+[sub_resource type="Resource" id="Resource_nqxnl"]
+script = ExtResource("1_df5je")
+item = ExtResource("3_6t7v0")
+max_quantity = 2
+
+[resource]
+script = ExtResource("7_hbl2b")
+guaranteed = Array[ExtResource("1_df5je")]([SubResource("Resource_nqxnl")])
+entries = Array[ExtResource("1_df5je")]([SubResource("Resource_04h65"), SubResource("Resource_xqy6d"), SubResource("Resource_hbut4"), SubResource("Resource_4jqdb"), SubResource("Resource_silse")])

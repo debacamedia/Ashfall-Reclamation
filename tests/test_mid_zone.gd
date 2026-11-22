@@ -1,7 +1,7 @@
 extends "res://tests/test_case.gd"
 ## Increment 25: the mid zone, and the way in. A second zone east of the
 ## early zone, laid out from the Regional Buildout Map, with its seven
-## places as blockouts. The road east out of Halden's runs through a gap
+## places (blockouts in 25, built out in 26: test_mid_sites.gd). The road east out of Halden's runs through a gap
 ## in the storm: cross the edge there and you travel, with your truck and
 ## its cargo if you're driving. Settlements you hold keep running while
 ## you're in the other zone: they catch up when you come back.
@@ -78,7 +78,7 @@ func test_the_mid_zone() -> void:
 			continue
 		check(edge.is_inside(l.global_position) and -edge.signed_distance(l.global_position) > l.radius * 0.8,
 			"%s is well inside the edge" % l.display_name)
-		check(zone.get_node("Blockouts/" + key).get_child_count() >= 6, "%s is blocked out" % l.display_name)
+		check(zone.get_node(key + "/Buildings").get_child_count() >= 3, "%s is built (26)" % l.display_name)
 		var path := NavigationServer3D.map_get_path(map, from, NavigationServer3D.map_get_closest_point(map, l.global_position), true)
 		var end := path[path.size() - 1] if path.size() > 0 else Vector3.INF
 		check(Vector2(end.x - l.global_position.x, end.z - l.global_position.z).length() < 3.0,
