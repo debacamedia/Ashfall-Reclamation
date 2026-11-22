@@ -14,6 +14,9 @@ extends Node
 ##
 ## Usage: NavRebaker.request(any_node_in_the_level). It finds the level's
 ## "Navigation" node by walking up from that node.
+##
+## Bodies in the "nav_passable" group (settlement gates, 27) are left out of
+## the bake, so paths run through them.
 
 signal baked
 
@@ -149,4 +152,26 @@ func _process(delta: float) -> void:
 	if not _own_mesh and region.navigation_mesh != null:
 		region.navigation_mesh = region.navigation_mesh.duplicate() as NavigationMesh
 		_own_mesh = true
+	# Gates (27) are left out: paths run through them, shut or not. The
+	# geometry's read here and now (the bake itself runs on a thread), so
+	# their bodies are off the structures layer just for that read.
+	var lifted := lift_passable(region)
 	region.bake_navigation_mesh(true)
+	for b: CollisionObject3D in lifted:
+		if is_instance_valid(b):
+			b.collision_layer = lifted[b]
+
+
+## Takes the bodies in the "nav_passable" group (a settlement gate's leaves)
+## off every layer while the navmesh's geometry is read. Returns
+## {body: its layers} to put back.
+static func lift_passable(node: Node) -> Dictionary:
+	var out := {}
+	if node == null or not node.is_inside_tree():
+		return out
+	for n in node.get_tree().get_nodes_in_group("nav_passable"):
+		var b := n as CollisionObject3D
+		if b != null and b.collision_layer != 0:
+			out[b] = b.collision_layer
+			b.collision_layer = 0
+	return out

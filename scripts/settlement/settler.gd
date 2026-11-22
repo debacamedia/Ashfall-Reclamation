@@ -194,15 +194,18 @@ func status_text() -> String:
 				return "Fighting"
 			return "Guarding" if gun != null else "Guarding (machete)"
 		Role.BUILDER:
-			var job := settlement.builder_job()
-			if job is Structure:
-				return "Mending the %s" % (job as Structure).definition.display_name.to_lower()
-			var site := settlement.current_site()
-			if site != null:
-				return "Building the %s" % site.display_name().to_lower()
-			for other in settlement.sites():
-				if not other.is_supplied():
-					return "Waiting for materials"
+			var a := settlement.builder_assignment()
+			var at := ""
+			if not a.is_empty() and a[1] != settlement:
+				at = " at %s" % (a[1] as Settlement).settlement_name
+			if not a.is_empty() and a[0] is Structure:
+				return "Mending the %s%s" % [(a[0] as Structure).definition.display_name.to_lower(), at]
+			if not a.is_empty():
+				return "Building the %s%s" % [(a[0] as ConstructionSite).display_name().to_lower(), at]
+			for st in settlement.network():
+				for other in st.sites():
+					if not other.is_supplied():
+						return "Waiting for materials"
 			return "Nothing to build"
 		Role.WOODCUTTER:
 			return "Cutting wood" if not settlement.wood_spots().is_empty() else "No woodlot here"
@@ -458,13 +461,18 @@ func _patrol(delta: float) -> void:
 
 ## Builders: to the site, then hammering.
 func _build(delta: float) -> void:
-	var job := settlement.builder_job()
-	if job == null:
+	var a := settlement.builder_assignment()
+	if a.is_empty():
 		_swing(false)
 		_wander(_hangout(), 6.0, delta)
 		return
+	var job: Node3D = a[0]
 	var site := job as ConstructionSite
 	var spot := site.work_point() if site != null else job.global_position + job.global_basis.z * 1.3
+	# Work at another of your places (27): off along the road to it
+	if _far_from(spot):
+		_go_far(spot, a[1] as Settlement, delta)
+		return
 	if _goal == Vector3.INF or state == State.IDLE or _goal.distance_to(spot) > 6.0:
 		_goal = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, spot)
 		state = State.WALK
@@ -639,6 +647,10 @@ func _swing(on: bool) -> void:
 
 func _wander(around: Vector3, radius: float, delta: float) -> void:
 	visual.rotation.x = 0.0
+	if _far_from(around):
+		# Away at another place (a Builder, 27): home first
+		_go_far(around, settlement, delta)
+		return
 	if _goal == Vector3.INF or _goal.distance_to(around) > radius + 1.0:
 		var angle := _rng.randf() * TAU
 		var p := around + Vector3(cos(angle), 0, sin(angle)) * _rng.randf_range(0.5, radius)
@@ -871,6 +883,44 @@ func _player_near_place(p: Vector3, d: float) -> bool:
 		if (pl as Node3D).global_position.distance_to(p) <= d:
 			return true
 	return false
+
+
+## Further than this from where they're going, a settler's off on a long
+## walk between your places (27).
+const FAR_WALK := 170.0
+
+
+func _far_from(p: Vector3) -> bool:
+	return Vector2(p.x - global_position.x, p.z - global_position.z).length() > FAR_WALK
+
+
+## The long walk to `dest` at another of your places (`place`), or home. As
+## with newcomers (20.1), it's done off-screen when nobody's with them: they
+## turn up at the end of the place's lane and walk in, or, with nobody there
+## either, simply arrive.
+func _go_far(dest: Vector3, place: Settlement, delta: float) -> void:
+	_swing(false)
+	visual.rotation.x = 0.0
+	if state != State.WALK:
+		state = State.WALK
+		_state_time = 0.0
+	_goal = Vector3.INF
+	_travel_check -= delta
+	if _travel_check <= 0.0:
+		_travel_check = 1.0
+		if not _player_within(90.0):
+			var lane := place.get_node_or_null("ArrivalPoint") as Node3D if place != null else null
+			var to := dest
+			if lane != null and _player_near_place(dest, 90.0) and global_position.distance_to(dest) > lane.global_position.distance_to(dest) + 2.0:
+				to = lane.global_position
+			elif _player_near_place(dest, 90.0):
+				to = global_position
+			if to != global_position:
+				global_position = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, to) + Vector3.UP * 0.1
+				velocity = Vector3.ZERO
+				state = State.IDLE
+				return
+	_move_to(dest, walk_speed * 1.5, delta)
 
 
 func _player_within(d: float) -> bool:

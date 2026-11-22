@@ -135,15 +135,20 @@ func test_the_armorer_makes_guns_from_scrap() -> void:
 	st.store.inventory.add_item(ELECTRONICS, 1)
 	st.simulate(4.0)
 	check(_count(st, &"service_rifle") == 1, "and an Electronics part: a Service Rifle")
-	# A pipe pistol, at a pinch
-	st.store.inventory.add_item(SCRAP, 4)
-	st.store.inventory.add_item(WOOD, 1)
-	st.simulate(4.0)
-	check(_count(st, &"pipe_pistol") == 1 and st.armory_guns() == 4, "4 scrap and a piece of wood: a Pipe Pistol (4 guns)")
-	# Four guns: stocked (no gunpowder for rounds)
+	# And (27) a Marksman Rifle: one of each kind first
 	st.store.inventory.add_item(SCRAP, 40)
+	st.store.inventory.add_item(PLANK, 4)
 	st.simulate(4.0)
-	check(st.armory_guns() == 4 and st.scrap() == 40, "four guns in the locker: no more")
+	check(_count(st, &"scoped_rifle") == 1 and st.armory_guns() == 4, "and a Marksman Rifle (4 guns)")
+	# Then more, up to two of each: eight guns, and no more
+	st.store.inventory.add_item(SCRAP, 200)
+	st.store.inventory.add_item(PLANK, 20)
+	st.store.inventory.add_item(ELECTRONICS, 2)
+	st.simulate(16.0)
+	check(st.armory_guns() == 8, "then two of each: 8 guns (%d)" % st.armory_guns())
+	var left := st.scrap()
+	st.simulate(4.0)
+	check(st.armory_guns() == 8 and st.scrap() == left, "eight guns in the locker: no more")
 	check(st.armorer_status().begins_with("Armory stocked") and st.armorer_status().contains("Gunpowder"), "stocked, but no makings for rounds: %s" % st.armorer_status())
 	await _free(zone)
 

@@ -9,7 +9,9 @@ extends RefCounted
 ## hold: the bunkhouse, storehouse, guard tower, guard post and farm plot,
 ## and (21.5) the kitchen, chicken coop, pig pen and cow pasture.
 ## Fences come with the settlement's own plan (laid out when you claim it),
-## as runs of 4 m lengths.
+## as runs of 4 m lengths. So do (27) the defences: fences round all three
+## of your places and double gates in them (8 m each), which only your people
+## can open.
 ##
 ## A settlement hour is a minute of play: one Builder puts in an hour's work
 ## a minute.
@@ -41,8 +43,11 @@ const PLANS := {
 	# Increment 22: leather from hides
 	&"tanning_rack": {"name": "Tanning Rack", "structure": "tanning_rack", "placeable": true, "hours": 2.0,
 		"cost": {&"wood_plank": 8, &"scrap_metal": 2, &"cloth": 2}, "about": "Put Raw Hides in its tub: each comes out as 3 Leather after a few hours"},
-	&"fence": {"name": "Fence", "structure": "farm_fence", "placeable": false, "hours": 0.25,
+	&"fence": {"name": "Fence", "structure": "farm_fence", "placeable": false, "hours": 0.25, "length": 4.0,
 		"cost": {&"wood_plank": 1}, "about": "Split-rail fence, in 4 m lengths"},
+	# Increment 27: a gate in a settlement's fence
+	&"gate": {"name": "Gate", "structure": "settlement_gate", "placeable": false, "hours": 1.5, "length": 8.0,
+		"cost": {&"wood_plank": 8, &"scrap_metal": 4}, "about": "A double gate, 8 m: it opens for your people; raiders have to break it down"},
 }
 ## Fences also need a Scrap Metal (nails and wire) for every four lengths.
 const FENCE_SCRAP_EVERY := 4
@@ -50,6 +55,26 @@ const FENCE_SCRAP_EVERY := 4
 
 static func has(id: StringName) -> bool:
 	return PLANS.has(id)
+
+
+## Plans laid out as runs (fences, gates): a site is a run of pieces this
+## long, and costs and hours are per piece.
+static func is_run(id: StringName) -> bool:
+	return PLANS.has(id) and PLANS[id].has("length")
+
+
+## The length of one piece of a run (m).
+static func piece_length(id: StringName) -> float:
+	return float(PLANS[id]["length"]) if is_run(id) else 4.0
+
+
+## The plan that builds structure `structure_id` (a fence for a farm_fence),
+## or &"".
+static func plan_for_structure(structure_id: StringName) -> StringName:
+	for id: StringName in PLANS:
+		if StringName(str(PLANS[id]["structure"])) == structure_id:
+			return id
+	return &""
 
 
 static func display_name(id: StringName) -> String:
@@ -81,7 +106,7 @@ static func cost(id: StringName, pieces := 1) -> Dictionary:
 	if not PLANS.has(id):
 		return out
 	var per: Dictionary = PLANS[id]["cost"]
-	var n := pieces if id == &"fence" else 1
+	var n := pieces if is_run(id) else 1
 	for item: StringName in per:
 		out[item] = int(per[item]) * n
 	if id == &"fence":
@@ -93,7 +118,7 @@ static func cost(id: StringName, pieces := 1) -> Dictionary:
 static func hours(id: StringName, pieces := 1) -> float:
 	if not PLANS.has(id):
 		return 1.0
-	return float(PLANS[id]["hours"]) * (pieces if id == &"fence" else 1)
+	return float(PLANS[id]["hours"]) * (pieces if is_run(id) else 1)
 
 
 ## "Wood Plank ×30, Scrap Metal ×10" for a cost dictionary of item ids.

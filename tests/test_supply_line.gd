@@ -30,6 +30,11 @@ func _claim(zone: Node3D, st: Settlement) -> void:
 	check(st.request_claim(p), "claimed %s (%s)" % [st.settlement_name, st.claim_refusal_reason(p)])
 	st.next_raid_in = 9999.0
 	st.arrival_in = 9999.0
+	# Its defences (27) would take the stores' scrap and planks: not here
+	for site in st.sites():
+		var m := st.get_node_or_null("Plans/" + site.key)
+		if m != null and m.get_meta("defence", false):
+			site.free()
 
 
 func _newcomer(zone: Node3D, st: Settlement, role: Settler.Role) -> Settler:

@@ -15,6 +15,8 @@ extends SceneTree
 ##   cow_pasture   a 16 × 12 m paddock with a trough and hay: 4 cows
 ##   tanning_rack  a frame with a hide stretched on it and a tub: put Raw Hides
 ##                 in the tub and they come out Leather (22)
+##   settlement_gate  an 8 m double gate in a settlement's fence: planks
+##                 braced with scrap; opens for your people (27)
 ##
 ##   godot --headless --path . -s res://tools/build_settlement_buildings.gd
 
@@ -56,6 +58,7 @@ func _run() -> void:
 	_pen("PigPen", "pig_pen", "Pig Pen", &"pig", 6, Vector2(10, 8), 1.0)
 	_pen("CowPasture", "cow_pasture", "Cow Pasture", &"cow", 4, Vector2(16, 12), 1.35)
 	_tanning_rack()
+	_gate()
 	quit()
 
 
@@ -469,6 +472,64 @@ func _tanning_rack() -> void:
 	_add(tub, inv)
 	inv.unique_name_in_owner = true
 	_finish(b, "tanning_rack")
+
+
+## An 8 m double gate (27): two leaves of upright planks on rails, a
+## diagonal brace and scrap sheet on each, hung on heavy posts. The leaves are
+## AnimatableBody3Ds under pivots at the hinges (%LeafL, %LeafR), in the
+## "nav_passable" group so the navmesh runs through them.
+func _gate() -> void:
+	var b := _begin("SettlementGate", "settlement_gate", "Gate", Vector3(8.0, 2.1, 0.3), 800.0,
+		{&"wood_plank": 2, &"scrap_metal": 1}, {&"wood_plank": 4, &"scrap_metal": 2})
+	var def: Variant = b.get("definition")
+	b.set_script(load("res://scripts/settlement/settlement_gate.gd"))
+	b.set("definition", def)
+	var body := _body(b)
+	for x: float in [-4.08, 4.08]:
+		_box(body, "Post" + ("L" if x < 0 else "R"), Vector3(0.24, 2.3, 0.24), Vector3(x, 1.15, 0), M["wood"], true)
+		_box(body, "Cap" + ("L" if x < 0 else "R"), Vector3(0.32, 0.08, 0.32), Vector3(x, 2.34, 0), M["rust"], false)
+	for side: int in [-1, 1]:
+		var pivot := Node3D.new()
+		pivot.name = "LeafL" if side < 0 else "LeafR"
+		pivot.position = Vector3(3.95 * side, 0, 0)
+		_add(b, pivot)
+		pivot.unique_name_in_owner = true
+		var leaf := AnimatableBody3D.new()
+		leaf.name = "Leaf"
+		leaf.collision_layer = PhysicsLayers.STRUCTURES
+		leaf.collision_mask = 0
+		_add(pivot, leaf)
+		leaf.add_to_group("nav_passable", true)
+		var dir := float(-side)  # the leaf runs from its hinge toward the middle
+		var w := 3.9
+		for i in 7:
+			var x := dir * (0.28 + i * 0.56)
+			_box(leaf, "Plank%d" % i, Vector3(0.5, 1.9 - (i % 2) * 0.12, 0.07), Vector3(x, 0.15 + (1.9 - (i % 2) * 0.12) / 2.0, 0), M["wood"], false)
+		for y in [0.45, 1.6]:
+			_box(leaf, "Rail%d" % roundi(y * 10), Vector3(w, 0.14, 0.06), Vector3(dir * w / 2.0, y, -0.07), M["wood"], false)
+		var brace := MeshInstance3D.new()
+		brace.name = "Brace"
+		var bm := BoxMesh.new()
+		bm.size = Vector3(sqrt(w * w + 1.15 * 1.15) - 0.1, 0.12, 0.05)
+		brace.mesh = bm
+		brace.material_override = M["wood"]
+		brace.position = Vector3(dir * w / 2.0, 1.02, -0.1)
+		brace.rotation.z = atan2(1.15, w) * -dir
+		_add(leaf, brace)
+		_box(leaf, "ScrapSheet", Vector3(1.6, 0.9, 0.03), Vector3(dir * 2.4, 0.95, 0.05), M["tin"], false)
+		_box(leaf, "Band", Vector3(w - 0.2, 0.08, 0.03), Vector3(dir * w / 2.0, 1.25, 0.05), M["rust"], false)
+		_shape(leaf, "Panel", Vector3(w, 1.95, 0.2), Vector3(dir * w / 2.0, 1.12, 0))
+	var swing := AudioStreamPlayer3D.new()
+	swing.name = "SwingSound"
+	swing.stream = load("res://assets/audio/crate_open.wav")
+	swing.volume_db = -4.0
+	swing.pitch_scale = 0.7
+	swing.unit_size = 5.0
+	swing.bus = &"SFX"
+	swing.position = Vector3(0, 1.2, 0)
+	_add(b, swing)
+	swing.unique_name_in_owner = true
+	_finish(b, "settlement_gate")
 
 
 func _plain(c: Color, rough: float) -> StandardMaterial3D:

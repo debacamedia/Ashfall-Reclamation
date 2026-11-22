@@ -65,6 +65,7 @@ const MEAT := &"raw_meat"
 const EGG := &"egg"
 const HIDE := &"raw_hide"
 const SCRAP := &"scrap_metal"
+const CHEMICALS := &"chemicals"
 ## The farm's animals (21.5): hours a vegetable feeds one, hours between
 ## births for each pair, hours between eggs (chickens), what one butchered gives.
 const ANIMALS := {
@@ -133,11 +134,14 @@ const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "
 @export_group("Wood")
 ## Wood Planks a working Woodcutter adds to the stores each hour (19.7).
 @export var woodcutter_planks_per_hour := 3.0
-## Scrap Metal a working Miner digs out into the stores each hour (23).
+## Scrap Metal a working Miner digs out into the stores each hour (23)…
 @export var miner_scrap_per_hour := 2.0
+## …and Chemicals (27), for the Armorer's gunpowder.
+@export var miner_chemicals_per_hour := 0.25
 ## The armory (23.5): an Armorer keeps the Armory Locker stocked with this
-## many guns, and this many rounds for each kind of gun here…
-@export var armory_gun_target := 4
+## many of each kind of gun (27: one of each first, then more), and this
+## many rounds for each kind of gun here…
+@export var armory_per_kind := 2
 @export var armory_round_target := 90
 ## …taking this many hours to make a gun, or a batch of rounds.
 @export var armory_gun_hours := 4.0
@@ -196,6 +200,7 @@ var arrival_in := 0.0
 var _food_progress := 0.0
 var _plank_progress := 0.0
 var _scrap_progress := 0.0
+var _chem_progress := 0.0
 var _supply_clock := 0.0
 ## Meals the supply line brought here (+) or sent away (-) in its last
 ## hourly share-out (24), for the screen.
@@ -209,6 +214,9 @@ var _next_id := 1
 var _armory_check := 0.0
 ## The settlement's own plan has been laid out as sites (on claiming).
 var plans_laid := false
+## …and its defences (27): the fence and gates round it. Laid with the rest
+## when you claim it; for a place claimed before, when the game loads.
+var defences_laid := false
 
 enum RaidPhase { NONE, WARNED, ACTIVE }
 var raid_phase: RaidPhase = RaidPhase.NONE
@@ -255,6 +263,10 @@ func _ready() -> void:
 		if c != null:
 			c.is_searched = true  # nothing hidden in them: just open
 			c.call("_update_prompt")
+	if armory != null and armory.inventory.slot_count < ARMORY_SLOTS:
+		# Room for two of each kind of gun and their rounds (27)
+		armory.inventory.slot_count = ARMORY_SLOTS
+		armory.inventory.call("_resize")
 	if store != null and store_sign != "":
 		var sign := store.get_node_or_null("Body/Sign") as Label3D
 		if sign != null:
@@ -400,6 +412,38 @@ func builder_job() -> Node3D:
 	return current_site()
 
 
+## Where a Builder from here works now (27: Builders go where needed):
+## this place's own job first, else the nearest of your other places with
+## something to mend or build. [job, the place it's at], or [] for nothing.
+func builder_assignment() -> Array:
+	var job := builder_job()
+	if job != null:
+		return [job, self]
+	var best: Array = []
+	var best_d := INF
+	for st in network():
+		if st == self:
+			continue
+		var j := st.builder_job()
+		if j == null:
+			continue
+		var d := global_position.distance_to(st.global_position)
+		if d < best_d:
+			best_d = d
+			best = [j, st]
+	return best
+
+
+## Builders from any of your places working here now (27).
+func builders_working_here() -> int:
+	var n := 0
+	for st in network():
+		var a := st.builder_assignment()
+		if not a.is_empty() and a[1] == self:
+			n += st.members().filter(func(s: Settler) -> bool: return s.role == Settler.Role.BUILDER and s.is_working()).size()
+	return n
+
+
 ## Built things here that raiders have hurt, worst first (20.1).
 func damaged_structures() -> Array[Structure]:
 	var out: Array[Structure] = []
@@ -455,7 +499,7 @@ func repair_with_stores(s: Structure, hours: float) -> bool:
 func on_building_destroyed(b: SettlementBuilding) -> void:
 	if b.definition == null or sites_root == null:
 		return
-	var plan := &"fence" if b.definition.id == &"farm_fence" else b.definition.id
+	var plan := SettlementPlans.plan_for_structure(b.definition.id)
 	if not SettlementPlans.has(plan):
 		return
 	var pieces: Array[Transform3D] = [Transform3D.IDENTITY]
@@ -475,11 +519,15 @@ func current_site() -> ConstructionSite:
 	return null
 
 
-## Lays out the settlement's own plan (fences, guard posts) as sites.
+## Lays out the settlement's own plan (fences, guard posts) as sites, and
+## its defences (27: markers with the "defence" meta). Claimed before the
+## defences were planned, just those.
 func lay_out_plans() -> void:
-	if plans_laid or sites_root == null:
+	if (plans_laid and defences_laid) or sites_root == null:
 		return
+	var defences_only := plans_laid
 	plans_laid = true
+	defences_laid = true
 	var plans := get_node_or_null("Plans")
 	if plans == null:
 		return
@@ -493,14 +541,17 @@ func lay_out_plans() -> void:
 		var plan := StringName(str(mark.get_meta("plan", "")))
 		if not SettlementPlans.has(plan):
 			continue
+		if defences_only and not mark.get_meta("defence", false):
+			continue
 		var pieces: Array[Transform3D] = []
 		var site_xf := mark.transform
 		if mark.has_meta("to"):
-			# A run of fence from the marker to "to", in 4 m lengths
+			# A run of fence (or gates) from the marker to "to", in 4 m
+			# lengths (8 m for a gate)
 			var a := mark.position
 			var b: Vector3 = mark.get_meta("to")
 			var along := b - a
-			var n := maxi(roundi(along.length() / 4.0), 1)
+			var n := maxi(roundi(along.length() / SettlementPlans.piece_length(plan)), 1)
 			var dir := along.normalized()
 			# The run's own +X points along it; each length faces +Z (out)
 			site_xf = Transform3D(Basis(Vector3.UP, atan2(-dir.z, dir.x)), a)
@@ -524,7 +575,7 @@ func _new_site(plan: StringName, pieces: Array[Transform3D], key := "") -> Const
 
 func _on_site_finished(site: ConstructionSite) -> void:
 	built.emit(site.display_name())
-	notice.emit("The %s is built" % site.display_name().to_lower() if site.plan_id == &"fence" else "The %s at %s is built" % [site.display_name(), settlement_name])
+	notice.emit("The %s is built" % site.display_name().to_lower() if site.plan_id == &"fence" else "The %s at %s is built" % [site.display_name().to_lower() if site.plan_id == &"gate" else site.display_name(), settlement_name])
 
 
 ## "" if `player` can plan a `plan` at `xform` here, otherwise why not.
@@ -1442,6 +1493,13 @@ func simulate(hours: float) -> void:
 		if s.role == Settler.Role.MINER and s.is_working():
 			faces -= 1
 			_scrap_progress += miner_scrap_per_hour * hours
+			_chem_progress += miner_chemicals_per_hour * hours
+	# …and now and then a jug of Chemicals (27)
+	while _chem_progress >= 1.0:
+		if _put_in_stores(CHEMICALS, 1) < 1:
+			_chem_progress = 1.0
+			break
+		_chem_progress -= 1.0
 	while _scrap_progress >= 1.0:
 		if _put_in_stores(SCRAP, 1) < 1:
 			_scrap_progress = 1.0  # the stores are full
@@ -1455,14 +1513,18 @@ func simulate(hours: float) -> void:
 	_simulate_supply(hours)
 	_simulate_first_aid(here)
 	# Building: each working Builder mends what's damaged, else puts their
-	# hours into the current site
+	# hours into the current site; with nothing to do here, at whichever of
+	# your other places needs them (27)
 	for s: Settler in here:
 		if s.role != Settler.Role.BUILDER or not s.is_working():
 			continue
-		var job := builder_job()
-		if job is Structure and repair_with_stores(job as Structure, hours):
+		var a := builder_assignment()
+		if a.is_empty():
 			continue
-		var site := current_site()
+		var where: Settlement = a[1]
+		if a[0] is Structure and where.repair_with_stores(a[0] as Structure, hours):
+			continue
+		var site := where.current_site()
 		if site != null:
 			site.add_work(hours)
 	# Newcomers
@@ -1475,8 +1537,15 @@ func simulate(hours: float) -> void:
 
 # ---------------------------------------------------------------- the armory (23.5)
 
-## The guns an Armorer makes, best first.
-const ARMORY_GUNS := [&"service_rifle", &"shotgun", &"pistol", &"pipe_pistol"]
+## The kinds of gun an Armorer makes (27): one of each first, then more, up
+## to armory_per_kind of each, the fewest first. A Pipe Pistol only at a
+## pinch: when the stores hold the makings of none of these and the locker's
+## empty.
+const ARMORY_GUNS := [&"pistol", &"shotgun", &"service_rifle", &"scoped_rifle"]
+const ARMORY_PINCH := &"pipe_pistol"
+## Slots in an Armory Locker (a weapons locker has 12): two of each kind of
+## gun and 90-odd rounds for each takes about 20.
+const ARMORY_SLOTS := 24
 
 
 ## Where Armorers work: in front of a weapons bench.
@@ -1544,36 +1613,80 @@ func _simulate_armory(hours: float, here: Array) -> void:
 ## Picks what to make next and takes its materials from the stores. False
 ## (with `_armory_state` saying why) if there's nothing to do.
 func _start_armory_job() -> bool:
-	# Rounds first, for the guns here (in the locker or carried by guards)…
-	var kinds := {}
+	# What the place has: guns in the locker, and carried by its guards
+	var in_locker := {}
+	var here := {}
 	for i in armory.inventory.slot_count:
 		var it := armory.inventory.get_slot_item(i)
 		if it != null and it.weapon != null and not it.weapon.melee:
-			kinds[it.weapon.ammo_type] = true
+			in_locker[it.id] = int(in_locker.get(it.id, 0)) + armory.inventory.get_slot_quantity(i)
+			here[it.id] = true
 	for m in members():
 		if m.gun != null and m.gun.weapon != null:
-			kinds[m.gun.weapon.ammo_type] = true
-	var short_of := ""
-	for t: StringName in kinds:
-		var ammo := ItemDatabase.find_ammo_item(t)
-		if ammo == null or armory.inventory.count_of(ammo.id) >= armory_round_target:
-			continue
-		if _commit_recipe_for(ammo.id):
-			_armory_job = ammo.id
-			_armory_progress = 0.0
+			here[m.gun.id] = true
+	# 1. A gun of each kind the place hasn't got
+	for id: StringName in _kinds_by_fewest(in_locker):
+		if not here.has(id) and _try_armory_job(id):
 			return true
-		short_of = ammo.display_name
-	# …then guns, the best the stores have the makings of
-	if armory_guns() < armory_gun_target:
-		for id: StringName in ARMORY_GUNS:
-			if _commit_recipe_for(id):
-				_armory_job = id
-				_armory_progress = 0.0
-				return true
+	# 2. Rounds for every kind of gun here, whichever's lowest first
+	var types := {}
+	for id: StringName in here:
+		var w := ItemDatabase.get_item(id)
+		if w != null and w.weapon != null and w.weapon.ammo_type != &"":
+			types[w.weapon.ammo_type] = true
+	var ammos: Array[ItemDefinition] = []
+	for t: StringName in types:
+		var ammo := ItemDatabase.find_ammo_item(t)
+		if ammo != null and armory.inventory.count_of(ammo.id) < armory_round_target:
+			ammos.append(ammo)
+	ammos.sort_custom(func(x: ItemDefinition, y: ItemDefinition) -> bool: return armory.inventory.count_of(x.id) < armory.inventory.count_of(y.id))
+	var short_of := ""
+	for ammo in ammos:
+		if _try_armory_job(ammo.id):
+			return true
+		if short_of == "":
+			short_of = ammo.display_name
+	# 3. More guns, the kind there's fewest of first
+	var stocked := true
+	for id: StringName in _kinds_by_fewest(in_locker):
+		if int(in_locker.get(id, 0)) >= armory_per_kind:
+			continue
+		stocked = false
+		if _try_armory_job(id):
+			return true
+	if armory_guns() == 0 and _try_armory_job(ARMORY_PINCH):
+		return true
+	if not stocked and in_locker.is_empty():
 		_armory_state = "Nothing to make a gun from: needs Scrap Metal in the stores"
 		return false
-	_armory_state = "Armory stocked" if short_of == "" else "Armory stocked; no makings for %s (it needs Gunpowder)" % short_of
+	if short_of != "":
+		_armory_state = "Armory stocked; no makings for %s (it needs Gunpowder: Chemicals and Wood)" % short_of if stocked \
+			else "No makings for more guns, or for %s (it needs Gunpowder: Chemicals and Wood)" % short_of
+	else:
+		_armory_state = "Armory stocked" if stocked else "No makings for more guns: needs Scrap Metal (and Electronics for rifles)"
 	return false
+
+
+## ARMORY_GUNS, the kind the locker has fewest of first (ties in list order).
+func _kinds_by_fewest(in_locker: Dictionary) -> Array[StringName]:
+	var out: Array[StringName] = []
+	out.assign(ARMORY_GUNS)
+	var order := {}
+	for i in out.size():
+		order[out[i]] = i
+	out.sort_custom(func(x: StringName, y: StringName) -> bool:
+		var cx := int(in_locker.get(x, 0))
+		var cy := int(in_locker.get(y, 0))
+		return cx < cy or (cx == cy and int(order[x]) < int(order[y])))
+	return out
+
+
+func _try_armory_job(id: StringName) -> bool:
+	if not _commit_recipe_for(id):
+		return false
+	_armory_job = id
+	_armory_progress = 0.0
+	return true
 
 
 func _finish_armory_job() -> void:
@@ -1637,6 +1750,15 @@ func _plan_make(id: StringName, count: int, avail: Dictionary, depth: int) -> bo
 	var need := count - use
 	if need <= 0:
 		return true
+	if id == WOOD:
+		# An Armorer makes do with a Wood Plank where Wood's called for (27)
+		if not avail.has(PLANK):
+			avail[PLANK] = _stores_count(PLANK)
+		var planks := mini(int(avail[PLANK]), need)
+		avail[PLANK] = int(avail[PLANK]) - planks
+		need -= planks
+		if need <= 0:
+			return true
 	if depth > 5:
 		return false
 	for r in _recipes_for(id):
@@ -2481,7 +2603,7 @@ const LAYOUT := 2
 
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
-		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
+		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "defences_laid": defences_laid, "chem_progress": _chem_progress, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
 		"armory_job": String(_armory_job), "armory_progress": _armory_progress, "food_share": food_share,
 		"meal_credit": _meal_credit, "cook_progress": _cook_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
@@ -2500,6 +2622,8 @@ func load_state(data: Dictionary) -> void:
 	_next_id = maxi(int(_num(data.get("next_id"), 1.0)), _next_id)
 	_apply_claimed_look()
 	plans_laid = data.get("plans_laid") is bool and data["plans_laid"]
+	defences_laid = data.get("defences_laid") is bool and data["defences_laid"]
+	_chem_progress = clampf(_num(data.get("chem_progress"), 0.0), 0.0, 1.0)
 	_plank_progress = clampf(_num(data.get("plank_progress"), 0.0), 0.0, 1.0)
 	_scrap_progress = clampf(_num(data.get("scrap_progress"), 0.0), 0.0, 1.0)
 	var job := StringName(str(data.get("armory_job", "")))
@@ -2535,8 +2659,9 @@ func load_state(data: Dictionary) -> void:
 		next_raid_in = clampf(next_raid_in, 0.25, raid_warning_hours)
 		_restore_raid(Vector3(rf[0], rf[1], rf[2]) if rf is Array and rf.size() == 3 else global_position,
 			str(data.get("raid_from_name", "")), int(_num(data.get("raid_size"), 2)))
-	if is_claimed and not plans_laid:
-		# Claimed before settlers could build (Increment 19): lay the plan out now
+	if is_claimed and not (plans_laid and defences_laid):
+		# Claimed before settlers could build (Increment 19), or before the
+		# defences were planned (27): lay them out now
 		lay_out_plans.call_deferred()
 	if int(_num(data.get("layout"), 1.0)) < LAYOUT:
 		_resettle.call_deferred()

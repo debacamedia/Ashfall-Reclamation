@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_tox0u"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_q40rw"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_5tr0d"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_7wfk3"]
+
+[resource]
+script = ExtResource("4_7wfk3")
+id = &"settlement_gate"
+display_name = "Gate"
+scene_path = "res://scenes/settlement/settlement_gate.tscn"
+max_health = 800.0
+footprint = Vector3(8, 2.1, 0.3)
+repair_cost = Dictionary[ExtResource("1_tox0u"), int]({
+ExtResource("2_q40rw"): 2,
+ExtResource("3_5tr0d"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_tox0u"), int]({
+ExtResource("2_q40rw"): 4,
+ExtResource("3_5tr0d"): 2
+})
+movable = false

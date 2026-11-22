@@ -76,6 +76,23 @@ const FENCES := [
 	["FieldFenceBack", Vector2(48, -64), Vector2(-48, -64)],
 	["FieldFenceLeft", Vector2(-48, -64), Vector2(-48, -36)],
 ]
+## The gates in the farm's fences (27): the yard's front and back, and the
+## field's.
+const GATES := [
+	["GateFront", Vector2(-4, 36), Vector2(4, 36)],
+	["GateBack", Vector2(4, -28), Vector2(-4, -28)],
+	["GateField", Vector2(-4, -36), Vector2(4, -36)],
+]
+## The fence round the mine (27), counterclockwise from above with the
+## outside to each run's +Z, and its gate on the road in from the east.
+const MINE_FENCE := [
+	["MineFenceEastS", "fence", Vector2(44, 38), Vector2(44, 19)],
+	["MineGate", "gate", Vector2(44, 19), Vector2(44, 11)],
+	["MineFenceEastN", "fence", Vector2(44, 11), Vector2(44, -36)],
+	["MineFenceNorth", "fence", Vector2(44, -36), Vector2(-47, -36)],
+	["MineFenceWest", "fence", Vector2(-47, -36), Vector2(-47, 38)],
+	["MineFenceSouth", "fence", Vector2(-47, 38), Vector2(44, 38)],
+]
 const GUARD_POSTS := [
 	["GuardPostFrontLeft", Vector2(-36, 32), Vector2(-1, 1)],
 	["GuardPostFrontRight", Vector2(44, 32), Vector2(1, 1)],
@@ -551,6 +568,10 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump
 				m.transform = Transform3D(Basis(Vector3.UP, atan2(-out.x, -out.y)), Vector3(g[1].x, 0, g[1].y))
 				m.set_meta("plan", "guard_post")
 				plans.add_child(m)
+	# The defences (27): gates in the fence's three gaps, so it shuts all
+	# round (runs go with the outside to their +Z, like the fences)
+	for g: Array in GATES:
+		_plan_run(plans, g[0], "gate", g[1], g[2])
 	var sites := Node3D.new()
 	sites.name = "Sites"
 	st.add_child(sites)
@@ -927,12 +948,36 @@ func _black_ridge_settlement(k: Kit, office: StaticBody3D, bunkhouse: StaticBody
 	var people := Node3D.new()
 	people.name = "Settlers"
 	st.add_child(people)
+	# The defences (27): a fence right round it, a gate on the road in, and a
+	# guard post either side of the gate
 	var plans := Node3D.new()
 	plans.name = "Plans"
 	st.add_child(plans)
+	for f: Array in MINE_FENCE:
+		_plan_run(plans, f[0], f[1], f[2], f[3])
+	for g: Array in [["MineGatePostN", Vector3(40, 0, 6)], ["MineGatePostS", Vector3(40, 0, 24)]]:
+		var m := Marker3D.new()
+		m.name = g[0]
+		m.transform = Transform3D(Basis(Vector3.UP, -PI / 2.0), g[1])  # facing out, east
+		m.set_meta("plan", "guard_post")
+		m.set_meta("defence", true)
+		plans.add_child(m)
 	var sites := Node3D.new()
 	sites.name = "Sites"
 	st.add_child(sites)
+
+
+## A run of fence or gates in a settlement's plan (27: one of its defences),
+## from `a` to `b` (x, z), the outside to its +Z.
+func _plan_run(plans: Node3D, mark_name: String, plan: String, a: Vector2, b: Vector2, defence := true) -> void:
+	var m := Marker3D.new()
+	m.name = mark_name
+	m.position = Vector3(a.x, 0, a.y)
+	m.set_meta("plan", plan)
+	m.set_meta("to", Vector3(b.x, 0, b.y))
+	if defence:
+		m.set_meta("defence", true)
+	plans.add_child(m)
 
 
 # ================================================================ Northwatch Outpost
@@ -944,11 +989,12 @@ func _northwatch() -> Kit:
 	k.box(per, "WallN", Vector3(36, 3.2, 0.6), Vector3(0, 1.6, -18), "concrete")
 	k.box(per, "WallW", Vector3(0.6, 3.2, 36), Vector3(-18, 1.6, 0), "concrete")
 	k.box(per, "WallE", Vector3(0.6, 3.2, 36), Vector3(18, 1.6, 0), "concrete")
-	k.box(per, "WallSW", Vector3(15, 3.2, 0.6), Vector3(-10.5, 1.6, 18), "concrete")
-	k.box(per, "WallSE", Vector3(15, 3.2, 0.6), Vector3(10.5, 1.6, 18), "concrete")
-	k.box(per, "GatePostW", Vector3(0.8, 4, 0.8), Vector3(-3.2, 2, 18), "concrete_stained")
-	k.box(per, "GatePostE", Vector3(0.8, 4, 0.8), Vector3(3.2, 2, 18), "concrete_stained")
-	k.box(per, "Barrier", Vector3(6, 0.15, 0.15), Vector3(0, 1.1, 18.6), "hazard", 0.0, false)
+	# (27: the gateway widened to 8 m, for the settlement's gate)
+	k.box(per, "WallSW", Vector3(13.2, 3.2, 0.6), Vector3(-11.4, 1.6, 18), "concrete")
+	k.box(per, "WallSE", Vector3(13.2, 3.2, 0.6), Vector3(11.4, 1.6, 18), "concrete")
+	k.box(per, "GatePostW", Vector3(0.8, 4, 0.8), Vector3(-4.4, 2, 18), "concrete_stained")
+	k.box(per, "GatePostE", Vector3(0.8, 4, 0.8), Vector3(4.4, 2, 18), "concrete_stained")
+	k.box(per, "Barrier", Vector3(8, 0.15, 0.15), Vector3(0, 1.1, 18.6), "hazard", 0.0, false)
 	per.set_meta("doors", [[Vector3(0, 0, 18), Vector3(0, 0, 1)]])
 	per.set_meta("size", Vector2(36, 36))
 	# Command post
@@ -1110,7 +1156,8 @@ func _northwatch_settlement(k: Kit, armory_hut: StaticBody3D, barracks: StaticBo
 	spot.position = k.at(armory_hut, Vector3(1.3, 0, -0.95))
 	spot.rotation.y = armory_hut.rotation.y
 	smiths.add_child(spot)
-	_markers(st, "GuardPosts", [Vector3(-2.5, 0, 14.5), Vector3(2.5, 0, 15.5), Vector3(15.5, 0, 3.5), Vector3(-15.5, 0, 4.5)])
+	# (the two by the gate stand back from it, 27, or they'd hold it open)
+	_markers(st, "GuardPosts", [Vector3(-3.0, 0, 12.5), Vector3(3.0, 0, 12.5), Vector3(15.5, 0, 3.5), Vector3(-15.5, 0, 4.5)])
 	_markers(st, "", [["ArrivalPoint", Vector3(0, 0, 32)], ["Hangout", Vector3(-6, 0, 0)]])
 	_markers(st, "RaidPoints", [Vector3(0, 0, 105), Vector3(105, 0, 10), Vector3(-105, 0, 0)])
 	var labels := ["the road", "the east", "the west"]
@@ -1120,9 +1167,11 @@ func _northwatch_settlement(k: Kit, armory_hut: StaticBody3D, barracks: StaticBo
 	var people := Node3D.new()
 	people.name = "Settlers"
 	st.add_child(people)
+	# The defences (27): a gate in the gateway
 	var plans := Node3D.new()
 	plans.name = "Plans"
 	st.add_child(plans)
+	_plan_run(plans, "Gate", "gate", Vector2(-4, 18), Vector2(4, 18))
 	var sites := Node3D.new()
 	sites.name = "Sites"
 	st.add_child(sites)

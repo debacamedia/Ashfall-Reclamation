@@ -111,8 +111,8 @@ func _tower(k: Kit, name: String, pos: Vector3, yaw: float, height: float, deck 
 
 
 ## A water tank on a tower (Red Mesa, the rail yard).
-func _water_tower(k: Kit, name: String, pos: Vector3, height: float) -> StaticBody3D:
-	var t := _tower(k, name, pos, 0, height, 4.4, "rust")
+func _water_tower(k: Kit, name: String, pos: Vector3, height: float, yaw := 0.0) -> StaticBody3D:
+	var t := _tower(k, name, pos, yaw, height, 4.4, "rust")
 	k.box(t, "Tank", Vector3(3.4, 3.2, 2.2), Vector3(0, height + 1.6, -0.9), "rust")
 	return t
 
@@ -160,12 +160,13 @@ func _red_mesa() -> Kit:
 		"inner": [[Vector2(-5.85, 1.0), Vector2(5.85, 1.0), [4.0]]],
 		"hole": Rect2(Vector2(-5.6, -4.6), Vector2(2.4, 1.6)),
 	})
-	k.fixture("Bar", saloon, Vector3(-2.5, 0, -2.6), Vector3(5.0, 1.1, 0.7), "wood")
+	# The bar along the back wall, clear of the ladder up to the rooms
+	k.fixture("Bar", saloon, Vector3(1.5, 0, -4.0), Vector3(5.0, 1.1, 0.7), "wood")
 	k.ladder("SaloonLadder", saloon, Vector3(-4.4, 0, -4.6), 0, 3.3)
 	k.container_at_wall("crate", "SaloonStores", saloon, "W", 3.0, "town_supplies", "Saloon Stores")
 	k.container_at_wall("footlocker", "SaloonRoomChest", saloon, "S", 3.0, "town_household", "Chest", 3.3)
 	k.pile("furniture", "SaloonTables", saloon, Vector3(2.4, 0, -1.5), 15)
-	k.pickup("canned_beans", 2, "SaloonBeans", saloon, Vector3(-3.5, 1.1, -2.6))
+	k.pickup("canned_beans", 2, "SaloonBeans", saloon, Vector3(0.5, 1.1, -4.0))
 	k.pickup("pistol_ammo", 10, "SaloonRoomAmmo", saloon, Vector3(-2.0, 3.3, 3.4))
 	var store := k.building("GeneralStore", Vector2(-10, 4), 0, Vector2(12, 9), {
 		"wall": "brick", "floor": "concrete_plain", "roof": "flat",
@@ -186,7 +187,8 @@ func _red_mesa() -> Kit:
 	k.fixture("Altar", church, Vector3(0, 0, -6.6), Vector3(2.4, 1.0, 1.0), "wood")
 	k.pile("furniture", "Pews", church, Vector3(-1.5, 0, 0), 0)
 	k.container_at_wall("footlocker", "VestryChest", church, "W", -5.5, "scavenger_stash", "Vestry Chest")
-	var bell := _tower(k, "BellTower", Vector3(-10, 0, -50), 0, 9.0, 3.6, "brick")
+	# Its ladder faces the street (east), not the church's back wall
+	var bell := _tower(k, "BellTower", Vector3(-10, 0, -50), 90, 9.0, 3.6, "brick")
 	k.box(bell, "Roof", Vector3(4.2, 0.3, 4.2), Vector3(0, 12.4, 0), "roofing", 0.0, false)
 	for c in [Vector3(-1.7, 10.7, -1.7), Vector3(1.7, 10.7, -1.7), Vector3(-1.7, 10.7, 1.7), Vector3(1.7, 10.7, 1.7)]:
 		k.box(bell, "Pillar", Vector3(0.25, 3.2, 0.25), c, "brick", 0.0, false)
@@ -224,7 +226,7 @@ func _red_mesa() -> Kit:
 	k.pile("furniture", "HouseNorthWestJunk", hC, Vector3(1.5, 0, 1.0), 70)
 	k.pickup("bandage", 1, "HouseNorthWestBandage", hC, Vector3(-1.8, 0, -1.6))
 	# The water tower behind the store
-	var wt := _water_tower(k, "WaterTower", Vector3(-34, 0, 12), 8.0)
+	var wt := _water_tower(k, "WaterTower", Vector3(-34, 0, 12), 8.0, 90)
 	k.container("crate", "TowerStash", wt, Vector3(1.2, 8.0, 1.2), -90, "scavenger_stash", "Stash")
 	# The street: wrecks, barrels, sandbags, salvage
 	k.prop("truck", "StreetWreck", Vector3(19, 0, 44), 170)
@@ -335,8 +337,9 @@ func _cinder_quarry() -> Kit:
 	k.box(face, "Bench2", Vector3(12, 8.0, 64), Vector3(13, 4.0, 0), "rock_tan")
 	k.box(face, "Bench3", Vector3(12, 12.0, 58), Vector3(25, 6.0, 0), "rock_tan")
 	k.ladder("Bench1Ladder", face, Vector3(-7.05, 0, 10), -90, 4.0)
-	k.ladder("Bench2Ladder", face, Vector3(6.95, 4.0, -6), -90, 4.0)
-	k.ladder("Bench3Ladder", face, Vector3(18.95, 8.0, 12), -90, 4.0)
+	# In a line: off the top of one ladder, walk straight on to the next
+	k.ladder("Bench2Ladder", face, Vector3(6.95, 4.0, 10), -90, 4.0)
+	k.ladder("Bench3Ladder", face, Vector3(18.95, 8.0, 10), -90, 4.0)
 	k.container("crate", "BlastersCache", face, Vector3(26, 12.0, 0), -90, "mine_explosives", "Blaster's Cache")
 	k.pickup("gunpowder", 2, "BenchPowder", face, Vector3(2, 4.0, -12))
 	face.set_meta("doors", [])
@@ -712,7 +715,8 @@ func _scorch() -> Kit:
 		_scrap_wall(k, "Wall%d" % i, a, b)
 	var gate := (ring[7] + ring[0]) / 2.0
 	for side in [-1, 1]:
-		var t := _tower(k, "GateTower%s" % ("W" if side < 0 else "E"), Vector3(gate.x + side * 8.0, 0, gate.y + 3.0), 0, 5.0, 3.2, "rust")
+		# Ladders face the gate gap, so you go up from the way in
+		var t := _tower(k, "GateTower%s" % ("W" if side < 0 else "E"), Vector3(gate.x + side * 8.0, 0, gate.y + 3.0), -90.0 * side, 5.0, 3.2, "rust")
 		k.container("crate", "GateCache%s" % ("W" if side < 0 else "E"), t, Vector3(0.5 * side, 5.0, -0.8), 0, "scorch_cache", "Raider Cache")
 	# The warlord's hall
 	var hall := k.building("WarlordsHall", Vector2(0, 14), 0, Vector2(18, 12), {

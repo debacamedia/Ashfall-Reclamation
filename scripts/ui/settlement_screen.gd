@@ -733,8 +733,8 @@ func _refresh_sites(s: Settlement) -> void:
 			col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			row.add_child(col)
 			var title := site.display_name()
-			if site.plan_id == &"fence":
-				title = "%s (%d m)" % [title, site.pieces.size() * 4]
+			if SettlementPlans.is_run(site.plan_id):
+				title = "%s (%d m)" % [title, roundi(site.pieces.size() * SettlementPlans.piece_length(site.plan_id))]
 			col.add_child(_label(title, 15, TEXT))
 			var st := _label("", 13, DIM)
 			st.name = "Status"
@@ -749,7 +749,7 @@ func _refresh_sites(s: Settlement) -> void:
 			off.pressed.connect(func() -> void: request_cancel_site(site))
 			row.add_child(off)
 			_site_rows[site] = {"status": st}
-	var builders := s.count_role(Settler.Role.BUILDER)
+	var builders := s.builders_working_here()  # from any of your places (27)
 	var current := s.current_site()
 	for site: ConstructionSite in _site_rows:
 		if not is_instance_valid(site):
@@ -762,7 +762,7 @@ func _refresh_sites(s: Settlement) -> void:
 			st.text = "Being built: %d%%" % roundi(site.progress() * 100.0)
 			st.add_theme_color_override("font_color", GOOD)
 		elif builders == 0:
-			st.text = "Ready: make someone a Builder  (%d%%)" % roundi(site.progress() * 100.0)
+			st.text = "Ready: make someone a Builder, here or at another of your places  (%d%%)" % roundi(site.progress() * 100.0)
 			st.add_theme_color_override("font_color", STYLE_COLOR)
 		else:
 			st.text = "Ready, next in line  (%d%%)" % roundi(site.progress() * 100.0)

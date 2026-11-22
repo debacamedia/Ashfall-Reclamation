@@ -137,7 +137,8 @@ func test_claiming_lays_out_the_plan() -> void:
 		lengths += f.pieces.size()
 	check(lengths == 132, "528 m of fence: round the yard and round the fields (%d lengths)" % lengths)
 	check(sites[0].key == "FenceFrontLeft", "the yard's fence first")
-	# The yard fence leaves the gateway open
+	check(sites.filter(func(s: ConstructionSite) -> bool: return s.plan_id == &"gate").size() == 3, "and (27) a gate in each of its three gaps")
+	# The yard fence leaves the gateway open (for its gate)
 	var site_root := zone.get_node("AshCreekFarms") as Node3D
 	var gate := site_root.to_global(Vector3(0, 0, 36))
 	for f: ConstructionSite in fences:
@@ -151,7 +152,7 @@ func test_claiming_lays_out_the_plan() -> void:
 		check(out.dot(Vector3(from_middle.x, 0, from_middle.z).normalized()) > 0.9, "%s faces out" % g.key)
 	# Claiming again (a load) doesn't lay it out twice
 	st.lay_out_plans()
-	check(st.sites().size() == 15, "laid out once")
+	check(st.sites().size() == 18, "laid out once")
 	await _free(zone)
 
 
@@ -236,7 +237,7 @@ func test_call_off_gives_the_materials_back() -> void:
 	check(st.request_cancel_site(p, run), "called it off")
 	await wait_physics(2)
 	check(p.inventory.count_of(&"wood_plank") == 10, "the planks come back to you")
-	check(_site(st, "FieldFenceBack") == null and st.sites().size() == 14, "it's gone from the plan")
+	check(_site(st, "FieldFenceBack") == null and st.sites().size() == 17, "it's gone from the plan")
 	await _free(zone)
 
 
@@ -380,7 +381,7 @@ func test_sites_and_buildings_are_saved() -> void:
 	check(saves.load_game("building", zone2) == OK, "loaded")
 	await wait_physics(5)
 	var st2 := _farm(zone2)
-	check(st2.sites().size() == 15, "the plan's sites (one built) plus the bunkhouse: %d" % st2.sites().size())
+	check(st2.sites().size() == 18, "the plan's sites (one built) plus the bunkhouse: %d" % st2.sites().size())
 	var run2 := _site(st2, "FenceFrontLeft")
 	check(run2 != null and run2.built == 4 and run2.is_supplied() and is_equal_approx(run2.work, 1.0), "the fence run, four lengths in")
 	check(_built(zone2, &"farm_fence").size() == 4, "and those four lengths stand")
@@ -407,6 +408,6 @@ func test_a_farm_claimed_before_builders_gets_its_plan() -> void:
 	var zone2 := await load_zone()
 	SaveManager.apply_save_data(old, zone2)
 	await wait_physics(3)
-	check(_farm(zone2).is_claimed and _farm(zone2).sites().size() == 15, "claimed, and the plan is laid out (%d)" % _farm(zone2).sites().size())
+	check(_farm(zone2).is_claimed and _farm(zone2).sites().size() == 18, "claimed, and the plan is laid out, gates too (%d)" % _farm(zone2).sites().size())
 	await _free(zone2)
 	var _st := st

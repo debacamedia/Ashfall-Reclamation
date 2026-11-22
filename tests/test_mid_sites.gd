@@ -270,3 +270,32 @@ func test_raiders_wait_at_each_place() -> void:
 		if ENEMIES[key].has("marauder"):
 			check(names.has("Scorch Marauder"), "%s has Scorch Marauders (%s)" % [key, names])
 	await _free(zone)
+
+
+## Each ladder is climbed by walking at it from 3 m out in front: nothing in
+## the way of the approach, and it's on the side you come from.
+func test_climb_every_ladder() -> void:
+	var zone := await _mid()
+	var p := zone.get_node("Player") as PlayerController
+	var w := InputFrame.new()
+	w.move = Vector2(0, -1)
+	var climbed := 0
+	for key: String in SITES:
+		var s := zone.get_node(key)
+		for l: Ladder in get_tree().get_nodes_in_group("ladders"):
+			if not s.is_ancestor_of(l):
+				continue
+			p.health.revive(1.0)
+			var out := l.get_outward()
+			await _teleport(p, l.global_position + out * 3.0 + Vector3.UP * 0.05)
+			p.rotation.y = atan2(out.x, out.z)
+			p.head.rotation.x = 0.0
+			for i in 1200:
+				await _run(p, 1, w)
+				if p.ladder == null and p.global_position.y > l.get_top_y() - 0.3 and p.is_on_floor():
+					break
+			check(p.global_position.y > l.get_top_y() - 0.3 and p.is_on_floor(),
+				"%s/%s: climbed to %.1f m (at %.2f)" % [key, l.name, l.get_top_y(), p.global_position.y])
+			climbed += 1
+	check(climbed >= 17, "every ladder climbed (%d)" % climbed)
+	await _free(zone)
