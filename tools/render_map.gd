@@ -5,17 +5,25 @@ extends SceneTree
 ## ash storm.
 ##
 ## Needs a real renderer (not --headless). Run after build_sites and
-## build_early_zone, whenever the zone's look changes:
+## build_early_zone (or build_mid_zone), whenever the zone's look changes:
 ##   godot --path . -s res://tools/render_map.gd
+##   godot --path . -s res://tools/render_map.gd -- mid_zone   (Increment 25)
 ##
-## Writes levels/early_zone/map.webp (the picture) and map.tres (a ZoneMap).
+## Writes levels/<zone>/map.webp (the picture) and map.tres (a ZoneMap).
 
-const ZONE := "res://levels/early_zone/early_zone.tscn"
-const OUT := "res://levels/early_zone/"
-const TITLE := "Early Zone"
-## The ground the map covers (x, z of the north-west corner, then size), m.
-## The playable area runs x -160…660, z -800…160; this leaves ~70 m round it.
-const RECT := Rect2(-232, -872, 960, 1104)
+## Each zone: [title, the ground the map covers (x, z of the north-west
+## corner, then size, m)], ~70 m past its playable area all round.
+const ZONES := {
+	# Playable x -160…660, z -800…160
+	"early_zone": ["Early Zone", Rect2(-232, -872, 960, 1104)],
+	# Playable x 300…1060, z -920…275 (Increment 25)
+	"mid_zone": ["Mid Zone", Rect2(228, -992, 904, 1340)],
+}
+
+var ZONE := "res://levels/early_zone/early_zone.tscn"
+var OUT := "res://levels/early_zone/"
+var TITLE := "Early Zone"
+var RECT := Rect2(-232, -872, 960, 1104)
 const PX_PER_M := 2.0
 ## Each tile is this many metres square.
 const TILE_M := 128.0
@@ -26,6 +34,13 @@ var cam: Camera3D
 
 
 func _initialize() -> void:
+	var args := OS.get_cmdline_user_args()
+	var key := args[0] if not args.is_empty() else "early_zone"
+	if ZONES.has(key):
+		ZONE = "res://levels/%s/%s.tscn" % [key, key]
+		OUT = "res://levels/%s/" % key
+		TITLE = ZONES[key][0]
+		RECT = ZONES[key][1]
 	_run.call_deferred()
 
 

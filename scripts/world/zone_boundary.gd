@@ -13,6 +13,11 @@ extends Node3D
 ##
 ## Raiders aren't affected: their navmesh ends at the edge.
 ##
+## EXITS (Increment 25): ZoneExit children mark roads out through the storm.
+## Within an exit's gap the storm doesn't hurt and the warning says where
+## the road goes; a player who crosses the edge there (on foot or driving)
+## is handed to WorldManager.request_travel.
+##
 ## AUTHORITY: damage is decided here, where the game state lives (host).
 ## The storm's look (fog, ash, wind) is per client: StormEffects reads
 ## storm_level() for its own player.
@@ -37,6 +42,8 @@ enum Kind { STORM, SEA }
 
 ## player -> seconds until their next damage step
 var _timers := {}
+## player -> seconds before an exit asks to travel again (after a refusal)
+var _exit_waits := {}
 
 
 func _ready() -> void:
@@ -78,12 +85,33 @@ func storm_level(p: Vector3) -> float:
 	return minf(0.6 + 0.4 * d / 15.0, 1.0)
 
 
+## The way out at `p` (a ZoneExit whose gap covers it), or null.
+func exit_at(p: Vector3) -> ZoneExit:
+	for c in get_children():
+		var x := c as ZoneExit
+		if x != null and x.covers(p):
+			return x
+	return null
+
+
+## Every way out of the zone.
+func exits() -> Array[ZoneExit]:
+	var out: Array[ZoneExit] = []
+	for c in get_children():
+		if c is ZoneExit:
+			out.append(c)
+	return out
+
+
 ## The warning for someone standing at `p` ("" if none).
 func warning_at(p: Vector3) -> String:
 	var n := _nearest(Vector2(p.x, p.z))
 	var d := -(n["distance"] as float) if is_inside(p) else (n["distance"] as float)
 	if d < -warn_distance * 0.5:
 		return ""
+	var way_out := exit_at(p)
+	if way_out != null:
+		return "The road leads on through the storm to %s" % way_out.destination_name
 	if n["kind"] == Kind.SEA:
 		return "The water's too deep to go any further" if d > -3.0 else ""
 	if d > 0.0:
@@ -93,7 +121,7 @@ func warning_at(p: Vector3) -> String:
 
 ## Storm damage per second at `p` (0 inside or at the sea).
 func damage_per_second_at(p: Vector3) -> float:
-	if is_inside(p):
+	if is_inside(p) or exit_at(p) != null:
 		return 0.0
 	var n := _nearest(Vector2(p.x, p.z))
 	if n["kind"] != Kind.STORM:
@@ -108,6 +136,7 @@ func _physics_process(delta: float) -> void:
 		if player == null or player.is_dead():
 			_timers.erase(p)
 			continue
+		_check_exit(player, delta)
 		var dps := damage_per_second_at(player.global_position)
 		if dps <= 0.0:
 			_timers.erase(p)
@@ -120,6 +149,26 @@ func _physics_process(delta: float) -> void:
 			var info := DamageInfo.create(dps * tick_interval, DamageInfo.Type.ENVIRONMENT, self)
 			info.hit_position = player.global_position
 			player.health.apply_damage(info)
+
+
+## Crossed the edge through an exit: travel (asked once, then again a few
+## seconds after a refusal).
+func _check_exit(player: PlayerController, delta: float) -> void:
+	if _exit_waits.has(player):
+		_exit_waits[player] -= delta
+		if _exit_waits[player] > 0.0:
+			return
+		_exit_waits.erase(player)
+	if is_inside(player.global_position):
+		return
+	var way_out := exit_at(player.global_position)
+	if way_out == null:
+		return
+	var world := get_node_or_null("/root/WorldManager")
+	if world == null or world.is_travelling:
+		return
+	if not world.request_travel(player, way_out):
+		_exit_waits[player] = 3.0
 
 
 ## The nearest edge to `q`: {"distance", "kind", "index"}.

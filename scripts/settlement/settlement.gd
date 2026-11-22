@@ -223,6 +223,10 @@ var raiders: Array[Raider] = []
 var raid_report := {}
 ## Settlement hours since it was claimed: the log's clock.
 var clock_hours := 0.0
+## Running through hours you spent in another zone (Increment 25):
+## WorldManager.catch_up sets it, and the HUD keeps its notices to itself
+## (they're in the log, and a summary is shown).
+var catching_up := false
 ## What's happened here, newest last: {"hour", "text", "away"} (20.5).
 var log_entries: Array[Dictionary] = []
 const LOG_KEEP := 40
@@ -1409,7 +1413,7 @@ func simulate(hours: float) -> void:
 		else:
 			s.next_meal = 0.0
 			s.unfed_hours += hours
-			if s.unfed_hours >= leave_after_hours:
+			if s.unfed_hours >= leave_after_hours and not s.is_down():  # the wounded can't walk out (25)
 				var why := "nothing to eat" if food() < food_per_meal and fridge_meals() < 1.0 else "no water"
 				settler_lost.emit(s.settler_name, why)
 				notice.emit("%s has left %s: %s" % [s.settler_name, settlement_name, why])

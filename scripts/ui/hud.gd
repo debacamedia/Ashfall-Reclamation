@@ -119,6 +119,7 @@ func _ready() -> void:
 	var world := get_node_or_null("/root/WorldManager")
 	if world != null:
 		world.arrived.connect(func(region: String) -> void: show_notice("Arrived at " + region, Color(0.95, 0.85, 0.6)))
+		world.caught_up.connect(func(summary: String) -> void: show_notice(summary, Color(0.7, 0.95, 0.7)))
 		world.travel_refused.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED))
@@ -269,7 +270,9 @@ func _bind_settlements() -> void:
 			continue
 		_settlements_bound[n] = true
 		var s := n as Settlement
-		s.notice.connect(func(text: String) -> void: show_notice(text, Color(0.7, 0.95, 0.7)))
+		s.notice.connect(func(text: String) -> void:
+			if not s.catching_up:
+				show_notice(text, Color(0.7, 0.95, 0.7)))
 		s.refused.connect(func(reason: String) -> void:
 			show_notice(reason, Color(1.0, 0.5, 0.4))
 			_play_ui(SOUND_DENIED)

@@ -30,7 +30,7 @@ func _free(zone: Node) -> void:
 
 
 func _rail_points(step := 1.0) -> PackedVector3Array:
-	var rail: Array = (load(ZONE_TOOL) as GDScript).get_script_constant_map()["RAIL"]
+	var rail: Array = (load(ZONE_TOOL) as GDScript).get_script_constant_map()["EARLY_RAIL"]
 	var out := PackedVector3Array()
 	for i in rail.size() - 1:
 		var a: Vector2 = rail[i]

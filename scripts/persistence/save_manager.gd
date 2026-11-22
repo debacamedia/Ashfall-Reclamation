@@ -25,9 +25,12 @@ extends Node
 ##    "level": "res://levels/early_zone/early_zone.tscn",
 ##    "nodes": [{"path": "Player", "scene": "res://...", "parent": ".",
 ##               "data": {...}}, ...],
-##    "regions": {"res://levels/…/other.tscn": {"nodes": [...]}, ...}}
+##    "regions": {"res://levels/…/other.tscn": {"nodes": [...], "away_seconds": 0}, ...},
+##    "vehicle_zones": {"CargoTruck": "res://levels/mid_zone/mid_zone.tscn"}}
 ## "regions" is the remembered state of the regions you're not in
-## (WorldManager, Increment 12); same node entries, no players.
+## (WorldManager, Increment 12); same node entries, no players, and how long
+## you've been away (Increment 25: their settlements catch up when you're
+## back). "vehicle_zones": vehicles driven into another zone (25).
 ## Older versions are upgraded in _migrate(); newer ones are refused.
 ##
 ## Version 3 (Increment 15): Outpost 17 and Halden's Crossing stopped being
@@ -229,6 +232,7 @@ func build_save_data(root: Node) -> Dictionary:
 		"level": root.scene_file_path,
 		"nodes": nodes,
 		"regions": _world().get_saved_regions(root.scene_file_path) if _world() != null else {},
+		"vehicle_zones": _world().vehicle_zones.duplicate() if _world() != null else {},
 	}
 
 
@@ -261,6 +265,7 @@ func load_game(slot := QUICK_SLOT, world_root: Node = null) -> Error:
 	apply_save_data(data, root)
 	if _world() != null:
 		_world().set_saved_regions(data.get("regions"), root.scene_file_path)
+		_world().set_vehicle_zones(data.get("vehicle_zones"), root)
 	loaded.emit(path)
 	return OK
 
@@ -351,6 +356,7 @@ func _apply_after_scene_change(data: Dictionary, path: String) -> void:
 	apply_save_data(data, root)
 	if _world() != null:
 		_world().set_saved_regions(data.get("regions"), root.scene_file_path)
+		_world().set_vehicle_zones(data.get("vehicle_zones"), root)
 	loaded.emit(path)
 
 

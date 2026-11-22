@@ -357,7 +357,7 @@ func refresh() -> void:
 	_refresh_supply()
 	if not claimed:
 		if s == null:
-			_empty.text = "No settlements here."
+			_empty.text = "No settlements in this zone.\n\nPlaces you hold in other zones keep running while you're away: food, jobs, the supply line, and raids, settled as if you were far off. When you go back you get a summary, and each place's log has the details."
 		else:
 			var raiders := s.raiders_here()
 			_empty.text = ("%s isn't yours yet.\n\nClear the raiders, then %s to claim it." % [s.settlement_name, s.claim_hint]) + ("\n\nRaiders there now: %d" % raiders if raiders > 0 else "")

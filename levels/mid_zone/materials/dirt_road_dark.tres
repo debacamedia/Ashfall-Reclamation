@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/dirt_road/albedo.png" id="1_kfe5m"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/dirt_road/normal.png" id="2_lej5f"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v3/textures/dirt_road/roughness.png" id="3_xftyn"]
+
+[resource]
+albedo_color = Color(0.52, 0.47, 0.41, 1)
+albedo_texture = ExtResource("1_kfe5m")
+roughness = 0.95
+roughness_texture = ExtResource("3_xftyn")
+normal_enabled = true
+normal_texture = ExtResource("2_lej5f")
+uv1_scale = Vector3(0.333, 0.333, 0.333)
+uv1_triplanar = true
+uv1_world_triplanar = true

@@ -141,8 +141,8 @@ func test_wood_out_in_the_zone() -> void:
 	var timber := zone.get_node("Timber")
 	check(timber.get_child_count() >= 56, "clumps of dead trees and logs across the zone (%d)" % timber.get_child_count())
 	var consts := (load(ZONE_TOOL) as GDScript).get_script_constant_map()
-	var places: Dictionary = consts["PLACES"]
-	var roads: Array = consts["ROADS"]
+	var places: Dictionary = consts["EARLY_PLACES"]
+	var roads: Array = consts["EARLY_ROADS"]
 	for t: Node3D in timber.get_children():
 		check(t is Timber, "%s is wood to chop" % t.name)
 		var p := Vector2(t.position.x, t.position.z)

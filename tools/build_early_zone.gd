@@ -26,8 +26,36 @@ extends SceneTree
 ## SCALE: 1 px of the concept map = 1.1 m, with Outpost 17 at the origin.
 ## World x = east, -z = north.
 
-const OUT := "res://levels/early_zone/"
+const EARLY_OUT := "res://levels/early_zone/"
+var OUT: String = EARLY_OUT
 const PX := 1.1  # metres per map pixel
+
+## What this builder makes (Increment 25: build_mid_zone.gd extends this
+## script and sets these, and the data below, for the mid zone). The early
+## zone's own data is in the EARLY_* constants (tests read them); the
+## builder works from the variables.
+var ZONE_NODE := "EarlyZone"
+var REGION_NAME := "Early Zone"
+var SCENE_FILE := "early_zone.tscn"
+var ENV_FILE := "early_zone_environment.tres"
+## Where you start, and respawn.
+var SPAWN := Vector3(0, 0.05, 14)
+## The railway starts at a buffer stop (it runs out of the zone at the other end).
+var RAIL_BUFFER_STOP := true
+## Roads out through the storm to another zone (Increment 25): [name, where
+## the road crosses the edge (x, z), gap half-width (m), target level,
+## arrival marker there, destination name, its sign (x, z), the way the
+## sign faces (compass degrees: toward the people reading it)]. Cross the
+## edge inside the gap and you travel.
+var EXITS := [
+	["ToMidZone", Vector2(656.6, -288.0), 14.0, "res://levels/mid_zone/mid_zone.tscn", &"FromEarlyZone", "the Mid Zone",
+		Vector2(632, -297), 270.0],
+]
+## Where you arrive from other zones: [marker name, position (x, z), heading
+## (compass degrees)].
+var ARRIVALS := [
+	["FromMidZone", Vector2(630, -285.0), 270.0],
+]
 
 const OUTPOST_SCENE := "res://levels/outpost_17/outpost_17.tscn"
 const HALDENS_SCENE := "res://levels/haldens_crossing/haldens_crossing.tscn"
@@ -36,7 +64,7 @@ const HALDENS_AT := Vector3(450, 0, -275)
 ## Places: node name -> [display name, centre (x, z), radius, compass name,
 ## (optional) yaw in degrees: the site is turned that much (Ash Creek, 19.5,
 ## faces the railway and the main road)]
-const PLACES := {
+const EARLY_PLACES := {
 	"Outpost17": ["Outpost 17", Vector2(0, 5), 85.0, "Outpost 17"],
 	"HaldensCrossing": ["Halden's Crossing", Vector2(450, -275), 115.0, "Halden's"],
 	"SaintMercyClinic": ["Saint Mercy Clinic", Vector2(245, -205), 50.0, "Saint Mercy"],
@@ -45,20 +73,23 @@ const PLACES := {
 	"BlackRidgeMine": ["Black Ridge Mine", Vector2(262, -552), 55.0, "Black Ridge"],
 	"NorthwatchOutpost": ["Northwatch Outpost", Vector2(400, -680), 45.0, "Northwatch"],
 }
+var PLACES: Dictionary = EARLY_PLACES
 
 ## The playable area, round the edge (x, z). Edges 0–2 are the coast.
-const EDGE := [
+const EARLY_EDGE := [
 	Vector2(-135, 135), Vector2(-160, 40), Vector2(-150, -80), Vector2(-120, -185),
 	Vector2(-60, -320), Vector2(40, -470), Vector2(120, -640), Vector2(250, -770),
 	Vector2(420, -800), Vector2(540, -745), Vector2(610, -580), Vector2(650, -400),
 	Vector2(660, -230), Vector2(610, -70), Vector2(480, 50), Vector2(300, 115),
 	Vector2(120, 150), Vector2(-40, 160),
 ]
-const SEA_EDGES := [0, 1, 2]
+var EDGE: Array = EARLY_EDGE
+const EARLY_SEA_EDGES := [0, 1, 2]
+var SEA_EDGES: Array = EARLY_SEA_EDGES
 
 ## Roads: [name, kind, width, points (x, z)]. Kinds: main (asphalt),
 ## gravel (dirt road), trail (narrow dirt road).
-const ROADS := [
+const EARLY_ROADS := [
 	["MainRoad", "main", 7.0, [Vector2(0, 69), Vector2(4, 88), Vector2(30, 103), Vector2(95, 100),
 		Vector2(175, 66), Vector2(255, 16), Vector2(330, -22), Vector2(392, -62),
 		Vector2(432, -112), Vector2(448, -150), Vector2(450, -176)]],  # runs on under Main Street
@@ -74,24 +105,27 @@ const ROADS := [
 	["RoadEast", "gravel", 6.0, [Vector2(539, -275), Vector2(580, -279), Vector2(640, -287),
 		Vector2(700, -300), Vector2(760, -318)]],
 ]
+var ROADS: Array = EARLY_ROADS
 
 ## The railway: from a buffer stop east of Outpost 17, past Halden's, east
 ## out of the zone (toward the Iron Vein Rail Yard).
-const RAIL := [Vector2(105, 58), Vector2(160, 40), Vector2(240, 0), Vector2(320, -52),
+const EARLY_RAIL := [Vector2(105, 58), Vector2(160, 40), Vector2(240, 0), Vector2(320, -52),
 	Vector2(400, -118), Vector2(470, -160), Vector2(540, -195), Vector2(620, -228),
 	Vector2(700, -258), Vector2(800, -290)]
+var RAIL: Array = EARLY_RAIL
 
 ## Vehicles (Increment 18): [node name, scene, position, heading (compass
 ## degrees the nose points: 0 = north, 90 = east)]. Not part of any place,
 ## so StaticBatcher never merges them.
-const VEHICLES := [
+const EARLY_VEHICLES := [
 	["CargoTruck", "res://scenes/vehicles/cargo_truck.tscn", Vector3(5.5, 0.1, 8.0), 180.0],  # Outpost 17, beside the yard road by the motor pool, nose to the gate
 ]
+var VEHICLES: Array = EARLY_VEHICLES
 
 ## Survivors (Increment 19): people waiting at other places, who'll come and
 ## live at your settlement if you ask. [node name, their name, position,
 ## facing (compass degrees), what they say first]
-const SURVIVORS := [
+const EARLY_SURVIVORS := [
 	["Maya", "Maya", Vector3(247, 0.05, -193), 90.0,
 		"I hid in the pharmacy when the raiders came. Find somewhere safe to live and I'll come."],
 	["Tomas", "Tomas", Vector3(464, 0.05, -312), 180.0,
@@ -99,17 +133,19 @@ const SURVIVORS := [
 	["Jeb", "Old Jeb", Vector3(278, 0.05, -528.6), 0.0,
 		"Forty years I worked this mine. Find me a bed that isn't down a hole and I'm yours."],
 ]
+var SURVIVORS: Array = EARLY_SURVIVORS
 
 ## Wood to chop out in the open (Increment 19.7): [centre (x, z), radius,
 ## dead trees, fallen logs]. Kept clear of places, roads, the railway and rocks.
-const TIMBER := [
+const EARLY_TIMBER := [
 	[Vector2(160, 20), 30.0, 6, 2], [Vector2(195, -120), 28.0, 6, 2], [Vector2(400, -40), 28.0, 6, 2],
 	[Vector2(520, -60), 32.0, 6, 2], [Vector2(330, -330), 30.0, 6, 2], [Vector2(90, -140), 30.0, 6, 2],
 	[Vector2(560, -400), 30.0, 6, 2], [Vector2(310, -455), 28.0, 6, 2],
 ]
+var TIMBER: Array = EARLY_TIMBER
 
 ## Signposts: [position (x, z), [destinations…]]
-const SIGNPOSTS := [
+const EARLY_SIGNPOSTS := [
 	[Vector2(8, 80), ["HaldensCrossing", "AshCreekFarms"]],
 	[Vector2(441, -162), ["Outpost17", "AshCreekFarms"]],
 	[Vector2(366, -265), ["SaintMercyClinic", "SmugglersGulch"]],
@@ -118,6 +154,7 @@ const SIGNPOSTS := [
 	[Vector2(348, -44), ["AshCreekFarms", "Outpost17"]],  # at the farm lane (19.5)
 	[Vector2(231, -229), ["SmugglersGulch", "HaldensCrossing"]],  # at the trail head, clear of the staff house
 ]
+var SIGNPOSTS: Array = EARLY_SIGNPOSTS
 
 # Materials used across the zone
 var M := {}
@@ -154,10 +191,10 @@ func _run() -> void:
 		_save(_terrain(), "terrain.scn")
 		_save(_roads(), "roads.scn")
 		_save(_rocks(), "rocks.scn")
-		ResourceSaver.save(_environment(), OUT + "early_zone_environment.tres")
+		ResourceSaver.save(_environment(), OUT + ENV_FILE)
 	await _zone(bake)
 	_boundary.free()
-	print("early zone built")
+	print(REGION_NAME.to_lower() + " built")
 	quit()
 
 
@@ -468,13 +505,14 @@ const SEA_AREA := [Vector2(-120, -185), Vector2(-150, -80), Vector2(-160, 40), V
 const WATER_LEVEL := -0.35
 
 ## Area tints: [centre, radius, colour]
-const TINTS := [
+const EARLY_TINTS := [
 	[Vector2(230, -600), 340.0, Color(0.56, 0.54, 0.54)],   # Black Ridge: dark ash
 	[Vector2(120, -390), 230.0, Color(1.08, 0.8, 0.68)],    # Smuggler's Gulch: red earth
 	[Vector2(10, -240), 160.0, Color(1.05, 0.86, 0.74)],
 	[Vector2(450, -275), 175.0, Color(0.82, 0.78, 0.72)],   # Halden's: darker, trodden
 	[Vector2(307, -106), 110.0, Color(0.88, 0.86, 0.7)],    # Ash Creek: tilled
 ]
+var TINTS: Array = EARLY_TINTS
 
 
 func _dist_to_outline(p: Vector2, pts: Array) -> float:
@@ -738,11 +776,12 @@ func _roads() -> Node3D:
 		xforms.append(Transform3D(basis, Vector3(rpts[k].x, 0.26, rpts[k].y)))
 	rail.add_child(_merged("Sleepers", sleeper, xforms, M["sign_wood"], 200.0, 180.0))
 	# Buffer stop at the Outpost 17 end
-	var stop := _solid_body("BufferStop")
-	stop.position = Vector3(RAIL[0].x, 0, RAIL[0].y)
-	stop.rotation.y = atan2(-(RAIL[1] - RAIL[0]).x, -(RAIL[1] - RAIL[0]).y)
-	_box(stop, "Frame", Vector3(2.8, 1.1, 0.5), Vector3(0, 0.75, 0), "hazard")
-	rail.add_child(stop)
+	if RAIL_BUFFER_STOP:
+		var stop := _solid_body("BufferStop")
+		stop.position = Vector3(RAIL[0].x, 0, RAIL[0].y)
+		stop.rotation.y = atan2(-(RAIL[1] - RAIL[0]).x, -(RAIL[1] - RAIL[0]).y)
+		_box(stop, "Frame", Vector3(2.8, 1.1, 0.5), Vector3(0, 0.75, 0), "hazard")
+		rail.add_child(stop)
 	# Level crossings where a road meets the tracks (19.5)
 	var crossings := Node3D.new()
 	crossings.name = "LevelCrossings"
@@ -870,7 +909,7 @@ const ROCK_STYLES := {
 }
 
 ## Clusters: [style, material, centre, radius, count, width min, width max, height / width]
-const ROCK_CLUSTERS := [
+const EARLY_ROCK_CLUSTERS := [
 	["hill", "rock_dark", Vector2(215, -610), 170.0, 18, 26.0, 62.0, Vector2(0.32, 0.55)],
 	["boulder", "rock_dark", Vector2(262, -560), 130.0, 22, 4.0, 11.0, Vector2(0.55, 0.85)],
 	["hill", "rock_dark", Vector2(80, -520), 80.0, 5, 22.0, 40.0, Vector2(0.3, 0.5)],
@@ -883,6 +922,7 @@ const ROCK_CLUSTERS := [
 	["boulder", "rock_dark", Vector2(-90, 90), 40.0, 4, 4.0, 9.0, Vector2(0.5, 0.8)],
 	["boulder", "rock_tan", Vector2(250, -150), 340.0, 45, 2.0, 6.0, Vector2(0.45, 0.8)],
 ]
+var ROCK_CLUSTERS: Array = EARLY_ROCK_CLUSTERS
 
 var _rock_meshes := {}  # "style:n" -> [ArrayMesh, PackedVector3Array]
 
@@ -1076,7 +1116,6 @@ func _scatter() -> Node3D:
 # ================================================================ the zone
 
 const TILE := 100.0
-const NAV_PATH := OUT + "navigation.scn"
 
 
 func _environment() -> Environment:
@@ -1121,16 +1160,16 @@ func _zone(bake := true) -> void:
 		_save(empty, "navigation.scn")
 
 	var zone := Node3D.new()
-	zone.name = "EarlyZone"
+	zone.name = ZONE_NODE
 	zone.set_script(load("res://scripts/world/zone.gd"))
-	zone.set_meta("region_name", "Early Zone")
+	zone.set_meta("region_name", REGION_NAME)
 	# Light
 	var lighting := Node3D.new()
 	lighting.name = "Lighting"
 	zone.add_child(lighting)
 	var we := WorldEnvironment.new()
 	we.name = "WorldEnvironment"
-	we.environment = load(OUT + "early_zone_environment.tres")
+	we.environment = load(OUT + ENV_FILE)
 	lighting.add_child(we)
 	var sun := DirectionalLight3D.new()
 	sun.name = "Sun"
@@ -1146,25 +1185,7 @@ func _zone(bake := true) -> void:
 	# Ground, roads, rocks
 	for part in ["terrain", "roads", "rocks"]:
 		zone.add_child((load(OUT + part + ".scn") as PackedScene).instantiate())
-	# The places
-	var outpost := (load(OUTPOST_SCENE) as PackedScene).instantiate() as Node3D
-	outpost.name = "Outpost17"
-	zone.add_child(outpost)
-	var haldens := (load(HALDENS_SCENE) as PackedScene).instantiate() as Node3D
-	haldens.name = "HaldensCrossing"
-	haldens.position = HALDENS_AT
-	zone.add_child(haldens)
-	# The other five places (Increment 16: tools/build_sites.gd builds them)
-	for pair in [["SaintMercyClinic", "saint_mercy_clinic"], ["AshCreekFarms", "ash_creek_farms"],
-			["SmugglersGulch", "smugglers_gulch"], ["BlackRidgeMine", "black_ridge_mine"],
-			["NorthwatchOutpost", "northwatch_outpost"]]:
-		var site := (load("res://levels/%s/%s.tscn" % [pair[1], pair[1]]) as PackedScene).instantiate() as Node3D
-		site.name = pair[0]
-		var c: Vector2 = PLACES[pair[0]][1]
-		site.position = Vector3(c.x, 0, c.y)
-		if (PLACES[pair[0]] as Array).size() > 4:
-			site.rotation.y = deg_to_rad(float(PLACES[pair[0]][4]))
-		zone.add_child(site)
+	_add_places(zone)
 	# Landmarks (compass, place names)
 	var marks := Node3D.new()
 	marks.name = "Landmarks"
@@ -1185,6 +1206,7 @@ func _zone(bake := true) -> void:
 	edge.edge_kinds = _boundary.edge_kinds
 	zone.add_child(edge)
 	edge.add_child(_backstop())
+	_add_exits(zone, edge)
 	# Wood to chop (19.7)
 	zone.add_child(_timber())
 	# Built things, the player and the game
@@ -1192,7 +1214,7 @@ func _zone(bake := true) -> void:
 	structures.name = "Structures"
 	structures.add_to_group("navigation_geometry", true)
 	zone.add_child(structures)
-	var nav := (load(NAV_PATH) as PackedScene).instantiate()
+	var nav := (load(OUT + "navigation.scn") as PackedScene).instantiate()
 	nav.name = "Navigation"
 	zone.add_child(nav)
 	var vehicles := Node3D.new()
@@ -1218,11 +1240,11 @@ func _zone(bake := true) -> void:
 		survivors.add_child(person)
 	var spawn := Marker3D.new()
 	spawn.name = "PlayerSpawn"
-	spawn.position = Vector3(0, 0.05, 14)
+	spawn.position = SPAWN
 	zone.add_child(spawn)
 	var player := (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as Node3D
 	player.name = "Player"
-	player.position = Vector3(0, 0, 14)
+	player.position = Vector3(SPAWN.x, 0, SPAWN.z)
 	zone.add_child(player)
 	var hud := (load("res://scenes/ui/hud.tscn") as PackedScene).instantiate()
 	hud.name = "HUD"
@@ -1256,9 +1278,83 @@ func _zone(bake := true) -> void:
 	zone.add_child(far_wind)
 	_own(zone, zone)
 	wind.unique_name_in_owner = true
-	_save(zone, "early_zone.tscn")
+	_save(zone, SCENE_FILE)
 	if bake:
 		await _bake_navigation()
+
+
+## The places (the early zone's are site scenes; the mid zone's are
+## blockouts until Increment 26).
+func _add_places(zone: Node3D) -> void:
+	var outpost := (load(OUTPOST_SCENE) as PackedScene).instantiate() as Node3D
+	outpost.name = "Outpost17"
+	zone.add_child(outpost)
+	var haldens := (load(HALDENS_SCENE) as PackedScene).instantiate() as Node3D
+	haldens.name = "HaldensCrossing"
+	haldens.position = HALDENS_AT
+	zone.add_child(haldens)
+	# The other five places (Increment 16: tools/build_sites.gd builds them)
+	for pair in [["SaintMercyClinic", "saint_mercy_clinic"], ["AshCreekFarms", "ash_creek_farms"],
+			["SmugglersGulch", "smugglers_gulch"], ["BlackRidgeMine", "black_ridge_mine"],
+			["NorthwatchOutpost", "northwatch_outpost"]]:
+		var site := (load("res://levels/%s/%s.tscn" % [pair[1], pair[1]]) as PackedScene).instantiate() as Node3D
+		site.name = pair[0]
+		var c: Vector2 = PLACES[pair[0]][1]
+		site.position = Vector3(c.x, 0, c.y)
+		if (PLACES[pair[0]] as Array).size() > 4:
+			site.rotation.y = deg_to_rad(float(PLACES[pair[0]][4]))
+		zone.add_child(site)
+
+
+## Roads out of the zone (EXITS) and where you arrive from them (ARRIVALS).
+func _add_exits(zone: Node3D, edge: Node3D) -> void:
+	for e in EXITS:
+		var x := ZoneExit.new()
+		x.name = e[0]
+		var at: Vector2 = e[1]
+		x.position = Vector3(at.x, 0.0, at.y)
+		x.gap = e[2]
+		x.target_level = e[3]
+		x.arrival_id = e[4]
+		x.destination_name = e[5]
+		edge.add_child(x)
+		zone.add_child(_exit_sign(e[6], float(e[7]), str(e[5])))
+	var arrivals := Node3D.new()
+	arrivals.name = "Arrivals"
+	zone.add_child(arrivals)
+	for a in ARRIVALS:
+		var m := Marker3D.new()
+		m.name = a[0]
+		var at: Vector2 = a[1]
+		m.position = Vector3(at.x, 0.05, at.y)
+		m.rotation.y = deg_to_rad(-float(a[2]))  # compass heading as a yaw
+		arrivals.add_child(m)
+
+
+## A big sign beside the road out ("MID ZONE AHEAD"), facing `facing`
+## (compass degrees) toward the people reading it.
+func _exit_sign(at: Vector2, facing: float, destination: String) -> Node3D:
+	var sign_root := Node3D.new()
+	sign_root.name = "ExitSign_" + destination.trim_prefix("the ").capitalize().replace(" ", "")
+	sign_root.position = Vector3(at.x, 0, at.y)
+	sign_root.rotation.y = deg_to_rad(-facing)  # its -Z (the text side) toward the readers
+	var body := _solid_body("Posts")
+	sign_root.add_child(body)
+	_box(body, "PostL", Vector3(0.22, 3.6, 0.22), Vector3(-1.9, 1.8, 0), "wood")
+	_box(body, "PostR", Vector3(0.22, 3.6, 0.22), Vector3(1.9, 1.8, 0), "wood")
+	_box(body, "Board", Vector3(5.0, 1.6, 0.12), Vector3(0, 3.0, 0), "rust")
+	var label := Label3D.new()
+	label.name = "Text"
+	label.text = destination.trim_prefix("the ").to_upper() + "\nAHEAD"
+	label.font_size = 80
+	label.pixel_size = 0.0075
+	label.line_spacing = -8.0
+	label.modulate = Color(0.96, 0.9, 0.78)
+	label.outline_size = 10
+	label.position = Vector3(0, 3.0, -0.08)
+	label.rotation.y = PI
+	sign_root.add_child(label)
+	return sign_root
 
 
 ## Invisible walls past the edge: storm edges `backstop_distance` out, the
@@ -1322,7 +1418,7 @@ func _nav_template() -> NavigationMesh:
 ## Bakes the navmesh tile by tile from the saved zone (with its raiders off)
 ## and writes navigation.scn.
 func _bake_navigation() -> void:
-	var zone := (load(OUT + "early_zone.tscn") as PackedScene).instantiate() as Node3D
+	var zone := (load(OUT + SCENE_FILE) as PackedScene).instantiate() as Node3D
 	for n in zone.find_children("*", "Node3D", true, false):
 		if n is EnemySpawner:
 			(n as EnemySpawner).enabled = false

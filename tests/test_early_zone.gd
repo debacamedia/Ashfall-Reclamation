@@ -162,17 +162,17 @@ func test_storm_edge_warns_hurts_and_stops_you() -> void:
 	var zone := await load_zone()
 	var edge := zone.get_node("Boundary") as ZoneBoundary
 	var p := zone.get_node("Player") as PlayerController
-	# East of Halden's: the storm side
-	var inside := Vector3(560, 0.05, -300)
+	# East of Halden's: the storm side (south of the road out, 25)
+	var inside := Vector3(560, 0.05, -310)
 	check(edge.is_inside(inside) and edge.storm_level(inside) == 0.0 and edge.warning_at(inside) == "", "calm well inside")
-	var near := Vector3(645, 0, -300)  # ~11 m inside the edge
+	var near := Vector3(645, 0, -310)  # ~11 m inside the edge
 	check(edge.storm_level(near) > 0.0 and edge.warning_at(near).contains("Turn back"), "haze and a warning near the edge")
 	check(edge.damage_per_second_at(near) == 0.0, "no damage before the edge")
-	var out := Vector3(680, 0, -300)
+	var out := Vector3(680, 0, -310)
 	check(not edge.is_inside(out) and edge.damage_per_second_at(out) > edge.damage_per_second_min * 0.99, "past the edge the storm hurts")
-	check(edge.damage_per_second_at(Vector3(685, 0, -300)) > edge.damage_per_second_at(Vector3(670, 0, -300)), "more the further you go")
+	check(edge.damage_per_second_at(Vector3(685, 0, -310)) > edge.damage_per_second_at(Vector3(670, 0, -310)), "more the further you go")
 	# Walk east into it: hurt, and stopped by the backstop
-	await _teleport(p, Vector3(600, 0.05, -300), -90)
+	await _teleport(p, Vector3(600, 0.05, -310), -90)
 	var w := InputFrame.new()
 	w.move = Vector2(0, -1)
 	await _run(p, 60 * 22, w)
@@ -191,7 +191,7 @@ func test_storm_cause_of_death() -> void:
 	var p := zone.get_node("Player") as PlayerController
 	var gm := zone.get_node("GameMode") as GameMode
 	p.health.current_health = 3.0
-	await _teleport(p, Vector3(690, 0.05, -300))
+	await _teleport(p, Vector3(690, 0.05, -310))
 	await wait_physics(60)
 	check(p.is_dead(), "died in the storm")
 	check(gm.get_death_cause(p) == edge.death_message, "cause: %s" % gm.get_death_cause(p))
@@ -221,7 +221,7 @@ func test_storm_effects_follow_your_player() -> void:
 	var we := zone.get_node("Lighting/WorldEnvironment") as WorldEnvironment
 	await wait_physics(10)
 	check(fx.level < 0.01 and fx.warning == "", "clear at the outpost")
-	await _teleport(p, Vector3(668, 0.05, -300))
+	await _teleport(p, Vector3(668, 0.05, -310))  # off the road out (25)
 	await get_tree().create_timer(1.5).timeout
 	check(fx.level > 0.5, "the haze closes in (%.2f)" % fx.level)
 	check(fx.warning != "" and (fx.get_node("StormWarning") as Label).visible, "warning shown: %s" % fx.warning)

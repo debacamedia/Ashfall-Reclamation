@@ -71,7 +71,8 @@ func _process(delta: float) -> void:
 		return
 	_centre()
 	_check -= delta
-	if _check <= 0.0:
+	var world := get_node_or_null("/root/WorldManager")
+	if _check <= 0.0 and not (world != null and world.is_travelling):  # not where the level put you before you arrive (25)
 		_check = 0.4
 		var here := Landmark.at(get_tree(), player.global_position)
 		if here != current_place:

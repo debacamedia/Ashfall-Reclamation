@@ -1,0 +1,31 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/zone_terrain.gdshader" id="1_sjinv"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/dirt_dry/albedo.png" id="2_y3bun"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/dirt_dry/normal.png" id="3_sno2t"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/dirt_dry/roughness.png" id="4_snl3f"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xcqai"]
+seed = 5
+frequency = 0.012
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_p1a6w"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_xcqai")
+seamless = true
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_sjinv")
+shader_parameter/albedo_tex = ExtResource("2_y3bun")
+shader_parameter/normal_tex = ExtResource("3_sno2t")
+shader_parameter/roughness_tex = ExtResource("4_snl3f")
+shader_parameter/patches = SubResource("NoiseTexture2D_p1a6w")
+shader_parameter/tile = null
+shader_parameter/patch_scale = null
+shader_parameter/patch_tint = null
+shader_parameter/slope_tint = null
+shader_parameter/wet_tint = null
+shader_parameter/water_level = null
