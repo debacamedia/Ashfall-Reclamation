@@ -71,6 +71,20 @@ const SKINS := [Color(0.88, 0.72, 0.6), Color(0.72, 0.55, 0.42), Color(0.55, 0.4
 ## Raiders this close (and in sight) get shot at (m).
 @export var guard_range := 40.0
 @export var melee_damage := 18.0
+## Up a tower (28.1): they see this far, and along the wall it stands against.
+@export var tower_range := 60.0
+
+## Guards shoot this much faster than the gun's own rate, floored (28.1).
+const FIRE_RATE := 1.25
+## A tower's steadier aim: its spread is this share of the ground's (28.1).
+const TOWER_SPREAD := 0.75
+## A guard spot this far above its building's floor is up a tower (m).
+const RAISED := 1.5
+## Built walls: no hopping through them, and guards on the ground don't go
+## after raiders on the far side of one (28.1).
+const WALL_IDS := [&"farm_fence", &"palisade", &"reinforced_palisade", &"settlement_gate", &"palisade_gate"]
+## Within this far of the wall a tower stands against (m): seen from it.
+const ON_WALL := 3.5
 
 ## Where they live (null for a survivor not yet asked).
 var settlement: Settlement
@@ -105,6 +119,13 @@ var _repath := 0.0
 var _label_check := 0.0
 var _travel_check := 0.0
 var _post := 0
+## The guard spot they were given (a post or a tower's deck), if any (28.1).
+var _spot: Node3D = null
+## [origin, along] of each wall length their tower stands against.
+var _tower_walls: Array = []
+var _tower_walls_for: Node3D = null
+## At the foot of their tower's stair, on the way up it.
+var _climbing := false
 var _stuck := 0
 var _probe_left := 0.0
 var _probe_from := Vector3.INF
@@ -374,9 +395,11 @@ func _home_life(delta: float) -> void:
 				target = r
 				_enter(State.FIGHT)
 				return
-	# A raid, and no raider in sight: guards go to where the raiders are,
-	# rather than wait at their posts while the barn's emptied (20.5)
-	if role == Role.GUARD and settlement.raid_active() and not is_hungry():
+	# A raid, and no raider in sight: guards on the ground go to where the
+	# raiders are, rather than wait at their posts while the barn's emptied
+	# (20.5); but only to raiders on their side of the walls, and a guard up a
+	# tower stays up it (28.1)
+	if role == Role.GUARD and settlement.raid_active() and not is_hungry() and not holds_tower():
 		var near := _nearest_raid_raider()
 		if near != null:
 			_swing(false)
@@ -447,11 +470,17 @@ func _patrol(delta: float) -> void:
 		# A guard post or tower of their own once some are built (one guard
 		# each, in turn); otherwise walk the patrol points
 		var posts := settlement.guard_posts()
+		_spot = null
+		_climbing = false
 		if not posts.is_empty():
+			# Guards with a gun take the towers first: up there, a machete
+			# is no use (28.1)
 			var guards := settlement.members().filter(func(s: Settler) -> bool: return s.role == Role.GUARD and s.has_arrived())
-			var mine := maxi(guards.find(self), 0)
-			if mine < posts.size():
-				_goal = posts[mine].global_position
+			var order := guards.filter(func(s: Settler) -> bool: return s.can_shoot()) + guards.filter(func(s: Settler) -> bool: return not s.can_shoot())
+			var mine := maxi(order.find(self), 0)
+			if mine < posts.size() and (can_shoot() or not is_raised(posts[mine])):
+				_spot = posts[mine]
+				_goal = _spot.global_position
 			else:
 				_goal = _pick_from(settlement.patrol_points(), 2.0)
 		else:
@@ -464,7 +493,11 @@ func _patrol(delta: float) -> void:
 		state = State.WALK
 		_state_time = 0.0
 	if state == State.WALK:
-		if _move_to(_goal, walk_speed, delta) or _state_time > 60.0:
+		# Up a tower: to the foot of its stair first, then up it (28.1:
+		# coming at it from the side, the way on was missed)
+		var way := _way_up()
+		var there := _move_to(way if way != Vector3.INF else _goal, walk_speed, delta)
+		if (there and way == Vector3.INF) or _state_time > 60.0:
 			state = State.PATROL
 			_state_time = 0.0
 			_state_length = _rng.randf_range(8.0, 15.0)
@@ -713,7 +746,7 @@ func _wander(around: Vector3, radius: float, delta: float) -> void:
 ## settlement's defended area.
 func _find_raider() -> Node3D:
 	var best: Node3D = null
-	var best_d := guard_range
+	var best_d := sight_range()
 	for n in get_tree().get_nodes_in_group("enemies"):
 		var r := n as Node3D
 		if r == null or (r.has_method("is_dead") and r.call("is_dead")):
@@ -721,14 +754,173 @@ func _find_raider() -> Node3D:
 		var d := global_position.distance_to(r.global_position)
 		if d > best_d or r.global_position.distance_to(settlement.global_position) > settlement.defend_radius:
 			continue
-		if not _can_see(r):
+		if not sees(r):
 			continue
 		best = r
 		best_d = d
 	return best
 
 
-## The nearest raider of this settlement's raid that's inside the farm.
+# ---------------------------------------------------------------- towers (28.1)
+
+## They've a gun with rounds in it or to load.
+func can_shoot() -> bool:
+	return gun != null and gun.weapon != null and not gun.weapon.melee and (magazine > 0 or ammo > 0)
+
+
+## A guard spot up a tower (a deck, not a sandbagged post on the ground).
+static func is_raised(spot: Node3D) -> bool:
+	if spot == null or not is_instance_valid(spot):
+		return false
+	var b := spot.get_parent().get_parent() as Node3D if spot.get_parent() != null else null
+	var floor_y := b.global_position.y if b != null else 0.0
+	return spot.global_position.y - floor_y > RAISED
+
+
+## Given a tower to man: they stay up it through a raid.
+func holds_tower() -> bool:
+	return role == Role.GUARD and is_raised(_spot)
+
+
+## Up their tower now (on its deck, not on the stair).
+func up_tower() -> bool:
+	if not holds_tower():
+		return false
+	var p := _spot.global_position
+	return Vector2(p.x - global_position.x, p.z - global_position.z).length() < 2.5 and absf(p.y - global_position.y) < 1.0
+
+
+func sight_range() -> float:
+	return tower_range if up_tower() else guard_range
+
+
+## In sight: nothing in the way, or (up a tower) anyone along the wall it
+## stands against, seen over its top.
+func sees(n: Node3D) -> bool:
+	if _can_see(n):
+		return true
+	return up_tower() and _on_my_wall(n.global_position) and _clear_but_walls(eyes.global_position, n.global_position + Vector3.UP * 1.2)
+
+
+## Within ON_WALL of a wall length the tower stands against, or of the line
+## it runs along (the rest of that side), within the tower's sight.
+func _on_my_wall(p: Vector3) -> bool:
+	if _tower_walls_for != _spot:
+		_tower_walls_for = _spot
+		_tower_walls.clear()
+		var at := _spot.global_position
+		for n in get_tree().get_nodes_in_group("settlement_buildings"):
+			var b := n as Structure
+			if b == null or b.definition == null or not WALL_IDS.has(b.definition.id) or b.is_queued_for_deletion():
+				continue
+			if Vector2(b.global_position.x - at.x, b.global_position.z - at.z).length() > 6.0:
+				continue
+			var along := b.global_basis.x
+			along.y = 0.0
+			_tower_walls.append([b.global_position, along.normalized()])
+	for w: Array in _tower_walls:
+		var o: Vector3 = w[0]
+		var along: Vector3 = w[1]
+		var rel := Vector3(p.x - o.x, 0.0, p.z - o.z)
+		var across := (rel - along * rel.dot(along)).length()
+		if across <= ON_WALL and absf(rel.dot(along)) <= tower_range:
+			return true
+	return false
+
+
+## Nothing but built walls (and the guard's own tower) between a and b.
+func _clear_but_walls(a: Vector3, b: Vector3) -> bool:
+	var space := get_world_3d().direct_space_state
+	var skip: Array[RID] = [get_rid()]
+	for i in 8:
+		var q := PhysicsRayQueryParameters3D.create(a, b, PhysicsLayers.WORLD_SOLID, skip)
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			return true
+		var s := Structure.from_collider(hit["collider"])
+		var ok := s != null and s.definition != null and (WALL_IDS.has(s.definition.id) or s.definition.id == &"watchtower" or s.definition.id == &"guard_tower")
+		if not ok:
+			return false
+		skip.append(hit["rid"])
+	return false
+
+
+## A built wall (fence, palisade or gate) between a and b (28.1).
+func wall_between(a: Vector3, b: Vector3) -> bool:
+	var space := get_world_3d().direct_space_state
+	var skip: Array[RID] = [get_rid()]
+	for i in 8:
+		var q := PhysicsRayQueryParameters3D.create(a, b, PhysicsLayers.WORLD_SOLID, skip)
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			return false
+		var s := Structure.from_collider(hit["collider"])
+		if s != null and s.definition != null and WALL_IDS.has(s.definition.id):
+			return true
+		skip.append(hit["rid"])
+	return false
+
+
+## On the far side of this place's walls: a built wall in a straight line,
+## or the way there runs out through one of its gates (Northwatch's own
+## walls aren't built ones) (28.1).
+func across_walls(p: Vector3) -> bool:
+	if wall_between(global_position + Vector3.UP, p + Vector3.UP):
+		return true
+	var gates := get_tree().get_nodes_in_group("settlement_gates").filter(func(g: Node) -> bool:
+		return not g.is_queued_for_deletion() and (g as SettlementGate).settlement() == settlement)
+	if gates.is_empty():
+		return false
+	var map := get_world_3d().navigation_map
+	var path := NavigationServer3D.map_get_path(map, global_position, NavigationServer3D.map_get_closest_point(map, p), true)
+	for g: Node in gates:
+		var at := (g as Node3D).global_position
+		for i in path.size() - 1:
+			if Settlement._flat_distance_to_segment(at, path[i], path[i + 1]) < 1.5:
+				return true
+	return false
+
+
+## In front of the foot of the stair up to their tower, while they're still
+## on the ground and haven't got there yet; INF otherwise.
+func _way_up() -> Vector3:
+	if _climbing or not holds_tower() or _goal != _spot.global_position:
+		return Vector3.INF
+	if global_position.y > _spot.global_position.y - 1.5:
+		return Vector3.INF
+	var b := _spot.get_parent().get_parent() as Node3D
+	var ramp := b.find_child("Ramp", true, false) as CollisionShape3D if b != null else null
+	if ramp == null or not (ramp.shape is ConvexPolygonShape3D):
+		return Vector3.INF
+	var foot_z := -INF
+	var xs := 0.0
+	var n := 0
+	for pt: Vector3 in (ramp.shape as ConvexPolygonShape3D).points:
+		if pt.y < 0.01 and pt.z > foot_z + 0.01:
+			foot_z = pt.z
+			xs = 0.0
+			n = 0
+		if pt.y < 0.01 and absf(pt.z - foot_z) <= 0.01:
+			xs += pt.x
+			n += 1
+	if n == 0:
+		return Vector3.INF
+	var way := ramp.global_transform * Vector3(xs / n, 0.0, foot_z + 1.0)
+	way = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, way)
+	if Vector2(way.x - global_position.x, way.z - global_position.z).length() < 0.7:
+		_climbing = true  # at the foot: on up
+		return Vector3.INF
+	return way
+
+
+## Seconds between shots with `w`: a quarter faster than before 28.1, and
+## the same on paper.
+static func shot_interval(w: WeaponDefinition) -> float:
+	return maxf(60.0 / maxf(w.rounds_per_minute, 1.0), 0.45) / FIRE_RATE
+
+
+## The nearest raider of this settlement's raid that's inside the farm, on
+## this side of its walls (28.1).
 func _nearest_raid_raider() -> Raider:
 	var best: Raider = null
 	var best_d := INF
@@ -741,7 +933,7 @@ func _nearest_raid_raider() -> Raider:
 		if r.global_position.distance_to(settlement.global_position) > settlement.defend_radius:
 			continue
 		var d := r.global_position.distance_to(global_position)
-		if d < best_d:
+		if d < best_d and not across_walls(r.global_position):
 			best = r
 			best_d = d
 	return best
@@ -754,12 +946,19 @@ func _can_see(n: Node3D) -> bool:
 
 func _fight(delta: float) -> void:
 	var gone: bool = target == null or not is_instance_valid(target) or (target.has_method("is_dead") and bool(target.call("is_dead")))
-	if gone or global_position.distance_to(target.global_position) > guard_range * 1.3 \
+	if gone or global_position.distance_to(target.global_position) > sight_range() * 1.3 \
 			or target.global_position.distance_to(settlement.global_position) > settlement.defend_radius * 1.2:
 		target = null
 		_enter(State.IDLE)
 		return
 	var to := target.global_position - global_position
+	# Up a tower they stay up it; on the ground they don't go out through
+	# the walls after anyone (28.1)
+	if not can_shoot() and ((holds_tower() and to.length() > 2.5) \
+			or (to.length() > 1.6 and across_walls(target.global_position))):
+		target = null
+		_enter(State.IDLE)
+		return
 	if gun != null and (magazine > 0 or ammo > 0):
 		_brake(delta)
 		_face(to, delta)
@@ -773,7 +972,7 @@ func _fight(delta: float) -> void:
 		if magazine <= 0:
 			_reloading = gun.weapon.reload_time
 			return
-		if _cooldown <= 0.0 and _can_see(target):
+		if _cooldown <= 0.0 and sees(target):
 			_shoot(target)
 		return
 	# No gun (or no rounds): the machete
@@ -794,17 +993,31 @@ func _fight(delta: float) -> void:
 func _shoot(t: Node3D) -> void:
 	var w := gun.weapon
 	magazine -= 1
-	_cooldown = maxf(60.0 / maxf(w.rounds_per_minute, 1.0), 0.45)
+	_cooldown = shot_interval(w)
 	var from := eyes.global_position
-	var aim := (t.global_position + Vector3.UP * 1.1 - from).normalized()
-	var spread := deg_to_rad(1.5 + w.base_spread * 2.0)
+	var aim := (t.global_position + Vector3.UP * 1.2 - from).normalized()  # where they look (28.1: was 1.1, under the sight line)
+	var up := up_tower()
+	var spread := deg_to_rad(1.5 + w.base_spread * 2.0) * (TOWER_SPREAD if up else 1.0)
 	var space := get_world_3d().direct_space_state
 	for p in w.pellets:
 		var axis := aim.cross(Vector3.UP).normalized().rotated(aim, _rng.randf() * TAU)
 		var dir := aim.rotated(axis, _rng.randf() * spread) if axis.length() > 0.5 else aim
-		var q := PhysicsRayQueryParameters3D.create(from, from + dir * w.max_range, PhysicsLayers.WORLD_SOLID | PhysicsLayers.NPCS, [get_rid()])
-		var hit := space.intersect_ray(q)
+		var skip: Array[RID] = [get_rid()]
+		var hit := {}
+		for i in 6:
+			var q := PhysicsRayQueryParameters3D.create(from, from + dir * w.max_range, PhysicsLayers.WORLD_SOLID | PhysicsLayers.NPCS, skip)
+			hit = space.intersect_ray(q)
+			# From a tower, over the top of its own walls (28.1)
+			var s := Structure.from_collider(hit["collider"]) if not hit.is_empty() else null
+			if up and s != null and s.definition != null and (WALL_IDS.has(s.definition.id) or s.definition.id in [&"watchtower", &"guard_tower"]):
+				skip.append(hit["rid"])
+				continue
+			break
 		if hit.is_empty():
+			continue
+		# Never their own place's buildings (28.1: a shot into the palisade
+		# used to chip it)
+		if Structure.from_collider(hit["collider"]) != null:
 			continue
 		var h := HealthComponent.find_on(hit["collider"])
 		if h == null or hit["collider"] is Settler:
@@ -865,7 +1078,10 @@ func _move_to(point: Vector3, speed: float, delta: float) -> bool:
 					# A few tries and still getting nowhere: hop on to the next point
 					_stuck = 0
 					var hop := NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, next)
-					if hop.distance_to(global_position) < 3.0:
+					# Never through a fence, palisade or shut gate (28.1)
+					if hop.distance_to(global_position) < 3.0 \
+							and not wall_between(global_position + Vector3.UP * 0.5, hop + Vector3.UP * 0.5) \
+							and not wall_between(global_position + Vector3.UP * 1.2, hop + Vector3.UP * 1.2):
 						global_position = hop + Vector3.UP * 0.05
 						velocity = Vector3.ZERO
 				else:
