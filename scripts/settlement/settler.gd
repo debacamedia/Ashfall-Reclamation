@@ -956,7 +956,7 @@ func _shoot(t: Node3D) -> void:
 	magazine -= 1
 	_cooldown = shot_interval(w)
 	var from := eyes.global_position
-	var aim := (t.global_position + Vector3.UP * 1.1 - from).normalized()
+	var aim := (t.global_position + Vector3.UP * 1.2 - from).normalized()  # where they look (28.1: was 1.1, under the sight line)
 	var up := up_tower()
 	var spread := deg_to_rad(1.5 + w.base_spread * 2.0) * (TOWER_SPREAD if up else 1.0)
 	var space := get_world_3d().direct_space_state
