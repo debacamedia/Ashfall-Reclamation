@@ -338,7 +338,10 @@ func test_guards_stand_at_the_posts() -> void:
 	await _finish(st, tower)
 	var spots := st.guard_posts()
 	check(spots.size() == 2, "a guard post and a tower")
+	# (28.1: towers go to guards with a gun; both armed here)
+	var rifle: ItemDefinition = load("res://resources/items/weapons/service_rifle_item.tres")
 	for g in [a, b]:
+		(g as Settler).arm(rifle, 30)
 		(g as Settler)._goal = Vector3.INF
 		(g as Settler)._enter(Settler.State.IDLE)
 	await wait_physics(3)
