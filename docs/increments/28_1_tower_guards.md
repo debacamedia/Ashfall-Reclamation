@@ -50,7 +50,15 @@ The same raid at the mine (six raiders, three rifle guards up the watchtowers), 
 | The south | never | never | 6 of 6 | none | 25 | 19 s |
 | Over the ridge | never | never | 6 of 6 | none | 23 | 21 s |
 
-SCREENSHOTS
+In a real window, the same raid up the road: the three guards were up their towers before it came and still up them after, all at full health, and all six raiders were killed. Nobody came down.
+
+| From the gate tower's deck: the six raiders coming up the road | After: the raiders fallen at the gate, the other gate tower's guard still up it |
+|---|---|
+| ![Coming](../screenshots/28_1_from_the_gate_tower.jpg) | ![After](../screenshots/28_1_after_the_raid.jpg) |
+
+| The gate from the road afterwards, a guard up the tower behind it | The mine's log: "Raid over: 6 killed" |
+|---|---|
+| ![Gate](../screenshots/28_1_the_gate_from_the_road.jpg) | ![Log](../screenshots/28_1_settlement_log.jpg) |
 
 ## Raids while you're away
 
