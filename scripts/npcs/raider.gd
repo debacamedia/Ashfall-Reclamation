@@ -103,13 +103,14 @@ var _stuck_time := 0.0
 ## Spike traps slow raiders down while they wade through (slow_down).
 var _slow_factor := 1.0
 var _slow_time := 0.0
-var _arm_tween: Tween
+## The person (29): a HumanBody, animated by _animate.
+var body: HumanBody
+var _act := 0.0
 
 @onready var health: HealthComponent = %HealthComponent
 @onready var agent: NavigationAgent3D = %NavAgent
 @onready var eyes: Marker3D = %Eyes
 @onready var visual: Node3D = %Visual
-@onready var right_arm: Node3D = %RightArm
 @onready var alert_label: Label3D = %AlertLabel
 # Optional sound players
 @onready var _alert_sound: AudioStreamPlayer3D = get_node_or_null("%AlertSound")
@@ -147,6 +148,10 @@ func _ready() -> void:
 	if armour > 0.0:
 		health.damage_modifier = armour_blocks
 	alert_label.visible = false
+	body = visual.get_node_or_null("Body") as HumanBody
+	if body != null:
+		body.pick_looks(_rng.randi())
+		body.build()
 	_enter(State.IDLE)
 
 
@@ -164,6 +169,7 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, 20.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, 20.0 * delta)
 		move_and_slide()
+		_animate(delta)
 		return
 
 	_state_time += delta
@@ -202,6 +208,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	NpcStep.step_up(self)
 	_update_footsteps(delta)
+	_animate(delta)
 
 
 # ---------------------------------------------------------------- public
@@ -558,10 +565,10 @@ func _on_damaged(_amount: float, info: DamageInfo) -> void:
 	_play(_hit_sound)
 	if health.current_health > 0.0 and (_pain_sound == null or not _pain_sound.playing):
 		_play(_pain_sound)
-	# Flinch
-	var tween := create_tween()
-	tween.tween_property(visual, "rotation:x", deg_to_rad(10.0), 0.05)
-	tween.tween_property(visual, "rotation:x", 0.0, 0.2)
+	# Flinch (unless mid-swing)
+	if state != State.ATTACK and body != null and _act <= 0.0:
+		body.play(&"Hit_Chest", 1.0, 0.05, true)
+		_act = 0.3
 	if info.source is PlayerController:
 		alert_to(info.source as PlayerController)
 	elif info.source is Settler and raid != null and is_alive_target(info.source as Node3D) and state != State.ATTACK:
@@ -583,11 +590,6 @@ func _on_died(_info: DamageInfo) -> void:
 	collision_layer = 0
 	collision_mask = PhysicsLayers.TERRAIN | PhysicsLayers.STRUCTURES
 	remove_from_group("noise_listeners")
-	if _arm_tween != null:
-		_arm_tween.kill()
-	var tween := create_tween().set_parallel()
-	tween.tween_property(visual, "rotation:x", deg_to_rad(84.0), 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_property(right_arm, "rotation:x", deg_to_rad(-30.0), 0.5)
 	_play(_death_sound)
 	_drop_loot()
 	_drop_carried()
@@ -604,19 +606,42 @@ func _show_alert() -> void:
 			alert_label.visible = false)
 
 
+## The swing (29): the blade comes down at the end of the windup.
 func _play_windup() -> void:
-	if _arm_tween != null:
-		_arm_tween.kill()
-	_arm_tween = create_tween()
-	_arm_tween.tween_property(right_arm, "rotation:x", deg_to_rad(150.0), attack_windup * 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	if body == null:
+		return
+	var total := attack_windup + attack_recovery
+	body.play(&"Sword_Attack", body.length_of(&"Sword_Attack") / maxf(total, 0.1), 0.08, true)
+	_act = total
 
 
 func _play_strike() -> void:
-	if _arm_tween != null:
-		_arm_tween.kill()
-	_arm_tween = create_tween()
-	_arm_tween.tween_property(right_arm, "rotation:x", deg_to_rad(40.0), 0.1)
-	_arm_tween.tween_property(right_arm, "rotation:x", deg_to_rad(15.0), 0.4)
+	pass
+
+
+## Their body's animation for what they're doing (29).
+func _animate(delta: float) -> void:
+	if body == null or body.anim == null:
+		return
+	_act -= delta
+	if state == State.DEAD:
+		body.play(&"Death01", 1.0, 0.12, false, false)
+		return
+	if _act > 0.0:
+		return
+	var speed := Vector2(velocity.x, velocity.z).length()
+	if speed > 3.8:
+		body.play(&"Sprint", clampf(speed / 5.5, 0.7, 1.4))
+	elif speed > 2.2:
+		body.play(&"Jog_Fwd", clampf(speed / 3.6, 0.7, 1.5))
+	elif speed > 0.25:
+		body.play(&"Walk", clampf(speed / 1.4, 0.6, 1.6))
+	elif raid != null and raid_phase == RaidPhase.LOOT:
+		body.play(&"PickUp_Table")
+	elif state == State.CHASE or state == State.ATTACK:
+		body.play(&"Sword_Idle", 1.0, 0.2, false, false)
+	else:
+		body.play(&"Idle")
 
 
 func _play(player: AudioStreamPlayer3D) -> void:

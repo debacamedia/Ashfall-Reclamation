@@ -50,7 +50,12 @@ const SHOT_SOUNDS := {
 }
 const SHIRTS := [Color(0.55, 0.32, 0.25), Color(0.3, 0.38, 0.5), Color(0.45, 0.45, 0.32), Color(0.5, 0.48, 0.44),
 	Color(0.35, 0.42, 0.3), Color(0.58, 0.5, 0.36), Color(0.42, 0.3, 0.42)]
-const SKINS := [Color(0.88, 0.72, 0.6), Color(0.72, 0.55, 0.42), Color(0.55, 0.4, 0.3), Color(0.4, 0.28, 0.2), Color(0.95, 0.8, 0.7)]
+## Work trousers and boots (29: with the shirt, on the body's clothes)
+const TROUSERS := [Color(0.28, 0.27, 0.24), Color(0.24, 0.26, 0.32), Color(0.36, 0.3, 0.22), Color(0.3, 0.3, 0.27), Color(0.22, 0.2, 0.18)]
+const BOOTS := [Color(0.22, 0.16, 0.11), Color(0.15, 0.13, 0.12), Color(0.3, 0.22, 0.14)]
+## What armour looks like over the clothes (22, 28): [colour, metal]
+const ARMOUR_LOOKS := {"leather": [Color(0.42, 0.27, 0.15), 0.0], "plated": [Color(0.45, 0.46, 0.48), 0.6],
+	"wool": [Color(0.82, 0.77, 0.66), 0.0], "padded": [Color(0.42, 0.4, 0.28), 0.0]}
 
 @export var settler_name := "Survivor"
 @export var role: Role = Role.NONE
@@ -126,6 +131,13 @@ var _tower_walls: Array = []
 var _tower_walls_for: Node3D = null
 ## At the foot of their tower's stair, on the way up it.
 var _climbing := false
+## The person (29), their gear by name, and what they're doing with their
+## hands.
+var body: HumanBody
+var _parts := {}
+var _working := false
+var _act := 0.0
+var _act_anim := &""
 var _stuck := 0
 var _probe_left := 0.0
 var _probe_from := Vector3.INF
@@ -159,6 +171,7 @@ func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.damage_modifier = func(info: DamageInfo) -> float: return armour.absorb(info.amount, info.type)
 	armour.changed.connect(_update_visuals)
+	body = visual.get_node_or_null("Body") as HumanBody
 	_apply_look()
 	_update_visuals()
 	name_label.visible = false
@@ -313,12 +326,17 @@ func leave() -> void:
 
 # ---------------------------------------------------------------- AI
 
+func _process(_delta: float) -> void:
+	_update_gun()
+
+
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
 	if state == State.DEAD or state == State.DOWN:
 		_brake(delta)
 		move_and_slide()
+		_animate(delta)
 		return
 	_state_time += delta
 	_cooldown -= delta
@@ -341,6 +359,7 @@ func _physics_process(delta: float) -> void:
 			_home_life(delta)
 	move_and_slide()
 	NpcStep.step_up(self)
+	_animate(delta)
 
 
 func _enter(s: State) -> void:
@@ -409,7 +428,6 @@ func _home_life(delta: float) -> void:
 	if settlement.raid_active() and role != Role.GUARD:
 		var shelter := settlement.get_node_or_null("Shelter") as Node3D
 		_swing(false)
-		visual.rotation.x = 0.0
 		_wander(shelter.global_position if shelter != null else _hangout(), 1.5, delta)
 		return
 	var shear := role == Role.FARMER and _shearing()
@@ -457,11 +475,11 @@ func _farm(delta: float) -> void:
 			_state_time = 0.0
 			_state_length = _rng.randf_range(8.0, 14.0)
 		return
-	# Working the soil: bent over, bobbing
+	# Working the soil: down on one knee
 	_brake(delta)
-	visual.rotation.x = deg_to_rad(25.0 + sin(_state_time * 3.0) * 8.0)
+	_working = true
 	if _state_time > _state_length:
-		visual.rotation.x = 0.0
+		_working = false
 		_goal = Vector3.INF
 
 
@@ -710,16 +728,14 @@ func _next_piece_at(site: ConstructionSite) -> Vector3:
 	return site.global_transform * site.pieces[i].origin if not site.pieces.is_empty() else site.global_position
 
 
-## The hammer arm going up and down.
+## At work with their hands (a hammer, a pick, the stove…): animated by
+## _animate (29).
 func _swing(on: bool) -> void:
-	var arm := visual.get_node_or_null("RightArm") as Node3D
-	if arm == null:
-		return
-	arm.rotation.x = (0.26 - 1.1 + absf(sin(_state_time * 5.0)) * 1.1) if on else 0.26
+	_working = on
 
 
 func _wander(around: Vector3, radius: float, delta: float) -> void:
-	visual.rotation.x = 0.0
+	_working = false
 	if _far_from(around):
 		# Away at another place (a Builder, 27): home first
 		_go_far(around, settlement, delta)
@@ -983,6 +999,7 @@ func _fight(delta: float) -> void:
 	_face(to, delta)
 	if _cooldown <= 0.0:
 		_cooldown = 1.0
+		_act_once(&"Sword_Attack", 0.9)
 		var info := DamageInfo.create(melee_damage, DamageInfo.Type.MELEE, self)
 		info.direction = to.normalized()
 		var h := HealthComponent.find_on(target)
@@ -994,6 +1011,7 @@ func _shoot(t: Node3D) -> void:
 	var w := gun.weapon
 	magazine -= 1
 	_cooldown = shot_interval(w)
+	_act_once(&"Pistol_Shoot", minf(_cooldown, 0.3))
 	var from := eyes.global_position
 	var aim := (t.global_position + Vector3.UP * 1.2 - from).normalized()  # where they look (28.1: was 1.1, under the sight line)
 	var up := up_tower()
@@ -1156,7 +1174,6 @@ func _far_from(p: Vector3) -> bool:
 ## either, simply arrive.
 func _go_far(dest: Vector3, place: Settlement, delta: float) -> void:
 	_swing(false)
-	visual.rotation.x = 0.0
 	if state != State.WALK:
 		state = State.WALK
 		_state_time = 0.0
@@ -1212,70 +1229,144 @@ func _pick(group: Node, jitter: float) -> Vector3:
 # ---------------------------------------------------------------- looks
 
 func _apply_look() -> void:
+	if body == null:
+		return
+	var seed_value := look_seed if look_seed != 0 else hash(settler_name)
 	var rng := RandomNumberGenerator.new()
-	rng.seed = look_seed if look_seed != 0 else hash(settler_name)
-	var shirt: Color = SHIRTS[rng.randi() % SHIRTS.size()]
-	var skin: Color = SKINS[rng.randi() % SKINS.size()]
-	for n in visual.find_children("*", "MeshInstance3D", true, false):
-		var mi := n as MeshInstance3D
-		if mi.has_meta("tint"):
-			var m := (mi.material_override as StandardMaterial3D).duplicate() as StandardMaterial3D
-			m.albedo_color = shirt if mi.get_meta("tint") == "shirt" else skin
-			mi.material_override = m
+	rng.seed = seed_value
+	body.shirt = SHIRTS[rng.randi() % SHIRTS.size()]
+	body.trousers = TROUSERS[rng.randi() % TROUSERS.size()]
+	body.boots = BOOTS[rng.randi() % BOOTS.size()]
+	body.long_sleeves = rng.randf() < 0.55
+	body.pick_looks(seed_value)
+	body.rebuild()
+	_parts.clear()
+	for n in visual.find_children("*", "Node3D", true, false):
+		var key := String(n.get_meta("part", n.name))
+		if n.has_meta("slot"):
+			if not _parts.has(key):
+				_parts[key] = []
+			(_parts[key] as Array).append(n)
+	_update_visuals()
+
+
+## A piece of their gear by name ("HardHat", "Pickaxe"…), or null (29).
+func part(part_name: String) -> Node3D:
+	var list: Array = _parts.get(part_name, [])
+	return list[0] if not list.is_empty() else null
+
+
+func _show(part_name: String, on: bool) -> void:
+	for n: Node3D in _parts.get(part_name, []):
+		n.visible = on
 
 
 func _update_visuals() -> void:
-	if not is_node_ready():
+	if not is_node_ready() or body == null:
 		return
 	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD and armour.worn(ArmourSet.BODY) == null],
 			["Helmet", role == Role.GUARD and armour.worn(ArmourSet.HEAD) == null],
 			["HardHat", role == Role.BUILDER or role == Role.MINER], ["ToolBelt", role == Role.BUILDER or role == Role.ARMORER],
 			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK or role == Role.TAILOR], ["CowboyHat", role == Role.RANCHER],
 			["HeadLamp", role == Role.MINER], ["Goggles", role == Role.ARMORER]]:
-		var n := visual.get_node_or_null(pair[0]) as Node3D
-		if n != null:
-			n.visible = pair[1]
-	# What they wear (22): leather brown, or plated grey
-	for pair in [["ArmourHead", ArmourSet.HEAD], ["ArmourBody", ArmourSet.BODY], ["ArmourLegs", ArmourSet.LEGS]]:
-		var n := visual.get_node_or_null(pair[0]) as Node3D
-		if n == null:
-			continue
+		_show(pair[0], pair[1])
+	# What they wear (22): over the clothes, leather brown, plated grey (with
+	# plates), Wool Clothes cream, padded olive (28)
+	var head := armour.worn(ArmourSet.HEAD)
+	_show("ArmourHead", head != null)
+	if head != null:
+		var look: Array = ARMOUR_LOOKS[_armour_kind(head)]
+		for n: Node3D in _parts.get("ArmourHead", []):
+			for mi in n.find_children("*", "MeshInstance3D", true, false):
+				var m := StandardMaterial3D.new()
+				m.albedo_color = look[0]
+				m.metallic = look[1]
+				m.roughness = 0.6 if look[1] > 0.0 else 0.9
+				(mi as MeshInstance3D).material_override = m
+	for pair in [["ArmourBody", ArmourSet.BODY, &"body"], ["ArmourLegs", ArmourSet.LEGS, &"legs"]]:
 		var it := armour.worn(pair[1])
-		n.visible = it != null
-		if it != null:
-			var plated := String(it.id).begins_with("plated") or String(it.id).begins_with("scrap")
-			# 28: Wool Clothes a cream wool, padded pieces a quilted olive
-			var colour := Color(0.45, 0.46, 0.48) if plated else Color(0.42, 0.27, 0.15)
-			if String(it.id).begins_with("wool"):
-				colour = Color(0.82, 0.77, 0.66)
-			elif String(it.id).begins_with("padded"):
-				colour = Color(0.42, 0.4, 0.28)
+		var kind := _armour_kind(it) if it != null else ""
+		_show(pair[0], it != null)
+		# Plates only on plated pieces
+		for n: Node3D in _parts.get(pair[0], []):
 			for c in n.get_children():
-				var mi := c as MeshInstance3D
-				if mi != null:
-					var m := StandardMaterial3D.new()
-					m.albedo_color = colour
-					m.metallic = 0.5 if plated else 0.0
-					m.roughness = 0.6 if plated else 0.9
-					mi.material_override = m
-	var g := visual.get_node_or_null("RightArm/Gun") as Node3D
-	if g != null:
-		g.visible = gun != null
-	var blade := visual.get_node_or_null("RightArm/Machete") as Node3D
-	if blade != null:
-		blade.visible = gun == null and role == Role.GUARD
-	var hammer := visual.get_node_or_null("RightArm/Hammer") as Node3D
-	if hammer != null:
-		hammer.visible = gun == null and (role == Role.BUILDER or role == Role.ARMORER)
-	var axe := visual.get_node_or_null("RightArm/Axe") as Node3D
-	if axe != null:
-		axe.visible = gun == null and role == Role.WOODCUTTER
-	var pick := visual.get_node_or_null("RightArm/Pickaxe") as Node3D
-	if pick != null:
-		pick.visible = gun == null and role == Role.MINER
-	if role not in [Role.BUILDER, Role.WOODCUTTER, Role.COOK, Role.RANCHER, Role.MINER, Role.ARMORER]:
+				(c as Node3D).visible = kind == "plated"
+		if it == null:
+			body.set_worn(pair[2], null)
+		else:
+			var look: Array = ARMOUR_LOOKS[kind]
+			body.set_worn(pair[2], look[0], look[1])
+	_show("Gun", gun != null)
+	_show("Machete", gun == null and role == Role.GUARD)
+	_show("Hammer", gun == null and (role == Role.BUILDER or role == Role.ARMORER))
+	_show("Axe", gun == null and role == Role.WOODCUTTER)
+	_show("Pickaxe", gun == null and role == Role.MINER)
+	if role not in [Role.BUILDER, Role.WOODCUTTER, Role.COOK, Role.RANCHER, Role.MINER, Role.ARMORER, Role.TAILOR, Role.FARMER]:
 		_swing(false)
 
+
+static func _armour_kind(it: ItemDefinition) -> String:
+	var id := String(it.id)
+	if id.begins_with("plated") or id.begins_with("scrap"):
+		return "plated"
+	if id.begins_with("wool"):
+		return "wool"
+	if id.begins_with("padded"):
+		return "padded"
+	return "leather"
+
+
+# ---------------------------------------------------------------- animation (29)
+
+## Their body's animation for what they're doing now.
+func _animate(delta: float) -> void:
+	if body == null or body.anim == null:
+		return
+	_act -= delta
+	if state == State.DEAD or state == State.DOWN:
+		body.play(&"Death01", 1.0, 0.15, false, false)
+		return
+	if _act > 0.0:
+		return  # a shot or a blow playing out
+	var speed := Vector2(velocity.x, velocity.z).length()
+	if speed > 2.6:
+		body.play(&"Jog_Fwd", clampf(speed / 3.6, 0.7, 1.5))
+	elif speed > 0.25:
+		body.play(&"Walk", clampf(speed / 1.4, 0.6, 1.6))
+	elif state == State.FIGHT:
+		body.play(&"Pistol_Idle" if can_shoot() else &"Sword_Idle", 1.0, 0.2, false, false)
+	elif _working:
+		match role:
+			Role.MINER, Role.WOODCUTTER:
+				body.play(&"Sword_Attack", 0.8)
+			Role.BUILDER, Role.ARMORER, Role.FARMER:
+				body.play(&"Fixing_Kneeling", 1.0)
+			_:
+				body.play(&"Interact", 0.8)
+	elif settlement != null and settlement.raid_active() and role != Role.GUARD and has_arrived():
+		body.play(&"Crouch_Idle")
+	else:
+		body.play(&"Idle")
+
+
+## A shot or a blow, played over whatever they were doing.
+func _act_once(anim_name: StringName, seconds: float) -> void:
+	if body == null or body.anim == null:
+		return
+	body.play(anim_name, maxf(body.length_of(anim_name) / maxf(seconds, 0.05), 0.5), 0.05, true)
+	_act = seconds
+
+
+## The gun points where they face (the hand's own turn would point it every
+## which way): set after the animation's moved the hand, each frame.
+func _update_gun() -> void:
+	if gun == null:
+		return
+	for g: Node3D in _parts.get("Gun", []):
+		if not g.visible:
+			continue
+		var hand := g.get_parent() as Node3D
+		g.global_transform = Transform3D(visual.global_basis.orthonormalized(), hand.global_transform * Vector3(0, 0.08, 0))
 
 ## Name and job float over them when you're close.
 func _update_label() -> void:
@@ -1289,6 +1380,8 @@ func _update_label() -> void:
 func _on_damaged(_amount: float, info: DamageInfo) -> void:
 	if hit_sound != null and not is_dead():
 		hit_sound.play()
+	if not is_dead() and not is_down() and _act <= 0.0:
+		_act_once(&"Hit_Chest", 0.3)
 	# A guard hit by a raider fights back
 	if role == Role.GUARD and has_arrived() and info != null and info.source is Node3D \
 			and (info.source as Node).is_in_group("enemies") and state != State.FIGHT:
@@ -1310,8 +1403,6 @@ func _go_down() -> void:
 	_enter(State.DOWN)
 	down_hours = 0.0
 	collision_layer = 0
-	var tween := create_tween()
-	tween.tween_property(visual, "rotation:x", deg_to_rad(-80.0), 0.5)
 	if settlement != null:
 		settlement.on_settler_down(self)
 
@@ -1331,7 +1422,6 @@ func help_up(health_fraction := 0.5) -> void:
 	health.revive(health_fraction)
 	down_hours = 0.0
 	collision_layer = PhysicsLayers.NPCS
-	visual.rotation = Vector3.ZERO
 	_enter(State.IDLE)
 	_update_visuals()
 
@@ -1350,8 +1440,6 @@ func _die_for_good() -> void:
 	talk.enabled = false
 	name_label.visible = false
 	collision_layer = 0
-	var tween := create_tween()
-	tween.tween_property(visual, "rotation:x", deg_to_rad(-88.0), 0.6)
 	if home != null:
 		if gun != null:
 			home._return_gun(self, null)
@@ -1434,7 +1522,6 @@ func load_state(data: Dictionary) -> void:
 		_enter(State.TRAVEL)
 	else:
 		_enter(State.IDLE)
-	visual.rotation = Vector3.ZERO
 	_update_visuals()
 	if _arrived and data.get("down") is bool and data["down"]:
 		_go_down()

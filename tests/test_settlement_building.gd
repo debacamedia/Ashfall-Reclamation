@@ -183,7 +183,7 @@ func test_hand_over_materials_and_a_builder_builds_it() -> void:
 	# A builder
 	var b := await _newcomer(zone, Settler.Role.BUILDER)
 	check(b.role == Settler.Role.BUILDER and b.role_name() == "Builder", "a Builder")
-	check((b.visual.get_node("HardHat") as Node3D).visible and (b.visual.get_node("RightArm/Hammer") as Node3D).visible, "in a hard hat, with a hammer")
+	check(b.part("HardHat").visible and b.part("Hammer").visible, "in a hard hat, with a hammer")
 	check(b.status_text() == "Building the guard post", "status: %s" % b.status_text())
 	var said := []
 	st.notice.connect(func(t: String) -> void: said.append(t))

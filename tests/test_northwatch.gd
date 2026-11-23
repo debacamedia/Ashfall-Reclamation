@@ -108,7 +108,7 @@ func test_the_armorer_makes_guns_from_scrap() -> void:
 		"no Armorers at the farm")
 	st.store.inventory.add_item(VEG, 20)
 	var a := await _newcomer(zone, st, Settler.Role.ARMORER)
-	check(a.role_name() == "Armorer" and (a.visual.get_node("Goggles") as Node3D).visible and (a.visual.get_node("RightArm/Hammer") as Node3D).visible,
+	check(a.role_name() == "Armorer" and a.part("Goggles").visible and a.part("Hammer").visible,
 		"an Armorer: goggles and a hammer")
 	# 15 Scrap Metal: not enough for anything
 	st.store.inventory.add_item(SCRAP, 15)

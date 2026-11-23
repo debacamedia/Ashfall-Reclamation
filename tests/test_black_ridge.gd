@@ -122,8 +122,8 @@ func test_miners_dig_scrap_metal() -> void:
 	var a := await _newcomer(zone, mine, Settler.Role.MINER)
 	var b := await _newcomer(zone, mine, Settler.Role.MINER)
 	check(a.role == Settler.Role.MINER and a.role_name() == "Miner" and a.status_text() == "Mining", "Miners: %s" % a.status_text())
-	check((a.visual.get_node("HardHat") as Node3D).visible and (a.visual.get_node("HeadLamp") as Node3D).visible
-		and (a.visual.get_node("RightArm/Pickaxe") as Node3D).visible, "in a hard hat with a lamp, with a pickaxe")
+	check(a.part("HardHat").visible and a.part("HeadLamp").visible
+		and a.part("Pickaxe").visible, "in a hard hat with a lamp, with a pickaxe")
 	var before := mine.scrap()
 	mine.store.inventory.add_item(load("res://resources/items/vegetables.tres"), 20)
 	mine.simulate(3.0)
