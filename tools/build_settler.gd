@@ -1,8 +1,9 @@
 extends SceneTree
-## Builds the settler (Increment 19): scenes/npcs/settler.tscn. A person in
-## the raiders' proportions but dressed as a civilian: work trousers, a shirt
-## and skin tinted per settler (Settler._apply_look), a straw hat for
-## farmers, a vest and helmet for guards, a gun or machete in hand.
+## Builds the settler (Increment 19): scenes/npcs/settler.tscn. Since 29 a
+## real person (HumanBody: a Quaternius body, dressed and animated), looks
+## picked per settler (Settler._apply_look), with each job's gear on their
+## bones: a straw hat for farmers, a vest and helmet for guards, a gun or
+## machete in hand…
 ##
 ##   godot --headless --path . -s res://tools/build_settler.gd
 
@@ -48,193 +49,101 @@ func _run() -> void:
 	head_shape.set_meta("damage_multiplier", 2.0)
 	_add(s, head_shape)
 
-	var trousers := _mat("trousers", Color(0.28, 0.27, 0.24))
-	var boots := _mat("boots", Color(0.22, 0.16, 0.11))
-	var shirt := _mat("shirt", Color(0.5, 0.4, 0.3))
-	var skin := _mat("skin", Color(0.8, 0.62, 0.5), 0.8)
-	var hair := _mat("hair", Color(0.18, 0.13, 0.09))
 	var straw := _mat("straw", Color(0.78, 0.66, 0.38))
 	var olive := _mat("olive", Color(0.3, 0.33, 0.2))
 	var steel := _mat("steel", Color(0.2, 0.2, 0.21), 0.5)
 	var blade := _mat("blade", Color(0.72, 0.72, 0.72), 0.35)
 	var wood := _mat("wood", Color(0.38, 0.25, 0.14))
+	var leather := _mat("leather", Color(0.42, 0.28, 0.16))
+	var whites := _mat("whites", Color(0.93, 0.92, 0.88))
+	var hat_leather := _mat("hat_leather", Color(0.45, 0.3, 0.17))
+	var hard_hat := _mat("hard_hat", Color(0.92, 0.72, 0.12), 0.5)
+	var plate := _mat("armour", Color(0.45, 0.46, 0.48), 0.6)
 
 	var v := Node3D.new()
 	v.name = "Visual"
 	_add(s, v)
 	v.unique_name_in_owner = true
-	for x in [-0.12, 0.12]:
-		var tag := "L" if x < 0 else "R"
-		_box(v, "Leg" + tag, Vector3(0.17, 0.8, 0.2), Vector3(x, 0.42, 0), trousers)
-		_box(v, "Boot" + tag, Vector3(0.19, 0.13, 0.29), Vector3(x, 0.065, -0.04), boots)
-	_box(v, "Belt", Vector3(0.46, 0.08, 0.27), Vector3(0, 0.84, 0), boots)
-	var torso := _box(v, "Torso", Vector3(0.46, 0.55, 0.27), Vector3(0, 1.13, 0), shirt)
-	torso.set_meta("tint", "shirt")
-	var neck := _box(v, "Neck", Vector3(0.11, 0.09, 0.11), Vector3(0, 1.44, 0), skin)
-	neck.set_meta("tint", "skin")
-	var head := MeshInstance3D.new()
-	head.name = "Head"
-	var hm := SphereMesh.new()
-	hm.radius = 0.14
-	hm.height = 0.3
-	head.mesh = hm
-	head.material_override = skin
-	head.position.y = 1.6
-	head.set_meta("tint", "skin")
-	_add(v, head)
-	_box(v, "Hair", Vector3(0.27, 0.08, 0.26), Vector3(0, 1.72, 0.02), hair)
+	# The person (Increment 29): a Quaternius body, dressed and animated;
+	# their looks are picked from their name when they're made
+	# (Settler._apply_look). Gear hangs on its bones: each node below says
+	# which with a "slot" meta, laid out in that bone's space (+Y up the
+	# bone, +Z the way the face looks; in the hand +Y runs to the
+	# fingertips and a handle lies along +X through the fist).
+	var person := HumanBody.new()
+	person.name = "Body"
+	_add(v, person)
 	# Farmer's straw hat
-	var hat := Node3D.new()
-	hat.name = "Hat"
-	hat.position.y = 1.73
-	_add(v, hat)
-	_cyl(hat, "Brim", 0.3, 0.3, 0.025, Vector3.ZERO, straw)
-	_cyl(hat, "Crown", 0.14, 0.16, 0.13, Vector3(0, 0.07, 0), straw)
+	var hat := _slot(person, "Hat", "Head", Vector3(0, 0.19, 0.025))
+	_cyl(hat, "Brim", 0.24, 0.24, 0.02, Vector3.ZERO, straw)
+	_cyl(hat, "Crown", 0.095, 0.11, 0.11, Vector3(0, 0.055, 0), straw)
 	# Guard's vest and helmet
-	var vest := Node3D.new()
-	vest.name = "Vest"
-	_add(v, vest)
-	_box(vest, "Front", Vector3(0.48, 0.42, 0.06), Vector3(0, 1.15, -0.15), olive)
-	_box(vest, "Back", Vector3(0.48, 0.42, 0.06), Vector3(0, 1.15, 0.15), olive)
-	_box(vest, "Pouch", Vector3(0.16, 0.1, 0.05), Vector3(-0.12, 1.0, -0.19), olive)
-	# Builder's hard hat and tool belt
-	var hard := Node3D.new()
-	hard.name = "HardHat"
-	hard.position.y = 1.69
-	_add(v, hard)
-	var hh := MeshInstance3D.new()
-	hh.name = "Shell"
-	var hm2 := SphereMesh.new()
-	hm2.radius = 0.165
-	hm2.height = 0.19
-	hm2.is_hemisphere = true
-	hh.mesh = hm2
-	hh.material_override = _mat("hard_hat", Color(0.92, 0.72, 0.12), 0.5)
-	_add(hard, hh)
-	_box(hard, "Brim", Vector3(0.36, 0.02, 0.4), Vector3(0, 0.005, -0.02), _mat("hard_hat", Color(0.92, 0.72, 0.12), 0.5))
-	# A Miner's lamp on the front of the hard hat (23)
-	var lamp := Node3D.new()
-	lamp.name = "HeadLamp"
-	lamp.position.y = 1.69
-	_add(v, lamp)
-	_box(lamp, "Lamp", Vector3(0.08, 0.06, 0.04), Vector3(0, 0.06, -0.16), _mat("lamp_glass", Color(1.0, 0.95, 0.7), 0.2))
-	# An Armorer's goggles, pushed up on the forehead (23.5)
-	var gog := Node3D.new()
-	gog.name = "Goggles"
-	gog.position.y = 1.69
-	_add(v, gog)
-	_box(gog, "Strap", Vector3(0.34, 0.04, 0.34), Vector3(0, -0.02, 0), _mat("leather", Color(0.42, 0.28, 0.16)))
-	_box(gog, "LensL", Vector3(0.08, 0.06, 0.04), Vector3(-0.06, -0.01, -0.17), _mat("goggle_glass", Color(0.35, 0.55, 0.5), 0.2))
-	_box(gog, "LensR", Vector3(0.08, 0.06, 0.04), Vector3(0.06, -0.01, -0.17), _mat("goggle_glass", Color(0.35, 0.55, 0.5), 0.2))
-	var belt := Node3D.new()
-	belt.name = "ToolBelt"
-	_add(v, belt)
-	_box(belt, "Belt", Vector3(0.5, 0.1, 0.3), Vector3(0, 0.86, 0), _mat("leather", Color(0.42, 0.28, 0.16)))
-	_box(belt, "Pouch", Vector3(0.14, 0.16, 0.08), Vector3(0.17, 0.78, -0.16), _mat("leather", Color(0.42, 0.28, 0.16)))
-	# Cook's apron and chef's hat (21.5)
-	var whites := _mat("whites", Color(0.93, 0.92, 0.88))
-	var apron := Node3D.new()
-	apron.name = "Apron"
-	_add(v, apron)
-	_box(apron, "Bib", Vector3(0.36, 0.3, 0.03), Vector3(0, 1.12, -0.15), whites)
-	_box(apron, "Skirt", Vector3(0.42, 0.42, 0.03), Vector3(0, 0.66, -0.15), whites)
-	var chef := Node3D.new()
-	chef.name = "ChefHat"
-	chef.position.y = 1.7
-	_add(v, chef)
-	_cyl(chef, "Band", 0.15, 0.15, 0.08, Vector3(0, 0.02, 0), whites)
-	_cyl(chef, "Puff", 0.17, 0.14, 0.14, Vector3(0, 0.12, 0), whites)
-	# Rancher's wide-brimmed hat (21.5)
-	var leather := _mat("hat_leather", Color(0.45, 0.3, 0.17))
-	var cowboy := Node3D.new()
-	cowboy.name = "CowboyHat"
-	cowboy.position.y = 1.72
-	_add(v, cowboy)
-	_cyl(cowboy, "Brim", 0.32, 0.32, 0.02, Vector3.ZERO, leather)
-	_cyl(cowboy, "Crown", 0.12, 0.15, 0.15, Vector3(0, 0.08, 0), leather)
-	_cyl(cowboy, "Band", 0.152, 0.152, 0.03, Vector3(0, 0.025, 0), _mat("hat_band", Color(0.15, 0.1, 0.08)))
-	# Armour a guard's given (22): coloured by the settler for leather or plate
-	var hide := _mat("armour", Color(0.42, 0.27, 0.15))
-	var ah := Node3D.new()
-	ah.name = "ArmourHead"
-	ah.position.y = 1.68
-	_add(v, ah)
-	var ahm := MeshInstance3D.new()
-	ahm.name = "Shell"
-	var ahs := SphereMesh.new()
-	ahs.radius = 0.172
-	ahs.height = 0.2
-	ahs.is_hemisphere = true
-	ahm.mesh = ahs
-	ahm.material_override = hide
-	_add(ah, ahm)
-	var ab := Node3D.new()
-	ab.name = "ArmourBody"
-	_add(v, ab)
-	_box(ab, "Coat", Vector3(0.5, 0.58, 0.31), Vector3(0, 1.13, 0), hide)
-	_box(ab, "Collar", Vector3(0.3, 0.06, 0.3), Vector3(0, 1.43, 0), hide)
-	var al := Node3D.new()
-	al.name = "ArmourLegs"
-	_add(v, al)
-	for x in [-0.12, 0.12]:
-		_box(al, "Leg" + ("L" if x < 0 else "R"), Vector3(0.19, 0.6, 0.22), Vector3(x, 0.5, 0), hide)
-	var helmet := Node3D.new()
-	helmet.name = "Helmet"
-	helmet.position.y = 1.68
-	_add(v, helmet)
-	var hel := MeshInstance3D.new()
-	hel.name = "Shell"
-	var hs := SphereMesh.new()
-	hs.radius = 0.17
-	hs.height = 0.2
-	hs.is_hemisphere = true
-	hel.mesh = hs
-	hel.material_override = olive
-	_add(helmet, hel)
-	# Arms: the right one holds the gun (or the machete)
-	for spec in [["LeftArm", -0.31, 0.17], ["RightArm", 0.31, 0.26]]:
-		var arm := Node3D.new()
-		arm.name = spec[0]
-		arm.position = Vector3(spec[1], 1.36, 0)
-		arm.rotation.x = spec[2]
-		_add(v, arm)
-		var upper := _box(arm, "UpperArm", Vector3(0.13, 0.62, 0.14), Vector3(0, -0.3, 0), shirt)
-		upper.set_meta("tint", "shirt")
-		var hand := _box(arm, "Hand", Vector3(0.1, 0.1, 0.1), Vector3(0, -0.64, 0), skin)
-		hand.set_meta("tint", "skin")
-	var right := v.get_node("RightArm")
-	var gun := Node3D.new()
-	gun.name = "Gun"
-	gun.position = Vector3(0, -0.64, -0.1)
-	_add(right, gun)
-	_box(gun, "Body", Vector3(0.06, 0.1, 0.42), Vector3(0, 0.02, -0.12), steel)
-	_box(gun, "Stock", Vector3(0.05, 0.1, 0.18), Vector3(0, -0.01, 0.15), wood)
-	_box(gun, "Grip", Vector3(0.04, 0.12, 0.05), Vector3(0, -0.07, 0.02), steel)
-	var hammer := Node3D.new()
-	hammer.name = "Hammer"
-	hammer.position = Vector3(0, -0.64, -0.04)
-	_add(right, hammer)
-	_box(hammer, "Handle", Vector3(0.035, 0.035, 0.34), Vector3(0, 0, -0.12), wood)
-	_box(hammer, "Head", Vector3(0.05, 0.15, 0.06), Vector3(0, 0.03, -0.3), steel)
-	var axe := Node3D.new()
-	axe.name = "Axe"
-	axe.position = Vector3(0, -0.64, -0.04)
-	_add(right, axe)
-	_box(axe, "Haft", Vector3(0.035, 0.035, 0.55), Vector3(0, 0, -0.2), wood)
-	_box(axe, "Head", Vector3(0.025, 0.16, 0.12), Vector3(0, 0.05, -0.45), steel)
-	# A Miner's pickaxe (23)
-	var pick := Node3D.new()
-	pick.name = "Pickaxe"
-	pick.position = Vector3(0, -0.64, -0.04)
-	_add(right, pick)
-	_box(pick, "Haft", Vector3(0.035, 0.035, 0.6), Vector3(0, 0, -0.22), wood)
-	_box(pick, "Head", Vector3(0.03, 0.34, 0.05), Vector3(0, 0.0, -0.5), steel)
-	var mach := Node3D.new()
-	mach.name = "Machete"
-	mach.position = Vector3(0, -0.64, -0.06)
-	_add(right, mach)
-	_box(mach, "Handle", Vector3(0.04, 0.04, 0.14), Vector3.ZERO, wood)
-	_box(mach, "Blade", Vector3(0.015, 0.07, 0.5), Vector3(0, 0.02, -0.32), blade)
+	var vest := _slot(person, "Vest", "UpperChest", Vector3(0, 0.1, 0.0))
+	_box(vest, "Front", Vector3(0.34, 0.36, 0.04), Vector3(0, 0, 0.14), olive)
+	_box(vest, "Back", Vector3(0.34, 0.36, 0.04), Vector3(0, 0, -0.12), olive)
+	_box(vest, "Pouch", Vector3(0.12, 0.08, 0.05), Vector3(0.09, -0.13, 0.17), olive)
+	var helmet := _slot(person, "Helmet", "Head", Vector3(0, 0.135, 0.02))
+	_dome(helmet, "Shell", 0.13, olive)
+	# Builder's (and Miner's) hard hat, Miner's lamp, Armorer's goggles
+	var hard := _slot(person, "HardHat", "Head", Vector3(0, 0.14, 0.02))
+	_dome(hard, "Shell", 0.125, hard_hat)
+	_box(hard, "Brim", Vector3(0.25, 0.015, 0.29), Vector3(0, 0.004, 0.025), hard_hat)
+	var lamp := _slot(person, "HeadLamp", "Head", Vector3(0, 0.2, 0.135))
+	_box(lamp, "Lamp", Vector3(0.06, 0.045, 0.035), Vector3.ZERO, _mat("lamp_glass", Color(1.0, 0.95, 0.7), 0.2))
+	var gog := _slot(person, "Goggles", "Head", Vector3(0, 0.165, 0.025))
+	_box(gog, "Strap", Vector3(0.15, 0.025, 0.02), Vector3(0, 0, 0.085), leather)
+	_box(gog, "LensL", Vector3(0.055, 0.04, 0.03), Vector3(-0.038, 0.0, 0.095), _mat("goggle_glass", Color(0.35, 0.55, 0.5), 0.2))
+	_box(gog, "LensR", Vector3(0.055, 0.04, 0.03), Vector3(0.038, 0.0, 0.095), _mat("goggle_glass", Color(0.35, 0.55, 0.5), 0.2))
+	# Builder's and Armorer's tool belt
+	var belt := _slot(person, "ToolBelt", "Hips", Vector3(0, 0.06, 0))
+	_box(belt, "Belt", Vector3(0.36, 0.07, 0.25), Vector3.ZERO, leather)
+	_box(belt, "Pouch", Vector3(0.1, 0.13, 0.07), Vector3(-0.16, -0.07, 0.07), leather)
+	# Cook's and Tailor's apron, Cook's chef's hat, Rancher's hat
+	var apron := _slot(person, "Apron", "UpperChest", Vector3(0, 0.06, 0.15))
+	_box(apron, "Bib", Vector3(0.26, 0.26, 0.02), Vector3.ZERO, whites)
+	var skirt := _slot(person, "ApronSkirt", "Hips", Vector3(0, -0.14, 0.15))
+	skirt.set_meta("part", "Apron")
+	_box(skirt, "Skirt", Vector3(0.34, 0.4, 0.02), Vector3.ZERO, whites)
+	var chef := _slot(person, "ChefHat", "Head", Vector3(0, 0.175, 0.015))
+	_cyl(chef, "Band", 0.105, 0.105, 0.06, Vector3(0, 0.0, 0), whites)
+	_cyl(chef, "Puff", 0.12, 0.095, 0.11, Vector3(0, 0.085, 0), whites)
+	var cowboy := _slot(person, "CowboyHat", "Head", Vector3(0, 0.19, 0.025))
+	_cyl(cowboy, "Brim", 0.25, 0.25, 0.02, Vector3.ZERO, hat_leather)
+	_cyl(cowboy, "Crown", 0.09, 0.105, 0.12, Vector3(0, 0.065, 0), hat_leather)
+	_cyl(cowboy, "Band", 0.107, 0.107, 0.025, Vector3(0, 0.02, 0), _mat("hat_band", Color(0.15, 0.1, 0.08)))
+	# Armour (22): the coat and trousers recolour the clothes
+	# (Settler._update_visuals); a helmet, and plates for plated pieces
+	var ah := _slot(person, "ArmourHead", "Head", Vector3(0, 0.135, 0.02))
+	_dome(ah, "Shell", 0.135, plate)
+	var ab := _slot(person, "ArmourBody", "UpperChest", Vector3(0, 0.1, 0))
+	_box(ab, "ChestPlate", Vector3(0.32, 0.3, 0.035), Vector3(0, 0, 0.15), plate)
+	_box(ab, "BackPlate", Vector3(0.32, 0.3, 0.035), Vector3(0, 0, -0.13), plate)
+	for side in ["Left", "Right"]:
+		var knee := _slot(person, "ArmourLegs" + side, side + "LowerLeg", Vector3(0, 0.02, 0.07))
+		knee.set_meta("part", "ArmourLegs")
+		_box(knee, "KneePlate", Vector3(0.1, 0.14, 0.035), Vector3.ZERO, plate)
+	# In the right hand (laid out in the hand's frame): the gun (pointed
+	# where they face by Settler._process), a hammer, an axe, a pickaxe or a
+	# machete
+	var gun := _slot(person, "Gun", "RightHand", Vector3(0, 0.08, 0))
+	gun.set_meta("space", "bone")
+	_box(gun, "Body", Vector3(0.05, 0.09, 0.42), Vector3(0, 0.03, -0.16), steel)
+	_box(gun, "Stock", Vector3(0.045, 0.09, 0.18), Vector3(0, 0.0, 0.1), wood)
+	_box(gun, "Grip", Vector3(0.035, 0.11, 0.045), Vector3(0, -0.04, -0.02), steel)
+	var hammer := _slot(person, "Hammer", "RightHand", Vector3(0, 0.08, 0))
+	_box(hammer, "Handle", Vector3(0.34, 0.035, 0.035), Vector3(0.12, 0, 0), wood)
+	_box(hammer, "Head", Vector3(0.06, 0.05, 0.15), Vector3(0.29, 0, 0), steel)
+	var axe := _slot(person, "Axe", "RightHand", Vector3(0, 0.08, 0))
+	_box(axe, "Haft", Vector3(0.55, 0.035, 0.035), Vector3(0.18, 0, 0), wood)
+	_box(axe, "Head", Vector3(0.12, 0.025, 0.16), Vector3(0.42, 0, 0.05), steel)
+	var pick := _slot(person, "Pickaxe", "RightHand", Vector3(0, 0.08, 0))
+	_box(pick, "Haft", Vector3(0.6, 0.035, 0.035), Vector3(0.2, 0, 0), wood)
+	_box(pick, "Head", Vector3(0.05, 0.03, 0.34), Vector3(0.47, 0, 0), steel)
+	var mach := _slot(person, "Machete", "RightHand", Vector3(0, 0.08, 0))
+	_box(mach, "Handle", Vector3(0.13, 0.04, 0.04), Vector3(0.0, 0, 0), wood)
+	_box(mach, "Blade", Vector3(0.5, 0.015, 0.07), Vector3(0.3, 0, 0.02), blade)
+	for n in [hammer, axe, pick, mach]:
+		n.set_meta("space", "bone")
 
 	var eyes := Marker3D.new()
 	eyes.name = "Eyes"
@@ -312,6 +221,31 @@ func _box(parent: Node, name: String, size: Vector3, pos: Vector3, mat: Material
 	mi.mesh = m
 	mi.material_override = mat
 	mi.position = pos
+	_add(parent, mi)
+	return mi
+
+
+## A gear node hung on a bone of the body (HumanBody moves it there).
+func _slot(body: Node3D, name: String, bone: String, at: Vector3) -> Node3D:
+	var n := Node3D.new()
+	n.name = name
+	n.position = at
+	n.set_meta("slot", bone)
+	_add(body, n)
+	return n
+
+
+func _dome(parent: Node, name: String, radius: float, mat: Material) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = name
+	var m := SphereMesh.new()
+	m.radius = radius
+	m.height = radius * 1.15
+	m.is_hemisphere = true
+	m.radial_segments = 16
+	m.rings = 6
+	mi.mesh = m
+	mi.material_override = mat
 	_add(parent, mi)
 	return mi
 

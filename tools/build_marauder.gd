@@ -36,41 +36,49 @@ func _initialize() -> void:
 	r.drop_items = drops
 	(r.get_node("HealthComponent") as HealthComponent).max_health = 260.0
 	# Scorch colours: soot-black clothes, rust-red plate
-	var cloth := StandardMaterial3D.new()
-	cloth.albedo_color = Color(0.13, 0.11, 0.1)
-	cloth.roughness = 0.85
 	var plate := StandardMaterial3D.new()
 	plate.albedo_color = Color(0.42, 0.17, 0.09)
 	plate.metallic = 0.5
 	plate.roughness = 0.6
 	var red := StandardMaterial3D.new()
 	red.albedo_color = Color(0.62, 0.12, 0.06)
-	var v := r.get_node("Visual")
-	for n in ["Torso", "Leg", "Leg2", "Belt"]:
-		(v.get_node(n) as MeshInstance3D).material_override = cloth
-	for n in ["ChestPlate", "KneePad", "KneePad2", "TirePad"]:
-		(v.get_node(n) as MeshInstance3D).material_override = plate
-	(v.get_node("Bandana") as MeshInstance3D).material_override = red
-	(v.get_node("Mohawk") as MeshInstance3D).material_override = red
-	# Plate on the shoulders and a scrap helmet
-	for arm in ["LeftArm", "RightArm"]:
-		var pad := MeshInstance3D.new()
-		pad.name = "ShoulderPlate"
+	# (29: on the Veteran's HumanBody) soot-black clothes, the plate and
+	# pads rust-red, the bandana red; plates on both shoulders, a scrap helmet
+	var body := r.get_node("Visual/Body") as HumanBody
+	body.shirt = Color(0.13, 0.11, 0.1)
+	body.trousers = Color(0.11, 0.1, 0.09)
+	body.colour_jitter = 0.1
+	for n in ["ChestPlate", "KneePadLeft", "KneePadRight", "TirePad"]:
+		for mi in body.get_node(n).find_children("*", "MeshInstance3D", true, false):
+			(mi as MeshInstance3D).material_override = plate
+	for mi in body.get_node("Bandana").find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).material_override = red
+	for side in ["Left", "Right"]:
+		var pad := Node3D.new()
+		pad.name = "ShoulderPlate" + side
+		pad.set_meta("slot", "UpperChest")
+		pad.set_meta("part", "ShoulderPlate")
+		pad.position = Vector3(0.2 if side == "Left" else -0.2, 0.19, -0.01)
+		body.add_child(pad)
+		var mi := MeshInstance3D.new()
+		mi.name = "Plate"
 		var bm := BoxMesh.new()
-		bm.size = Vector3(0.2, 0.08, 0.3)
-		pad.mesh = bm
-		pad.material_override = plate
-		pad.position = Vector3(0, 0.02, 0)
-		v.get_node(arm).add_child(pad)
-	var head := v.get_node("Head") as MeshInstance3D
-	var helmet := MeshInstance3D.new()
+		bm.size = Vector3(0.16, 0.05, 0.21)
+		mi.mesh = bm
+		mi.material_override = plate
+		pad.add_child(mi)
+	var helmet := Node3D.new()
 	helmet.name = "ScrapHelmet"
+	helmet.set_meta("slot", "Head")
+	helmet.position = Vector3(0, 0.165, 0.02)
+	body.add_child(helmet)
+	var hmi := MeshInstance3D.new()
+	hmi.name = "Shell"
 	var hm := BoxMesh.new()
-	hm.size = Vector3(0.3, 0.12, 0.32)
-	helmet.mesh = hm
-	helmet.material_override = plate
-	helmet.position = head.position + Vector3(0, 0.13, 0)
-	v.add_child(helmet)
+	hm.size = Vector3(0.2, 0.08, 0.23)
+	hmi.mesh = hm
+	hmi.material_override = plate
+	helmet.add_child(hmi)
 	_own(r, r)
 	var packed := PackedScene.new()
 	assert(packed.pack(r) == OK)

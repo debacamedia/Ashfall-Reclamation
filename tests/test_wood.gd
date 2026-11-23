@@ -185,7 +185,7 @@ func test_a_woodcutter_keeps_the_stores_in_planks() -> void:
 	var st := await _claimed(zone)
 	st.store.inventory.add_item(load("res://resources/items/vegetables.tres"), 100)
 	var w := await _newcomer(zone, Settler.Role.WOODCUTTER)
-	check(w.role_name() == "Woodcutter" and (w.visual.get_node("RightArm/Axe") as Node3D).visible, "a Woodcutter, with an axe")
+	check(w.role_name() == "Woodcutter" and w.part("Axe").visible, "a Woodcutter, with an axe")
 	check(w.status_text() == "Cutting wood", "status: %s" % w.status_text())
 	check(is_equal_approx(st.rates()["planks"], 3.0), "3 planks an hour")
 	var before := st.planks()
