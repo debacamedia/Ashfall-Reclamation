@@ -2704,17 +2704,26 @@ func settle_raid_on_paper(seed_value := 0) -> Dictionary:
 		var stats := _raider_stats(veteran)
 		paper.add_raider("Raider Veteran" if veteran else "Raider", stats[0], stats[1], stats[2])
 	var here := members().filter(func(s: Settler) -> bool: return s.has_arrived() and not s.is_down())
+	var up := tower_guards()
 	for m in here:
 		var s := m as Settler
 		if s.role == Settler.Role.GUARD:
-			paper.add_guard(s.settler_name, s.health.current_health, s.gun.weapon if s.gun != null else null, s.magazine, s.ammo, s).protection = s.armour.protection()
+			var f := paper.add_guard(s.settler_name, s.health.current_health, s.gun.weapon if s.gun != null else null, s.magazine, s.ammo, s)
+			f.protection = s.armour.protection()
+			f.raised = up.has(s)
 		else:
 			# (28: whatever they wear counts too)
 			paper.add_sheltering(s.settler_name, s.health.current_health, s).protection = s.armour.protection()
 	var before := {FOOD: _count_in_stores(FOOD), PLANK: _count_in_stores(PLANK)}
 	paper.stores = before.duplicate()
 	paper.carry = {FOOD: raid_carry_food, PLANK: raid_carry_planks}
+	var gate := _paper_gate()
+	if gate != null:
+		paper.breach_health = gate.health
+		paper.gate_seen_from_ground = gate.definition.id == &"settlement_gate"
 	var res := paper.run()
+	if gate != null and bool(res.get("breached", false)) and is_instance_valid(gate):
+		gate.apply_damage(gate.health + 1.0)
 	# What got carried off leaves the stores
 	for id in before:
 		var gone := int(before[id]) - int(paper.stores.get(id, 0))
@@ -2748,6 +2757,42 @@ func settle_raid_on_paper(seed_value := 0) -> Dictionary:
 	raid_ended.emit(raid_report)
 	notice.emit(paper_summary(raid_report, settlement_name))
 	return raid_report
+
+
+## The guards up towers (28.1), as they'd be given them: the guards with a
+## gun first, one to each tower's spot (Settler._patrol).
+func tower_guards() -> Array[Settler]:
+	var out: Array[Settler] = []
+	var spots := guard_posts()
+	var guards := members().filter(func(s: Settler) -> bool: return s.role == Settler.Role.GUARD and s.has_arrived())
+	var order := guards.filter(func(s: Settler) -> bool: return s.can_shoot()) + guards.filter(func(s: Settler) -> bool: return not s.can_shoot())
+	for i in mini(order.size(), spots.size()):
+		var s := order[i] as Settler
+		if Settler.is_raised(spots[i]) and s.can_shoot() and not s.is_down():
+			out.append(s)
+	return out
+
+
+## The shut gate in this place's walls that raiders coming from `raid_from`
+## would have to break through to reach the stores (28.1), or null: the way
+## they'd go runs through it.
+func _paper_gate() -> SettlementGate:
+	if not is_inside_tree():
+		return null
+	var goal := raid_goal()
+	var path := NavigationServer3D.map_get_path(get_world_3d().navigation_map, raid_from, goal, true)
+	var best: SettlementGate = null
+	var best_d := 4.0
+	for n in get_tree().get_nodes_in_group("settlement_gates"):
+		var g := n as SettlementGate
+		if g == null or g.is_queued_for_deletion() or g.settlement() != self:
+			continue
+		for i in path.size() - 1:
+			var d := _flat_distance_to_segment(g.global_position, path[i], path[i + 1])
+			if d < best_d:
+				best = g
+				best_d = d
+	return best
 
 
 ## [health, swing damage, seconds between swings] of a raider or a veteran,

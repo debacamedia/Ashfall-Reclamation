@@ -9,6 +9,10 @@ extends RefCounted
 ##
 ## How it goes, raider by raider:
 ##   APPROACH  running in under the guards' fire (`under_fire_seconds`)
+##   BREACH    (28.1) hacking at the shut gate in the walls, together, under
+##             fire from the towers (and from the ground through a fence
+##             gate's gaps), until it gives (`breach_health`)
+##   CLIMB     (28.1) up a tower's stair to a guard on it, under fire
 ##   FIGHT     at a guard who's still standing: machete swings
 ##   LOOT      no guard left standing (or none at all): at the stores
 ##   HUNT      still nobody standing in its way: after the settlers sheltering
@@ -22,7 +26,7 @@ extends RefCounted
 ## Odds were tuned against real raids played out headless (see
 ## docs/increments/20_5_away.md). Seeded, so a test can repeat one.
 
-enum Phase { APPROACH, FIGHT, LOOT, HUNT, FLEE, GONE, DEAD }
+enum Phase { APPROACH, FIGHT, LOOT, HUNT, FLEE, GONE, DEAD, BREACH, CLIMB }
 
 const STEP := 0.25
 const MAX_SECONDS := 400.0
@@ -43,6 +47,8 @@ const LOOT_SECONDS := 4.0
 ## How long a raider with nobody standing in its way spends after the
 ## settlers sheltering in the farmhouse before running off.
 const HUNT_SECONDS := 25.0
+## Seconds up a tower's stair to the guard on it (28.1).
+const CLIMB_SECONDS := 4.0
 
 
 class Fighter:
@@ -69,6 +75,9 @@ class Fighter:
 	## Armour (22): the share of a hit it takes off, and what it stopped.
 	var protection := 0.0
 	var stopped := 0.0
+	## Up a tower (28.1): sees over the walls, aims steadier, and is reached
+	## only up its stair.
+	var raised := false
 
 	func standing() -> bool:
 		return not down and health > 0.0
@@ -88,6 +97,13 @@ var sheltering: Array[Fighter] = []
 ## What's in the stores to take: {item id: n}, taken from as raiders loot.
 var stores := {}
 var carry := {}
+## The shut gate in the walls the raiders must break first: its health (0:
+## no walls in their way) (28.1).
+var breach_health := 0.0
+## Guards on the ground can see raiders at that gate (a fence gate's gaps;
+## not a palisade's).
+var gate_seen_from_ground := true
+var _walled := false
 var _rng := RandomNumberGenerator.new()
 
 
@@ -133,8 +149,8 @@ func add_sheltering(name: String, health: float, node: Node = null) -> Fighter:
 
 ## Expected chance one shot (or pellet) from `w` lands at SHOT_DISTANCE,
 ## and its damage there.
-static func shot_odds(w: WeaponDefinition) -> Array:
-	var spread := 1.5 + w.base_spread * 2.0  # degrees, as Settler._shoot
+static func shot_odds(w: WeaponDefinition, raised := false) -> Array:
+	var spread := (1.5 + w.base_spread * 2.0) * (Settler.TOWER_SPREAD if raised else 1.0)  # degrees, as Settler._shoot
 	var size := rad_to_deg(atan(TARGET_RADIUS / SHOT_DISTANCE))
 	var chance := clampf(size / spread, 0.02, 0.95) * AIM
 	var d := SHOT_DISTANCE
@@ -143,7 +159,8 @@ static func shot_odds(w: WeaponDefinition) -> Array:
 
 
 func run() -> Dictionary:
-	result = {"killed": 0, "escaped": 0, "stolen": {}, "recovered": {}, "wounded": [], "rounds": 0, "seconds": 0.0}
+	result = {"killed": 0, "escaped": 0, "stolen": {}, "recovered": {}, "wounded": [], "rounds": 0, "seconds": 0.0, "breached": false}
+	_walled = breach_health > 0.0
 	var t := 0.0
 	while t < MAX_SECONDS and raiders.any(func(r: Fighter) -> bool: return r.phase != Phase.GONE and r.phase != Phase.DEAD):
 		t += STEP
@@ -168,7 +185,27 @@ func _raider_step(r: Fighter) -> void:
 	match r.phase:
 		Phase.APPROACH:
 			if r.timer <= 0.0:
+				if breach_health > 0.0:
+					r.phase = Phase.BREACH
+					r.timer = r.swing_every * _rng.randf_range(0.3, 1.0)
+				else:
+					_pick_fight(r)
+		Phase.BREACH:
+			if breach_health <= 0.0:
 				_pick_fight(r)
+				return
+			if r.timer <= 0.0:
+				r.timer = r.swing_every
+				breach_health -= r.swing_damage
+				if breach_health <= 0.0:
+					result["breached"] = true
+		Phase.CLIMB:
+			if r.target == null or not r.target.standing():
+				_pick_fight(r)
+				return
+			if r.timer <= 0.0:
+				r.phase = Phase.FIGHT
+				r.timer = r.swing_every * _rng.randf_range(0.3, 1.0)
 		Phase.FIGHT:
 			if r.target == null or not r.target.standing():
 				_pick_fight(r)
@@ -211,7 +248,8 @@ func _raider_step(r: Fighter) -> void:
 					stolen[id] = int(stolen.get(id, 0)) + int(r.carrying[id])
 
 
-## Go for the standing guard with the fewest raiders on them; nobody
+## Go for the standing guard with the fewest raiders on them, those on the
+## ground before those up towers (28.1: up its stair first); nobody
 ## standing: the stores.
 func _pick_fight(r: Fighter) -> void:
 	var best: Fighter = null
@@ -219,14 +257,20 @@ func _pick_fight(r: Fighter) -> void:
 	for g in guards:
 		if not g.standing():
 			continue
-		var n := raiders.filter(func(o: Fighter) -> bool: return o.phase == Phase.FIGHT and o.target == g).size()
+		var n := raiders.filter(func(o: Fighter) -> bool: return (o.phase == Phase.FIGHT or o.phase == Phase.CLIMB) and o.target == g).size()
+		if g.raised:
+			n += 1000
 		if n < best_n:
 			best = g
 			best_n = n
 	if best != null:
-		r.phase = Phase.FIGHT
 		r.target = best
-		r.timer = r.swing_every * _rng.randf_range(0.3, 1.0)
+		if best.raised:
+			r.phase = Phase.CLIMB
+			r.timer = CLIMB_SECONDS * _rng.randf_range(0.8, 1.2)
+		else:
+			r.phase = Phase.FIGHT
+			r.timer = r.swing_every * _rng.randf_range(0.3, 1.0)
 	elif r.looted:
 		r.phase = Phase.HUNT
 		r.target = null
@@ -287,8 +331,8 @@ func _guard_step(g: Fighter) -> void:
 			return
 		g.magazine -= 1
 		g.shots += 1
-		g.cooldown = maxf(60.0 / maxf(g.weapon.rounds_per_minute, 1.0), 0.45)
-		var odds := shot_odds(g.weapon)
+		g.cooldown = Settler.shot_interval(g.weapon)
+		var odds := shot_odds(g.weapon, g.raised)
 		for p in maxi(g.weapon.pellets, 1):
 			if _rng.randf() < float(odds[0]):
 				target.health -= float(odds[1])
@@ -296,7 +340,7 @@ func _guard_step(g: Fighter) -> void:
 	# The machete, at raiders who've closed in
 	if g.cooldown > 0.0:
 		return
-	var near := raiders.filter(func(r: Fighter) -> bool: return r.phase == Phase.FIGHT and r.health > 0.0)
+	var near := raiders.filter(func(r: Fighter) -> bool: return r.phase == Phase.FIGHT and r.health > 0.0 and (not g.raised or r.target == g))
 	if near.is_empty():
 		return
 	var mine := near.filter(func(r: Fighter) -> bool: return r.target == g)
@@ -306,13 +350,18 @@ func _guard_step(g: Fighter) -> void:
 		r.health -= 18.0
 
 
-## Who a guard with a gun shoots: a raider on them, else one fighting,
-## else one coming in or running off (in the barn, looting, they can't be seen).
+## Who a guard with a gun shoots: a raider on them, else one fighting, else
+## one climbing a tower, else one at the gate, else one coming in or running
+## off (in the barn, looting, they can't be seen). Behind solid walls (28.1)
+## only the towers see raiders outside: coming in and at the gate.
 func _shoot_target(g: Fighter) -> Fighter:
 	var live := raiders.filter(func(r: Fighter) -> bool: return r.health > 0.0)
+	var outside_seen := g.raised or not _walled or gate_seen_from_ground
 	for want in [func(r: Fighter) -> bool: return r.phase == Phase.FIGHT and r.target == g,
 			func(r: Fighter) -> bool: return r.phase == Phase.FIGHT,
-			func(r: Fighter) -> bool: return r.phase == Phase.APPROACH or r.phase == Phase.FLEE]:
+			func(r: Fighter) -> bool: return r.phase == Phase.CLIMB,
+			func(r: Fighter) -> bool: return r.phase == Phase.BREACH and outside_seen,
+			func(r: Fighter) -> bool: return (r.phase == Phase.APPROACH and outside_seen) or r.phase == Phase.FLEE]:
 		var some := live.filter(want)
 		if not some.is_empty():
 			return some[0]
