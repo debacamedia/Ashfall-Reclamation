@@ -40,6 +40,11 @@ const PLANS := {
 		"cost": {&"wood_plank": 16, &"scrap_metal": 6}, "about": "Room for 6 pigs: a pair arrives once it's built. Meat"},
 	&"cow_pasture": {"name": "Cow Pasture", "structure": "cow_pasture", "placeable": true, "hours": 4.0,
 		"cost": {&"wood_plank": 28, &"scrap_metal": 8}, "about": "Room for 4 cows: a pair arrives once it's built. Meat and hides"},
+	# Increment 28: sheep for wool, and a table for a Tailor
+	&"sheep_pen": {"name": "Sheep Pen", "structure": "sheep_pen", "placeable": true, "hours": 3.0,
+		"cost": {&"wood_plank": 18, &"scrap_metal": 4}, "about": "Room for 6 sheep: a pair arrives once it's built. A Farmer shears them for Wool"},
+	&"tailors_table": {"name": "Tailor's Table", "structure": "tailors_table", "placeable": true, "hours": 3.0,
+		"cost": {&"wood_plank": 12, &"scrap_metal": 4, &"cloth": 4}, "about": "A work table, spinning wheel and loom: hire a Tailor to make clothes and padded armour from Wool"},
 	# Increment 22: leather from hides
 	&"tanning_rack": {"name": "Tanning Rack", "structure": "tanning_rack", "placeable": true, "hours": 2.0,
 		"cost": {&"wood_plank": 8, &"scrap_metal": 2, &"cloth": 2}, "about": "Put Raw Hides in its tub: each comes out as 3 Leather after a few hours"},

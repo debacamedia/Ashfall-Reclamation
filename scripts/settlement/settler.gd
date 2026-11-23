@@ -33,12 +33,12 @@ extends CharacterBody3D
 signal role_changed(role: Role)
 signal armed_changed
 
-enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER, COOK, RANCHER, MINER, ARMORER }
+enum Role { NONE, FARMER, GUARD, BUILDER, WOODCUTTER, COOK, RANCHER, MINER, ARMORER, TAILOR }
 enum State { WAIT, TRAVEL, IDLE, WALK, WORK, PATROL, FIGHT, LEAVING, DEAD, DOWN }
 
 const ROLE_NAMES := {Role.NONE: "No job", Role.FARMER: "Farmer", Role.GUARD: "Guard", Role.BUILDER: "Builder", Role.WOODCUTTER: "Woodcutter",
 	Role.COOK: "Cook", Role.RANCHER: "Rancher", Role.MINER: "Miner",
-	Role.ARMORER: "Armorer"}
+	Role.ARMORER: "Armorer", Role.TAILOR: "Tailor"}
 ## A guard keeps about this many rounds (topped up from you or the armory).
 const AMMO_TARGET := 60
 const SHOT_SOUNDS := {
@@ -186,6 +186,8 @@ func status_text() -> String:
 		return "Hungry: not working"
 	match role:
 		Role.FARMER:
+			if _shearing():
+				return "Shearing the sheep"
 			if no_field:
 				return "No field free"
 			return "No water to farm" if short_of_water else "Farming"
@@ -217,6 +219,8 @@ func status_text() -> String:
 			return "Mining" if not settlement.mine_spots().is_empty() else "No mine here"
 		Role.ARMORER:
 			return settlement.armorer_status() if not settlement.armorer_spots().is_empty() else "No weapons bench here"
+		Role.TAILOR:
+			return settlement.tailor_status()
 	return "Helping out"
 
 
@@ -385,6 +389,16 @@ func _home_life(delta: float) -> void:
 		visual.rotation.x = 0.0
 		_wander(shelter.global_position if shelter != null else _hangout(), 1.5, delta)
 		return
+	var shear := role == Role.FARMER and _shearing()
+	if shear != _was_shearing:
+		# Off to the sheep pen, or back to the fields: a fresh start
+		_was_shearing = shear
+		_goal = Vector3.INF
+		state = State.IDLE
+	if shear:
+		# A fleece grown at the sheep pen (28): the first Farmer goes to shear
+		_work_at(settlement.pen_to_shear().shear_spots(), 0.4, delta)
+		return
 	if is_hungry() or role == Role.NONE or (role == Role.FARMER and (short_of_water or no_field)):
 		_wander(_hangout(), 6.0, delta)
 		return
@@ -405,6 +419,8 @@ func _home_life(delta: float) -> void:
 			_dig(delta)
 		Role.ARMORER:
 			_forge(delta)
+		Role.TAILOR:
+			_sew(delta)
 
 
 func _farm(delta: float) -> void:
@@ -545,6 +561,30 @@ func _dig(delta: float) -> void:
 	_swing(true)
 	if _state_time > _state_length:
 		state = State.IDLE
+
+
+var _was_shearing := false
+
+
+## Farmers (28): the first working Farmer here shears the sheep when a fleece
+## has grown (the shearing itself is done each settlement hour).
+func _shearing() -> bool:
+	if role != Role.FARMER or settlement == null or is_hungry() or settlement.raid_active():
+		return false
+	if settlement.pen_to_shear() == null:
+		return false
+	var farmers := settlement.members().filter(func(s: Settler) -> bool: return s.role == Role.FARMER and s.has_arrived() and not s.is_hungry())
+	return not farmers.is_empty() and farmers[0] == self
+
+
+## Tailors (28): at the Tailor's Table, sewing.
+func _sew(delta: float) -> void:
+	var spots := settlement.tailor_spots()
+	if spots.is_empty():
+		_swing(false)
+		_wander(_hangout(), 6.0, delta)
+		return
+	_work_at(spots, 0.3, delta)
 
 
 ## Armorers (23.5): at the weapons bench, hammering.
@@ -974,7 +1014,7 @@ func _update_visuals() -> void:
 	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD and armour.worn(ArmourSet.BODY) == null],
 			["Helmet", role == Role.GUARD and armour.worn(ArmourSet.HEAD) == null],
 			["HardHat", role == Role.BUILDER or role == Role.MINER], ["ToolBelt", role == Role.BUILDER or role == Role.ARMORER],
-			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK], ["CowboyHat", role == Role.RANCHER],
+			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK or role == Role.TAILOR], ["CowboyHat", role == Role.RANCHER],
 			["HeadLamp", role == Role.MINER], ["Goggles", role == Role.ARMORER]]:
 		var n := visual.get_node_or_null(pair[0]) as Node3D
 		if n != null:
@@ -988,11 +1028,17 @@ func _update_visuals() -> void:
 		n.visible = it != null
 		if it != null:
 			var plated := String(it.id).begins_with("plated") or String(it.id).begins_with("scrap")
+			# 28: Wool Clothes a cream wool, padded pieces a quilted olive
+			var colour := Color(0.45, 0.46, 0.48) if plated else Color(0.42, 0.27, 0.15)
+			if String(it.id).begins_with("wool"):
+				colour = Color(0.82, 0.77, 0.66)
+			elif String(it.id).begins_with("padded"):
+				colour = Color(0.42, 0.4, 0.28)
 			for c in n.get_children():
 				var mi := c as MeshInstance3D
 				if mi != null:
 					var m := StandardMaterial3D.new()
-					m.albedo_color = Color(0.45, 0.46, 0.48) if plated else Color(0.42, 0.27, 0.15)
+					m.albedo_color = colour
 					m.metallic = 0.5 if plated else 0.0
 					m.roughness = 0.6 if plated else 0.9
 					mi.material_override = m

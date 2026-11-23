@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mxf5w"]
+albedo_color = Color(0.44, 0.42, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="SphereMesh" id="SphereMesh_ahvgo"]
+radius = 0.12
+height = 0.192
+radial_segments = 10
+rings = 5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6d6lv"]
+albedo_color = Color(0.48, 0.3, 0.17, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_oicxq"]
+size = Vector3(0.12, 0.03, 0.14)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r4n40"]
+albedo_color = Color(0.45, 0.3, 0.22, 1)
+metallic = 0.4
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_uwnkq"]
+size = Vector3(0.2, 0.025, 0.03)
+
+[node name="PaddedHood" type="Node3D" unique_id=641227285]
+
+[node name="Hood" type="MeshInstance3D" parent="." unique_id=32778951]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+material_override = SubResource("StandardMaterial3D_mxf5w")
+mesh = SubResource("SphereMesh_ahvgo")
+
+[node name="Crown" type="MeshInstance3D" parent="." unique_id=958228020]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+material_override = SubResource("StandardMaterial3D_6d6lv")
+mesh = SubResource("BoxMesh_oicxq")
+
+[node name="Brow" type="MeshInstance3D" parent="." unique_id=152829519]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, -0.11)
+material_override = SubResource("StandardMaterial3D_r4n40")
+mesh = SubResource("BoxMesh_uwnkq")

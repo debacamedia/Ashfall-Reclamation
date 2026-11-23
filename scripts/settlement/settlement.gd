@@ -64,6 +64,11 @@ const WOOD := &"wood"
 const MEAT := &"raw_meat"
 const EGG := &"egg"
 const HIDE := &"raw_hide"
+const WOOL := &"wool"
+const CLOTHES := &"wool_clothes"
+## What a Tailor makes once the stores hold their clothes (28), in this order
+## when there's as few of each.
+const TAILOR_PIECES := [&"padded_coat", &"padded_hood", &"padded_trousers"]
 const SCRAP := &"scrap_metal"
 const CHEMICALS := &"chemicals"
 ## The farm's animals (21.5): hours a vegetable feeds one, hours between
@@ -72,6 +77,10 @@ const ANIMALS := {
 	&"chicken": {"one": "chicken", "many": "chickens", "feed_hours": 24.0, "breed_hours": 12.0, "egg_hours": 12.0, "meat": 2, "hide": 0},
 	&"pig": {"one": "pig", "many": "pigs", "feed_hours": 8.0, "breed_hours": 24.0, "egg_hours": 0.0, "meat": 5, "hide": 0},
 	&"cow": {"one": "cow", "many": "cows", "feed_hours": 6.0, "breed_hours": 48.0, "egg_hours": 0.0, "meat": 8, "hide": 1},
+	# 28: a fed sheep grows a fleece every `wool_hours`, `wool` Wool when a
+	# Farmer shears it; butchered, its fleece comes too
+	&"sheep": {"one": "sheep", "many": "sheep", "feed_hours": 8.0, "breed_hours": 24.0, "egg_hours": 0.0, "meat": 3, "hide": 0,
+		"wool_hours": 24.0, "wool": 2},
 }
 ## Your settlements on the compass and the map.
 const CLAIMED_COLOR := Color(0.45, 0.9, 0.45)
@@ -548,8 +557,10 @@ func lay_out_plans() -> void:
 
 
 ## The defences come in stages (27.1): the next is laid out once nothing's
-## left to build of this one. At the mine, after the palisade: watchtowers,
-## and reinforcing the palisade with scrap.
+## left to build of this one (28: nor of anything else planned before it). At
+## the mine, after the palisade: watchtowers, and reinforcing the palisade
+## with scrap. At Ash Creek (28), after its gates and watchtowers: its fences
+## and gates become a palisade, then that's reinforced.
 const DEFENCES_VERSION := 2
 var defence_stage := 0
 var defences_version := 0
@@ -578,11 +589,13 @@ func _advance_defences() -> void:
 	var next := _defence_markers(defence_stage + 1)
 	if next.is_empty():
 		return
+	# Everything planned so far built first (28): this stage of the defences,
+	# those before, and the rest of the place's plan (its fences, say)
 	var keys := {}
 	for site in sites():
 		keys[site.key] = true
-	for m in _defence_markers(defence_stage):
-		if keys.has(String(m.name)):
+	for m in get_node("Plans").get_children():
+		if _stage_of(m) <= defence_stage and keys.has(String(m.name)):
 			return
 	defence_stage += 1
 	_lay(func(m: Node3D) -> bool: return m.get_meta("defence", false) and _stage_of(m) == defence_stage)
@@ -1231,7 +1244,9 @@ func role_refusal_reason(role: Settler.Role) -> String:
 	if role == Settler.Role.COOK and kitchens().is_empty():
 		return "Build a Kitchen first: plan one in build mode (B)"
 	if role == Settler.Role.RANCHER and pens().is_empty():
-		return "Build a Chicken Coop, Pig Pen or Cow Pasture first: plan one in build mode (B)"
+		return "Build a Chicken Coop, Pig Pen, Cow Pasture or Sheep Pen first: plan one in build mode (B)"
+	if role == Settler.Role.TAILOR and tailors_tables().is_empty():
+		return "Build a Tailor's Table first: plan one in build mode (B)"
 	return ""
 
 
@@ -1344,7 +1359,9 @@ func _hand_back_armour(entry: Dictionary, player: PlayerController) -> void:
 		player.inventory.add_item(item, 1)
 		player._keep_wear(entry)
 		return
-	if armory != null:
+	if item.id == CLOTHES:
+		_put_in_stores(CLOTHES, 1)  # clothes back on the shelves (28)
+	elif armory != null:
 		armory.inventory.max_weight = 0.0
 		armory.inventory.add_item(item, 1)
 
@@ -1374,6 +1391,11 @@ func _return_gun(s: Settler, player: PlayerController) -> void:
 ## Unarmed guards, or ones low on rounds, help themselves from the armory.
 func _supply_guards() -> void:
 	var lockers := shared_armories()
+	_supply_armed(lockers)
+	_dress_everyone(lockers)
+
+
+func _supply_armed(lockers: Array[SalvageContainer]) -> void:
 	if lockers.is_empty():
 		return
 	for s in members():
@@ -1397,24 +1419,63 @@ func _supply_guards() -> void:
 		if s.gun != null and s.ammo < Settler.AMMO_TARGET / 2:
 			for locker in lockers:
 				give_ammo_from(locker.inventory, s, Settler.AMMO_TARGET)
-		# Armour (22): the best piece for each empty slot
-		for slot in ArmourSet.SLOTS:
-			if s.armour.worn(slot) != null:
+		# Armour (22): the best piece for each empty slot (28: or better than
+		# what they have on: Wool Clothes, say, or a piece worn out)
+		_dress(s, lockers, [])
+
+
+## Clothes and armour for everyone (28). Guards come first: anyone else takes
+## a piece from the lockers only for a slot no guard in your places is short
+## of. And anyone with nothing on their back takes Wool Clothes from the
+## stores.
+func _dress_everyone(lockers: Array[SalvageContainer]) -> void:
+	var guards_short: Array[int] = []
+	for st in network():
+		for g in st.members():
+			if g.role != Settler.Role.GUARD or not g.has_arrived():
 				continue
-			var best: ItemDefinition = null
-			var best_at: SalvageContainer = null
-			var best_index := -1
-			for locker in lockers:
-				for i in locker.inventory.slot_count:
-					var it := locker.inventory.get_slot_item(i)
-					if it != null and it.is_armour() and it.armour_slot == slot and (best == null or it.armour_protection > best.armour_protection):
-						best = it
-						best_at = locker
-						best_index = i
-			if best != null:
-				best_at.inventory.take_from_slot(best_index, 1)
-				s.armour.put_on(best)
-				notice.emit("%s took a %s from %s" % [s.settler_name, best.display_name, _locker_name(best_at)])
+			for slot in ArmourSet.SLOTS:
+				if (g.armour.worn(slot) == null or g.armour.worn(slot).id == CLOTHES) and not guards_short.has(slot):
+					guards_short.append(slot)
+	for s in members():
+		if not s.has_arrived() or s.is_down() or s.is_dead():
+			continue
+		if s.role != Settler.Role.GUARD and not lockers.is_empty():
+			_dress(s, lockers, guards_short)
+		if s.armour.worn(ArmourSet.BODY) == null and _stores_count(CLOTHES) > 0:
+			_take_id(CLOTHES, 1)
+			s.armour.put_on(ItemDatabase.get_item(CLOTHES))
+			notice.emit("%s put on some Wool Clothes from the stores" % s.settler_name)
+
+
+## Puts the best piece in the lockers on `s` for each slot (but `skip`) that's
+## empty or has worse on (worn out counts as nothing); what they had goes back
+## (clothes to the stores, armour to the armory).
+func _dress(s: Settler, lockers: Array[SalvageContainer], skip: Array) -> void:
+	for slot in ArmourSet.SLOTS:
+		if skip.has(slot):
+			continue
+		var on := s.armour.worn(slot)
+		var have := on.armour_protection if on != null and s.armour.wear_left(slot) > 0.0 else -1.0
+		var best: ItemDefinition = null
+		var best_at: SalvageContainer = null
+		var best_index := -1
+		for locker: SalvageContainer in lockers:
+			for i in locker.inventory.slot_count:
+				var it := locker.inventory.get_slot_item(i)
+				if it != null and it.is_armour() and it.armour_slot == slot and it.armour_protection > have + 0.001 \
+						and (best == null or it.armour_protection > best.armour_protection):
+					best = it
+					best_at = locker
+					best_index = i
+		if best == null:
+			continue
+		best_at.inventory.take_from_slot(best_index, 1)
+		if on != null:
+			_hand_back_armour(s.armour.take_off(slot), null)
+		s.armour.put_on(best)
+		var article := "" if best.display_name.ends_with("s") else "a "
+		notice.emit("%s took %s%s from %s" % [s.settler_name, article, best.display_name, _locker_name(best_at)])
 
 
 ## "the armory", or "Northwatch Outpost's armory" for another place's (24).
@@ -1588,6 +1649,7 @@ func simulate(hours: float) -> void:
 	_simulate_cooking(hours, here)
 	_simulate_tanning(hours)
 	_simulate_armory(hours, here)
+	_simulate_tailoring(hours, here)
 	_simulate_supply(hours)
 	_simulate_first_aid(here)
 	# Building: each working Builder mends what's damaged, else puts their
@@ -1611,6 +1673,143 @@ func simulate(hours: float) -> void:
 		arrival_in = arrival_every_hours
 		if free_beds() > 0 and food() + fridge_meals() >= arrival_food_needed:
 			spawn_newcomer()
+
+
+# ---------------------------------------------------------------- the Tailor (28)
+
+## A Tailor keeps this many Wool Clothes in the stores (for settlers to put
+## on) before making any armour, and armour only from clothes beyond these.
+@export var tailor_clothes_keep := 6
+## …and this many of each padded piece in the Armory Locker.
+@export var tailor_per_piece := 2
+## Hours a Tailor takes for a set of clothes, and for a piece of armour.
+@export var tailor_clothes_hours := 1.0
+@export var tailor_armour_hours := 3.0
+var _tailor_job: StringName = &""
+var _tailor_progress := 0.0
+var _tailor_state := ""
+
+
+func tailors_tables() -> Array[SettlementBuilding]:
+	var out: Array[SettlementBuilding] = []
+	for b in buildings():
+		if b.is_tailors_table():
+			out.append(b)
+	return out
+
+
+func tailor_spots() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	for t in tailors_tables():
+		out.append_array(t.tailor_spots())
+	return out
+
+
+## Wool Clothes in your places' stores.
+func clothes() -> int:
+	return _stores_count(CLOTHES)
+
+
+func tailor_status() -> String:
+	if tailors_tables().is_empty():
+		return "No Tailor's Table"
+	if _tailor_job != &"":
+		var it := ItemDatabase.get_item(_tailor_job)
+		var total := tailor_clothes_hours if _tailor_job == CLOTHES else tailor_armour_hours
+		return "Making %s (%d%%)" % [it.display_name if it != null else String(_tailor_job), roundi(clampf(_tailor_progress / total, 0.0, 1.0) * 100.0)]
+	return _tailor_state if _tailor_state != "" else "Waiting for Wool"
+
+
+func _simulate_tailoring(hours: float, here: Array) -> void:
+	var tables := tailors_tables().size()
+	if tables <= 0:
+		return
+	var tailors := mini(here.filter(func(s: Settler) -> bool: return s.role == Settler.Role.TAILOR and s.is_working()).size(), tables)
+	if tailors <= 0:
+		return
+	var work := hours * tailors
+	var guard := 0
+	while work > 0.0 and guard < 20:
+		guard += 1
+		if _tailor_job == &"" and not _start_tailor_job():
+			return
+		var total := tailor_clothes_hours if _tailor_job == CLOTHES else tailor_armour_hours
+		var step := minf(work, total - _tailor_progress)
+		_tailor_progress += step
+		work -= step
+		if _tailor_progress >= total - 0.0001:
+			_finish_tailor_job()
+
+
+## Clothes until the stores hold tailor_clothes_keep; then armour, the piece
+## the lockers have fewest of, from the clothes beyond those. False (with
+## _tailor_state saying why) if there's nothing to do.
+func _start_tailor_job() -> bool:
+	if clothes() < tailor_clothes_keep:
+		if _stores_count(WOOL) >= 3 and _commit_recipe_for(CLOTHES):
+			_tailor_job = CLOTHES
+			_tailor_progress = 0.0
+			return true
+		_tailor_state = "Needs Wool for clothes (%d of %d in the stores): shear the sheep" % [clothes(), tailor_clothes_keep]
+		return false
+	var counts := {}
+	for id: StringName in TAILOR_PIECES:
+		counts[id] = armory.inventory.count_of(id) if armory != null else _stores_count(id)
+	var order: Array = TAILOR_PIECES.duplicate()
+	order.sort_custom(func(x: StringName, y: StringName) -> bool:
+		return int(counts[x]) < int(counts[y]) or (int(counts[x]) == int(counts[y]) and TAILOR_PIECES.find(x) < TAILOR_PIECES.find(y)))
+	var short := ""
+	for id: StringName in order:
+		if int(counts[id]) >= tailor_per_piece:
+			continue
+		var r := _recipes_for(id)
+		if r.is_empty():
+			continue
+		var need_clothes := 0
+		var others := true
+		for item: ItemDefinition in (r[0] as RecipeDefinition).inputs:
+			if item.id == CLOTHES:
+				need_clothes = (r[0] as RecipeDefinition).inputs[item]
+			elif _stores_count(item.id) < (r[0] as RecipeDefinition).inputs[item]:
+				others = false
+		if not others:
+			if short == "":
+				short = "Leather and Scrap Metal"
+			continue
+		# Only from clothes beyond the ones kept for settlers: more clothes
+		# first, for this piece
+		if clothes() - need_clothes < tailor_clothes_keep:
+			if _stores_count(WOOL) >= 3 and _commit_recipe_for(CLOTHES):
+				_tailor_job = CLOTHES
+				_tailor_progress = 0.0
+				return true
+			short = "Wool for more clothes"
+			continue
+		if _commit_recipe_for(id):
+			_tailor_job = id
+			_tailor_progress = 0.0
+			return true
+		if short == "":
+			short = "Leather and Scrap Metal"
+	if short == "":
+		_tailor_state = "Clothes in the stores, padded armour in the locker"
+	else:
+		_tailor_state = "%d Wool Clothes in the stores; needs %s for padded armour" % [clothes(), short]
+	return false
+
+
+func _finish_tailor_job() -> void:
+	var it := ItemDatabase.get_item(_tailor_job)
+	if it != null:
+		if _tailor_job == CLOTHES or armory == null:
+			_put_in_stores(_tailor_job, 1)
+		else:
+			armory.inventory.max_weight = 0.0
+			if armory.inventory.add_item(it, 1) < 1:
+				_put_in_stores(_tailor_job, 1)
+		notice.emit("The Tailor made %s %s%s" % ["some" if _tailor_job == CLOTHES else "a", it.display_name, " for the stores" if _tailor_job == CLOTHES else " for the Armory Locker"])
+	_tailor_job = &""
+	_tailor_progress = 0.0
 
 
 # ---------------------------------------------------------------- the armory (23.5)
@@ -2043,6 +2242,8 @@ static func butcher_yield(kind: StringName) -> Dictionary:
 	var out := {MEAT: int(spec.get("meat", 0))}
 	if int(spec.get("hide", 0)) > 0:
 		out[HIDE] = int(spec["hide"])
+	if int(spec.get("wool", 0)) > 0:
+		out[WOOL] = int(spec["wool"])
 	return out
 
 
@@ -2083,6 +2284,24 @@ func _simulate_animals(hours: float, here: Array) -> void:
 		pen.animals_fed = pen.feed_owed < 2.0
 		if not pen.animals_fed:
 			continue
+		# Fleece (28): a sheep's grows back over wool_hours; a Farmer here
+		# shears what's grown. (Kept in egg_progress: fleeces ready.)
+		if float(spec.get("wool_hours", 0.0)) > 0.0:
+			pen.egg_progress = minf(pen.egg_progress + pen.count() * hours / float(spec["wool_hours"]), float(pen.count()))
+			var shearer := _shearer(here)
+			var fleeces := floori(pen.egg_progress)
+			# A fleece waits most of an hour: time for the Farmer to get to
+			# the pen and shear
+			var key := String(pen.name)
+			_shear_wait[key] = float(_shear_wait.get(key, 0.0)) + hours if fleeces > 0 and shearer != null else 0.0
+			if shearer != null and fleeces > 0 and float(_shear_wait[key]) >= SHEAR_WAIT_HOURS:
+				_shear_wait[key] = 0.0
+				var wool := fleeces * int(spec["wool"])
+				var put := _put_in_stores(WOOL, wool)
+				if put > 0:
+					pen.egg_progress -= ceilf(float(put) / float(spec["wool"]))
+					pen.egg_progress = maxf(pen.egg_progress, 0.0)
+					notice.emit("%s sheared %d sheep: %d Wool into the stores" % [shearer.settler_name, fleeces, put])
 		# Eggs
 		if float(spec["egg_hours"]) > 0.0:
 			pen.egg_progress += pen.count() * hours / float(spec["egg_hours"])
@@ -2109,6 +2328,27 @@ func _simulate_animals(hours: float, here: Array) -> void:
 				_put_in_stores(id, got[id])
 			pen.set_count(keep)
 			notice.emit("%s butchered %d %s: %s into the stores" % [rancher.settler_name, n, spec["many"], _yield_text(got)])
+
+
+## How long a grown fleece waits for its Farmer (28).
+const SHEAR_WAIT_HOURS := 0.75
+var _shear_wait := {}
+
+
+## A working Farmer to shear the sheep (28), or null.
+func _shearer(here: Array) -> Settler:
+	for s: Settler in here:
+		if s.role == Settler.Role.FARMER and s.is_working():
+			return s
+	return null
+
+
+## A sheep pen here with a fleece ready to shear (28), or null.
+func pen_to_shear() -> SettlementBuilding:
+	for pen in pens():
+		if pen.animal_kind == &"sheep" and pen.egg_progress >= 1.0 and not pen.shear_spots().is_empty():
+			return pen
+	return null
 
 
 func tanning_racks() -> Array[SettlementBuilding]:
@@ -2469,7 +2709,8 @@ func settle_raid_on_paper(seed_value := 0) -> Dictionary:
 		if s.role == Settler.Role.GUARD:
 			paper.add_guard(s.settler_name, s.health.current_health, s.gun.weapon if s.gun != null else null, s.magazine, s.ammo, s).protection = s.armour.protection()
 		else:
-			paper.add_sheltering(s.settler_name, s.health.current_health, s)
+			# (28: whatever they wear counts too)
+			paper.add_sheltering(s.settler_name, s.health.current_health, s).protection = s.armour.protection()
 	var before := {FOOD: _count_in_stores(FOOD), PLANK: _count_in_stores(PLANK)}
 	paper.stores = before.duplicate()
 	paper.carry = {FOOD: raid_carry_food, PLANK: raid_carry_planks}
@@ -2682,7 +2923,8 @@ const LAYOUT := 2
 func save_state() -> Dictionary:
 	return {"claimed": is_claimed, "water": water, "pump": pump_working, "pump_level": pump_level, "arrival_in": arrival_in,
 		"food_progress": _food_progress, "next_id": _next_id, "layout": LAYOUT, "plans_laid": plans_laid, "defences_laid": defences_laid, "defence_stage": defence_stage, "defences_version": defences_version, "chem_progress": _chem_progress, "plank_progress": _plank_progress, "scrap_progress": _scrap_progress,
-		"armory_job": String(_armory_job), "armory_progress": _armory_progress, "food_share": food_share,
+		"armory_job": String(_armory_job), "armory_progress": _armory_progress,
+		"tailor_job": String(_tailor_job), "tailor_progress": _tailor_progress, "food_share": food_share,
 		"meal_credit": _meal_credit, "cook_progress": _cook_progress,
 		"next_raid_in": 0.0 if raid_active() else next_raid_in, "raid_warned": raid_phase != RaidPhase.NONE, "raid_from": [raid_from.x, raid_from.y, raid_from.z],
 		"raid_from_name": raid_from_name, "raid_size": raid_size,
@@ -2710,6 +2952,9 @@ func load_state(data: Dictionary) -> void:
 	var job := StringName(str(data.get("armory_job", "")))
 	_armory_job = job if job == &"" or ItemDatabase.get_item(job) != null else &""
 	_armory_progress = maxf(_num(data.get("armory_progress"), 0.0), 0.0)
+	var tjob := StringName(str(data.get("tailor_job", "")))
+	_tailor_job = tjob if tjob == &"" or ItemDatabase.get_item(tjob) != null else &""
+	_tailor_progress = maxf(_num(data.get("tailor_progress"), 0.0), 0.0)
 	food_share = _num(data.get("food_share"), -1.0)
 	if food_share < 0.0:
 		food_share = -1.0

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_m0vom"]
+[ext_resource type="Resource" path="res://resources/items/wool_clothes.tres" id="2_scxs6"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="3_lk5ma"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_fjok6"]
+[ext_resource type="Resource" path="res://resources/items/padded_hood.tres" id="5_yvns3"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_publ6"]
+
+[resource]
+script = ExtResource("6_publ6")
+id = &"padded_hood"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_m0vom"), int]({
+ExtResource("2_scxs6"): 1,
+ExtResource("3_lk5ma"): 1,
+ExtResource("4_fjok6"): 1
+})
+output = ExtResource("5_yvns3")
+craft_time = 6.0

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/padded_trousers.png" id="1_1olgd"]
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_8gsrq"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_1olgd"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/padded_trousers.tscn" id="3_ab6vx"]
+
+[resource]
+script = ExtResource("2_1olgd")
+id = &"padded_trousers"
+display_name = "Padded Trousers"
+description = "Quilted trousers with leather knees and scrap shin guards."
+category = 9
+icon = ExtResource("1_1olgd")
+max_stack = 1
+weight = 1.6
+base_value = 20
+world_model = ExtResource("3_ab6vx")
+pickup_sound = ExtResource("1_8gsrq")
+armour_slot = 3
+armour_protection = 0.11
+armour_durability = 240.0
+armour_repair = {
+&"wool": 1
+}

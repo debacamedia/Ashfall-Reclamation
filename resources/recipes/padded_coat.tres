@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_vmxsm"]
+[ext_resource type="Resource" path="res://resources/items/wool_clothes.tres" id="2_winpv"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="3_mub20"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_nw285"]
+[ext_resource type="Resource" path="res://resources/items/padded_coat.tres" id="5_nxlxt"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_0p5m1"]
+
+[resource]
+script = ExtResource("6_0p5m1")
+id = &"padded_coat"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_vmxsm"), int]({
+ExtResource("2_winpv"): 2,
+ExtResource("3_mub20"): 2,
+ExtResource("4_nw285"): 3
+})
+output = ExtResource("5_nxlxt")
+craft_time = 10.0

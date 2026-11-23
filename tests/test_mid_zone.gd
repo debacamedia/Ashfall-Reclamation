@@ -71,6 +71,15 @@ func test_the_mid_zone() -> void:
 	var marks := zone.get_node("Landmarks")
 	check(marks.get_child_count() == 7, "seven places (%d)" % marks.get_child_count())
 	var from := NavigationServer3D.map_get_closest_point(map, spawn)
+	# (The zone's map can take a moment to take its navmesh in, run after
+	# other suites: wait till a path's to be had)
+	var first := marks.get_child(0) as Node3D
+	for i in 600:
+		from = NavigationServer3D.map_get_closest_point(map, spawn)
+		var probe := NavigationServer3D.map_get_path(map, from, NavigationServer3D.map_get_closest_point(map, first.global_position), true)
+		if probe.size() > 1 and Vector2(probe[-1].x - first.global_position.x, probe[-1].z - first.global_position.z).length() < 3.0:
+			break
+		await wait_physics(1)
 	for key: String in MID_PLACES:
 		var l := marks.get_node_or_null(key) as Landmark
 		check(l != null and l.display_name == MID_PLACES[key], "%s is on the compass" % MID_PLACES[key])

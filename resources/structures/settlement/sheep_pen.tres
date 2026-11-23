@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_s4mma"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_nlxqm"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_dwwqn"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_a7do1"]
+
+[resource]
+script = ExtResource("4_a7do1")
+id = &"sheep_pen"
+display_name = "Sheep Pen"
+scene_path = "res://scenes/settlement/sheep_pen.tscn"
+max_health = 600.0
+footprint = Vector3(12.3, 2.6, 10.3)
+repair_cost = Dictionary[ExtResource("1_s4mma"), int]({
+ExtResource("2_nlxqm"): 2,
+ExtResource("3_dwwqn"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_s4mma"), int]({
+ExtResource("2_nlxqm"): 5,
+ExtResource("3_dwwqn"): 2
+})
+movable = false

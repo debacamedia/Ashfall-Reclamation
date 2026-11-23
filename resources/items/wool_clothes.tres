@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_6l0rx"]
+[ext_resource type="Texture2D" path="res://assets/icons/wool_clothes.png" id="1_oug6d"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_oug6d"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/wool_clothes.tscn" id="3_dhxqo"]
+
+[resource]
+script = ExtResource("2_oug6d")
+id = &"wool_clothes"
+display_name = "Wool Clothes"
+description = "A thick wool shirt and jerkin, spun and stitched from Ash Creek fleece. Warm, and takes a little off a blow."
+category = 9
+icon = ExtResource("1_oug6d")
+max_stack = 1
+weight = 0.8
+base_value = 8
+world_model = ExtResource("3_dhxqo")
+pickup_sound = ExtResource("1_6l0rx")
+armour_slot = 2
+armour_protection = 0.05
+armour_durability = 100.0
+armour_repair = {
+&"wool": 1
+}

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_el43i"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_igg7m"]
+[ext_resource type="Resource" path="res://resources/items/cloth.tres" id="3_8foxe"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_wa323"]
+
+[resource]
+script = ExtResource("4_wa323")
+id = &"tailors_table"
+display_name = "Tailor's Table"
+scene_path = "res://scenes/settlement/tailors_table.tscn"
+max_health = 500.0
+footprint = Vector3(4.4, 2.6, 3.2)
+repair_cost = Dictionary[ExtResource("1_el43i"), int]({
+ExtResource("2_igg7m"): 1,
+ExtResource("3_8foxe"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_el43i"), int]({
+ExtResource("2_igg7m"): 5,
+ExtResource("3_8foxe"): 2
+})
+movable = false

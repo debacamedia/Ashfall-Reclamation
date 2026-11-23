@@ -135,7 +135,7 @@ func test_cook_and_rancher_need_their_buildings() -> void:
 	st.refused.connect(func(r: String) -> void: said.append(r))
 	var p := _player(zone)
 	check(not st.request_set_role(p, s, Settler.Role.COOK) and said.back().begins_with("Build a Kitchen first"), "no kitchen, no cook: %s" % [said])
-	check(not st.request_set_role(p, s, Settler.Role.RANCHER) and said.back().begins_with("Build a Chicken Coop, Pig Pen or Cow Pasture first"), "no pen, no rancher")
+	check(not st.request_set_role(p, s, Settler.Role.RANCHER) and said.back().begins_with("Build a Chicken Coop, Pig Pen, Cow Pasture or Sheep Pen first"), "no pen, no rancher")
 	await _build(zone, &"kitchen", Vector3(20, 0, 24))
 	check(st.kitchens().size() == 1, "a kitchen built")
 	check(st.request_set_role(p, s, Settler.Role.COOK) and s.role == Settler.Role.COOK and s.role_name() == "Cook", "now a cook")

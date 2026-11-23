@@ -125,9 +125,9 @@ func test_the_defences_come_in_stages() -> void:
 	# The other places: watchtowers after their gates
 	await _claim(zone, farm)
 	await _claim(zone, nw)
-	await _finish(farm, ["GateFront", "GateBack", "GateField"])
+	await _finish(farm, [])  # (28: everything at the farm, not just its gates)
 	await _finish(nw, [])
-	check(farm.defence_stage == 2 and _keys(farm).has("TowerFrontLeft") and _keys(farm).has("TowerFrontRight"), "Ash Creek: its gates built, then two watchtowers by the front gate")
+	check(farm.defence_stage == 2 and _keys(farm).has("TowerFrontLeft") and _keys(farm).has("TowerFrontRight"), "Ash Creek: its gates (and the rest) built, then two watchtowers by the front gate")
 	check(nw.defence_stage == 2 and _keys(nw).has("TowerGateW") and _keys(nw).has("TowerGateE"), "Northwatch: its gate built, then a watchtower either side")
 	await _free(zone)
 

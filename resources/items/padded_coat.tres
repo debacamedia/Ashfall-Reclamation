@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_4tymh"]
+[ext_resource type="Texture2D" path="res://assets/icons/padded_coat.png" id="1_qghhu"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_qghhu"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/padded_coat.tscn" id="3_8x24n"]
+
+[resource]
+script = ExtResource("2_qghhu")
+id = &"padded_coat"
+display_name = "Padded Coat"
+description = "Layers of quilted wool over leather, with scrap plates sewn into the chest. Between a leather jacket and a plated vest."
+category = 9
+icon = ExtResource("1_qghhu")
+max_stack = 1
+weight = 3.2
+base_value = 35
+world_model = ExtResource("3_8x24n")
+pickup_sound = ExtResource("1_4tymh")
+armour_slot = 2
+armour_protection = 0.2
+armour_durability = 320.0
+armour_speed = 0.98
+armour_repair = {
+&"scrap_metal": 1,
+&"wool": 1
+}

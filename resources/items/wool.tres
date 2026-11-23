@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_soft.tres" id="1_i6qug"]
+[ext_resource type="Texture2D" path="res://assets/icons/wool.png" id="1_uyy1u"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_uyy1u"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/wool.tscn" id="3_qqfqi"]
+
+[resource]
+script = ExtResource("2_uyy1u")
+id = &"wool"
+display_name = "Wool"
+description = "Fleece sheared from your sheep, cleaned and carded. A Tailor spins it into clothes; so can you, at a workbench."
+icon = ExtResource("1_uyy1u")
+max_stack = 30
+weight = 0.3
+base_value = 4
+world_model = ExtResource("3_qqfqi")
+pickup_sound = ExtResource("1_i6qug")

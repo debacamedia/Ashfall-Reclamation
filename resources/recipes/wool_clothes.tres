@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_64bc4"]
+[ext_resource type="Resource" path="res://resources/items/wool.tres" id="2_ahac5"]
+[ext_resource type="Resource" path="res://resources/items/wool_clothes.tres" id="3_gtdnm"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="4_ybpwv"]
+
+[resource]
+script = ExtResource("4_ybpwv")
+id = &"wool_clothes"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_64bc4"), int]({
+ExtResource("2_ahac5"): 3
+})
+output = ExtResource("3_gtdnm")
+craft_time = 5.0

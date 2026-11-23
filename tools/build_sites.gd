@@ -103,8 +103,8 @@ const MINE_TOWERS := [
 	["MineTowerSouthwest", Vector2(-43.4, 33), Vector2(-1, 0)],
 ]
 const FARM_TOWERS := [
-	["TowerFrontLeft", Vector2(-8.5, 32.65), Vector2(0, 1)],
-	["TowerFrontRight", Vector2(8.5, 32.65), Vector2(0, 1)],
+	["TowerFrontLeft", Vector2(-8.5, 32.45), Vector2(0, 1)],
+	["TowerFrontRight", Vector2(8.5, 32.45), Vector2(0, 1)],
 ]
 const NORTHWATCH_TOWERS := [
 	["TowerGateW", Vector2(-6.45, 14.4), Vector2(0, 1)],
@@ -591,6 +591,17 @@ func _ash_creek_settlement(k: Kit, house: StaticBody3D, barn: StaticBody3D, pump
 		_plan_run(plans, g[0], "gate", g[1], g[2])
 	# …then (27.1) watchtowers by the front gate
 	_plan_towers(plans, FARM_TOWERS)
+	# …then (28), once all that's built, its fences become a palisade and its
+	# gates palisade gates, and after that the palisade's reinforced
+	for f: Array in FENCES:
+		_plan_run(plans, "Palisade" + String(f[0]), "palisade", f[1], f[2])
+		(plans.get_child(-1) as Node).set_meta("stage", 3)
+	for g: Array in GATES:
+		_plan_run(plans, "Palisade" + String(g[0]), "palisade_gate", g[1], g[2])
+		(plans.get_child(-1) as Node).set_meta("stage", 3)
+	for f: Array in FENCES:
+		_plan_run(plans, "Reinforce" + String(f[0]), "reinforced_palisade", f[1], f[2])
+		(plans.get_child(-1) as Node).set_meta("stage", 4)
 	var sites := Node3D.new()
 	sites.name = "Sites"
 	st.add_child(sites)

@@ -1,6 +1,7 @@
 class_name FarmAnimal
 extends Interactable
-## A chicken, pig or cow in one of a settlement's pens (Increment 21.5).
+## A chicken, pig, cow or (28) sheep in one of a settlement's pens (Increment
+## 21.5).
 ## Made by its pen (SettlementBuilding with an `animal_kind`), which keeps
 ## the count; the animal only wanders about inside the pen's AnimalArea,
 ## stops to graze or peck, and can be butchered: hold E (3 s).
@@ -11,6 +12,7 @@ const KINDS := {
 	&"chicken": {"name": "Chicken", "speed": 0.9, "size": 0.45},
 	&"pig": {"name": "Pig", "speed": 0.7, "size": 1.1},
 	&"cow": {"name": "Cow", "speed": 0.6, "size": 2.0},
+	&"sheep": {"name": "Sheep", "speed": 0.65, "size": 1.1},
 }
 
 var kind: StringName = &"chicken"
@@ -164,4 +166,21 @@ func _build_visual() -> Node3D:
 			_box(head, "Muzzle", Vector3(0.36, 0.22, 0.12), Vector3(0, -0.2, -0.5), _mat(Color(0.85, 0.65, 0.6)))
 			for x in [-0.24, 0.24]:
 				_box(head, "Horn%s" % ("L" if x < 0 else "R"), Vector3(0.14, 0.06, 0.06), Vector3(x, 0.2, -0.15), _mat(Color(0.85, 0.82, 0.72)))
+		&"sheep":
+			# A woolly body of lumps on thin dark legs (28)
+			var fleece := _mat(Color(0.9, 0.87, 0.78) if _rng.randf() < 0.8 else Color(0.35, 0.3, 0.27))
+			var face := _mat(Color(0.16, 0.14, 0.13) if _rng.randf() < 0.7 else Color(0.85, 0.8, 0.72))
+			_box(v, "Body", Vector3(0.62, 0.52, 0.95), Vector3(0, 0.62, 0), fleece)
+			_box(v, "Fluff", Vector3(0.7, 0.3, 0.7), Vector3(0, 0.8, 0.05), fleece)
+			_box(v, "Rump", Vector3(0.55, 0.42, 0.3), Vector3(0, 0.66, 0.42), fleece)
+			for c in [Vector2(-0.18, -0.3), Vector2(0.18, -0.3), Vector2(-0.18, 0.3), Vector2(0.18, 0.3)]:
+				_box(v, "Leg%d%d" % [int(c.x > 0), int(c.y > 0)], Vector3(0.09, 0.4, 0.09), Vector3(c.x, 0.2, c.y), face)
+			var head := Node3D.new()
+			head.name = "Head"
+			head.position = Vector3(0, 0.8, -0.5)
+			v.add_child(head)
+			_box(head, "Skull", Vector3(0.24, 0.26, 0.32), Vector3(0, -0.05, -0.12), face)
+			_box(head, "Topknot", Vector3(0.26, 0.1, 0.18), Vector3(0, 0.1, -0.04), fleece)
+			for x in [-0.17, 0.17]:
+				_box(head, "Ear%s" % ("L" if x < 0 else "R"), Vector3(0.12, 0.05, 0.07), Vector3(x, 0.0, -0.05), face)
 	return v

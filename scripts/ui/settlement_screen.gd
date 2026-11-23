@@ -389,6 +389,13 @@ func refresh() -> void:
 	if not s.armorer_spots().is_empty():
 		var smiths := s.members().filter(func(m: Settler) -> bool: return m.role == Settler.Role.ARMORER and m.has_arrived()).size()
 		lines.append("Armorer:  %s" % (s.armorer_status() if smiths > 0 else "nobody at the weapons bench (give someone the Armorer job)"))
+	# 28: wool and clothes, and the Tailor
+	var wool := s._stores_count(Settlement.WOOL)
+	if wool > 0 or s.clothes() > 0 or not s.tailors_tables().is_empty() or s.pens().any(func(p: SettlementBuilding) -> bool: return p.animal_kind == &"sheep"):
+		lines.append("Wool:  %d     Wool Clothes:  %d  (the Tailor keeps %d)" % [wool, s.clothes(), s.tailor_clothes_keep])
+	if not s.tailors_tables().is_empty():
+		var tailors := s.members().filter(func(m: Settler) -> bool: return m.role == Settler.Role.TAILOR and m.has_arrived()).size()
+		lines.append("Tailor:  %s" % (s.tailor_status() if tailors > 0 else "nobody at the Tailor's Table (give someone the Tailor job)"))
 	match s.raid_phase:
 		Settlement.RaidPhase.WARNED:
 			lines.append("RAIDERS COMING from %s: %d, in about %d min" % [s.raid_from_name, s.raid_size, maxi(ceili(s.next_raid_in * s.hour_seconds / 60.0), 1)])
@@ -628,7 +635,7 @@ func _build_rows(people: Array[Settler]) -> void:
 		jobs.add_theme_constant_override("h_separation", 6)
 		jobs.add_theme_constant_override("v_separation", 4)
 		col.add_child(jobs)
-		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.MINER, Settler.Role.ARMORER, Settler.Role.COOK, Settler.Role.RANCHER, Settler.Role.NONE]:
+		for r in [Settler.Role.FARMER, Settler.Role.GUARD, Settler.Role.BUILDER, Settler.Role.WOODCUTTER, Settler.Role.MINER, Settler.Role.ARMORER, Settler.Role.COOK, Settler.Role.RANCHER, Settler.Role.TAILOR, Settler.Role.NONE]:
 			var b := Button.new()
 			b.name = "Job_%s" % Settler.ROLE_NAMES[r]
 			b.text = Settler.ROLE_NAMES[r]

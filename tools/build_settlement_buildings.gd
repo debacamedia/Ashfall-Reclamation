@@ -22,6 +22,8 @@ extends SceneTree
 ##   palisade_gate  an 8 m double gate of stakes for a palisade (27.1)
 ##   watchtower    a guard tower with its deck at 3.4 m, to see over a
 ##                 palisade (27.1)
+##   sheep_pen     a pen for 6 sheep, with a shearing stand (28)
+##   tailors_table  a Tailor's work table, spinning wheel and loom (28)
 ##
 ##   godot --headless --path . -s res://tools/build_settlement_buildings.gd
 
@@ -69,6 +71,9 @@ func _run() -> void:
 	_palisade(true)
 	_gate("PalisadeGate", "palisade_gate", "Palisade Gate", true)
 	_tower("Watchtower", "watchtower", "Watchtower", 3.4, 1100.0)
+	# 28: sheep, and a Tailor's Table
+	_pen("SheepPen", "sheep_pen", "Sheep Pen", &"sheep", 6, Vector2(12, 10), 1.1)
+	_tailors_table()
 	quit()
 
 
@@ -405,6 +410,15 @@ func _pen(node_name: String, id: String, display: String, kind: StringName, capa
 			_box(body, "HenRoof", Vector3(2.5, 0.08, 1.9), hut + Vector3(0, 1.55, 0), M["tin"], false)
 			_box(body, "HenLegs", Vector3(2.0, 0.2, 1.4), hut + Vector3(0, 0.1, 0), M["wood"], false)
 			_box(body, "Ramp", Vector3(0.3, 0.05, 0.9), hut + Vector3(0.6, 0.18, 1.1), M["wood"], false)
+		&"sheep":
+			# A lean-to, and a shearing stand by the gate
+			var lean := Vector3(-hx + 1.8, 0, -hz + 1.3)
+			_box(body, "ShelterRoof", Vector3(3.4, 0.08, 2.4), lean + Vector3(0, 1.5, 0), M["tin"], false)
+			_box(body, "ShelterBack", Vector3(3.4, 1.5, 0.08), lean + Vector3(0, 0.75, -1.15), M["wood"], true)
+			for c in [-1.6, 1.6]:
+				_box(body, "ShelterPost%d" % int(c > 0), Vector3(0.1, 1.5, 0.1), lean + Vector3(c, 0.75, 1.1), M["wood"], false)
+			_box(body, "ShearingBoard", Vector3(1.4, 0.12, 1.0), Vector3(-2.2, 0.06, hz - 1.4), M["wood_plain"], false)
+			_box(body, "FleeceSack", Vector3(0.6, 0.5, 0.5), Vector3(-3.3, 0.25, hz - 1.4), M["straw"], true)
 		&"pig":
 			var lean := Vector3(-hx + 1.6, 0, -hz + 1.2)
 			_box(body, "ShelterRoof", Vector3(3.0, 0.08, 2.2), lean + Vector3(0, 1.3, 0), M["tin"], false)
@@ -425,7 +439,66 @@ func _pen(node_name: String, id: String, display: String, kind: StringName, capa
 	area.set_meta("size", size - Vector2(1.2, 1.2))
 	_add(b, area)
 	_markers(b, "TendSpots", [trough_at + Vector3(0, 0, 1.0)])
+	if kind == &"sheep":
+		# Where a Farmer stands to shear (28)
+		_markers(b, "ShearSpots", [Vector3(-2.2, 0, hz - 2.2)])
 	_finish(b, id)
+
+
+## The Tailor's Table (28): a long work table with folded cloth and shears, a
+## spinning wheel, a little loom and a rack of hanging clothes, under a
+## lean-to roof. TailorSpots: where a Tailor stands to work.
+func _tailors_table() -> void:
+	var b := _begin("TailorsTable", "tailors_table", "Tailor's Table", Vector3(4.4, 2.6, 3.2), 500.0,
+		{&"wood_plank": 1, &"cloth": 1}, {&"wood_plank": 5, &"cloth": 2})
+	var body := _body(b)
+	var wool := _plain(Color(0.86, 0.82, 0.72), 0.95)
+	var dyed := _plain(Color(0.42, 0.4, 0.28), 0.95)
+	# Lean-to
+	for c in [Vector2(-2.0, -1.4), Vector2(2.0, -1.4), Vector2(-2.0, 1.4), Vector2(2.0, 1.4)]:
+		_box(body, "Post", Vector3(0.12, 2.4 if c.y < 0 else 2.0, 0.12), Vector3(c.x, (2.4 if c.y < 0 else 2.0) / 2.0, c.y), M["wood"], false)
+	var roof := MeshInstance3D.new()
+	roof.name = "Roof"
+	var rm := BoxMesh.new()
+	rm.size = Vector3(4.5, 0.07, 3.3)
+	roof.mesh = rm
+	roof.material_override = M["tin"]
+	roof.transform = Transform3D(Basis(Vector3.RIGHT, atan2(0.4, 2.8)), Vector3(0, 2.22, 0))
+	_add(body, roof)
+	# The table, with cloth, shears and a measuring stick
+	_box(body, "Table", Vector3(2.4, 0.08, 0.9), Vector3(-0.6, 0.86, -0.8), M["wood_plain"], false)
+	for c in [Vector2(-1.7, -1.15), Vector2(0.5, -1.15), Vector2(-1.7, -0.45), Vector2(0.5, -0.45)]:
+		_box(body, "TableLeg", Vector3(0.08, 0.82, 0.08), Vector3(c.x, 0.41, c.y), M["wood"], false)
+	_shape(body, "TableCol", Vector3(2.4, 0.9, 0.9), Vector3(-0.6, 0.45, -0.8))
+	_box(body, "ClothFolded", Vector3(0.6, 0.12, 0.45), Vector3(-1.3, 0.96, -0.85), wool, false)
+	_box(body, "ClothFolded2", Vector3(0.5, 0.1, 0.4), Vector3(-1.25, 1.07, -0.85), dyed, false)
+	_box(body, "ClothLaid", Vector3(0.9, 0.01, 0.6), Vector3(-0.2, 0.905, -0.8), wool, false)
+	_box(body, "Shears", Vector3(0.22, 0.02, 0.05), Vector3(0.25, 0.92, -0.65), M["rust"], false)
+	_box(body, "Stick", Vector3(0.9, 0.015, 0.03), Vector3(-0.3, 0.92, -1.12), M["wood"], false)
+	# A spinning wheel
+	var wheel := MeshInstance3D.new()
+	wheel.name = "Wheel"
+	var wm := CylinderMesh.new()
+	wm.top_radius = 0.38
+	wm.bottom_radius = 0.38
+	wm.height = 0.05
+	wm.radial_segments = 16
+	wheel.mesh = wm
+	wheel.material_override = M["wood"]
+	wheel.transform = Transform3D(Basis(Vector3.FORWARD, PI / 2.0), Vector3(1.4, 0.72, -0.9))
+	_add(body, wheel)
+	_box(body, "WheelStand", Vector3(0.12, 0.5, 0.6), Vector3(1.4, 0.25, -0.9), M["wood"], true)
+	_box(body, "Bobbin", Vector3(0.06, 0.06, 0.2), Vector3(1.4, 0.75, -0.45), wool, false)
+	# A rack of hanging clothes at the back
+	_box(body, "RackBar", Vector3(1.6, 0.05, 0.05), Vector3(0.6, 1.9, -1.35), M["wood"], false)
+	for i in 4:
+		_box(body, "Hanging%d" % i, Vector3(0.32, 0.6, 0.06), Vector3(0.05 + i * 0.37, 1.55, -1.35), wool if i % 2 == 0 else dyed, false)
+	_shape(body, "RackCol", Vector3(1.8, 1.9, 0.2), Vector3(0.6, 0.95, -1.35))
+	# A wool basket
+	_box(body, "Basket", Vector3(0.5, 0.35, 0.5), Vector3(-1.75, 0.175, 0.2), M["straw"], true)
+	_box(body, "BasketWool", Vector3(0.42, 0.08, 0.42), Vector3(-1.75, 0.38, 0.2), wool, false)
+	_markers(b, "TailorSpots", [Vector3(-0.6, 0, 0.05)])
+	_finish(b, "tailors_table")
 
 
 ## The Tanning Rack (22): a wooden frame with a hide stretched on it, and a

@@ -1,0 +1,63 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yy6dt"]
+albedo_color = Color(0.86, 0.82, 0.72, 1)
+roughness = 0.9
+
+[sub_resource type="SphereMesh" id="SphereMesh_83fr6"]
+radius = 0.09
+height = 0.144
+radial_segments = 10
+rings = 5
+
+[sub_resource type="SphereMesh" id="SphereMesh_i3m28"]
+radius = 0.082
+height = 0.1312
+radial_segments = 10
+rings = 5
+
+[sub_resource type="SphereMesh" id="SphereMesh_ovlw5"]
+radius = 0.074
+height = 0.1184
+radial_segments = 10
+rings = 5
+
+[sub_resource type="SphereMesh" id="SphereMesh_a5q7q"]
+radius = 0.066
+height = 0.1056
+radial_segments = 10
+rings = 5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_db21w"]
+albedo_color = Color(0.55, 0.45, 0.3, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_t002i"]
+size = Vector3(0.012, 0.13, 0.17)
+
+[node name="Wool" type="Node3D" unique_id=1046904271]
+
+[node name="Fleece0" type="MeshInstance3D" parent="." unique_id=179355266]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.06, -0.02)
+material_override = SubResource("StandardMaterial3D_yy6dt")
+mesh = SubResource("SphereMesh_83fr6")
+
+[node name="Fleece1" type="MeshInstance3D" parent="." unique_id=1418478751]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.025, 0.06, 0.02)
+material_override = SubResource("StandardMaterial3D_yy6dt")
+mesh = SubResource("SphereMesh_i3m28")
+
+[node name="Fleece2" type="MeshInstance3D" parent="." unique_id=2063041382]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03, 0.06, -0.02)
+material_override = SubResource("StandardMaterial3D_yy6dt")
+mesh = SubResource("SphereMesh_ovlw5")
+
+[node name="Fleece3" type="MeshInstance3D" parent="." unique_id=2100290969]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.085, 0.06, 0.02)
+material_override = SubResource("StandardMaterial3D_yy6dt")
+mesh = SubResource("SphereMesh_a5q7q")
+
+[node name="Twine" type="MeshInstance3D" parent="." unique_id=666980719]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+material_override = SubResource("StandardMaterial3D_db21w")
+mesh = SubResource("BoxMesh_t002i")

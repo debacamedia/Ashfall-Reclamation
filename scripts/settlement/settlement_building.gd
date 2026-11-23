@@ -72,12 +72,18 @@ func _ready() -> void:
 
 
 ## The settlement it stands in (within that settlement's claim radius), or null.
+## How far past its claim radius a place's buildings still count as its own.
+const BEYOND_RADIUS := 12.0
+
+
 func settlement() -> Settlement:
 	if not is_inside_tree():
 		return null
 	for n in get_tree().get_nodes_in_group("settlements"):
 		var s := n as Settlement
-		if s != null and Vector2(global_position.x - s.global_position.x, global_position.z - s.global_position.z).length() <= s.claim_radius:
+		# (28: a little past the claim radius, for the far corners of a
+		# place's own fences: Ash Creek's fields reach 80 m out)
+		if s != null and Vector2(global_position.x - s.global_position.x, global_position.z - s.global_position.z).length() <= s.claim_radius + BEYOND_RADIUS:
 			return s
 	return null
 
@@ -126,6 +132,20 @@ func cook_spots() -> Array[Node3D]:
 
 func tend_spots() -> Array[Node3D]:
 	return _markers("TendSpots")
+
+
+## Where a Farmer stands to shear a sheep pen (28).
+func shear_spots() -> Array[Node3D]:
+	return _markers("ShearSpots")
+
+
+## A Tailor's Table (28), and where a Tailor works at it.
+func is_tailors_table() -> bool:
+	return definition != null and definition.id == &"tailors_table"
+
+
+func tailor_spots() -> Array[Node3D]:
+	return _markers("TailorSpots")
 
 
 func animals() -> Array[FarmAnimal]:

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_pkn48"]
+[ext_resource type="Resource" path="res://resources/items/wool_clothes.tres" id="2_kke5w"]
+[ext_resource type="Resource" path="res://resources/items/leather.tres" id="3_ulatp"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="4_fjkb7"]
+[ext_resource type="Resource" path="res://resources/items/padded_trousers.tres" id="5_lnpfw"]
+[ext_resource type="Script" path="res://scripts/crafting/recipe_definition.gd" id="6_ejxij"]
+
+[resource]
+script = ExtResource("6_ejxij")
+id = &"padded_trousers"
+category = 7
+station = 1
+inputs = Dictionary[ExtResource("1_pkn48"), int]({
+ExtResource("2_kke5w"): 1,
+ExtResource("3_ulatp"): 1,
+ExtResource("4_fjkb7"): 2
+})
+output = ExtResource("5_lnpfw")
+craft_time = 7.0
