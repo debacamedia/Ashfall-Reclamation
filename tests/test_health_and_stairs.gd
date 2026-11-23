@@ -151,8 +151,11 @@ func test_guards_climb_to_their_towers() -> void:
 	await wait_physics(30)
 	check(st.guard_posts().size() == 3, "three towers")
 	var guards: Array[Settler] = []
+	# (28.1: towers go to guards with a gun)
+	var rifle: ItemDefinition = load("res://resources/items/weapons/service_rifle_item.tres")
 	for i in 3:
 		guards.append(await _newcomer(zone, st, Settler.Role.GUARD))
+		guards[i].arm(rifle, 30)
 	var up := 0
 	for i in 75:
 		await wait_physics(60)

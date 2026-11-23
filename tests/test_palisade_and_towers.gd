@@ -193,6 +193,10 @@ func test_guards_climb_the_watchtowers() -> void:
 	nw.store.inventory.add_item(VEG, 40)
 	var a := await _newcomer(nw, Settler.Role.GUARD)
 	var b := await _newcomer(nw, Settler.Role.GUARD)
+	# (28.1: towers go to guards with a gun)
+	var rifle: ItemDefinition = load("res://resources/items/weapons/service_rifle_item.tres")
+	a.arm(rifle, 30)
+	b.arm(rifle, 30)
 	var up := 0
 	for i in 2400:
 		await wait_physics(1)
