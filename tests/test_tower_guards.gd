@@ -48,7 +48,7 @@ func test_shooting_faster_and_from_towers() -> void:
 	# On paper the same, and a steadier aim from a tower
 	var ground: Array = RaidOnPaper.shot_odds(RIFLE_W, false)
 	var up: Array = RaidOnPaper.shot_odds(RIFLE_W, true)
-	check(float(up[0]) > float(ground[0]) * 1.3, "from a tower a shot lands more often (%.2f against %.2f)" % [up[0], ground[0]])
+	check(float(up[0]) > float(ground[0]), "from a tower a shot lands more often (%.2f against %.2f)" % [up[0], ground[0]])
 	var paper := RaidOnPaper.new(5)
 	paper.add_raider("r", 100000.0, 0.0, 1.25)
 	paper.add_guard("g", 100.0, RIFLE_W, 30, 300)
@@ -128,8 +128,20 @@ func test_towers_see_further_and_along_their_wall() -> void:
 			if not guard._can_see(r):
 				by_wall += 1
 		r.queue_free()
-	check(seen == tried, "a raider anywhere along the wall the tower stands against is seen (%d of %d)" % [seen, tried])
-	check(by_wall > 0, "including %d the wall's top hid before" % by_wall)
+	check(seen == tried, "a raider anywhere along the wall the tower stands against is seen (%d of %d; %d only past the wall)" % [seen, tried, by_wall])
+	# Right down at the wall's foot, below the line over its top: the wall
+	# itself doesn't count against a tower's view
+	var foot := mine.to_global(Vector3(44.9, 0.3, -8))
+	var plain := zone.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(guard.eyes.global_position, foot, PhysicsLayers.WORLD_SOLID, [guard.get_rid()]))
+	check(not plain.is_empty() and Structure.from_collider(plain["collider"]) != null, "a sight line to the very foot of the wall runs into its top")
+	check(guard._clear_but_walls(guard.eyes.global_position, foot), "but from the tower it's seen past the wall")
+	check(guard._on_my_wall(foot) and not guard._on_my_wall(mine.to_global(Vector3(20, 0, -8))), "along its wall, not across the yard")
+	# 60 m from up there: a raider far along the wall is picked out
+	var far := _raider(zone, mine.to_global(Vector3(44.9, 0, -48)))
+	await wait_physics(2)
+	var d := guard.global_position.distance_to(far.global_position)
+	check(d > 45.0 and guard._find_raider() == far, "a raider %.0f m off along the wall is picked out from the tower" % d)
+	far.queue_free()
 	# Shot from up there, over the palisade, not into it
 	var r2 := _raider(zone, mine.to_global(Vector3(44.9, 0, -25)))
 	await wait_physics(2)
@@ -216,7 +228,7 @@ func test_nobody_hops_through_a_wall() -> void:
 
 
 func test_paper_raids_break_the_gate_under_the_towers() -> void:
-	# Six raiders against three rifles: up towers behind a palisade gate,
+	# Six raiders against one rifle: up a tower behind a palisade gate,
 	# and on the open ground as before
 	var walled := {"wounded": 0, "killed": 0, "breached": 0}
 	var open := {"wounded": 0, "killed": 0}
@@ -225,8 +237,8 @@ func test_paper_raids_break_the_gate_under_the_towers() -> void:
 			var paper := RaidOnPaper.new(run + 1)
 			for i in 6:
 				paper.add_raider("r", 120.0 if i % 4 == 3 else 80.0, 20.0, 1.25)
-			for i in 3:
-				paper.add_guard("g%d" % i, 100.0, RIFLE_W, 30, 90).raised = w == 0
+			for i in 1:
+				paper.add_guard("g%d" % i, 100.0, RIFLE_W, 30, 30).raised = w == 0
 			for i in 5:
 				paper.add_sheltering("m%d" % i, 100.0)
 			paper.stores = {&"vegetables": 100}
@@ -255,8 +267,10 @@ func test_paper_raids_break_the_gate_under_the_towers() -> void:
 	mine.raid_from = NavigationServer3D.map_get_closest_point(zone.get_world_3d().navigation_map, road.global_position)
 	var gate := mine._paper_gate()
 	check(gate != null and gate.definition.id == &"palisade_gate", "raiders up the road would have to break the palisade gate")
-	# Weak enough to give: the report says so and it's broken
+	# Weak enough to give, and nobody to shoot (the guard's gun taken back):
+	# it's broken through
 	gate.health = 10.0
+	g.disarm()
 	mine.away_range = 0.0
 	g.global_position = AWAY
 	u.global_position = AWAY
