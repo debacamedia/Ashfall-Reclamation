@@ -193,7 +193,10 @@ func test_ground_guards_stay_inside_the_walls() -> void:
 	check(out == 0, "the guard stays inside, not out through the gate after them")
 	# One gets in: the guard goes for it
 	var r := mine.raiders[0] as Raider
-	r.global_position = mine.store.global_position + mine.store.global_basis.z * 2.5 + Vector3.UP * 0.1
+	# (somewhere inside well away from the guard: by the stores, or the board)
+	var spots := [mine.store.global_position + mine.store.global_basis.z * 2.5, mine.claim_point.global_position]
+	spots.sort_custom(func(x: Vector3, y: Vector3) -> bool: return x.distance_to(guard.global_position) > y.distance_to(guard.global_position))
+	r.global_position = NavigationServer3D.map_get_closest_point(zone.get_world_3d().navigation_map, spots[0]) + Vector3.UP * 0.1
 	var start := guard.global_position.distance_to(r.global_position)
 	for i in 600:
 		await wait_physics(1)
