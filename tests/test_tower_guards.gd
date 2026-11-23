@@ -131,7 +131,11 @@ func test_towers_see_further_and_along_their_wall() -> void:
 	check(seen == tried, "a raider anywhere along the wall the tower stands against is seen (%d of %d; %d only past the wall)" % [seen, tried, by_wall])
 	# Right down at the wall's foot, below the line over its top: the wall
 	# itself doesn't count against a tower's view
-	var foot := mine.to_global(Vector3(44.9, 0.3, -8))
+	var wall_x := -INF
+	for b in mine.buildings():
+		if b.definition.id in Settler.WALL_IDS and b.global_position.distance_to(tower.global_position) < 6.0:
+			wall_x = maxf(wall_x, mine.to_local(b.global_position).x)
+	var foot := mine.to_global(Vector3(wall_x + 0.45, 0.1, -3))
 	var plain := zone.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(guard.eyes.global_position, foot, PhysicsLayers.WORLD_SOLID, [guard.get_rid()]))
 	check(not plain.is_empty() and Structure.from_collider(plain["collider"]) != null, "a sight line to the very foot of the wall runs into its top")
 	check(guard._clear_but_walls(guard.eyes.global_position, foot), "but from the tower it's seen past the wall")
@@ -277,5 +281,6 @@ func test_paper_raids_break_the_gate_under_the_towers() -> void:
 	var rep := mine.settle_raid_on_paper(7)
 	await wait_physics(3)
 	check(not is_instance_valid(gate) or gate.is_queued_for_deletion() or gate.health <= 0.0, "broken through on paper: the gate's broken (%s)" % rep)
-	check(_keys(mine).any(func(k: String) -> bool: return k.contains("Gate")), "and back on the building list")
+	await wait_physics(3)
+	check(mine.sites().any(func(x: ConstructionSite) -> bool: return x.rebuild and x.plan_id == &"palisade_gate"), "and back on the building list")
 	await _free(zone)
