@@ -74,7 +74,7 @@ func _one(c: Array, point: int) -> void:
 	for k in sums:
 		sums[k] = snappedf(sums[k] / PAPER_RUNS, 0.01)
 	var food0 := st._count_in_stores(&"vegetables")
-	var rounds0 := guards.reduce(func(a: int, s: Settler) -> int: return a + s.magazine + s.ammo, 0)
+	var rounds0: int = guards.reduce(func(a: int, s: Settler) -> int: return a + s.magazine + s.ammo, 0)
 	st.start_raid()
 	var t := 0
 	var off := 0
@@ -84,7 +84,7 @@ func _one(c: Array, point: int) -> void:
 		for g in guards:
 			if g.holds_tower() and not g.up_tower() and not g.is_down():
 				off += 1
-	var rounds1 := guards.reduce(func(a: int, s: Settler) -> int: return a + s.magazine + s.ammo, 0)
+	var rounds1: int = guards.reduce(func(a: int, s: Settler) -> int: return a + s.magazine + s.ammo, 0)
 	var rep := st.raid_report
 	var g2 := gate if gate != null and is_instance_valid(gate) and not gate.is_queued_for_deletion() else null
 	print("CAL %s pt%d size%d up%d gate%s | REAL k%d e%d w%d r%d food%d broke%s %ds off%d | PAPER %s" % [c[0], point, st.raid_size, up.size(),

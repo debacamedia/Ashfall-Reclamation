@@ -136,7 +136,7 @@ func test_towers_see_further_and_along_their_wall() -> void:
 	var h := HealthComponent.find_on(r2)
 	var before := h.current_health
 	var walls := mine.buildings().filter(func(b: SettlementBuilding) -> bool: return b.definition.id in Settler.WALL_IDS)
-	var wall_health := walls.reduce(func(a: float, b: SettlementBuilding) -> float: return a + b.health, 0.0)
+	var wall_health: float = walls.reduce(func(a: float, b: SettlementBuilding) -> float: return a + b.health, 0.0)
 	for i in 30:
 		guard._cooldown = 0.0
 		guard._shoot(r2)
@@ -248,7 +248,8 @@ func test_paper_raids_break_the_gate_under_the_towers() -> void:
 	var g := await _newcomer(mine, Settler.Role.GUARD)
 	g.arm(RIFLE, 60)
 	var u := await _newcomer(mine, Settler.Role.GUARD)
-	check(mine.tower_guards() == [g] as Array[Settler], "the armed guard is the one up a tower")
+	var up_now := mine.tower_guards()
+	check(up_now.size() == 1 and up_now[0] == g, "the armed guard is the one up a tower")
 	mine.warn_raid(0.0)
 	var road := mine.get_node("RaidPoints").get_child(0) as Node3D
 	mine.raid_from = NavigationServer3D.map_get_closest_point(zone.get_world_3d().navigation_map, road.global_position)
