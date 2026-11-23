@@ -124,6 +124,8 @@ var _spot: Node3D = null
 ## [origin, along] of each wall length their tower stands against.
 var _tower_walls: Array = []
 var _tower_walls_for: Node3D = null
+## At the foot of their tower's stair, on the way up it.
+var _climbing := false
 var _stuck := 0
 var _probe_left := 0.0
 var _probe_from := Vector3.INF
@@ -469,6 +471,7 @@ func _patrol(delta: float) -> void:
 		# each, in turn); otherwise walk the patrol points
 		var posts := settlement.guard_posts()
 		_spot = null
+		_climbing = false
 		if not posts.is_empty():
 			# Guards with a gun take the towers first: up there, a machete
 			# is no use (28.1)
@@ -490,7 +493,11 @@ func _patrol(delta: float) -> void:
 		state = State.WALK
 		_state_time = 0.0
 	if state == State.WALK:
-		if _move_to(_goal, walk_speed, delta) or _state_time > 60.0:
+		# Up a tower: to the foot of its stair first, then up it (28.1:
+		# coming at it from the side, the way on was missed)
+		var way := _way_up()
+		var there := _move_to(way if way != Vector3.INF else _goal, walk_speed, delta)
+		if (there and way == Vector3.INF) or _state_time > 60.0:
 			state = State.PATROL
 			_state_time = 0.0
 			_state_length = _rng.randf_range(8.0, 15.0)
@@ -872,6 +879,38 @@ func across_walls(p: Vector3) -> bool:
 			if Settlement._flat_distance_to_segment(at, path[i], path[i + 1]) < 1.5:
 				return true
 	return false
+
+
+## In front of the foot of the stair up to their tower, while they're still
+## on the ground and haven't got there yet; INF otherwise.
+func _way_up() -> Vector3:
+	if _climbing or not holds_tower() or _goal != _spot.global_position:
+		return Vector3.INF
+	if global_position.y > _spot.global_position.y - 1.5:
+		return Vector3.INF
+	var b := _spot.get_parent().get_parent() as Node3D
+	var ramp := b.find_child("Ramp", true, false) as CollisionShape3D if b != null else null
+	if ramp == null or not (ramp.shape is ConvexPolygonShape3D):
+		return Vector3.INF
+	var foot_z := -INF
+	var xs := 0.0
+	var n := 0
+	for pt: Vector3 in (ramp.shape as ConvexPolygonShape3D).points:
+		if pt.y < 0.01 and pt.z > foot_z + 0.01:
+			foot_z = pt.z
+			xs = 0.0
+			n = 0
+		if pt.y < 0.01 and absf(pt.z - foot_z) <= 0.01:
+			xs += pt.x
+			n += 1
+	if n == 0:
+		return Vector3.INF
+	var way := ramp.global_transform * Vector3(xs / n, 0.0, foot_z + 1.0)
+	way = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, way)
+	if Vector2(way.x - global_position.x, way.z - global_position.z).length() < 0.7:
+		_climbing = true  # at the foot: on up
+		return Vector3.INF
+	return way
 
 
 ## Seconds between shots with `w`: a quarter faster than before 28.1, and
