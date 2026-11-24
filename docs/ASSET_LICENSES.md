@@ -29,17 +29,17 @@ Only **CC0** and **MIT** (or another licence on the "yes" rows) come into the re
 | Universal Base Characters (Standard) | Quaternius | CC0 1.0 | 22 Nov 2026, licence file in the zip | `assets/characters/quaternius/bodies/`, `hair/` with `LICENSE_base_characters.txt` | Settlers' and raiders' heads, bodies, hair (29) |
 | Modular Character Outfits – Fantasy (Standard) | Quaternius | CC0 1.0 | 23 Nov 2026, licence file in the zip and the pack's itch.io page | `assets/characters/quaternius/outfits/` with `LICENSE_Modular_Character_Outfits_Fantasy.txt` | Everyone's clothes, and armour as clothes (29.1) |
 | ASHFALL Resource Packs 1.0, 2.0, 3.0 | Made for this project (procedural materials, decals, signs, sounds), from the user | Project-owned | 25 Oct 2026, the packs' READMEs | `assets/ashfall_pack_v1/`, `v2/`, `v3/` | Outpost 17's and Halden's materials, signs, graffiti, decals, surface and town sounds |
+| Ultimate Gun Pack | Quaternius | CC0 1.0 | 23 Nov 2026, `License.txt` in the zip and quaternius.com | `assets/models/quaternius/guns/` with `LICENSE_Ultimate_Gun_Pack.txt` | The Service Rifle, Sidearm Pistol, Pump Shotgun and Marksman Rifle, the 4× scope, suppressor and foregrip; settlers' rifles (30) |
+| Farm Buildings | Quaternius | CC0 1.0 | 23 Nov 2026: no licence file in the zip; quaternius.itch.io/lowpoly-farm-buildings says CC0 | `assets/models/quaternius/farm/` with `LICENSE_Farm_Buildings.txt` (a note recording the page and the date) | Ash Creek's silo and wind pump, the chicken pen's hen house (30) |
 | Everything else: models, levels, materials, synthesized sounds, icons, code | Made for this project | Project-owned | | | |
 
 ## Downloaded, not in the game yet
 
 | Asset | Author / source | Licence | Checked | What's in it | Could be used for |
 |---|---|---|---|---|---|
-| Ultimate Gun Pack | Quaternius | CC0 1.0 | 23 Nov 2026, `License.txt` in the zip and quaternius.com | 41 low-poly guns (pistols, revolvers, shotguns, assault rifles, bullpups, SMGs, sniper rifles) and 15 attachments (scopes, silencers, grip, stock, bipod, tripod, flashlight, bayonets). FBX, OBJ, .blend; flat colours | The player's guns and attachments, guards' and raiders' guns in hand |
-| Farm Buildings | Quaternius | CC0 1.0 | 23 Nov 2026: **no licence file in the zip**; quaternius.itch.io/lowpoly-farm-buildings says CC0 | 13 pieces: barns (small, big, open), silo, silo house, chicken coop, windmill, wind pump, water tower, well, two fences. FBX, OBJ, .blend; flat colours | Ash Creek Farms, pens, the coop |
 | Downtown City MegaKit (Standard) | Quaternius | CC0 1.0 | 23 Nov 2026, `License_Standard.txt` in the zip and quaternius.com | About 150 modular city pieces: brick, metal and trim walls, windows, columns, cornices, doors, slate roofs, floors, stairs, streets, sidewalks, road decals, small props, 3 ready buildings. glTF for Godot, textured | Halden's Crossing, Dusthaven, Red Mesa: towns built from real pieces |
 
-When one of these comes into the game, move its row up, add the licence file next to its files (for Farm Buildings, write one recording the itch.io page and the date checked), and say which increment.
+When one of these comes into the game, move its row up, add the licence file next to its files (or, where a zip has none, a note recording the page that gives the licence and the date checked), and say which increment.
 
 ## Things to watch
 
