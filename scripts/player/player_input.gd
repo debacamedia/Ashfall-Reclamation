@@ -52,6 +52,7 @@ var _last_forward_tap := -10.0
 
 
 func _ready() -> void:
+	ensure_bar_keys()
 	capture_mouse()
 	# Things that take the rifle out of your hands also drop toggled aim
 	var player := get_parent() as PlayerController
@@ -63,6 +64,20 @@ func _ready() -> void:
 		player.died.connect(func(_info: DamageInfo) -> void: cancel_aim())
 		if player.weapon_slots != null:
 			player.weapon_slots.switch_started.connect(func(_slot: int) -> void: cancel_aim())
+
+
+## Keys 1-8 pick quick bar slots (Increment 32). Keys 1-5 are in the project's
+## input map; 6-8 are added here if they're missing (and left alone if a
+## player has bound them).
+static func ensure_bar_keys() -> void:
+	for i in range(1, QuickBar.SIZE + 1):
+		var action := "weapon_%d" % i
+		if InputMap.has_action(action):
+			continue
+		InputMap.add_action(action)
+		var key := InputEventKey.new()
+		key.physical_keycode = KEY_0 + i
+		InputMap.action_add_event(action, key)
 
 
 ## Magic Mouse / trackpad swipes arrive as pan gestures, which the GUI
@@ -163,8 +178,8 @@ func gather() -> InputFrame:
 		aim_held = false
 	var sprinting := frame.sprint and frame.move.y < -0.3
 	frame.aim = update_aim(aim_held, sprinting)
-	for i in range(1, 6):
-		if Input.is_action_just_pressed("weapon_%d" % i):
+	for i in range(1, QuickBar.SIZE + 1):
+		if InputMap.has_action("weapon_%d" % i) and Input.is_action_just_pressed("weapon_%d" % i):
 			frame.slot = i
 	frame.cycle = _pending_cycle
 	_pending_cycle = 0

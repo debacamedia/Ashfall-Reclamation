@@ -266,9 +266,9 @@ func test_arming_guards() -> void:
 	var p := _player(zone)
 	var g := await _newcomer(zone, Settler.Role.GUARD)
 	check(g.role == Settler.Role.GUARD and g.gun == null and g.status_text() == "Guarding (machete)", "a guard with only a machete")
-	# Your spare pistol and its rounds
+	# Your spare pistol (unloaded) and its rounds
 	p.inventory.clear()
-	p.inventory.add_item(PISTOL, 1)
+	p.inventory.add_item(PISTOL, 1, {"magazine": 0, "attachments": []})
 	p.inventory.add_item(ItemDatabase.find_ammo_item(PISTOL.weapon.ammo_type), 40)
 	var idx := -1
 	for i in p.inventory.slot_count:

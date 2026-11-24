@@ -50,6 +50,9 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, S
 @export var attachment: AttachmentDefinition
 ## Structure kits (Increment 13): what this kit builds in build mode (B).
 @export var structure: StructureDefinition
+## Can go on the quick bar though it isn't a gun, medical or food (the
+## Field Manual: Increment 32).
+@export var holdable := false
 
 
 @export_group("Backpack")

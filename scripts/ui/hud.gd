@@ -45,6 +45,8 @@ var _speed_label: Label
 @onready var inventory_screen: InventoryScreen = %InventoryScreen
 @onready var container_screen: ContainerScreen = get_node_or_null("%ContainerScreen")
 @onready var _weapon_strip: Label = get_node_or_null("%WeaponStrip")
+## The quick bar along the bottom (Increment 32): replaces the weapon strip.
+var quick_bar_hud: QuickBarHud
 @onready var crafting_screen: CraftingScreen = get_node_or_null("%CraftingScreen")
 @onready var _hint: Label = get_node_or_null("%HintLabel")
 @onready var _scope: Control = get_node_or_null("%ScopeOverlay")
@@ -103,6 +105,10 @@ func _ready() -> void:
 	settlement_screen = SettlementScreen.new()
 	add_child(settlement_screen)
 	_build_drive_panel()
+	quick_bar_hud = QuickBarHud.new()
+	$Root.add_child(quick_bar_hud)
+	if _weapon_strip != null:
+		_weapon_strip.visible = false
 	pause_menu = PauseMenu.new()
 	add_child(pause_menu)
 	_death_screen.visible = false
@@ -152,11 +158,9 @@ func _process(delta: float) -> void:
 		player.item_use_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.transfer_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.weapon_picked_up.connect(func(def: WeaponDefinition) -> void:
-			show_notice("%s  →  slot %d" % [def.display_name, def.slot], Color(0.75, 0.9, 1.0)))
+			show_notice("%s  →  quick bar %d" % [def.display_name, player.last_bar_slot], Color(0.75, 0.9, 1.0)))
 		player.gun_stowed.connect(func(def: WeaponDefinition) -> void:
-			show_notice("%s  →  backpack (spare)" % def.display_name, Color(0.75, 0.9, 1.0)))
-		player.gun_equipped.connect(func(def: WeaponDefinition) -> void:
-			show_notice("%s  →  slot %d (unloaded: reload)" % [def.display_name, def.slot], Color(0.75, 0.9, 1.0)))
+			show_notice("%s  →  backpack" % def.display_name, Color(0.75, 0.9, 1.0)))
 		player.pack_changed.connect(func(pack: ItemDefinition) -> void:
 			show_notice("Wearing your %s: %.0f kg, %d slots" % [pack.display_name if pack != null else "satchel",
 				PlayerInventory.weight_for(pack), PlayerInventory.slots_for(pack)], Color(0.75, 0.9, 1.0)))
@@ -228,7 +232,6 @@ func _process(delta: float) -> void:
 				_ammo_label.text = "RELOADING  %d%%" % roundi(_weapon.get_reload_progress() * 100.0)
 		if _scope != null:
 			_scope.visible = _weapon.definition.scope_overlay and player.aim_amount >= 0.95 and not player.is_dead()
-	_update_weapon_strip()
 	_update_drive_panel()
 	# Full-screen windows (inventory, container, crafting) hide the corner readouts
 	var window_open := is_window_open()
@@ -237,7 +240,8 @@ func _process(delta: float) -> void:
 	compass.get_node("PlaceBanner").visible = not window_open
 	# The map covers the top of the screen, where the compass is
 	compass.modulate.a = 0.0 if map_screen.visible or settlement_screen.visible else 1.0
-	for c: CanvasItem in [_weapon_strip, _quick_slot, _eat_slot, _weapon_label, _ammo_label]:
+	quick_bar_hud.player = player
+	for c: CanvasItem in [quick_bar_hud, _quick_slot, _eat_slot, _weapon_label, _ammo_label]:
 		if c != null:
 			c.modulate.a = 0.0 if window_open or driving else 1.0
 	# …and the last two notices move down under the window, clear of its buttons
@@ -657,7 +661,7 @@ func _update_item_use() -> void:
 		_use_bar.visible = true
 		_use_label.visible = true
 		_use_bar.value = progress * 100.0
-		_use_label.text = "Using %s…  (fire or sprint to cancel)" % player.get_item_in_use().display_name
+		_use_label.text = "Using %s…  (%s to cancel)" % [player.get_item_in_use().display_name, "sprint" if player.is_using_from_hand() else "fire or sprint"]
 		return
 	# Hand crafting carries on with the menu closed: show it here
 	var crafting := player.is_crafting() and not (crafting_screen != null and crafting_screen.visible)
@@ -702,23 +706,6 @@ func _update_notices(delta: float) -> void:
 func _play_ui(stream: AudioStream) -> void:
 	_ui_sound.stream = stream
 	_ui_sound.play()
-
-
-## "1 RIFLE   2 PISTOL   3 —   4 —" with the gun in hand in brackets.
-func _update_weapon_strip() -> void:
-	if _weapon_strip == null:
-		return
-	var slots := player.weapon_slots
-	if slots == null:
-		_weapon_strip.text = ""
-		return
-	var parts := []
-	var shown := slots.pending_slot if slots.pending_slot != 0 else slots.current_slot
-	for s in range(1, WeaponSlots.SLOT_COUNT + 1):
-		var w := slots.get_weapon(s)
-		var label := "%d %s" % [s, w.definition.short_name if w != null else "—"]
-		parts.append("[%s]" % label if s == shown else label)
-	_weapon_strip.text = "   ".join(parts)
 
 
 ## Build mode (B): what's selected and what's possible where you look.

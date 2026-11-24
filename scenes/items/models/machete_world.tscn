@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="1_6mtdc"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="2_7xpxy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6chkr"]
+albedo_color = Color(0.6392157, 0.65882355, 0.6784314, 1)
+metallic = 0.3
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_wgfr0"]
+size = Vector3(0.006, 0.05, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ofc1j"]
+albedo_color = Color(0.42745098, 0.4509804, 0.47058824, 1)
+metallic = 0.3
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_4lisl"]
+size = Vector3(0.008, 0.008, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_go1nq"]
+size = Vector3(0.05, 0.012, 0.014)
+
+[sub_resource type="BoxMesh" id="BoxMesh_usk1h"]
+size = Vector3(0.026, 0.032, 0.13)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o8kem"]
+albedo_color = Color(0.22745098, 0.16470589, 0.1254902, 1)
+metallic = 0.3
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_7wniv"]
+size = Vector3(0.028, 0.034, 0.03)
+
+[node name="MacheteWorld" type="Node3D" unique_id=2147055442]
+
+[node name="Machete" type="Node3D" parent="." unique_id=507212218]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0.03, 0.2)
+
+[node name="Blade" type="MeshInstance3D" parent="Machete" unique_id=419185237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -0.3)
+material_override = SubResource("StandardMaterial3D_6chkr")
+mesh = SubResource("BoxMesh_wgfr0")
+
+[node name="Spine" type="MeshInstance3D" parent="Machete" unique_id=583232833]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, -0.3)
+material_override = SubResource("StandardMaterial3D_ofc1j")
+mesh = SubResource("BoxMesh_4lisl")
+
+[node name="Guard" type="MeshInstance3D" parent="Machete" unique_id=1707767299]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.085)
+material_override = ExtResource("1_6mtdc")
+mesh = SubResource("BoxMesh_go1nq")
+
+[node name="Handle" type="MeshInstance3D" parent="Machete" unique_id=1954037771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, -0.015)
+material_override = ExtResource("2_7xpxy")
+mesh = SubResource("BoxMesh_usk1h")
+
+[node name="Wrap" type="MeshInstance3D" parent="Machete" unique_id=2057231097]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, 0.04)
+material_override = SubResource("StandardMaterial3D_o8kem")
+mesh = SubResource("BoxMesh_7wniv")

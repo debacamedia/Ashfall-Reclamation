@@ -662,7 +662,7 @@ func _build_rows(people: Array[Settler]) -> void:
 		give.focus_mode = Control.FOCUS_NONE
 		give.add_theme_font_size_override("font_size", 14)
 		give.disabled = spares.is_empty()
-		give.tooltip_text = "No spare guns in your backpack" if spares.is_empty() else "One of the spare guns in your backpack"
+		give.tooltip_text = "You've no guns to give" if spares.is_empty() else "One of the guns you carry"
 		var pop := give.get_popup()
 		for sp in spares:
 			pop.add_item((sp[1] as ItemDefinition).display_name, sp[0])
@@ -837,16 +837,20 @@ func request_take_armour(p: Settler) -> void:
 		_rows_key = ""
 
 
-## Spare guns in your backpack: [slot index, item].
+## Guns you carry: [index, item]. Backpack slots by their index, quick
+## bar slots as Settlement.BAR_GUN + their index (Increment 32).
 func _spares() -> Array:
 	var out := []
-	var inv := player.inventory if player != null else null
-	if inv == null:
+	if player == null:
 		return out
-	for i in inv.slot_count:
-		var it := inv.get_slot_item(i)
-		if it != null and it.weapon != null and not it.weapon.melee:
-			out.append([i, it])
+	for inv: InventoryComponent in [player.quick_bar, player.inventory]:
+		if inv == null:
+			continue
+		var base := Settlement.BAR_GUN if inv == player.quick_bar else 0
+		for i in inv.slot_count:
+			var it := inv.get_slot_item(i)
+			if it != null and it.weapon != null and not it.weapon.melee:
+				out.append([base + i, it])
 	return out
 
 

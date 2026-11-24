@@ -208,6 +208,19 @@ func _hold_e(p: PlayerController, ticks: int) -> void:
 	await _run(p, _frame(), 1)
 
 
+## How many of `id` are in the backpack itself (not the quick bar).
+func _in_backpack(p: PlayerController, id: StringName) -> int:
+	var n := 0
+	for i in p.inventory.slot_count:
+		var it := p.inventory.get_slot_item(i)
+		if it != null and it.id == id:
+			n += p.inventory.get_slot_quantity(i)
+	return n
+
+
+## Increment 32: a gun you pick up goes onto the first empty slot of the
+## quick bar (two of the same gun, side by side, if you like); with the bar
+## full, into the backpack.
 func test_weapon_pickup_fills_its_slot() -> void:
 	var p := _player()
 	await _run(p, _frame(), 3)
@@ -217,15 +230,25 @@ func test_weapon_pickup_fills_its_slot() -> void:
 	var got := []
 	p.weapon_picked_up.connect(func(d: WeaponDefinition) -> void: got.append(d.id))
 	await _hold_e(p, 40)
-	check(p.weapon_slots.get_weapon(3) != null and p.weapon_slots.get_weapon(3).definition == SHOTGUN, "shotgun in slot 3")
+	check(p.weapon_slots.get_weapon(3) != null and p.weapon_slots.get_weapon(3).definition == SHOTGUN, "shotgun on bar slot 3 (the first empty one)")
+	check(p.weapon_slots.get_weapon(3).ammo_in_magazine == SHOTGUN.magazine_size, "found loaded")
 	check(got == [&"shotgun"] and not is_instance_valid(pk), "weapon_picked_up, pickup gone")
 	check(p.weapon.definition == RIFLE, "still holding the rifle")
-	check(p.inventory.count_of(&"shotgun") == 0, "guns don't go into the inventory grid")
+	check(_in_backpack(p, &"shotgun") == 0, "guns don't go into the backpack while the bar has room")
 	var again := _pickup_in_front(p, SHOTGUN_ITEM)
 	await _run(p, _frame(), 2)
-	check(again.get_prompt(p) == "Pick up Pump Shotgun (spare, into your backpack)", "second one: %s" % again.get_prompt(p))
+	check(again.get_prompt(p) == "Pick up Pump Shotgun", "second one: %s" % again.get_prompt(p))
 	await _hold_e(p, 40)
-	check(p.inventory.count_of(&"shotgun") == 1 and not is_instance_valid(again), "a second gun goes into the backpack as a spare (Increment 16.7)")
+	check(p.weapon_slots.get_weapon(4) != null and p.weapon_slots.get_weapon(4).definition == SHOTGUN and not is_instance_valid(again), "a second shotgun beside the first")
+	# Fill the bar: the next one goes into the backpack
+	for i in 4:
+		p.give_weapon(PISTOL)
+	check(p.quick_bar.first_empty() == -1, "the bar's full")
+	var third := _pickup_in_front(p, SHOTGUN_ITEM)
+	await _run(p, _frame(), 2)
+	check(third.get_prompt(p) == "Pick up Pump Shotgun (into your backpack: your quick bar's full)", "third one: %s" % third.get_prompt(p))
+	await _hold_e(p, 40)
+	check(_in_backpack(p, &"shotgun") == 1 and not is_instance_valid(third), "into the backpack")
 
 
 # ---------------------------------------------------------------- shotgun
@@ -286,7 +309,7 @@ func test_marksman_scope() -> void:
 	await _run(p, _frame(), 3)
 	p.give_weapon(MARKSMAN)
 	p.inventory.add_item(MARKSMAN_AMMO, 10)
-	await _switch(p, 4)
+	await _switch(p, p.weapon_slots.find_slot(&"scoped_rifle"))
 	var mr := p.weapon
 	check(mr.definition == MARKSMAN and mr.ammo_in_magazine == 5, "marksman rifle up, 5 loaded")
 	var hip := mr.get_current_spread_degrees()
@@ -316,7 +339,7 @@ func test_marksman_one_shots_a_raider_body() -> void:
 	var p := _player()
 	await _run(p, _frame(), 3)
 	p.give_weapon(MARKSMAN)
-	await _switch(p, 4)
+	await _switch(p, p.weapon_slots.find_slot(&"scoped_rifle"))
 	var h := _target(60.0, 80.0)
 	var aim := _frame()
 	aim.aim = true
@@ -328,6 +351,8 @@ func test_marksman_one_shots_a_raider_body() -> void:
 
 # ---------------------------------------------------------------- HUD, saves, input
 
+## Increment 32: the quick bar along the bottom of the screen, the thing in
+## your hands raised.
 func test_hud_weapon_strip() -> void:
 	var p := _player()
 	var hud := (load("res://scenes/ui/hud.tscn") as PackedScene).instantiate() as HUD
@@ -335,12 +360,15 @@ func test_hud_weapon_strip() -> void:
 	add_child(hud)
 	await _run(p, _frame(), 3)
 	await get_tree().process_frame
-	var strip := hud.get_node("%WeaponStrip") as Label
-	check(strip.text == "[1 RIFLE]   2 PISTOL   3 —   4 —   5 —", "strip: '%s'" % strip.text)
+	var bar := hud.quick_bar_hud
+	check(bar != null and bar.visible and bar.cells.size() == 8, "eight cells along the bottom")
+	check(not (hud.get_node("%WeaponStrip") as Label).visible, "the old text strip is gone")
+	check(bar.hand_slot() == 1 and bar.cells[0].position.y < bar.cells[1].position.y, "the rifle's cell raised")
+	check((bar.cells[0].get_child(0) as TextureRect).texture != null and (bar.cells[2].get_child(0) as TextureRect).texture == null, "icons for what's there")
 	p.give_weapon(SHOTGUN)
 	await _switch(p, 3)
 	await get_tree().process_frame
-	check(strip.text == "1 RIFLE   2 PISTOL   [3 SHOTGUN]   4 —   5 —", "strip: '%s'" % strip.text)
+	check(bar.hand_slot() == 3 and bar.cells[2].position.y < bar.cells[0].position.y, "the shotgun's raised now")
 	check((hud.get_node("%WeaponLabel") as Label).text == "PUMP SHOTGUN", "weapon name follows the switch")
 
 
@@ -364,6 +392,7 @@ func test_loadout_saved_and_loaded() -> void:
 	# A save from before weapon slots: just the rifle's magazine
 	var old := data.duplicate()
 	old.erase("loadout")
+	old.erase("quick_bar")
 	old["magazine"] = 9
 	var p3 := classic_kit(PLAYER_SCENE.instantiate() as PlayerController)
 	p3.controlled_locally = false

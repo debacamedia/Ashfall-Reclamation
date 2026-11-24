@@ -35,7 +35,7 @@ func _kit_out(p: PlayerController) -> void:
 	p.inventory.add_item(MEDKIT, 2)
 	p.inventory.add_item(PISTOL_AMMO, 20)
 	check(p.give_weapon(PISTOL.weapon), "given a pistol")
-	var w := p.weapon_slots.get_weapon(PISTOL.weapon.slot)
+	var w := p.weapon_slots.get_weapon(p.weapon_slots.find_slot(PISTOL.weapon.id))
 	w.fit_attachment(RED_DOT.attachment)
 	w.ammo_in_magazine = 7
 
@@ -82,8 +82,8 @@ func test_dying_leaves_your_gear_where_you_fell() -> void:
 	check(p.current_container == c, "your gear opens straight away (no searching)")
 	p.request_take_all()
 	check(p.inventory.count_of(&"scrap_metal") == 5 and p.inventory.count_of(&"medkit") == 2 and p.inventory.count_of(&"pistol_ammo") == 20, "everything's back in your backpack")
-	var pistol := p.weapon_slots.get_weapon(PISTOL.weapon.slot)
-	check(pistol != null and pistol.base_definition.id == PISTOL.weapon.id, "your pistol's back in its slot")
+	var pistol := p.weapon_slots.get_weapon(p.weapon_slots.find_slot(PISTOL.weapon.id))
+	check(pistol != null and pistol.base_definition.id == PISTOL.weapon.id, "your pistol's back on your quick bar")
 	check(pistol != null and pistol.get_attachment(RED_DOT.attachment.slot) == RED_DOT.attachment, "with its red dot")
 	check(pistol != null and pistol.ammo_in_magazine == 7, "and the 7 rounds that were in it (%d)" % (pistol.ammo_in_magazine if pistol else -1))
 	p.close_container()
@@ -147,7 +147,7 @@ func test_dropped_gear_is_saved() -> void:
 		var p2 := zone2.get_node("Player") as PlayerController
 		await _open(p2, c)
 		p2.request_take_all()
-		var pistol := p2.weapon_slots.get_weapon(PISTOL.weapon.slot)
+		var pistol := p2.weapon_slots.get_weapon(p2.weapon_slots.find_slot(PISTOL.weapon.id))
 		check(pistol != null and pistol.get_attachment(RED_DOT.attachment.slot) == RED_DOT.attachment and pistol.ammo_in_magazine == 7, "the pistol comes back as it was")
 	saves.delete_save("gear_test")
 	saves.save_dir = "user://saves"
@@ -197,12 +197,14 @@ func test_a_gun_from_a_container_goes_into_your_hands() -> void:
 			slot = i
 			break
 	check(p.request_take(slot) == 1, "took the shotgun")
-	var gun := p.weapon_slots.get_weapon(SHOTGUN.weapon.slot)
-	check(gun != null and gun.base_definition.id == SHOTGUN.weapon.id, "it's in its weapon slot, ready to use")
-	check(p.inventory.count_of(SHOTGUN.id) == 0, "not stuffed in the backpack")
-	# A second one: you already have it, so it's a spare in your backpack
+	var first := p.weapon_slots.find_slot(SHOTGUN.weapon.id)
+	var gun := p.weapon_slots.get_weapon(first)
+	check(gun != null and gun.base_definition.id == SHOTGUN.weapon.id, "it's on your quick bar, ready to use")
+	check(gun != null and gun.ammo_in_magazine == SHOTGUN.weapon.magazine_size, "found loaded")
+	check(p.inventory.count_of(SHOTGUN.id) == 1 and p.quick_bar.count_of(SHOTGUN.id) == 1, "not stuffed in the backpack")
+	# A second one: beside it on the bar (Increment 32)
 	check(p.request_take_all() == 1, "took the second")
-	check(p.inventory.count_of(SHOTGUN.id) == 1, "as a spare, since you have one (Increment 16.7)")
+	check(p.quick_bar.count_of(SHOTGUN.id) == 2, "two shotguns on the bar")
 	check(cab.inventory.count_of(SHOTGUN.id) == 0, "the cabinet is empty")
 	await _free(zone)
 

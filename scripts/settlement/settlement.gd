@@ -1252,17 +1252,25 @@ func role_refusal_reason(role: Settler.Role) -> String:
 
 ## Gives `s` the spare gun in `player`'s backpack slot `index`. Their old gun
 ## (and its rounds) come back to you, or go in the armory if you're full.
+## request_give_gun's index for quick bar slot i: BAR_GUN + i.
+const BAR_GUN := 1000
+
+
 func request_give_gun(player: PlayerController, s: Settler, index: int) -> bool:
 	var reason := _member_reason(player, s)
-	var item := player.inventory.get_slot_item(index) if reason == "" and player.inventory != null else null
+	# Quick bar slots come as BAR_GUN + their index (Increment 32)
+	var from: InventoryComponent = player.quick_bar if index >= BAR_GUN else player.inventory
+	var at := index - BAR_GUN if index >= BAR_GUN else index
+	var item := from.get_slot_item(at) if reason == "" and from != null else null
 	if reason == "" and (item == null or item.weapon == null or item.weapon.melee):
 		reason = "That's not a gun"
 	if reason != "":
 		refused.emit(reason)
 		return false
-	player.inventory.take_from_slot(index, 1)
+	var taken := from.take_from_slot(at, 1)
 	_return_gun(s, player)
-	s.arm(item, 0)
+	# The rounds in its magazine go with it
+	s.arm(item, int((taken.get("state", {}) as Dictionary).get("magazine", 0)))
 	# Rounds for it from your backpack, if you have them
 	give_ammo_from(player.inventory, s, Settler.AMMO_TARGET)
 	notice.emit("%s has your %s (%d rounds)" % [s.settler_name, item.display_name, s.ammo])
@@ -1373,13 +1381,15 @@ func _return_gun(s: Settler, player: PlayerController) -> void:
 	var rounds := s.ammo
 	s.disarm()
 	var ammo_item := ItemDatabase.find_ammo_item(item.weapon.ammo_type)
+	# Unloaded: its rounds come back as rounds
+	var empty := {"magazine": 0, "attachments": []}
 	for inv in [player.inventory if player != null else null, armory.inventory if armory != null else null]:
 		if inv != null and item != null and inv.can_add(item, 1) >= 1:
-			inv.add_item(item, 1)
+			inv.add_item(item, 1, empty)
 			item = null
 	if item != null and armory != null:
 		armory.inventory.max_weight = 0.0
-		armory.inventory.add_item(item, 1)
+		armory.inventory.add_item(item, 1, empty)
 	if ammo_item != null and rounds > 0:
 		var left := rounds
 		if player != null and player.inventory != null:

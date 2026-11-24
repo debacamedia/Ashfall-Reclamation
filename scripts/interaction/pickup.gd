@@ -19,6 +19,9 @@ signal picked_up(item: ItemDefinition, quantity: int, by: Node3D)
 		quantity = maxi(value, 0)
 		if is_inside_tree():
 			_refresh()
+## A gun's rounds and attachments (Increment 32): a gun you dropped comes
+## back as it was. Empty = a gun you found: it comes loaded.
+var state: Dictionary = {}
 ## Gentle bob and spin so loot is easy to spot.
 @export var animate := false
 
@@ -72,7 +75,7 @@ func get_prompt(interactor: Node3D) -> String:
 	var player := interactor as PlayerController
 	if item != null and item.weapon != null and player != null \
 			and player.gun_destination(item.weapon) == PlayerController.GUN_TO_BACKPACK:
-		return "%s %s (spare, into your backpack)" % [action_name, object_name]
+		return "%s %s (into your backpack: your quick bar's full)" % [action_name, object_name]
 	return "%s %s" % [action_name, object_name]
 
 
@@ -106,11 +109,13 @@ func _perform(interactor: Node3D) -> void:
 
 ## Spawns a pickup into the world at `position` (world space; used for loot
 ## drops). The parent may be a site that isn't at the origin.
-static func spawn(parent: Node, definition: ItemDefinition, amount: int, position: Vector3) -> Pickup:
+static func spawn(parent: Node, definition: ItemDefinition, amount: int, position: Vector3, gun_state: Dictionary = {}) -> Pickup:
 	var scene := load("res://scenes/items/pickup.tscn") as PackedScene
 	var pickup := scene.instantiate() as Pickup
 	pickup.item = definition
 	pickup.quantity = amount
+	if InventoryComponent.has_state(definition) and not gun_state.is_empty():
+		pickup.state = InventoryComponent.clean_state(definition, gun_state)
 	var parent3d := parent as Node3D
 	pickup.position = parent3d.to_local(position) if parent3d != null and parent3d.is_inside_tree() else position
 	parent.add_child(pickup)
@@ -121,8 +126,11 @@ static func spawn(parent: Node, definition: ItemDefinition, amount: int, positio
 
 func save_state() -> Dictionary:
 	var p := global_position
-	return {"item": String(item.id) if item != null else "", "quantity": quantity,
+	var out := {"item": String(item.id) if item != null else "", "quantity": quantity,
 		"position": [p.x, p.y, p.z], "yaw": rotation.y}
+	if not state.is_empty():
+		out["state"] = state.duplicate(true)
+	return out
 
 
 func load_state(data: Dictionary) -> void:
@@ -133,6 +141,7 @@ func load_state(data: Dictionary) -> void:
 		return
 	item = def
 	quantity = int(qty)
+	state = InventoryComponent.clean_state(def, data["state"]) if InventoryComponent.has_state(def) and data.get("state") is Dictionary else {}
 	var raw: Variant = data.get("position")
 	if raw is Array and raw.size() == 3 and raw.all(func(v: Variant) -> bool: return v is float or v is int):
 		global_position = Vector3(raw[0], raw[1], raw[2])
@@ -146,12 +155,11 @@ func is_save_removable() -> bool:
 	return true
 
 
-## Guns go into their weapon slot, or your backpack as a spare if you
-## already have that gun or a better one (Increment 16.7).
+## Guns go onto your quick bar, or your backpack if it's full (Increment 32).
 func _take_weapon(interactor: Node3D) -> void:
 	var player := interactor as PlayerController
 	if player == null:
 		return
-	if player.receive_gun(item.weapon) != "":
+	if player.receive_gun(item.weapon, true, state) != "":
 		picked_up.emit(item, 1, interactor)
 		queue_free()

@@ -137,7 +137,7 @@ func test_new_start_is_a_machete_and_scrap() -> void:
 	await _run(p, 3)
 	var owned := p.weapon_slots.owned()
 	check(owned.size() == 1 and owned[0].definition == MACHETE, "only a machete")
-	check(p.weapon == owned[0] and p.weapon_slots.current_slot == 5, "machete in hand (slot 5)")
+	check(p.weapon == owned[0] and p.weapon_slots.current_slot == 1, "machete in hand (quick bar slot 1, Increment 32)")
 	check(p.inventory.count_of(&"scrap_metal") == 4 and p.inventory.count_of(&"cloth") == 2, "4 scrap, 2 cloth")
 	check(p.inventory.count_of(&"pistol_ammo") == 12 and p.inventory.count_of(&"medkit") == 1, "12 pistol rounds and a medkit")
 	check(p.craft_refusal_reason(PIPE_R) == "Missing 1 Wood", "pipe pistol just needs wood: '%s'" % p.craft_refusal_reason(PIPE_R))
@@ -206,13 +206,13 @@ func test_parts_make_a_pistol_at_the_weapons_bench() -> void:
 	check(p.get_crafting_station() == RecipeDefinition.Station.WEAPONS_BENCH, "at the weapons bench")
 	check(p.request_craft(PISTOL_R), "pistol craft started")
 	await _run(p, int(PISTOL_R.craft_time * 60.0) + 5)
-	check(p.weapon_slots.get_weapon(2).definition == PISTOL, "pistol replaces the pipe pistol in slot 2")
+	check(p.weapon_slots.get_weapon(3) != null and p.weapon_slots.get_weapon(3).definition == PISTOL, "the pistol onto the quick bar beside the pipe pistol (slot 3)")
+	check(p.weapon_slots.get_weapon(2).definition == PIPE, "the pipe pistol stays where it was")
 	for id in ["gun_receiver", "gun_barrel", "trigger_group", "gun_magazine"]:
 		check(p.inventory.count_of(StringName(id)) == 0, "%s used" % id)
 	p.inventory.add_item(_item("scrap_metal"), 4)
 	p.inventory.add_item(WOOD, 1)
-	check(p.inventory.count_of(&"pipe_pistol") == 1, "the pipe pistol it replaced is a spare in the backpack (Increment 16.7)")
-	check(p.gun_destination(PIPE) == PlayerController.GUN_TO_BACKPACK and p.craft_refusal_reason(PIPE_R) == "", "a worse gun can still be made: it goes into the backpack")
+	check(p.gun_destination(PIPE) == PlayerController.GUN_TO_SLOT and p.craft_refusal_reason(PIPE_R) == "", "another pipe pistol can still be made: onto the bar")
 
 
 func test_part_recipes_turn_materials_into_parts() -> void:
@@ -326,7 +326,7 @@ func test_attachments_saved_and_loaded() -> void:
 	check(r2.definition.magazine_size == 45 and r2.ammo_in_magazine == 40, "40 of 45 in the extended magazine")
 	# Nonsense attachment ids are ignored
 	var bad := data.duplicate(true)
-	bad["loadout"]["weapons"][0]["attachments"] = ["nonsense", "scope_4x", 7]
+	bad["quick_bar"][0]["state"]["attachments"] = ["nonsense", "scope_4x", 7]
 	p2.load_state(bad)
 	r2 = p2.weapon_slots.get_weapon(1)
 	check(r2.get_attachment(AttachmentDefinition.Slot.OPTIC) != null and r2.get_attachment(AttachmentDefinition.Slot.OPTIC).id == &"scope_4x",

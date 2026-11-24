@@ -10,7 +10,7 @@
 script = ExtResource("3_ljqkm")
 id = &"shotgun"
 display_name = "Pump Shotgun"
-description = "Devastating up close, useless at range. Loads a shell at a time. Slot 3."
+description = "Devastating up close, useless at range. Loads a shell at a time."
 category = 3
 icon = ExtResource("1_odu6t")
 max_stack = 1

@@ -1382,7 +1382,7 @@ func test_modify_weapons_opens_on_the_gun_in_hand() -> void:
 	await wait_physics(2)
 	p.current_station = bench
 	p.weapon_slots.equip_immediately(1)  # the rifle (pistol is slot 2)
-	var rifle_slot := p.weapon.base_definition.slot
+	var rifle_slot := p.weapon_slots.slot_of(p.weapon)
 	var screen := hud.find_child("CraftingScreen", true, false)
 	screen.call("open")
 	screen.call("show_gunsmith", true)

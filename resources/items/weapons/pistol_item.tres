@@ -10,7 +10,7 @@
 script = ExtResource("3_mtoa5")
 id = &"pistol"
 display_name = "Sidearm Pistol"
-description = "A reliable 9 mm sidearm. Slot 2."
+description = "A reliable 9 mm sidearm."
 category = 3
 icon = ExtResource("1_4px8n")
 max_stack = 1
