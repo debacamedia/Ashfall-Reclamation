@@ -71,6 +71,10 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 	for s in stacks:
 		inv.add_item(s[0], s[1])
 	parent.add_child(cache)
+	# Died out of the world (fell through it, or out of the bottom of a
+	# building, 30.1): the gear goes where you last stood on solid ground
+	if player.last_safe_position != Vector3.INF and (at.y < player.kill_plane_y + 2.0 or not _ground_below(parent, at, player)):
+		at = player.last_safe_position
 	cache.global_position = resting_place(parent, at, player)
 	cache.rotation.y = player.rotation.y
 	# Now take it all off the player
@@ -83,6 +87,15 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 	if player.weapon_slots != null:
 		player.weapon_slots.remove_guns()
 	return cache
+
+
+static func _ground_below(parent: Node3D, at: Vector3, exclude: CollisionObject3D) -> bool:
+	var world := parent.get_world_3d()
+	if world == null:
+		return true
+	var q := PhysicsRayQueryParameters3D.create(at + Vector3.UP * 1.0, at + Vector3.DOWN * 60.0, PhysicsLayers.WORLD_SOLID)
+	q.exclude = [exclude.get_rid()]
+	return not world.direct_space_state.intersect_ray(q).is_empty()
 
 
 ## Where a cache dropped at `at` comes to rest: pulled back inside the zone

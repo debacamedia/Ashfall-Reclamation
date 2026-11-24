@@ -164,6 +164,9 @@ var _sprint_amount := 0.0
 @export var controlled_locally := true
 ## Falling below this height kills the player (out of the world).
 @export var kill_plane_y := -30.0
+## The last place you stood on solid ground (30.1): where your gear goes if
+## you die out of the world.
+var last_safe_position := Vector3.INF
 
 var movement_state: MovementState = MovementState.IDLE
 var is_crouching := false
@@ -247,6 +250,10 @@ func _physics_process(delta: float) -> void:
 	if global_position.y < kill_plane_y and not is_dead():
 		var info := DamageInfo.create(health.max_health * 10.0, DamageInfo.Type.ENVIRONMENT)
 		health.apply_damage(info)
+
+
+func _ladder_free() -> bool:
+	return ladder == null
 
 
 func is_dead() -> bool:
@@ -1811,6 +1818,8 @@ func _simulate_walking(frame: InputFrame, delta: float) -> void:
 	move_and_slide()
 	if not was_on_floor and is_on_floor():
 		landed.emit(impact_speed)
+	if is_on_floor() and global_position.y > kill_plane_y + 5.0 and _ladder_free():
+		last_safe_position = global_position
 
 
 # ---------------------------------------------------------------- aiming

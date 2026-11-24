@@ -284,8 +284,57 @@ func _build_piece(i: int) -> void:
 	s.name = "%s_%d" % [def.id, (Time.get_ticks_usec() + i * 7) % 100000000]
 	s.transform = root.global_transform.affine_inverse() * at
 	root.add_child(s)
+	# 30.1: anyone standing where it goes up steps out of its way (stood in
+	# its walls, you were stuck, and could fall out of the world)
+	clear_space(s)
 	s._one_shot(load("res://assets/audio/build_place.wav"))
 	_hide_piece(i)
+
+
+## Moves anyone (players, settlers, raiders, animals) caught in `s`'s solid
+## parts to just outside its footprint, on the ground (Increment 30.1).
+## Returns who was moved.
+static func clear_space(s: Node3D) -> Array[CharacterBody3D]:
+	var moved: Array[CharacterBody3D] = []
+	if not s.is_inside_tree():
+		return moved
+	var space := s.get_world_3d().direct_space_state
+	var to_local := s.global_transform.affine_inverse()
+	var box := AABB()
+	var first := true
+	for n in s.find_children("*", "CollisionShape3D", true, false):
+		var cs := n as CollisionShape3D
+		if cs.disabled or cs.shape == null:
+			continue
+		var b := (to_local * cs.global_transform) * cs.shape.get_debug_mesh().get_aabb()
+		box = b if first else box.merge(b)
+		first = false
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = cs.shape
+		q.transform = cs.global_transform
+		q.collision_mask = PhysicsLayers.PLAYER | PhysicsLayers.NPCS
+		for hit in space.intersect_shape(q, 16):
+			var body := hit["collider"] as CharacterBody3D
+			if body != null and not moved.has(body):
+				moved.append(body)
+	for body in moved:
+		# The nearest side of the footprint, 0.8 m clear of it
+		var l := to_local * body.global_position
+		var ways := [Vector3(box.position.x - 0.8, l.y, l.z), Vector3(box.end.x + 0.8, l.y, l.z),
+			Vector3(l.x, l.y, box.position.z - 0.8), Vector3(l.x, l.y, box.end.z + 0.8)]
+		var best: Vector3 = ways[0]
+		for w: Vector3 in ways:
+			if w.distance_to(l) < best.distance_to(l):
+				best = w
+		var out := s.global_transform * best
+		# Stood on the ground (or floor) there
+		var q := PhysicsRayQueryParameters3D.create(out + Vector3.UP * 3.0, out + Vector3.DOWN * 10.0, PhysicsLayers.WORLD_SOLID)
+		var hit := space.intersect_ray(q)
+		if not hit.is_empty():
+			out.y = (hit["position"] as Vector3).y + 0.05
+		body.global_position = out
+		body.velocity = Vector3.ZERO
+	return moved
 
 
 func _hide_piece(i: int) -> void:
