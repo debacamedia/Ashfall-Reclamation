@@ -1,0 +1,19 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/models/quaternius/city/T_RedBrick_BaseColor.png" id="1_xrhbp"]
+[ext_resource type="Texture2D" path="res://assets/models/quaternius/city/T_RedBrick_ORM.png" id="2_kbxdc"]
+[ext_resource type="Texture2D" path="res://assets/models/quaternius/city/T_RedBrick_Normal.png" id="3_m0ohg"]
+
+[resource]
+resource_name = "MI_RedBrick_Pale"
+cull_mode = 2
+albedo_color = Color(0.85467005, 0.8463, 0.836256, 1)
+albedo_texture = ExtResource("1_xrhbp")
+metallic = 1.0
+metallic_texture = ExtResource("2_kbxdc")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_kbxdc")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_m0ohg")
+metadata/_gltf_primary_texture_coord = 0
