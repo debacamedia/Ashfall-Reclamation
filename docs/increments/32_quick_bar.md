@@ -1,6 +1,10 @@
 # Increment 32: the quick bar
 
-**Status:** RESULTS_LINE
+**Status:** complete. 13 of the tests are new (`tests/test_quick_bar.gd`). In the full run, 566 of 569 passed. All three failures were fixed and pass on their own:
+
+- **A real bug:** dying while wearing a backpack crashed the gear drop (the pack's line had no gun state). Fixed.
+- **Two test timing faults:** the pause menu test checked before the HUD had run a frame, and its key presses (and the quick save test's) arrived late. The tests now wait for the HUD's first frame and flush their input.
+- **The open-gate navmesh test:** it doesn't touch the quick bar, and it passed when run again.
 
 You asked for the numbered slots to stop being given to guns automatically and become a drag-and-drop bar for anything you can hold, so that a player can carry two pistols if they want to. This is the quick bar from the proofs you approved ("8 slots, yes to medkits and food, yes to mouse wheel"). It comes first because the Field Manual, orders and achievements all build on it: the manual is something you hold on the bar.
 
