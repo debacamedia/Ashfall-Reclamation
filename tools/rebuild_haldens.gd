@@ -688,9 +688,10 @@ func _cornice(kit: Node3D, n: String, frame: Transform3D, from: float, to: float
 	var mi := MeshInstance3D.new()
 	mi.name = "Cornice%s_%d" % [side.to_upper(), k]
 	mi.mesh = _mesh(n)
-	# Its top 0.25 m over the roof's edge
-	mi.transform = frame * Transform3D(Basis.from_scale(Vector3(sx, 1.0, 1.0)),
-		Vector3((from + to) / 2.0 - box.get_center().x * sx, h + 0.25 - box.end.y, -box.end.z + 0.02))
+	# A parapet along the roof's edge, standing on the wall's top (the signs
+	# below it stay in view)
+	mi.transform = frame * Transform3D(Basis.from_scale(Vector3(sx, 0.9, 1.0)),
+		Vector3((from + to) / 2.0 - box.get_center().x * sx, h - 0.1 - box.position.y * 0.9, -box.end.z + 0.02))
 	kit.add_child(mi)
 	mi.owner = _level
 

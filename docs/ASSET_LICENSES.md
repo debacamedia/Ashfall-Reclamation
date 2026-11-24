@@ -30,20 +30,22 @@ Only **CC0** and **MIT** (or another licence on the "yes" rows) come into the re
 | Modular Character Outfits – Fantasy (Standard) | Quaternius | CC0 1.0 | 23 Nov 2026, licence file in the zip and the pack's itch.io page | `assets/characters/quaternius/outfits/` with `LICENSE_Modular_Character_Outfits_Fantasy.txt` | Everyone's clothes, and armour as clothes (29.1) |
 | ASHFALL Resource Packs 1.0, 2.0, 3.0 | Made for this project (procedural materials, decals, signs, sounds), from the user | Project-owned | 25 Oct 2026, the packs' READMEs | `assets/ashfall_pack_v1/`, `v2/`, `v3/` | Outpost 17's and Halden's materials, signs, graffiti, decals, surface and town sounds |
 | Ultimate Gun Pack | Quaternius | CC0 1.0 | 23 Nov 2026, `License.txt` in the zip and quaternius.com | `assets/models/quaternius/guns/` with `LICENSE_Ultimate_Gun_Pack.txt` | The Service Rifle, Sidearm Pistol, Pump Shotgun and Marksman Rifle, the 4× scope, suppressor and foregrip; settlers' rifles (30) |
-| Farm Buildings | Quaternius | CC0 1.0 | 23 Nov 2026: no licence file in the zip; quaternius.itch.io/lowpoly-farm-buildings says CC0 | `assets/models/quaternius/farm/` with `LICENSE_Farm_Buildings.txt` (a note recording the page and the date) | Ash Creek's silo and wind pump, the chicken pen's hen house (30) |
+| Farm Buildings | Quaternius | CC0 1.0 | 23 Nov 2026: no licence file in the zip; quaternius.itch.io/lowpoly-farm-buildings says CC0 | `assets/models/quaternius/farm/` with `LICENSE_Farm_Buildings.txt` (a note recording the page and the date) | Ash Creek's silo and wind pump, the chicken pen's hen house (30). Its barns' look (red board and batten, white trim, X-braced doors) copied onto Ash Creek's barn, farmhouse and coop and the settlers' bunkhouse, kitchen and storehouse (31); that's our own geometry, no pack files |
+| Downtown City MegaKit (Standard) | Quaternius | CC0 1.0 | 23 Nov 2026, `License_Standard.txt` in the zip and quaternius.com | `assets/models/quaternius/city/` with `LICENSE_Downtown_City_MegaKit.txt`; made-ready pieces in `city/built/` | Halden's Crossing's twelve buildings: walls, windows, shopfronts, doorways, corner columns, cornices; manhole covers, drains, air conditioners and planters (31) |
 | Everything else: models, levels, materials, synthesized sounds, icons, code | Made for this project | Project-owned | | | |
 
 ## Downloaded, not in the game yet
 
 | Asset | Author / source | Licence | Checked | What's in it | Could be used for |
 |---|---|---|---|---|---|
-| Downtown City MegaKit (Standard) | Quaternius | CC0 1.0 | 23 Nov 2026, `License_Standard.txt` in the zip and quaternius.com | About 150 modular city pieces: brick, metal and trim walls, windows, columns, cornices, doors, slate roofs, floors, stairs, streets, sidewalks, road decals, small props, 3 ready buildings. glTF for Godot, textured | Halden's Crossing, Dusthaven, Red Mesa: towns built from real pieces |
+| (none right now) | | | | | |
 
 When one of these comes into the game, move its row up, add the licence file next to its files (or, where a zip has none, a note recording the page that gives the licence and the date checked), and say which increment.
 
 ## Things to watch
 
 - **Real-looking guns:** the Ultimate Gun Pack's guns look like real designs (an AK, an M4, an AWP…) but carry no brand names. Keep it that way: no real model or maker names on items, in the code or in the store listing.
-- **Logos and signs:** Downtown City's previews show shop signs, but the Standard version's file list has no sign pieces. Whatever signs the game gets, don't put a real company's name or logo on them.
+- **Logos and signs:** Downtown City's previews show shop signs, but the Standard version's file list has no sign pieces. Halden's signs are the project's own (Resource Pack 3). Whatever signs the game gets, don't put a real company's name or logo on them.
+- **More of the city kit:** Halden's uses about 40 of its 150 pieces. The rest (slate roofs, stairs, streets and sidewalks with curbs, road markings, the 3 ready buildings) are there for Dusthaven and Red Mesa.
 - **Paid versions:** Quaternius's Source versions are also CC0, so buying one later changes nothing here. Record the purchase anyway.
 - **Before release:** a Credits screen listing Godot's notice and thanking Quaternius and anyone else listed here.

@@ -311,14 +311,24 @@ func _saint_mercy() -> Kit:
 ## farm is claimed (19.6): see FENCES and GUARD_POSTS.
 func _ash_creek() -> Kit:
 	var k := Kit.new("AshCreekFarms", "Ash Creek Farms", 202)
+	k.trim_dir = "res://levels/ash_creek_farms/trim/"
 	# Farmhouse: two rooms, a porch facing the yard
 	var f := k.building("Farmhouse", Vector2(0, -16), 0, Vector2(10, 8), {
-		"wall": "wood", "floor": "wood", "roof": "pitched",
+		"wall": "wood", "floor": "wood", "roof": "pitched", "trim": "farmhouse",
 		"openings": [["S", -2, "door"], ["S", 2.5, "window"], ["N", -2.5, "window"], ["N", 2.5, "window"],
 			["W", 0, "window"], ["E", 0, "door"]],
 		"inner": [[Vector2(0, -3.85), Vector2(0, 3.85), [3.85]]],
 	})
 	k.box(k.groups["Buildings"].get_node("Farmhouse"), "Porch", Vector3(10, 0.1, 2.4), Vector3(0, 0.05, 5.2), "wood", 0.0, false)
+	# (31) The porch roofed over, on white posts clear of the door
+	for i in 3:
+		k.box(f, "PorchPost%d" % i, Vector3(0.16, 2.75, 0.16), Vector3([-4.8, 0.6, 4.8][i], 1.375, 6.25), "farm_white")
+	var porch_roof := MeshInstance3D.new()
+	porch_roof.name = "PorchRoof"
+	porch_roof.mesh = k.box_mesh(Vector3(10.4, 0.12, 2.7))
+	porch_roof.material_override = k.mat("farm_shingle")
+	porch_roof.transform = Transform3D(Basis(Vector3.RIGHT, atan2(0.55, 2.5)), Vector3(0, 3.05, 5.3))
+	f.add_child(porch_roof)
 	_bed(k, "FarmBed", f, Vector3(-3.5, 0, -2.6))
 	k.container_at_wall("footlocker", "BedroomChest", f, "W", 2.3, "town_household", "Bedroom Chest")
 	k.fixture("KitchenCounter", f, Vector3(3.1, 0, -3.25), Vector3(2.0, 0.9, 0.6), "wood")
@@ -332,7 +342,7 @@ func _ash_creek() -> Kit:
 	# The barn on the right of the yard, its big doors open onto it, with a
 	# hayloft up a ladder over the food shelves at the back
 	var b := k.building("Barn", Vector2(26, -2), -90, Vector2(12, 16), {
-		"wall": "barn_red", "floor": "wood", "roof": "pitched", "height": 5.4, "pitch": 3.0,
+		"wall": "barn_red", "floor": "wood", "roof": "pitched", "height": 5.4, "pitch": 3.0, "trim": "barn",
 		"openings": [["S", 0, "wide"], ["E", 3, "window"], ["W", 3, "window"]],
 	})
 	var loft := k.solid_body(b, "Hayloft")
@@ -410,7 +420,7 @@ func _ash_creek() -> Kit:
 	_farm_prop(windpump, "Tower", "windmill", 1.0, 0.0, true)
 	# Chicken coop by the water tower
 	var c := k.building("ChickenCoop", Vector2(-14, 24), 0, Vector2(4, 3), {
-		"wall": "wood", "floor": "", "roof": "flat", "roof_mat": "rust", "height": 2.6,
+		"wall": "wood", "floor": "", "roof": "flat", "roof_mat": "rust", "height": 2.6, "trim": "barn",
 		"openings": [["E", 0, "door"]],
 	})
 	k.pile("furniture", "CoopNests", c, Vector3(-0.6, 0, 0), 90)

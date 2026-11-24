@@ -225,7 +225,7 @@ func _bunkhouse() -> void:
 		{&"wood_plank": 4, &"scrap_metal": 1}, {&"wood_plank": 10, &"scrap_metal": 3})
 	b.set("beds", 4)
 	var house := _kit_building(b, Vector2(8, 6), {
-		"wall": "wood", "floor": "wood", "roof": "pitched",
+		"wall": "wood", "floor": "wood", "roof": "pitched", "trim": "barn", "trim_name": "bunkhouse",
 		"openings": [["S", 0, "door"], ["E", 0, "window"], ["W", 0, "window"], ["N", -2, "window"], ["N", 2, "window"]],
 	})
 	# Two bunk beds against the back wall, a table and a chest of drawers
@@ -243,7 +243,7 @@ func _storehouse() -> void:
 	var b := _begin("Storehouse", "storehouse", "Storehouse", Vector3(12.2, 4.2, 6.2), 1500.0,
 		{&"wood_plank": 3, &"scrap_metal": 2}, {&"wood_plank": 8, &"scrap_metal": 5})
 	var shed := _kit_building(b, Vector2(12, 6), {
-		"wall": "corrugated", "floor": "concrete_plain", "roof": "pitched", "height": 3.6,
+		"wall": "corrugated", "floor": "concrete_plain", "roof": "pitched", "height": 3.6, "trim": "barn", "trim_name": "storehouse",
 		"openings": [["S", 0, "wide"], ["E", 0, "window"], ["W", 0, "window"]],
 	})
 	var shelves := (load("res://scenes/world/containers/food_shelves.tscn") as PackedScene).instantiate() as SalvageContainer
@@ -314,7 +314,7 @@ func _kitchen() -> void:
 	var b := _begin("Kitchen", "kitchen", "Kitchen", Vector3(8.2, 4.6, 6.2), 1500.0,
 		{&"wood_plank": 4, &"scrap_metal": 1}, {&"wood_plank": 8, &"scrap_metal": 3})
 	var house := _kit_building(b, Vector2(8, 6), {
-		"wall": "wood", "floor": "wood", "roof": "pitched",
+		"wall": "wood", "floor": "wood", "roof": "pitched", "trim": "farmhouse", "trim_name": "kitchen",
 		"openings": [["S", 0, "door"], ["E", 0, "window"], ["W", 0, "window"], ["N", 2, "window"]],
 	})
 	var stove := (load("res://scenes/world/stations/cooking_stove.tscn") as PackedScene).instantiate() as Node3D
@@ -820,6 +820,7 @@ func _body(b: Node3D) -> StaticBody3D:
 ## moved under `b` as its body.
 func _kit_building(b: Node3D, size: Vector2, opts: Dictionary) -> StaticBody3D:
 	var k := Kit.new("Tmp", "Tmp", 1)
+	k.trim_dir = "res://scenes/settlement/trim/"
 	var house := k.building("Body", Vector2.ZERO, 0, size, opts)
 	house.get_parent().remove_child(house)
 	k.root.free()

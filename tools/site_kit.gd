@@ -19,6 +19,8 @@ const DOOR := Vector2(1.6, 2.4)    ## width, height
 const WIDE := Vector2(4.0, 4.0)    ## barn / workshop doors
 const WINDOW := Vector2(1.2, 1.2)  ## width, height (sill at 1.0)
 const SILL := 1.0
+## Farm buildings' paint and trim (Increment 31)
+const FarmTrim := preload("res://tools/farm_trim.gd")
 
 const SCENES := {
 	"crate": "res://scenes/world/containers/supply_crate.tscn",
@@ -85,6 +87,8 @@ const MATERIALS := {
 	"container_olive": "res://assets/ashfall_pack_v3/materials/container_paint_olive.tres",
 	"water": "res://levels/early_zone/materials/sea.tres",
 	"rock_tan": "res://levels/early_zone/materials/rock_tan.tres",
+	"farm_white": "res://assets/materials/farm/farm_white.tres",
+	"farm_shingle": "res://assets/materials/farm/farm_shingle.tres",
 }
 
 var root: Node3D
@@ -92,6 +96,9 @@ var groups := {}   # name -> Node3D
 var rng := RandomNumberGenerator.new()
 ## For tests and the guide: what was placed
 var counts := {"buildings": 0, "containers": 0, "piles": 0, "pickups": 0, "ladders": 0}
+
+## Where farm buildings' trim meshes are saved (a folder, "" for none)
+var trim_dir := ""
 
 var _mats := {}
 var _scenes := {}
@@ -248,6 +255,11 @@ func building(name: String, at: Vector2, yaw_deg: float, size: Vector2, opts: Di
 	# Interior lights, so rooms read inside (the sun never reaches them)
 	if opts.get("roof", "flat") != "none" and opts.get("lights", true):
 		_interior_lights(b, size, storeys, h)
+	# Farm buildings (Increment 31): painted, trimmed and shingled in the style
+	# of the Farm Buildings pack
+	if opts.has("trim") and trim_dir != "":
+		DirAccess.make_dir_recursive_absolute(trim_dir)
+		FarmTrim.dress(b, size, h, storeys, openings, opts, trim_dir + String(opts.get("trim_name", name)).to_snake_case() + ".res")
 	b.set_meta("doors", doors)
 	b.set_meta("size", size)
 	b.set_meta("storeys", storeys)
