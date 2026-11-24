@@ -1,6 +1,6 @@
 # Increment 29.1: real clothes
 
-**Status:** complete. 548 automated tests pass in headless Godot 4.7, 4 of them new in `tests/test_outfits.gd`.
+**Status:** complete. 547 automated tests pass in headless Godot 4.7, 4 of them new in `tests/test_outfits.gd`.
 
 Increment 29 painted clothes onto the bodies, so everyone looked skin-tight. You downloaded Quaternius's free **Modular Character Outfits – Fantasy** (Standard), and it's now in the game. It's **CC0** like the other two packs, so it's free to use in a game you sell. The zip is in **Ashfall Assets → Characters - Quaternius** on your Desktop.
 
@@ -110,6 +110,9 @@ At Ash Creek, claimed and its first defence stages built:
 **Changed tests:**
 - `test_characters.gd`: head-only body, dressed pieces, clothes from the seed and kept in saves, guards' pauldrons, armour as pieces, raiders' pauldrons.
 - `test_armour.gd`: a vest shows as the greyed coat with pauldrons.
+- `test_palisade_and_towers.gd`: the second guard gets the 60 s it can need to arm, be given the west watchtower and climb it (it timed out now and then, before this increment too).
+
+In the full run, `test_claim_once_the_raiders_are_gone` failed once and passed when run again on its own: it's flaky, and unrelated to clothes.
 
 ## Notes
 
