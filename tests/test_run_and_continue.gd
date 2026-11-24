@@ -65,6 +65,8 @@ func _press(action: String) -> void:
 	up.action = action
 	up.pressed = false
 	Input.parse_input_event(up)
+	# Input reaches the game on the next idle frames (not physics ticks)
+	Input.flush_buffered_events()
 
 
 # ---------------------------------------------------------------- boot
