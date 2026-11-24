@@ -1,6 +1,6 @@
 # Increment 31: Halden's Crossing rebuilt, and farm buildings with some style
 
-**Status:** complete. 9 new tests (`tests/test_haldens_rebuilt.gd`, `tests/test_farm_style.gd`) and the full run pass.
+**Status:** complete. The full run: 564 of 565 pass, 9 of them new (`tests/test_haldens_rebuilt.gd`, `tests/test_farm_style.gd`). The one failure was the mine's tower-guard raid test, which depends on timing; nothing in this increment touches the mine, and it passed twice when run again on its own.
 
 You asked for two things: rebuild Halden's, and make the farm buildings look better using ideas from the packs. (The bug you found, getting stuck in a chicken coop as it went up, was fixed first, as Increment 30.1.)
 
