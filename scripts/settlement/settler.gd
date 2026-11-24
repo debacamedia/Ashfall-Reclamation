@@ -1264,17 +1264,21 @@ func _show(part_name: String, on: bool) -> void:
 func _update_visuals() -> void:
 	if not is_node_ready() or body == null:
 		return
-	for pair in [["Hat", role == Role.FARMER], ["Vest", role == Role.GUARD and armour.worn(ArmourSet.BODY) == null],
+	for pair in [["Hat", role == Role.FARMER],
 			["Helmet", role == Role.GUARD and armour.worn(ArmourSet.HEAD) == null],
 			["HardHat", role == Role.BUILDER or role == Role.MINER], ["ToolBelt", role == Role.BUILDER or role == Role.ARMORER],
 			["ChefHat", role == Role.COOK], ["Apron", role == Role.COOK or role == Role.TAILOR], ["CowboyHat", role == Role.RANCHER],
 			["HeadLamp", role == Role.MINER], ["Goggles", role == Role.ARMORER]]:
 		_show(pair[0], pair[1])
-	# What they wear (22): over the clothes, leather brown, plated grey (with
-	# plates), Wool Clothes cream, padded olive (28)
+	# What they wear (22): over the clothes (29.1: as an outfit's pieces), a
+	# leather coat the Ranger's, plate the Ranger's greyed with plates and
+	# pauldrons, Wool Clothes the Peasant's, padded the Ranger's green (28);
+	# a leather or padded cap as the Ranger's hood, a helmet as it was
 	var head := armour.worn(ArmourSet.HEAD)
-	_show("ArmourHead", head != null)
-	if head != null:
+	var hood := head != null and _armour_kind(head) in ["leather", "padded"]
+	body.wear(&"head", _armour_kind(head) if hood else "")
+	_show("ArmourHead", head != null and not hood)
+	if head != null and not hood:
 		var look: Array = ARMOUR_LOOKS[_armour_kind(head)]
 		for n: Node3D in _parts.get("ArmourHead", []):
 			for mi in n.find_children("*", "MeshInstance3D", true, false):
@@ -1283,19 +1287,13 @@ func _update_visuals() -> void:
 				m.metallic = look[1]
 				m.roughness = 0.6 if look[1] > 0.0 else 0.9
 				(mi as MeshInstance3D).material_override = m
-	for pair in [["ArmourBody", ArmourSet.BODY, &"body"], ["ArmourLegs", ArmourSet.LEGS, &"legs"]]:
-		var it := armour.worn(pair[1])
-		var kind := _armour_kind(it) if it != null else ""
-		_show(pair[0], it != null)
-		# Plates only on plated pieces
-		for n: Node3D in _parts.get(pair[0], []):
-			for c in n.get_children():
-				(c as Node3D).visible = kind == "plated"
-		if it == null:
-			body.set_worn(pair[2], null)
-		else:
-			var look: Array = ARMOUR_LOOKS[kind]
-			body.set_worn(pair[2], look[0], look[1])
+	for pair in [[ArmourSet.BODY, &"body"], [ArmourSet.LEGS, &"legs"]]:
+		var it := armour.worn(pair[0])
+		body.wear(pair[1], _armour_kind(it) if it != null else "")
+	# Knee plates on plated trousers; a guard with no coat wears pauldrons
+	var legs := armour.worn(ArmourSet.LEGS)
+	_show("ArmourLegs", legs != null and _armour_kind(legs) == "plated")
+	body.wear(&"shoulders", "guard" if role == Role.GUARD and armour.worn(ArmourSet.BODY) == null else "")
 	_show("Gun", gun != null)
 	_show("Machete", gun == null and role == Role.GUARD)
 	_show("Hammer", gun == null and (role == Role.BUILDER or role == Role.ARMORER))

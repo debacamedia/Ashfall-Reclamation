@@ -26,6 +26,8 @@ const SHIRT_BONES := ["Spine", "Chest", "UpperChest", "LeftShoulder", "RightShou
 const FOREARM_BONES := ["LeftLowerArm", "RightLowerArm"]
 const LEG_BONES := ["Hips", "LeftUpperLeg", "RightUpperLeg", "LeftLowerLeg", "RightLowerLeg"]
 const FOOT_BONES := ["LeftFoot", "RightFoot", "LeftToes", "RightToes"]
+## What's left of the body under an outfit (29.1)
+const HEAD_BONES := ["Head", "Neck", "Jaw", "LeftEye", "RightEye"]
 
 
 func _initialize() -> void:
@@ -37,12 +39,16 @@ func _initialize() -> void:
 		var path := ROOT + key + "_dressed.res"
 		var err := ResourceSaver.save(out, path)
 		print(key, ": ", error_string(err), " -> ", path)
+		# 29.1: just the head and neck, for under the outfits
+		var head := _head_only(out, _bind_names(mi))
+		path = ROOT + key + "_head.res"
+		err = ResourceSaver.save(head, path)
+		print(key, " head: ", error_string(err), " -> ", path)
 		scene.free()
 	quit()
 
 
-func _dress(mi: MeshInstance3D) -> ArrayMesh:
-	var src := mi.mesh as ArrayMesh
+func _bind_names(mi: MeshInstance3D) -> Array[String]:
 	var skin := mi.skin
 	var bind_names: Array[String] = []
 	for b in skin.get_bind_count():
@@ -51,6 +57,70 @@ func _dress(mi: MeshInstance3D) -> ArrayMesh:
 			var sk := mi.get_node(mi.skeleton) as Skeleton3D
 			n = sk.get_bone_name(skin.get_bind_bone(b))
 		bind_names.append(n)
+	return bind_names
+
+
+## 29.1: the outfits come with their own bodies (Quaternius: "only the head
+## of the model is required"), so this keeps the triangles moved by the head
+## and neck alone.
+func _head_only(src: ArrayMesh, bind_names: Array[String]) -> ArrayMesh:
+	var out := ArrayMesh.new()
+	var kept := 0
+	for s in src.get_surface_count():
+		var arrays := src.surface_get_arrays(s)
+		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+		var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var per := bones.size() / verts.size()
+		var on_head := PackedByteArray()
+		on_head.resize(verts.size())
+		for v in verts.size():
+			var best := -1
+			var best_w := -1.0
+			for k in per:
+				if weights[v * per + k] > best_w:
+					best_w = weights[v * per + k]
+					best = bones[v * per + k]
+			var bone := bind_names[best] if best >= 0 and best < bind_names.size() else ""
+			on_head[v] = 1 if bone in HEAD_BONES else 0
+		var idx: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		var keep := PackedInt32Array()
+		for t in range(0, idx.size(), 3):
+			if on_head[idx[t]] == 1 and on_head[idx[t + 1]] == 1 and on_head[idx[t + 2]] == 1:
+				keep.append_array([idx[t], idx[t + 1], idx[t + 2]])
+		if keep.is_empty():
+			continue
+		kept += keep.size() / 3
+		# Only the vertices used, so its bounds are the head's
+		var remap := {}
+		var order := PackedInt32Array()
+		for i in keep.size():
+			if not remap.has(keep[i]):
+				remap[keep[i]] = order.size()
+				order.append(keep[i])
+			keep[i] = remap[keep[i]]
+		for a in Mesh.ARRAY_MAX:
+			if a == Mesh.ARRAY_INDEX or arrays[a] == null:
+				continue
+			var src_arr: Variant = arrays[a]
+			var stride: int = src_arr.size() / verts.size()
+			var dst: Variant = src_arr.duplicate()
+			dst.resize(order.size() * stride)
+			for i in order.size():
+				for k in stride:
+					dst[i * stride + k] = src_arr[order[i] * stride + k]
+			arrays[a] = dst
+		arrays[Mesh.ARRAY_INDEX] = keep
+		var fmt := src.surface_get_format(s)
+		out.add_surface_from_arrays(src.surface_get_primitive_type(s), arrays, [], {}, fmt)
+		out.surface_set_material(out.get_surface_count() - 1, src.surface_get_material(s))
+	print("  head: ", kept, " triangles in ", out.get_surface_count(), " surfaces")
+	return out
+
+
+func _dress(mi: MeshInstance3D) -> ArrayMesh:
+	var src := mi.mesh as ArrayMesh
+	var bind_names := _bind_names(mi)
 	var out := ArrayMesh.new()
 	var counts := {"skin": 0, "shirt": 0, "trousers": 0, "boots": 0}
 	for s in src.get_surface_count():

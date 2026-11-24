@@ -77,11 +77,7 @@ func _run() -> void:
 	var hat := _slot(person, "Hat", "Head", Vector3(0, 0.19, 0.025))
 	_cyl(hat, "Brim", 0.24, 0.24, 0.02, Vector3.ZERO, straw)
 	_cyl(hat, "Crown", 0.095, 0.11, 0.11, Vector3(0, 0.055, 0), straw)
-	# Guard's vest and helmet
-	var vest := _slot(person, "Vest", "UpperChest", Vector3(0, 0.1, 0.0))
-	_box(vest, "Front", Vector3(0.34, 0.36, 0.04), Vector3(0, 0, 0.14), olive)
-	_box(vest, "Back", Vector3(0.34, 0.36, 0.04), Vector3(0, 0, -0.12), olive)
-	_box(vest, "Pouch", Vector3(0.12, 0.08, 0.05), Vector3(0.09, -0.13, 0.17), olive)
+	# Guard's helmet (29.1: and the Ranger's pauldrons, HumanBody.wear())
 	var helmet := _slot(person, "Helmet", "Head", Vector3(0, 0.135, 0.02))
 	_dome(helmet, "Shell", 0.13, olive)
 	# Builder's (and Miner's) hard hat, Miner's lamp, Armorer's goggles
@@ -99,11 +95,13 @@ func _run() -> void:
 	_box(belt, "Belt", Vector3(0.36, 0.07, 0.25), Vector3.ZERO, leather)
 	_box(belt, "Pouch", Vector3(0.1, 0.13, 0.07), Vector3(-0.16, -0.07, 0.07), leather)
 	# Cook's and Tailor's apron, Cook's chef's hat, Rancher's hat
-	var apron := _slot(person, "Apron", "UpperChest", Vector3(0, 0.06, 0.15))
-	_box(apron, "Bib", Vector3(0.26, 0.26, 0.02), Vector3.ZERO, whites)
-	var skirt := _slot(person, "ApronSkirt", "Hips", Vector3(0, -0.14, 0.15))
+	# (29.1: a leather work apron, closer over the outfits)
+	var canvas := _mat("apron_leather", Color(0.4, 0.3, 0.21))
+	var apron := _slot(person, "Apron", "UpperChest", Vector3(0, 0.05, 0.135))
+	_box(apron, "Bib", Vector3(0.22, 0.22, 0.012), Vector3.ZERO, canvas)
+	var skirt := _slot(person, "ApronSkirt", "Hips", Vector3(0, -0.15, 0.13))
 	skirt.set_meta("part", "Apron")
-	_box(skirt, "Skirt", Vector3(0.34, 0.4, 0.02), Vector3.ZERO, whites)
+	_box(skirt, "Skirt", Vector3(0.3, 0.4, 0.012), Vector3.ZERO, canvas)
 	var chef := _slot(person, "ChefHat", "Head", Vector3(0, 0.175, 0.015))
 	_cyl(chef, "Band", 0.105, 0.105, 0.06, Vector3(0, 0.0, 0), whites)
 	_cyl(chef, "Puff", 0.12, 0.095, 0.11, Vector3(0, 0.085, 0), whites)
@@ -111,13 +109,10 @@ func _run() -> void:
 	_cyl(cowboy, "Brim", 0.25, 0.25, 0.02, Vector3.ZERO, hat_leather)
 	_cyl(cowboy, "Crown", 0.09, 0.105, 0.12, Vector3(0, 0.065, 0), hat_leather)
 	_cyl(cowboy, "Band", 0.107, 0.107, 0.025, Vector3(0, 0.02, 0), _mat("hat_band", Color(0.15, 0.1, 0.08)))
-	# Armour (22): the coat and trousers recolour the clothes
-	# (Settler._update_visuals); a helmet, and plates for plated pieces
+	# Armour (22): the coat and trousers are drawn as outfit pieces (29.1,
+	# HumanBody.wear()); a helmet, and knee plates for plated trousers
 	var ah := _slot(person, "ArmourHead", "Head", Vector3(0, 0.135, 0.02))
 	_dome(ah, "Shell", 0.135, plate)
-	var ab := _slot(person, "ArmourBody", "UpperChest", Vector3(0, 0.1, 0))
-	_box(ab, "ChestPlate", Vector3(0.32, 0.3, 0.035), Vector3(0, 0, 0.15), plate)
-	_box(ab, "BackPlate", Vector3(0.32, 0.3, 0.035), Vector3(0, 0, -0.13), plate)
 	for side in ["Left", "Right"]:
 		var knee := _slot(person, "ArmourLegs" + side, side + "LowerLeg", Vector3(0, 0.02, 0.07))
 		knee.set_meta("part", "ArmourLegs")

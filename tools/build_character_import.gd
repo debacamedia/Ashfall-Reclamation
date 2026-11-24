@@ -51,7 +51,7 @@ func _initialize() -> void:
 	ResourceSaver.save(anim_map, ROOT + "bonemap_animations.tres")
 	ResourceSaver.save(body_map, ROOT + "bonemap_bodies.tres")
 	_patch(ROOT + "animations/AnimationLibrary_Godot_Standard.glb.import", "Rig/Skeleton3D", load(ROOT + "bonemap_animations.tres"), true)
-	for d in ["bodies", "hair"]:
+	for d in ["bodies", "hair", "outfits"]:
 		for f in DirAccess.get_files_at(ROOT + d):
 			if f.ends_with(".gltf.import"):
 				_patch(ROOT + d + "/" + f, "Armature/Skeleton3D", load(ROOT + "bonemap_bodies.tres"), false)

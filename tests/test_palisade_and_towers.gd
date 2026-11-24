@@ -198,7 +198,9 @@ func test_guards_climb_the_watchtowers() -> void:
 	a.arm(rifle, 30)
 	b.arm(rifle, 30)
 	var up := 0
-	for i in 2400:
+	# (The second guard gets a tower once armed, about 20 s in, then walks
+	# round to the west stair: 30-35 s in all, near the old 40 s limit)
+	for i in 3600:
 		await wait_physics(1)
 		up = [a, b].filter(func(s: Settler) -> bool: return s.global_position.y > 3.2).size()
 		if up == 2:

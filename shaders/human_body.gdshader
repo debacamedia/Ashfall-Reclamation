@@ -21,6 +21,9 @@ instance uniform float trousers_metal = 0.0;
 uniform float cloth_thickness = 0.008;
 // Worn and dirty
 uniform float grime = 0.35;
+// 29.1: all skin (the head under an outfit, and the outfits' bare hands and
+// arms, which carry no regions)
+uniform bool bare = false;
 
 varying vec4 region;
 varying vec3 local_pos;
@@ -42,7 +45,7 @@ float noise(vec3 x) {
 }
 
 void vertex() {
-	region = COLOR;
+	region = bare ? vec4(0.0) : COLOR;
 	// Sleeves rolled up: the forearm's skin shows
 	float shirt = region.r * mix(1.0 - region.a, 1.0, long_sleeves);
 	region.r = shirt;
