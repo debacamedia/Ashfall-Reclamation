@@ -405,11 +405,18 @@ func _pen(node_name: String, id: String, display: String, kind: StringName, capa
 	# Shelter
 	match kind:
 		&"chicken":
+			# (30: Quaternius's chicken coop, weathered, on the old hen
+			# house's footprint and as solid)
 			var hut := Vector3(-hx + 1.4, 0, -hz + 1.1)
-			_box(body, "HenHouse", Vector3(2.2, 1.3, 1.6), hut + Vector3(0, 0.85, 0), M["wood"], true)
-			_box(body, "HenRoof", Vector3(2.5, 0.08, 1.9), hut + Vector3(0, 1.55, 0), M["tin"], false)
-			_box(body, "HenLegs", Vector3(2.0, 0.2, 1.4), hut + Vector3(0, 0.1, 0), M["wood"], false)
-			_box(body, "Ramp", Vector3(0.3, 0.05, 0.9), hut + Vector3(0.6, 0.18, 1.1), M["wood"], false)
+			var coop := load("res://assets/models/quaternius/farm/built/chicken_coop.res") as ArrayMesh
+			var ca := coop.get_aabb()
+			var csc := 2.2 / ca.size.x
+			var hen := MeshInstance3D.new()
+			hen.name = "HenHouse"
+			hen.mesh = coop
+			hen.transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * csc), hut - csc * Vector3(ca.get_center().x, ca.position.y, ca.get_center().z))
+			_add(body, hen)
+			_shape(body, "HenHouseCol", Vector3(2.2, 1.3, 1.6), hut + Vector3(0, 0.85, 0))
 		&"sheep":
 			# A lean-to, and a shearing stand by the gate
 			var lean := Vector3(-hx + 1.8, 0, -hz + 1.3)

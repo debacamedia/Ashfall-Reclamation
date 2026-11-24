@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/combat/hitscan_weapon.gd" id="1_61dc8"]
 [ext_resource type="Resource" path="res://resources/items/weapons/pistol.tres" id="2_red3f"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_c5u5x"]
+[ext_resource type="ArrayMesh" path="res://assets/models/quaternius/guns/built/pistol.res" id="3_red3f"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/pistol_shot.tres" id="4_nb08m"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/audio/pistol_reload.wav" id="5_5sf3v"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/dry_fire.tres" id="6_8on4r"]
@@ -36,29 +37,6 @@ size = Vector2(0.09, 0.2)
 material = SubResource("StandardMaterial3D_fauhy")
 size = Vector2(0.11, 0.11)
 
-[sub_resource type="BoxMesh" id="BoxMesh_au4or"]
-size = Vector3(0.03, 0.035, 0.19)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l667k"]
-albedo_color = Color(0.14901961, 0.15686275, 0.16470589, 1)
-roughness = 0.7
-
-[sub_resource type="BoxMesh" id="BoxMesh_q6m7t"]
-size = Vector3(0.028, 0.025, 0.15)
-
-[sub_resource type="BoxMesh" id="BoxMesh_0pqqo"]
-size = Vector3(0.03, 0.1, 0.045)
-
-[sub_resource type="BoxMesh" id="BoxMesh_mgx08"]
-size = Vector3(0.006, 0.025, 0.045)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ga7bm"]
-albedo_color = Color(0.06666667, 0.06666667, 0.06666667, 1)
-roughness = 0.7
-
-[sub_resource type="BoxMesh" id="BoxMesh_lhkx6"]
-size = Vector3(0.022, 0.022, 0.004)
-
 [sub_resource type="BoxMesh" id="BoxMesh_0bp0l"]
 size = Vector3(0.005, 0.012, 0.006)
 
@@ -82,6 +60,11 @@ definition = ExtResource("2_red3f")
 
 [node name="Model" type="Node3D" parent="." unique_id=1942135348]
 unique_name_in_owner = true
+
+[node name="Gun" type="MeshInstance3D" parent="Model" unique_id=1562644309]
+transform = Transform3D(-4.971471e-09, 0, 0.11373399, 0, 0.11373399, 0, -0.11373399, 0, -4.971471e-09, 7.311378e-09, -0.043518823, 0.0072648376)
+cast_shadow = 0
+mesh = ExtResource("3_red3f")
 
 [node name="Muzzle" type="Marker3D" parent="Model" unique_id=1846146746]
 unique_name_in_owner = true
@@ -110,42 +93,13 @@ mesh = SubResource("QuadMesh_tnr1d")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_d3byv")
 
-[node name="Slide" type="MeshInstance3D" parent="Model" unique_id=1803991793]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.022, -0.055)
-material_override = ExtResource("3_c5u5x")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_au4or")
-
-[node name="Frame" type="MeshInstance3D" parent="Model" unique_id=1728567452]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.006, -0.045)
-material_override = SubResource("StandardMaterial3D_l667k")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_q6m7t")
-
-[node name="Grip" type="MeshInstance3D" parent="Model" unique_id=2071424972]
-transform = Transform3D(1, 0, 0, 0, 0.9702957, 0.2419219, 0, -0.2419219, 0.9702957, 0, -0.06, 0.02)
-material_override = SubResource("StandardMaterial3D_l667k")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_0pqqo")
-
-[node name="TriggerGuard" type="MeshInstance3D" parent="Model" unique_id=783856446]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.028, -0.025)
-material_override = ExtResource("3_c5u5x")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_mgx08")
-
-[node name="Muzzle Face" type="MeshInstance3D" parent="Model" unique_id=699158046]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.151)
-material_override = SubResource("StandardMaterial3D_ga7bm")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_lhkx6")
-
 [node name="SightAnchor" type="Marker3D" parent="Model" unique_id=1690478168]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.052, 0.03)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05167806, 0.03)
 
 [node name="IronSights" type="Node3D" parent="Model" unique_id=586798109]
 unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00032194122, 0)
 
 [node name="RearSightL" type="MeshInstance3D" parent="Model/IronSights" unique_id=326982171]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.007, 0.046, 0.03)
@@ -173,7 +127,7 @@ mesh = SubResource("SphereMesh_rgd36")
 
 [node name="OpticMount" type="Marker3D" parent="Model" unique_id=711446593]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0395, -0.06)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04167806, -0.06)
 
 [node name="MuzzleMount" type="Marker3D" parent="Model" unique_id=2116941964]
 unique_name_in_owner = true

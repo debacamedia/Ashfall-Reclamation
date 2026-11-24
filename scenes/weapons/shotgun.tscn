@@ -3,8 +3,7 @@
 [ext_resource type="Script" path="res://scripts/combat/hitscan_weapon.gd" id="1_844j2"]
 [ext_resource type="Resource" path="res://resources/items/weapons/shotgun.tres" id="2_cusjx"]
 [ext_resource type="Material" path="res://assets/materials/metal_dark.tres" id="3_8wxhb"]
-[ext_resource type="Material" path="res://assets/materials/wood.tres" id="4_im8a1"]
-[ext_resource type="Material" path="res://assets/materials/rubber.tres" id="5_2oak7"]
+[ext_resource type="ArrayMesh" path="res://assets/models/quaternius/guns/built/shotgun.res" id="3_xeb56"]
 [ext_resource type="AudioStream" path="res://assets/audio/sets/shotgun_shot.tres" id="6_urmid"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/shell_insert.tres" id="7_l8kom"]
 [ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/dry_fire.tres" id="8_t2wk7"]
@@ -39,39 +38,6 @@ size = Vector2(0.09, 0.2)
 material = SubResource("StandardMaterial3D_fauhy")
 size = Vector2(0.11, 0.11)
 
-[sub_resource type="BoxMesh" id="BoxMesh_54cn8"]
-size = Vector3(0.05, 0.075, 0.24)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_n13ib"]
-top_radius = 0.011
-bottom_radius = 0.011
-height = 0.55
-radial_segments = 12
-
-[sub_resource type="BoxMesh" id="BoxMesh_23ktc"]
-size = Vector3(0.006, 0.004, 0.52)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_4f8mk"]
-top_radius = 0.01
-bottom_radius = 0.01
-height = 0.42
-radial_segments = 12
-
-[sub_resource type="BoxMesh" id="BoxMesh_e43ah"]
-size = Vector3(0.046, 0.04, 0.17)
-
-[sub_resource type="BoxMesh" id="BoxMesh_dd7es"]
-size = Vector3(0.035, 0.09, 0.05)
-
-[sub_resource type="BoxMesh" id="BoxMesh_y46jc"]
-size = Vector3(0.042, 0.075, 0.28)
-
-[sub_resource type="BoxMesh" id="BoxMesh_5m6wv"]
-size = Vector3(0.044, 0.085, 0.02)
-
-[sub_resource type="BoxMesh" id="BoxMesh_dvdvk"]
-size = Vector3(0.006, 0.025, 0.05)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4xu40"]
 albedo_color = Color(0.9411765, 0.9019608, 0.7529412, 1)
 roughness = 0.7
@@ -92,6 +58,11 @@ definition = ExtResource("2_cusjx")
 
 [node name="Model" type="Node3D" parent="." unique_id=1942135348]
 unique_name_in_owner = true
+
+[node name="Gun" type="MeshInstance3D" parent="Model" unique_id=173900588]
+transform = Transform3D(-8.085839e-09, 0, 0.18498243, 0, 0.18498243, 0, -0.18498243, 0, -8.085839e-09, 3.4831817e-08, -0.0078029037, 0.12685907)
+cast_shadow = 0
+mesh = ExtResource("3_xeb56")
 
 [node name="Muzzle" type="Marker3D" parent="Model" unique_id=1846146746]
 unique_name_in_owner = true
@@ -120,72 +91,19 @@ mesh = SubResource("QuadMesh_tnr1d")
 cast_shadow = 0
 mesh = SubResource("QuadMesh_d3byv")
 
-[node name="Receiver" type="MeshInstance3D" parent="Model" unique_id=1108670604]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, -0.02)
-material_override = ExtResource("3_8wxhb")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_54cn8")
-
-[node name="Barrel" type="MeshInstance3D" parent="Model" unique_id=1417813377]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.032, -0.39)
-material_override = ExtResource("3_8wxhb")
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_n13ib")
-
-[node name="Rib" type="MeshInstance3D" parent="Model" unique_id=1886745404]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0445, -0.39)
-material_override = ExtResource("3_8wxhb")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_23ktc")
-
-[node name="MagTube" type="MeshInstance3D" parent="Model" unique_id=178662212]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.008, -0.33)
-material_override = ExtResource("3_8wxhb")
-cast_shadow = 0
-mesh = SubResource("CylinderMesh_4f8mk")
-
-[node name="Forend" type="MeshInstance3D" parent="Model" unique_id=300229302]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, -0.3)
-material_override = ExtResource("4_im8a1")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_e43ah")
-
-[node name="Grip" type="MeshInstance3D" parent="Model" unique_id=1343223970]
-transform = Transform3D(1, 0, 0, 0, 0.9396926, 0.34202012, 0, -0.34202012, 0.9396926, 0, -0.06, 0.1)
-material_override = ExtResource("4_im8a1")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_dd7es")
-
-[node name="Stock" type="MeshInstance3D" parent="Model" unique_id=1796236172]
-transform = Transform3D(1, 0, 0, 0, 0.99254614, 0.12186935, 0, -0.12186935, 0.99254614, 0, -0.025, 0.25)
-material_override = ExtResource("4_im8a1")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_y46jc")
-
-[node name="ButtPad" type="MeshInstance3D" parent="Model" unique_id=24009677]
-transform = Transform3D(1, 0, 0, 0, 0.99254614, 0.12186935, 0, -0.12186935, 0.99254614, 0, -0.044, 0.39)
-material_override = ExtResource("5_2oak7")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_5m6wv")
-
-[node name="TriggerGuard" type="MeshInstance3D" parent="Model" unique_id=297727048]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.045, 0.03)
-material_override = ExtResource("3_8wxhb")
-cast_shadow = 0
-mesh = SubResource("BoxMesh_dvdvk")
-
 [node name="Bead" type="MeshInstance3D" parent="Model" unique_id=1024964562]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.048, -0.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06812853, -0.6)
 material_override = SubResource("StandardMaterial3D_4xu40")
 cast_shadow = 0
 mesh = SubResource("SphereMesh_g8ty6")
 
 [node name="SightAnchor" type="Marker3D" parent="Model" unique_id=526140785]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.048, -0.08)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06812853, -0.08)
 
 [node name="IronSights" type="Node3D" parent="Model" unique_id=1097418218]
 unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.020128535, 0)
 
 [node name="RearNotchL" type="MeshInstance3D" parent="Model/IronSights" unique_id=1744647430]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.006, 0.043, -0.08)
@@ -201,11 +119,11 @@ mesh = SubResource("BoxMesh_gbrlp")
 
 [node name="OpticMount" type="Marker3D" parent="Model" unique_id=1863625304]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0425, -0.02)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.051238365, -0.02)
 
 [node name="UnderMount" type="Marker3D" parent="Model" unique_id=1923762130]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.014, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.033057373, -0.3)
 
 [node name="ShotSound" type="AudioStreamPlayer3D" parent="." unique_id=994840292]
 unique_name_in_owner = true

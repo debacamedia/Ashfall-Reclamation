@@ -104,11 +104,11 @@ size = Vector3(3.7, 0.08, 0.03)
 [sub_resource type="BoxShape3D" id="BoxShape3D_5l3vm"]
 size = Vector3(3.9, 1.95, 0.2)
 
-[node name="SettlementGate" type="Node3D" unique_id=1149445662]
+[node name="SettlementGate" type="Node3D" unique_id=1320732181]
 script = ExtResource("1_ddpnv")
 definition = ExtResource("2_e7w63")
 
-[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=565209096]
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=969998866]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 stream = ExtResource("3_sdq41")
@@ -116,185 +116,185 @@ volume_db = -2.0
 unit_size = 4.0
 bus = &"SFX"
 
-[node name="Body" type="StaticBody3D" parent="." unique_id=1342273708]
+[node name="Body" type="StaticBody3D" parent="." unique_id=2031846722]
 collision_layer = 2
 collision_mask = 0
 
-[node name="PostL" type="MeshInstance3D" parent="Body" unique_id=1266675854]
+[node name="PostL" type="MeshInstance3D" parent="Body" unique_id=1140595015]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.08, 1.15, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_aasi0")
 
-[node name="PostLCol" type="CollisionShape3D" parent="Body" unique_id=1757522422]
+[node name="PostLCol" type="CollisionShape3D" parent="Body" unique_id=141301324]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.08, 1.15, 0)
 shape = SubResource("BoxShape3D_oopuu")
 
-[node name="CapL" type="MeshInstance3D" parent="Body" unique_id=2098822483]
+[node name="CapL" type="MeshInstance3D" parent="Body" unique_id=794932612]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.08, 2.34, 0)
 material_override = ExtResource("5_4n62c")
 mesh = SubResource("BoxMesh_jw05q")
 
-[node name="PostR" type="MeshInstance3D" parent="Body" unique_id=1449204298]
+[node name="PostR" type="MeshInstance3D" parent="Body" unique_id=1123275250]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.08, 1.15, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_rf0nn")
 
-[node name="PostRCol" type="CollisionShape3D" parent="Body" unique_id=1690068411]
+[node name="PostRCol" type="CollisionShape3D" parent="Body" unique_id=1729133193]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.08, 1.15, 0)
 shape = SubResource("BoxShape3D_k28gn")
 
-[node name="CapR" type="MeshInstance3D" parent="Body" unique_id=115130084]
+[node name="CapR" type="MeshInstance3D" parent="Body" unique_id=2024834839]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.08, 2.34, 0)
 material_override = ExtResource("5_4n62c")
 mesh = SubResource("BoxMesh_rts47")
 
-[node name="LeafL" type="Node3D" parent="." unique_id=865725750]
+[node name="LeafL" type="Node3D" parent="." unique_id=65019624]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.95, 0, 0)
 
-[node name="Leaf" type="AnimatableBody3D" parent="LeafL" unique_id=2012593758 groups=["nav_passable"]]
+[node name="Leaf" type="AnimatableBody3D" parent="LeafL" unique_id=198073348 groups=["nav_passable"]]
 collision_layer = 2
 collision_mask = 0
 sync_to_physics = false
 
-[node name="Plank0" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=528478335]
+[node name="Plank0" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=728099777]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_q6mjs")
 
-[node name="Plank1" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1927793912]
+[node name="Plank1" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=337272337]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 1.04, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_ow3pq")
 
-[node name="Plank2" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1056084288]
+[node name="Plank2" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1711587007]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_haser")
 
-[node name="Plank3" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=111084802]
+[node name="Plank3" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1262102772]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.96, 1.04, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_grpa8")
 
-[node name="Plank4" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=303892093]
+[node name="Plank4" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1938138406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.52, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_2nmcm")
 
-[node name="Plank5" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=646131788]
+[node name="Plank5" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=196264410]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.08, 1.04, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_ag32i")
 
-[node name="Plank6" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=2120228117]
+[node name="Plank6" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=624443516]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.64, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_f0q0d")
 
-[node name="Rail5" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1945685371]
+[node name="Rail5" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=436105632]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.95, 0.45, -0.07)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_fo3d6")
 
-[node name="Rail16" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1088481256]
+[node name="Rail16" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1644388606]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.95, 1.6, -0.07)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_l4g7s")
 
-[node name="Brace" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1808718254]
+[node name="Brace" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=7704006]
 transform = Transform3D(0.95916945, 0.28283203, 0, -0.28283203, 0.95916945, 0, 0, 0, 1, 1.95, 1.02, -0.1)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_lql4r")
 
-[node name="ScrapSheet" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1881896550]
+[node name="ScrapSheet" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1456791362]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0.95, 0.05)
 material_override = ExtResource("6_4ck2f")
 mesh = SubResource("BoxMesh_o7vpu")
 
-[node name="Band" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1093222640]
+[node name="Band" type="MeshInstance3D" parent="LeafL/Leaf" unique_id=1770106983]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.95, 1.25, 0.05)
 material_override = ExtResource("5_4n62c")
 mesh = SubResource("BoxMesh_fumec")
 
-[node name="Panel" type="CollisionShape3D" parent="LeafL/Leaf" unique_id=2089384475]
+[node name="Panel" type="CollisionShape3D" parent="LeafL/Leaf" unique_id=265598469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.95, 1.12, 0)
 shape = SubResource("BoxShape3D_edc6q")
 
-[node name="LeafR" type="Node3D" parent="." unique_id=935992380]
+[node name="LeafR" type="Node3D" parent="." unique_id=916401834]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.95, 0, 0)
 
-[node name="Leaf" type="AnimatableBody3D" parent="LeafR" unique_id=1677522569 groups=["nav_passable"]]
+[node name="Leaf" type="AnimatableBody3D" parent="LeafR" unique_id=2064872531 groups=["nav_passable"]]
 collision_layer = 2
 collision_mask = 0
 sync_to_physics = false
 
-[node name="Plank0" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1937976833]
+[node name="Plank0" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1861496288]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.28, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_hlvjj")
 
-[node name="Plank1" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1660116034]
+[node name="Plank1" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=916008102]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.84, 1.04, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_vnfgg")
 
-[node name="Plank2" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=125300585]
+[node name="Plank2" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1033555200]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_15rwl")
 
-[node name="Plank3" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=946377338]
+[node name="Plank3" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=888620425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.96, 1.04, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_ks5uh")
 
-[node name="Plank4" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=2108580365]
+[node name="Plank4" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=200306027]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.52, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_6nbtv")
 
-[node name="Plank5" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=432143292]
+[node name="Plank5" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=224244770]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.08, 1.04, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_1ln6h")
 
-[node name="Plank6" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1163955830]
+[node name="Plank6" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=379635895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.64, 1.1, 0)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_emcxf")
 
-[node name="Rail5" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1528817245]
+[node name="Rail5" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=841249656]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.95, 0.45, -0.07)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_h80kt")
 
-[node name="Rail16" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1662057750]
+[node name="Rail16" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=682406822]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.95, 1.6, -0.07)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_qnnr5")
 
-[node name="Brace" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1712533711]
+[node name="Brace" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=298587375]
 transform = Transform3D(0.95916945, -0.28283203, 0, 0.28283203, 0.95916945, 0, 0, 0, 1, -1.95, 1.02, -0.1)
 material_override = ExtResource("4_vnmuc")
 mesh = SubResource("BoxMesh_20yrr")
 
-[node name="ScrapSheet" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=248899319]
+[node name="ScrapSheet" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1084413683]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.95, 0.05)
 material_override = ExtResource("6_4ck2f")
 mesh = SubResource("BoxMesh_afc8j")
 
-[node name="Band" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1512023465]
+[node name="Band" type="MeshInstance3D" parent="LeafR/Leaf" unique_id=1047436225]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.95, 1.25, 0.05)
 material_override = ExtResource("5_4n62c")
 mesh = SubResource("BoxMesh_hbtsk")
 
-[node name="Panel" type="CollisionShape3D" parent="LeafR/Leaf" unique_id=1933091254]
+[node name="Panel" type="CollisionShape3D" parent="LeafR/Leaf" unique_id=614053782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.95, 1.12, 0)
 shape = SubResource("BoxShape3D_5l3vm")
 
-[node name="SwingSound" type="AudioStreamPlayer3D" parent="." unique_id=1225660724]
+[node name="SwingSound" type="AudioStreamPlayer3D" parent="." unique_id=55211769]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 stream = ExtResource("7_fcedg")

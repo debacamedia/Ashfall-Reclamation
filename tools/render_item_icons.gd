@@ -63,6 +63,21 @@ func _run() -> void:
 		cam.size = bounds.size.length() * 1.05
 		cam.position = centre + dir * 5.0
 		cam.look_at(centre, Vector3.UP)
+		# Guns and attachments (30: the Ultimate Gun Pack's models) lie on
+		# their side: seen from above, side-on, muzzle to the right, filling
+		# the icon's width
+		var gun := model.find_child("Model", true, false) as MeshInstance3D
+		if gun != null and (item.weapon != null or item.attachment != null):
+			var length := gun.global_basis.x
+			length.y = 0.0
+			length = length.normalized()
+			var side := Vector3.UP.cross(length).normalized()
+			cam.position = centre + (Vector3.UP * 1.0 + side * 0.35).normalized() * 5.0
+			cam.look_at(centre, -side)
+			if cam.global_basis.x.dot(length) < 0.0:
+				cam.look_at(centre, side)
+			var long := (gun.global_transform * gun.mesh.get_aabb()).size
+			cam.size = maxf(Vector2(long.x, long.z).length(), long.y) * 1.08
 		for i in 4:
 			await process_frame
 		var img := vp.get_texture().get_image()

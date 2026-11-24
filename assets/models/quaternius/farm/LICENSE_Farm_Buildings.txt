@@ -1,0 +1,9 @@
+LowPoly Farm Buildings by Quaternius (quaternius.com, quaternius.itch.io)
+
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The downloaded zip ("Farm Buildings by Quaternius.zip") has no licence file.
+The pack's page, https://quaternius.itch.io/lowpoly-farm-buildings, lists it
+as CC0. Checked 23 Nov 2026 for ASHFALL: Reclamation (see
+docs/ASSET_LICENSES.md).

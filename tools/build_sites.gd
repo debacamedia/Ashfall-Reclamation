@@ -394,16 +394,8 @@ func _ash_creek() -> Kit:
 	k.container("crate", "LookoutStash", tower, Vector3(-1.3, 8.0, 1.5), 90, "sniper_stash", "Lookout Stash")
 	# Silo behind the barn
 	var silo := k.solid_body(k.groups["Buildings"], "Silo", Transform3D(Basis.IDENTITY, Vector3(40, 0, -14)))
-	var sm := MeshInstance3D.new()
-	sm.name = "Body"
-	var scm := CylinderMesh.new()
-	scm.top_radius = 3.0
-	scm.bottom_radius = 3.0
-	scm.height = 12.0
-	sm.mesh = scm
-	sm.material_override = k.mat("corrugated")
-	sm.position.y = 6.0
-	silo.add_child(sm)
+	# (30: Quaternius's farm silo, weathered, as wide as the old one)
+	_farm_prop(silo, "Body", "silo", 6.0 / 3.6, 0.0)
 	var scs := CollisionShape3D.new()
 	scs.name = "BodyCol"
 	var ssh := CylinderShape3D.new()
@@ -412,6 +404,10 @@ func _ash_creek() -> Kit:
 	scs.shape = ssh
 	scs.position.y = 6.0
 	silo.add_child(scs)
+	# A wind pump by the pump house (30: Quaternius's, weathered), its legs
+	# solid
+	var windpump := k.solid_body(k.groups["Props"], "WindPump", Transform3D(Basis(Vector3.UP, deg_to_rad(90)), Vector3(-34, 0, 5)))
+	_farm_prop(windpump, "Tower", "windmill", 1.0, 0.0, true)
 	# Chicken coop by the water tower
 	var c := k.building("ChickenCoop", Vector2(-14, 24), 0, Vector2(4, 3), {
 		"wall": "wood", "floor": "", "roof": "flat", "roof_mat": "rust", "height": 2.6,
@@ -473,6 +469,37 @@ func _ash_creek() -> Kit:
 	k.spawner("RaiderSpawner", "raider", 2, 60.0, [Vector2(-30, -32), Vector2(30, 16)])
 	_ash_creek_settlement(k, f, b, p)
 	return k
+
+
+## One of Quaternius's farm buildings (Increment 30, made ready by
+## tools/build_farm_props.gd) under `body`, scaled, turned and centred on its
+## footprint; with `legs`, a solid box round what touches the ground, 4 m up.
+func _farm_prop(body: Node3D, n: String, mesh_name: String, sc: float, yaw: float, legs := false) -> MeshInstance3D:
+	var mesh := load("res://assets/models/quaternius/farm/built/%s.res" % mesh_name) as ArrayMesh
+	var a := mesh.get_aabb()
+	var mi := MeshInstance3D.new()
+	mi.name = n
+	mi.mesh = mesh
+	var basis := Basis(Vector3.UP, deg_to_rad(yaw)).scaled(Vector3.ONE * sc)
+	mi.transform = Transform3D(basis, -(basis * Vector3(a.get_center().x, a.position.y, a.get_center().z)))
+	body.add_child(mi)
+	if legs:
+		var foot := AABB()
+		var first := true
+		for i in mesh.get_surface_count():
+			for p: Vector3 in mesh.surface_get_arrays(i)[Mesh.ARRAY_VERTEX]:
+				if p.y < a.position.y + 0.3:
+					var q := mi.transform * p
+					foot = AABB(q, Vector3.ZERO) if first else foot.expand(q)
+					first = false
+		var cs := CollisionShape3D.new()
+		cs.name = n + "Col"
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(maxf(foot.size.x, 0.3), 4.0, maxf(foot.size.z, 0.3))
+		cs.shape = bs
+		cs.position = Vector3(foot.get_center().x, 2.0, foot.get_center().z)
+		body.add_child(cs)
+	return mi
 
 
 ## Ash Creek Farms as a settlement (Increment 19): the notice board where you
