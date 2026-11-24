@@ -48,25 +48,14 @@ func _initialize() -> void:
 	body.shirt = Color(0.13, 0.11, 0.1)
 	body.trousers = Color(0.11, 0.1, 0.09)
 	body.colour_jitter = 0.1
-	for n in ["ChestPlate", "KneePadLeft", "KneePadRight", "TirePad"]:
+	body.cloth_tint = Color(0.3, 0.28, 0.27)  # 29.1: soot-black clothes
+	# 29.1: rust-red pauldrons (the Veteran's) for the shoulder plates
+	body.pauldron_tint = Color(0.85, 0.42, 0.3)
+	for n in ["KneePadLeft", "KneePadRight"]:
 		for mi in body.get_node(n).find_children("*", "MeshInstance3D", true, false):
 			(mi as MeshInstance3D).material_override = plate
 	for mi in body.get_node("Bandana").find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = red
-	for side in ["Left", "Right"]:
-		var pad := Node3D.new()
-		pad.name = "ShoulderPlate" + side
-		pad.set_meta("slot", "UpperChest")
-		pad.set_meta("part", "ShoulderPlate")
-		pad.position = Vector3(0.2 if side == "Left" else -0.2, 0.19, -0.01)
-		body.add_child(pad)
-		var mi := MeshInstance3D.new()
-		mi.name = "Plate"
-		var bm := BoxMesh.new()
-		bm.size = Vector3(0.16, 0.05, 0.21)
-		mi.mesh = bm
-		mi.material_override = plate
-		pad.add_child(mi)
 	var helmet := Node3D.new()
 	helmet.name = "ScrapHelmet"
 	helmet.set_meta("slot", "Head")

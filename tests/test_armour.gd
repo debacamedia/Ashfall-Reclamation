@@ -280,7 +280,7 @@ func test_guards_wear_armour() -> void:
 	p.inventory.add_item(CAP, 1)
 	check(st.request_give_armour(p, g, _player_slot(p, VEST)), "a vest for the guard")
 	check(g.armour.worn(ArmourSet.BODY) == VEST and p.inventory.count_of(&"plated_vest") == 0, "worn, out of your backpack")
-	check(g.part("ArmourBody").visible and not g.part("Vest").visible, "you can see it on them")
+	check(g.body.worn(&"body") == "plated" and g.body.outfit_of(&"pauldrons") == &"ranger", "you can see it on them (29.1: the Ranger's coat, greyed, with pauldrons)")
 	var before := g.health.current_health
 	var r := (load("res://scenes/enemies/raider.tscn") as PackedScene).instantiate() as Raider
 	zone.add_child(r)

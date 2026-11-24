@@ -53,6 +53,9 @@ func _dress(v: Node, veteran: bool) -> void:
 	body.trousers = Color(0.2, 0.19, 0.17)
 	body.boots = Color(0.1, 0.09, 0.08)
 	body.colour_jitter = 0.25
+	# 29.1: ranger clothes mostly, darker and worn
+	body.outfit_style = &"raider"
+	body.cloth_tint = Color(0.7, 0.64, 0.58) if not veteran else Color(0.6, 0.56, 0.52)
 	_add(v, body)
 	var red := _mat("bandana", Color(0.55, 0.1, 0.07))
 	var leather := _mat("leather", Color(0.3, 0.2, 0.12))
@@ -76,12 +79,14 @@ func _dress(v: Node, veteran: bool) -> void:
 	s1.rotation.z = 0.7
 	var s2 := _box(strap, "Back", Vector3(0.06, 0.48, 0.02), Vector3(0, 0, -0.13), leather)
 	s2.rotation.z = -0.7
-	var tire := _slot(body, "TirePad", "UpperChest", Vector3(0.19, 0.2, -0.01))
-	_box(tire, "Pad", Vector3(0.15, 0.045, 0.19), Vector3.ZERO, rubber)
-	_box(tire, "Spike", Vector3(0.03, 0.08, 0.03), Vector3(0, 0.05, 0), rust)
-	if veteran:
-		var plate := _slot(body, "ChestPlate", "UpperChest", Vector3(0, 0.09, 0.0))
-		_box(plate, "Front", Vector3(0.32, 0.3, 0.03), Vector3(0, 0, 0.155), rust)
+	if not veteran:
+		var tire := _slot(body, "TirePad", "UpperChest", Vector3(0.19, 0.2, -0.01))
+		_box(tire, "Pad", Vector3(0.15, 0.045, 0.19), Vector3.ZERO, rubber)
+		_box(tire, "Spike", Vector3(0.03, 0.08, 0.03), Vector3(0, 0.05, 0), rust)
+	else:
+		# 29.1: the Ranger's pauldrons, worn and rusty, for the chest plate
+		body.pauldrons = true
+		body.pauldron_tint = Color(0.8, 0.68, 0.6)
 		for side in ["Left", "Right"]:
 			var knee := _slot(body, "KneePad" + side, side + "LowerLeg", Vector3(0, 0.02, 0.07))
 			knee.set_meta("part", "KneePad")

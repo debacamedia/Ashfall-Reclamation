@@ -111,88 +111,90 @@ metadata/damage_multiplier = 2.0
 [node name="Visual" type="Node3D" parent="." unique_id=1876314567]
 unique_name_in_owner = true
 
-[node name="Body" type="Node3D" parent="Visual" unique_id=501179146]
+[node name="Body" type="Node3D" parent="Visual" unique_id=895809471]
 script = ExtResource("10_clo11")
 shirt = Color(0.3, 0.22, 0.15, 1)
 trousers = Color(0.2, 0.19, 0.17, 1)
 boots = Color(0.1, 0.09, 0.08, 1)
 colour_jitter = 0.25
+outfit_style = &"raider"
+cloth_tint = Color(0.7, 0.64, 0.58, 1)
 
-[node name="Bandana" type="Node3D" parent="Visual/Body" unique_id=859973495]
+[node name="Bandana" type="Node3D" parent="Visual/Body" unique_id=965462070]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, 0.03)
 metadata/slot = "Head"
 
-[node name="Mask" type="MeshInstance3D" parent="Visual/Body/Bandana" unique_id=1289467305]
+[node name="Mask" type="MeshInstance3D" parent="Visual/Body/Bandana" unique_id=1959851705]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.085)
 material_override = SubResource("StandardMaterial3D_clo11")
 mesh = SubResource("BoxMesh_cbrhk")
 
-[node name="Wrap" type="MeshInstance3D" parent="Visual/Body/Bandana" unique_id=1518483538]
+[node name="Wrap" type="MeshInstance3D" parent="Visual/Body/Bandana" unique_id=1462743109]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 material_override = SubResource("StandardMaterial3D_clo11")
 mesh = SubResource("BoxMesh_xcp24")
 
-[node name="Knot" type="MeshInstance3D" parent="Visual/Body/Bandana" unique_id=155107094]
+[node name="Knot" type="MeshInstance3D" parent="Visual/Body/Bandana" unique_id=1311062014]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.085)
 material_override = SubResource("StandardMaterial3D_clo11")
 mesh = SubResource("BoxMesh_fvnhr")
 
-[node name="Goggles" type="Node3D" parent="Visual/Body" unique_id=1580713324]
+[node name="Goggles" type="Node3D" parent="Visual/Body" unique_id=2047294984]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.165, 0.025)
 metadata/slot = "Head"
 
-[node name="Strap" type="MeshInstance3D" parent="Visual/Body/Goggles" unique_id=1209811581]
+[node name="Strap" type="MeshInstance3D" parent="Visual/Body/Goggles" unique_id=1002322056]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.085)
 material_override = SubResource("StandardMaterial3D_dc808")
 mesh = SubResource("BoxMesh_71ugl")
 
-[node name="Lens" type="MeshInstance3D" parent="Visual/Body/Goggles" unique_id=2114299252]
+[node name="Lens" type="MeshInstance3D" parent="Visual/Body/Goggles" unique_id=66898640]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.038, 0, 0.095)
 material_override = SubResource("StandardMaterial3D_w64xd")
 mesh = SubResource("BoxMesh_jqa7p")
 
-[node name="Lens2" type="MeshInstance3D" parent="Visual/Body/Goggles" unique_id=906981183]
+[node name="Lens2" type="MeshInstance3D" parent="Visual/Body/Goggles" unique_id=1052232309]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.038, 0, 0.095)
 material_override = SubResource("StandardMaterial3D_w64xd")
 mesh = SubResource("BoxMesh_st5r7")
 
-[node name="ChestStrap" type="Node3D" parent="Visual/Body" unique_id=1310818775]
+[node name="ChestStrap" type="Node3D" parent="Visual/Body" unique_id=1450549014]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 metadata/slot = "UpperChest"
 
-[node name="Front" type="MeshInstance3D" parent="Visual/Body/ChestStrap" unique_id=996808428]
+[node name="Front" type="MeshInstance3D" parent="Visual/Body/ChestStrap" unique_id=1653328405]
 transform = Transform3D(0.7648422, -0.64421767, 0, 0.64421767, 0.7648422, 0, 0, 0, 1, 0, 0, 0.145)
 material_override = SubResource("StandardMaterial3D_1a5in")
 mesh = SubResource("BoxMesh_ji6yc")
 
-[node name="Back" type="MeshInstance3D" parent="Visual/Body/ChestStrap" unique_id=990051062]
+[node name="Back" type="MeshInstance3D" parent="Visual/Body/ChestStrap" unique_id=1423103535]
 transform = Transform3D(0.7648422, 0.64421767, 0, -0.64421767, 0.7648422, 0, 0, 0, 1, 0, 0, -0.13)
 material_override = SubResource("StandardMaterial3D_1a5in")
 mesh = SubResource("BoxMesh_x3ecq")
 
-[node name="TirePad" type="Node3D" parent="Visual/Body" unique_id=1655057944]
+[node name="TirePad" type="Node3D" parent="Visual/Body" unique_id=255341886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19, 0.2, -0.01)
 metadata/slot = "UpperChest"
 
-[node name="Pad" type="MeshInstance3D" parent="Visual/Body/TirePad" unique_id=1983144894]
+[node name="Pad" type="MeshInstance3D" parent="Visual/Body/TirePad" unique_id=21635523]
 material_override = SubResource("StandardMaterial3D_dc808")
 mesh = SubResource("BoxMesh_jd5go")
 
-[node name="Spike" type="MeshInstance3D" parent="Visual/Body/TirePad" unique_id=1144787650]
+[node name="Spike" type="MeshInstance3D" parent="Visual/Body/TirePad" unique_id=2062471484]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 material_override = SubResource("StandardMaterial3D_rqjxy")
 mesh = SubResource("BoxMesh_iunrb")
 
-[node name="Machete" type="Node3D" parent="Visual/Body" unique_id=595175987]
+[node name="Machete" type="Node3D" parent="Visual/Body" unique_id=692471996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
 metadata/slot = "RightHand"
 metadata/space = "bone"
 
-[node name="Handle" type="MeshInstance3D" parent="Visual/Body/Machete" unique_id=1621867065]
+[node name="Handle" type="MeshInstance3D" parent="Visual/Body/Machete" unique_id=1222408977]
 material_override = SubResource("StandardMaterial3D_ipnhw")
 mesh = SubResource("BoxMesh_dodlj")
 
-[node name="Blade" type="MeshInstance3D" parent="Visual/Body/Machete" unique_id=100720053]
+[node name="Blade" type="MeshInstance3D" parent="Visual/Body/Machete" unique_id=2112964781]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0, 0.02)
 material_override = SubResource("StandardMaterial3D_5uug2")
 mesh = SubResource("BoxMesh_5xytc")
