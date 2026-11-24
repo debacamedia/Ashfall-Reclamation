@@ -50,7 +50,7 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 				stacks.append([item, bar.get_slot_quantity(i), bar.get_slot_state(i)])
 	# The backpack you had on (Increment 16.8); your satchel stays with you
 	if player.inventory != null and player.inventory.pack != null:
-		stacks.append([player.inventory.pack, 1])
+		stacks.append([player.inventory.pack, 1, {}])
 	# What you wore (Increment 22): its wear is remembered for when it's back on
 	for slot in ArmourSet.SLOTS:
 		if player.armour.worn(slot) != null:
