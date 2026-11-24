@@ -1,6 +1,6 @@
-# Increment 30: real guns, and farm buildings at Ash Creek
+# Increment 30: real guns, farm buildings at Ash Creek, and a fast-forward for testing
 
-**Status:** complete. TESTS_LINE
+**Status:** complete. 553 automated tests pass in headless Godot 4.7, 6 of them new: 4 in `tests/test_real_guns.gd`, 2 in `tests/test_game_speed.gd`.
 
 You downloaded three more Quaternius packs (all CC0, checked in 29.1 and listed in `docs/ASSET_LICENSES.md`) and asked for them to go in, guns first. This increment uses two of them:
 - the **Ultimate Gun Pack**, for your guns, their attachments, guns on the ground and in settlers' hands;
@@ -63,6 +63,18 @@ A guard with a gun carries the pack's rifle, 0.8 m long, by its grip, and it poi
 
 **What stays:** the barn, the farmhouse and the water tower are still Ash Creek's own, because you go inside them and climb them. The pack's barns are closed shells.
 
+## Fast-forward for testing (F4)
+
+You asked for a way to run the game at double speed for testing. **F4** steps it through **1×, 2× and 4×** and back. A **">> 2× SPEED"** badge sits in the top-right corner while it's above 1×, and a notice tells you each change.
+
+- **Everything goes faster together:** settlement hours, crops, hunger, raids, walking and fighting.
+- **Nothing behaves differently.** The game takes more physics steps a second rather than bigger ones, so each step is still 1/60 s of game time. Movement, collisions, guns and the AI work exactly as at 1×.
+- **It works your Mac harder.** If a busy place can't keep up at 4×, it simply runs as fast as it can.
+- **Only when you play with Run** from Godot (a debug build). A released copy of the game ignores F4.
+- **Not saved:** every launch starts at 1×. Sounds keep their normal pitch.
+
+![Fast-forward](../screenshots/30_fast_forward.jpg)
+
 ## What didn't change
 
 - **How guns play:** damage, fire rate, recoil, spread, magazines, attachments and their effects, crafting and the gunsmith.
@@ -82,6 +94,8 @@ A guard with a gun carries the pack's rifle, 0.8 m long, by its grip, and it poi
 - **Settlers:** `tools/build_settler.gd`'s `_rifle()`.
 - **Ash Creek:** `_farm_prop()` in `tools/build_sites.gd` (the silo, the wind pump and its collision). Then `build_early_zone.gd -- zone-only bake`.
 - **The hen house:** `tools/build_settlement_buildings.gd`.
+
+**Fast-forward:** `GameSpeed` (`scripts/core/game_speed.gd`) sets `Engine.time_scale` and raises the physics ticks per second by the same factor. The HUD handles F4 and shows the badge.
 
 **Rebuilding:** `build_guns.gd`, `build_farm_props.gd`, `build_settler.gd`, `build_settlement_buildings.gd`, `build_sites.gd -- ash_creek_farms`, `build_early_zone.gd -- zone-only bake`, then (in a window) `render_item_icons.gd -- service_rifle,pistol,shotgun,scoped_rifle,scope_4x,suppressor,foregrip`.
 
@@ -104,6 +118,12 @@ A guard with a gun carries the pack's rifle, 0.8 m long, by its grip, and it poi
    - Ash Creek's silo is the pack's and still solid;
    - the wind pump stands with solid legs;
    - the chicken pen's hen house is the pack's coop, still solid.
+
+**Fast-forward (`tests/test_game_speed.gd`):**
+1. **Speed:** only in a debug build; at 2× time runs twice as fast with twice the physics ticks, each step still 1/60 s; F4 goes 2×, 4×, back to 1×.
+2. **The badge:** F4 on the HUD shows "2×", and it goes again at 1×.
+
+**Changed tests:** `test_settlement.gd`'s claim test now waits for Ash Creek's raiders to turn up (the farm's spawner wakes on its next check, up to about a second after you arrive; it was given half a second, and missed them now and then).
 
 The existing gun tests (the pistol's and shotgun's sights lining up when you aim, the barrel pointing where you look, attachments, crafting) all pass on the new models.
 
