@@ -6,9 +6,9 @@ Increment 29 painted clothes onto the bodies, so everyone looked skin-tight. You
 
 The free version has two outfits, the **Peasant** and the **Ranger**, for a man and a woman. Each comes in parts: shirt, sleeves, trousers and boots, plus the Ranger's **hood** and **pauldrons** (shoulder armour). Each outfit has two colourways.
 
-| Settlers at Ash Creek | Raiders, Veterans and Scorch Marauders |
+| A settler at Ash Creek | A raid coming in |
 |---|---|
-| ![Yard](../screenshots/29_1_the_yard.jpg) | ![Raiders](../screenshots/29_1_raiders.jpg) |
+| ![Settler](../screenshots/29_1_a_settler.jpg) | ![Raiders](../screenshots/29_1_raiders_running_in.jpg) |
 
 ## The people
 
@@ -22,6 +22,8 @@ That's 4 shirts × 4 trousers × 4 boots before the tint, on two bodies, six ski
 Under the clothes, only the base body's **head** is drawn, as Quaternius's readme advises: no skin pokes through, and it's lighter to draw. The Ranger's bare forearms and hands are drawn in the person's own skin tone.
 
 **Eyebrows** now take the hair colour. In 29 they were grey-white.
+
+Lined up (both outfits in both colourways):
 
 | Men | Women |
 |---|---|
@@ -44,11 +46,15 @@ What a settler wears over their clothes (22, 28) swaps in an outfit piece:
 
 **Guards wear pauldrons** when they have no coat on. The old box vest is gone, and so are the box chest and back plates (pauldrons show plate instead). The other job gear stays: hats, hard hats, the miner's lamp, goggles, tool belts, the chef's hat. The cook's and tailor's apron is now leather and sits closer.
 
-| Every job | Guards in padded, plate and leather |
+| The Cook, a Miner and a Builder | A guard in padded, one in plate, the Tailor in Wool Clothes |
 |---|---|
 | ![Jobs](../screenshots/29_1_jobs.jpg) | ![Guards](../screenshots/29_1_guards.jpg) |
 
 ## Raiders
+
+![Raiders](../screenshots/29_1_raiders.jpg)
+
+Marauders, a Veteran and two Raiders, lined up.
 
 - **Raiders** wear darker, worn clothes, mostly the Ranger's, with a red bandana, goggles, a strap and a tyre pad, as before.
 - **Veterans** wear worn **pauldrons** instead of the box chest plate, and keep their knee pads.
@@ -63,7 +69,7 @@ What a settler wears over their clothes (22, 28) swaps in an outfit piece:
 
 At Ash Creek, claimed and its first defence stages built:
 - **Seven newcomers:** two farmers, a woodcutter, a builder, one with no job, and two guards with rifles, one in padded hood, coat and trousers and one in a plated vest and scrap helmet. They walked in and went to work in their own clothes.
-- **A raid of five** came up the lane and was shot by the tower guards.
+- **A raid of five** came running up the lane from the west, Raiders and a Veteran in their darker clothes. (The fight itself is as in 28.1 and 29; this run was about how they look.)
 
 | A farmer at work | The guard in plate |
 |---|---|
