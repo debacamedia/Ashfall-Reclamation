@@ -65,6 +65,8 @@ func _press(action: String) -> void:
 	up.action = action
 	up.pressed = false
 	Input.parse_input_event(up)
+	# Input reaches the game on the next idle frames (not physics ticks)
+	Input.flush_buffered_events()
 
 
 # ---------------------------------------------------------------- boot
@@ -150,6 +152,9 @@ func test_the_pause_menu() -> void:
 	var previous := get_tree().current_scene
 	get_tree().current_scene = self
 	await wait_physics(3)
+	# The HUD hands the menu its player on its first idle frame
+	await get_tree().process_frame
+	await get_tree().process_frame
 	var menu := hud.pause_menu
 	check(menu != null and not menu.visible and menu.process_mode == Node.PROCESS_MODE_ALWAYS, "a pause menu, closed")
 	p.controlled_locally = true

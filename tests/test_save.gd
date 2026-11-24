@@ -268,6 +268,8 @@ func test_quick_save_and_load_keys_with_hud_notice() -> void:
 		up.action = action
 		up.pressed = false
 		Input.parse_input_event(up)
+		# Input reaches the game on the next idle frames (not physics ticks)
+		Input.flush_buffered_events()
 	press.call("quick_load")
 	await wait_physics(2)
 	var notices := hud.get_node("%Notices") as VBoxContainer

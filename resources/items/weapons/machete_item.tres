@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="AudioStream" path="res://assets/ashfall_pack_v3/sets/pickup_weapon.tres" id="1_i31n4"]
+[ext_resource type="Texture2D" path="res://assets/icons/machete.png" id="1_umcw4"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="2_umcw4"]
+[ext_resource type="Resource" path="res://resources/items/weapons/machete.tres" id="3_16xje"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/machete_world.tscn" id="4_tnm81"]
+
+[resource]
+script = ExtResource("2_umcw4")
+id = &"machete"
+display_name = "Machete"
+description = "A heavy blade with a taped grip. Quiet, and it never runs dry."
+category = 3
+icon = ExtResource("1_umcw4")
+max_stack = 1
+weight = 0.8
+base_value = 40
+world_model = ExtResource("4_tnm81")
+pickup_hold_time = 0.4
+pickup_sound = ExtResource("1_i31n4")
+weapon = ExtResource("3_16xje")

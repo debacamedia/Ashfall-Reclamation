@@ -10,7 +10,7 @@
 script = ExtResource("2_cm1aq")
 id = &"pipe_pistol"
 display_name = "Pipe Pistol"
-description = "A length of pipe, a nail and a prayer. One shot, then reload. Slot 2."
+description = "A length of pipe, a nail and a prayer. One shot, then reload."
 category = 3
 icon = ExtResource("1_cm1aq")
 max_stack = 1

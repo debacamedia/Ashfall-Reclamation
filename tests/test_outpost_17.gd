@@ -82,7 +82,7 @@ func test_culvert_needs_crouch() -> void:
 ## The level starts you with only a machete; range tests need the rifle.
 func _arm_rifle() -> void:
 	_player.give_weapon(load("res://resources/items/weapons/service_rifle.tres"))
-	_player.weapon_slots.equip_immediately(1)
+	_player.weapon_slots.equip_immediately(_player.weapon_slots.find_slot(&"service_rifle"))
 	await get_tree().physics_frame
 
 
@@ -435,7 +435,7 @@ func test_new_guns_placed_in_the_outpost() -> void:
 	for i in 40:
 		await get_tree().physics_frame
 		_player.simulate(f, DT)
-	check(_player.weapon_slots.get_weapon(4) != null, "picked up into slot 4")
+	check(_player.weapon_slots.find_slot(&"scoped_rifle") > 0, "picked up onto the quick bar")
 
 
 func test_benches_placed_and_usable() -> void:

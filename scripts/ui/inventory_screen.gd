@@ -1,9 +1,11 @@
 class_name InventoryScreen
 extends Control
 ## The inventory window (Tab / I). Shows the player's slots in a grid, the
-## equipped weapon, carry weight and details of the selected item, with Use
-## and Drop buttons. Left-click selects, right-click uses, drag to move or
-## merge stacks, drag outside the window to drop on the ground.
+## quick bar (keys 1-8, Increment 32) along the bottom, what you wear, carry
+## weight and details of the selected item, with Use, Quick bar and Drop
+## buttons. Left-click selects, right-click uses (or puts a gun on the bar,
+## or takes a thing off it), drag to move or stack, between the backpack and
+## the bar, or outside the window to drop it on the ground.
 ##
 ## While open, the mouse is free and gameplay input is ignored, but the world
 ## keeps running — raiders don't wait.
@@ -24,9 +26,13 @@ var player: PlayerController:
 		_bind()
 
 var selected := -1
+## The quick bar slot selected (0-based), -1 = none. Only one of `selected`
+## and `selected_bar` is ever set.
+var selected_bar := -1
 var _slots: Array[InventorySlot] = []
-## The five weapon slots (Increment 16.7), 1–5.
-var weapon_rows: Array[WeaponSlotRow] = []
+## The quick bar's eight cells (Increment 32), keys 1-8.
+var bar_slots: Array[InventorySlot] = []
+var bar_button: Button
 ## The backpack slot under them (Increment 16.8).
 var pack_row: PackSlotRow
 var armour_row: ArmourSlotsRow
@@ -50,19 +56,15 @@ func _ready() -> void:
 	visible = false
 	_use_button.pressed.connect(_on_use_pressed)
 	_drop_button.pressed.connect(_on_drop_pressed)
-	# Weapon slots replace the old text list of equipped guns
+	# What you wear in the left column (guns moved to the quick bar, 32)
 	var panel := _weapon_label.get_parent() as Control
 	panel.visible = false
 	var column := panel.get_parent() as VBoxContainer
 	column.custom_minimum_size.x = 270
 	column.add_theme_constant_override("separation", 6)
-	for s in range(1, WeaponSlots.SLOT_COUNT + 1):
-		var row := WeaponSlotRow.new(s)
-		row.pressed.connect(_on_weapon_row_pressed)
-		row.stow_requested.connect(request_stow)
-		row.spare_dropped.connect(request_use)
-		column.add_child(row)
-		weapon_rows.append(row)
+	var title := column.get_node_or_null("EquipTitle") as Label
+	if title != null:
+		title.text = "WEARING"
 	var gap := Control.new()
 	gap.custom_minimum_size = Vector2(0, 4)
 	column.add_child(gap)
@@ -95,6 +97,48 @@ func _ready() -> void:
 	# Moving it loses its %Name: give it back
 	_grid.owner = owner_of_grid
 	_grid.unique_name_in_owner = true
+	_build_bar()
+	# A button to put the selected thing on (or take it off) the quick bar
+	bar_button = Button.new()
+	bar_button.name = "BarButton"
+	bar_button.custom_minimum_size = Vector2(120, 34)
+	bar_button.focus_mode = Control.FOCUS_NONE
+	bar_button.text = "To quick bar"
+	bar_button.pressed.connect(_on_bar_pressed)
+	_use_button.get_parent().add_child(bar_button)
+	_use_button.get_parent().move_child(bar_button, _drop_button.get_index())
+	_window.grow_vertical = Control.GROW_DIRECTION_BOTH
+
+
+## The quick bar along the bottom of the window: eight cells, keys 1-8.
+func _build_bar() -> void:
+	var layout := _window.get_node("Layout") as VBoxContainer
+	var box := VBoxContainer.new()
+	box.name = "QuickBar"
+	box.add_theme_constant_override("separation", 4)
+	var head := Label.new()
+	head.text = "QUICK BAR   ·   keys 1-8 or the wheel   ·   drag guns, blades, medkits and food here"
+	head.add_theme_font_size_override("font_size", 14)
+	head.add_theme_color_override("font_color", Color(0.85, 0.8, 0.65))
+	box.add_child(head)
+	var row := HBoxContainer.new()
+	row.name = "Slots"
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 6)
+	box.add_child(row)
+	var slot_scene := load(SLOT_SCENE_PATH) as PackedScene
+	for i in QuickBar.SIZE:
+		var cell := slot_scene.instantiate() as InventorySlot
+		cell.name = "Bar%d" % (i + 1)
+		cell.index = i
+		cell.screen = self
+		row.add_child(cell)
+		cell.set_corner(str(i + 1))
+		cell.clicked.connect(_on_bar_clicked)
+		cell.activated.connect(request_hold)
+		bar_slots.append(cell)
+	layout.add_child(box)
+	layout.move_child(box, layout.get_child_count() - 2)  # above the footer
 
 
 func get_inventory() -> PlayerInventory:
@@ -164,18 +208,32 @@ func _refresh_weapons() -> void:
 	if armour_row != null:
 		armour_row.player = player
 		armour_row.refresh()
-	var pending := player.weapon_slots.pending_slot if player.weapon_slots != null else 0
-	for row in weapon_rows:
-		var w := player.weapon_slots.get_weapon(row.slot) if player.weapon_slots != null else null
-		var in_hand := w != null and (row.slot == pending if pending != 0 else w == player.weapon)
-		row.show_weapon(w, in_hand)
+	_refresh_bar()
 
 
-## Clicking a weapon slot takes that gun out (validated by WeaponSlots).
-func _on_weapon_row_pressed(slot: int) -> void:
-	if player != null and player.weapon_slots != null and not player.is_dead():
-		player.weapon_slots.request_slot(slot)
-		_refresh_weapons()
+## The quick bar's cells: what's on each, a gun's rounds, what's in hand.
+func _refresh_bar() -> void:
+	var bar := player.quick_bar if player != null else null
+	if bar == null:
+		return
+	if selected_bar >= 0 and bar.is_slot_empty(selected_bar):
+		selected_bar = -1
+	var ws := player.weapon_slots
+	var hand := (ws.pending_slot if ws.pending_slot != 0 else ws.current_slot) if ws != null else 0
+	for cell in bar_slots:
+		cell.inventory = bar
+		var item := bar.get_slot_item(cell.index)
+		cell.set_in_hand(item != null and cell.index + 1 == hand)
+		cell.set_note(_rounds_note(cell.index))
+		cell.show_stack(item, bar.get_slot_quantity(cell.index), cell.index == selected_bar)
+
+
+## "12/15" for a gun on the bar (live), "" for anything else.
+func _rounds_note(bar_slot: int) -> String:
+	var w := player.weapon_slots.get_weapon(bar_slot + 1) if player.weapon_slots != null else null
+	if w == null or w.definition.melee:
+		return ""
+	return "%d/%d" % [w.ammo_in_magazine, w.definition.magazine_size]
 
 
 # ---------------------------------------------------------------- requests
@@ -184,7 +242,7 @@ func _on_weapon_row_pressed(slot: int) -> void:
 func request_move(from: int, to: int) -> void:
 	var inv := get_inventory()
 	if inv != null and inv.move_slot(from, to):
-		selected = to
+		_select(to, -1)
 
 
 func request_use(index: int) -> void:
@@ -197,22 +255,47 @@ func request_use(index: int) -> void:
 	if item.is_pack():
 		# A backpack: put it on (Increment 16.8)
 		player.request_wear_pack(index)
-		selected = -1
+		_select(-1, -1)
 		_refresh()
 		return
 	if item.is_armour():
 		# Clothing and armour: put it on (Increment 22)
 		player.request_wear_armour(index)
-		selected = index if not inv.is_slot_empty(index) else -1
+		_select(index if not inv.is_slot_empty(index) else -1, -1)
 		_refresh()
 		return
-	if item.weapon != null:
-		# A spare gun: swap it into its weapon slot (Increment 16.7)
-		if player.request_equip_spare(index):
-			selected = index if not inv.is_slot_empty(index) else -1
-		_refresh()
+	if item.category != ItemDefinition.Category.MEDICAL and item.food_value <= 0.0 and QuickBar.holdable(item):
+		# A gun or blade: onto the quick bar (Increment 32)
+		request_to_bar(index)
 		return
 	player.request_use_item(item)
+
+
+## Puts backpack slot `index` on the quick bar (`bar_slot`, or the first
+## free one), whatever was there swapping into the backpack.
+func request_to_bar(index: int, bar_slot := -1) -> void:
+	var target := bar_slot if bar_slot >= 0 else -1
+	if player != null and player.request_move_to_bar(index, target):
+		var item_at := bar_slot
+		if item_at < 0:
+			item_at = _last_bar_change
+		_select(-1, item_at)
+	_refresh()
+
+
+## Takes quick bar slot `bar_slot` off the bar, into the backpack (onto
+## backpack slot `index` if given).
+func request_off_bar(bar_slot: int, index := -1) -> void:
+	if player != null and player.request_move_to_backpack(bar_slot, index):
+		_select(-1, -1)
+	_refresh()
+
+
+## Takes quick bar slot `bar_slot` into your hands.
+func request_hold(bar_slot: int) -> void:
+	if player != null and player.weapon_slots != null and not player.is_dead():
+		player.weapon_slots.request_slot(bar_slot + 1)
+	_refresh()
 
 
 ## Takes the backpack off (back to the satchel).
@@ -221,39 +304,58 @@ func request_take_off_pack() -> void:
 		_refresh()
 
 
-## Puts the gun in weapon slot `slot` into the backpack.
-func request_stow(slot: int) -> void:
-	if player != null and player.request_stow_gun(slot):
-		_refresh()
-
-
 func request_drop(index: int) -> void:
 	if player != null and player.request_drop_slot(index) != null and selected == index:
-		selected = -1
+		_select(-1, -1)
 		_refresh()
 
 
-## A slot was dropped onto another slot of this screen: move/merge/swap.
-## A gun dragged off a weapon slot goes into the backpack.
+func request_drop_bar(bar_slot: int) -> void:
+	if player != null and player.request_drop_bar_slot(bar_slot) != null:
+		_select(-1, -1)
+	_refresh()
+
+
+## A slot was dropped onto another slot of this screen: move/merge/swap
+## within the backpack or the bar, or between them.
 func handle_slot_drop(data: Dictionary, target: InventorySlot) -> void:
-	if data.has("weapon_slot"):
-		request_stow(int(data["weapon_slot"]))
-	elif data.has("pack_slot"):
+	var bar := player.quick_bar if player != null else null
+	if data.has("pack_slot"):
 		request_take_off_pack()
-	elif data.get("inventory") == get_inventory():
-		request_move(int(data["inventory_slot"]), target.index)
+		return
+	var from := int(data.get("inventory_slot", -1))
+	var src: Variant = data.get("inventory")
+	if src == get_inventory() and target.inventory == get_inventory():
+		request_move(from, target.index)
+	elif src == get_inventory() and target.inventory == bar:
+		request_to_bar(from, target.index)
+	elif src == bar and target.inventory == bar:
+		if player.request_move_in_bar(from, target.index):
+			_select(-1, target.index)
+		_refresh()
+	elif src == bar and target.inventory == get_inventory():
+		request_off_bar(from, target.index)
+
+
+func _select(backpack: int, bar_slot: int) -> void:
+	selected = backpack
+	selected_bar = bar_slot
 
 
 # ---------------------------------------------------------------- dropping onto the background
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	# Anywhere outside the window counts as "drop on the ground"
-	return data is Dictionary and data.has("inventory_slot") and data.get("inventory") == get_inventory() \
+	return data is Dictionary and data.has("inventory_slot") \
+		and (data.get("inventory") == get_inventory() or (player != null and data.get("inventory") == player.quick_bar)) \
 		and not _window.get_global_rect().has_point(get_global_transform() * at_position)
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
-	request_drop(int(data["inventory_slot"]))
+	if player != null and data.get("inventory") == player.quick_bar:
+		request_drop_bar(int(data["inventory_slot"]))
+	else:
+		request_drop(int(data["inventory_slot"]))
 
 
 # ---------------------------------------------------------------- display
@@ -267,8 +369,10 @@ func _bind() -> void:
 	inv.contents_changed.connect(_on_contents_changed)
 	if not inv.capacity_changed.is_connected(_rebuild_grid):
 		inv.capacity_changed.connect(_rebuild_grid)
-	for row in weapon_rows:
-		row.inventory = inv
+	if player.quick_bar != null:
+		player.quick_bar.contents_changed.connect(_on_bar_changed)
+		for cell in bar_slots:
+			cell.inventory = player.quick_bar
 	pack_row.inventory = inv as PlayerInventory
 	_rebuild_grid()
 
@@ -301,6 +405,8 @@ func _unbind() -> void:
 		inv.contents_changed.disconnect(_on_contents_changed)
 	if inv != null and inv.capacity_changed.is_connected(_rebuild_grid):
 		inv.capacity_changed.disconnect(_rebuild_grid)
+	if player != null and player.quick_bar != null and player.quick_bar.contents_changed.is_connected(_on_bar_changed):
+		player.quick_bar.contents_changed.disconnect(_on_bar_changed)
 
 
 func _on_contents_changed(_changed: PackedInt32Array) -> void:
@@ -308,21 +414,55 @@ func _on_contents_changed(_changed: PackedInt32Array) -> void:
 		_refresh()
 
 
+## The last bar slot that changed (where request_to_bar put something).
+var _last_bar_change := -1
+
+
+func _on_bar_changed(changed: PackedInt32Array) -> void:
+	for i in changed:
+		if player != null and player.quick_bar != null and not player.quick_bar.is_slot_empty(i):
+			_last_bar_change = i
+	if visible:
+		_refresh()
+
+
 func _on_slot_clicked(index: int, button: MouseButton) -> void:
+	_select(index, -1)
 	if button == MOUSE_BUTTON_RIGHT:
 		request_use(index)
-	selected = index
+	_refresh()
+
+
+func _on_bar_clicked(index: int, button: MouseButton) -> void:
+	_select(-1, index)
+	if button == MOUSE_BUTTON_RIGHT:
+		request_off_bar(index)
 	_refresh()
 
 
 func _on_use_pressed() -> void:
 	if selected >= 0:
 		request_use(selected)
+	elif selected_bar >= 0:
+		var item := player.quick_bar.get_slot_item(selected_bar)
+		if item != null and (item.category == ItemDefinition.Category.MEDICAL or item.food_value > 0.0):
+			player.request_use_item(item)
+		else:
+			request_hold(selected_bar)
+
+
+func _on_bar_pressed() -> void:
+	if selected >= 0:
+		request_to_bar(selected)
+	elif selected_bar >= 0:
+		request_off_bar(selected_bar)
 
 
 func _on_drop_pressed() -> void:
 	if selected >= 0:
 		request_drop(selected)
+	elif selected_bar >= 0:
+		request_drop_bar(selected_bar)
 
 
 func _refresh() -> void:
@@ -340,20 +480,39 @@ func _refresh() -> void:
 
 	_refresh_weapons()
 
-	var item := inv.get_slot_item(selected) if selected >= 0 else null
-	_use_button.disabled = item == null or (item.category != ItemDefinition.Category.MEDICAL and item.food_value <= 0.0 and item.weapon == null and not item.is_pack() and not item.is_armour())
-	_use_button.text = "Equip" if item != null and item.weapon != null else ("Wear" if item != null and (item.is_pack() or item.is_armour()) else ("Eat" if item != null and item.food_value > 0.0 else "Use"))
+	var bar := player.quick_bar
+	var on_bar := selected_bar >= 0 and bar != null
+	var from: InventoryComponent = bar if on_bar else inv
+	var at := selected_bar if on_bar else selected
+	var item := from.get_slot_item(at) if at >= 0 else null
+	var usable := item != null and (item.category == ItemDefinition.Category.MEDICAL or item.food_value > 0.0)
+	if on_bar:
+		_use_button.disabled = item == null
+		_use_button.text = ("Eat" if item.food_value > 0.0 else "Use") if usable else "Hold"
+		bar_button.text = "Off quick bar"
+		bar_button.disabled = item == null
+	else:
+		_use_button.disabled = item == null or (not usable and not QuickBar.holdable(item) and not item.is_pack() and not item.is_armour())
+		_use_button.text = "To quick bar" if item != null and not usable and QuickBar.holdable(item) else ("Wear" if item != null and (item.is_pack() or item.is_armour()) else ("Eat" if item != null and item.food_value > 0.0 else "Use"))
+		bar_button.text = "To quick bar"
+		bar_button.disabled = item == null or not QuickBar.holdable(item)
+		bar_button.tooltip_text = "" if item == null else QuickBar.refusal_reason(item)
 	_drop_button.disabled = item == null
 	if item == null:
 		_detail_name.text = "Select an item"
 		_detail_info.text = ""
-		_detail_desc.text = "Left-click: select   ·   Right-click: use\nDrag: move or stack   ·   Drag outside: drop"
+		_detail_desc.text = "Left-click: select   ·   Right-click: use\nDrag: move or stack   ·   Drag outside: drop\nDrag guns, blades, medkits and food onto the quick bar"
 		return
-	var qty := inv.get_slot_quantity(selected)
+	var qty := from.get_slot_quantity(at)
 	_detail_name.text = item.get_label(qty)
 	var category: String = ItemDefinition.Category.keys()[item.category].capitalize()
-	var lines := ["%s  ·  %.2f kg each  ·  %d Marks" % [category, item.weight, item.base_value],
-		"Stack %d / %d  ·  %.1f kg total" % [qty, item.max_stack, item.weight * qty]]
+	var lines := ["%s  ·  %.2f kg each  ·  %d Marks" % [category, item.weight, item.base_value]]
+	if on_bar and item.weapon != null:
+		lines.append("On your quick bar, key %d: slung, it weighs nothing" % (at + 1))
+	else:
+		lines.append("Stack %d / %d  ·  %.1f kg total" % [qty, item.max_stack, item.weight * qty])
+		if on_bar:
+			lines.append("On your quick bar: key %d" % (at + 1))
 	if item.heal_amount > 0.0:
 		lines.append("Restores %d health (%.0f s)" % [roundi(item.heal_amount), item.use_time])
 	if item.is_armour():
@@ -365,6 +524,8 @@ func _refresh() -> void:
 		lines.append("Food: fills you %d of 100 (%.1f s to eat)  ·  you're at %d%s" % [roundi(item.food_value), item.use_time,
 			roundi(h.food), "" if h.stage == PlayerHunger.Stage.FED else " (%s)" % PlayerHunger.stage_name(h.stage).to_lower()])
 		lines.append("Right-click or Eat to eat one  ·  J eats the best thing you carry")
+	if usable and not on_bar:
+		lines.append("Put it on the quick bar to hold it: fire uses it")
 	if item.is_pack():
 		var now := inv as PlayerInventory
 		lines.append("Backpack: %.0f kg, %d slots (you carry %.0f kg, %d slots now)" % [item.pack_carry_weight, item.pack_slots,
@@ -373,10 +534,28 @@ func _refresh() -> void:
 		if item.pack_rattle_radius > 0.0:
 			lines.append("Rattles as you move: raiders within %.0f m hear you (crouch to move quietly)" % item.pack_rattle_radius)
 	if item.weapon != null:
-		var kind: String = WeaponSlotRow.KINDS.get(item.weapon.slot, "")
-		var there := player.weapon_slots.get_weapon(item.weapon.slot) if player.weapon_slots != null else null
-		lines.append("Spare gun for slot %d (%s), unloaded" % [item.weapon.slot, kind.to_lower()])
-		lines.append("Right-click, Equip or drag it to slot %d to swap it in%s" % [item.weapon.slot,
-			"" if there == null else " (your %s goes into the backpack)" % there.base_definition.display_name])
+		lines.append_array(_gun_lines(item, from, at, on_bar))
 	_detail_info.text = "\n".join(lines)
 	_detail_desc.text = item.description
+
+
+## A gun's rounds and attachments, and what you can do with it.
+func _gun_lines(item: ItemDefinition, from: InventoryComponent, at: int, on_bar: bool) -> Array:
+	var out := []
+	if item.weapon.melee:
+		out.append("A blade: never runs dry")
+	else:
+		var w := player.weapon_slots.get_weapon(at + 1) if on_bar and player.weapon_slots != null else null
+		var state := WeaponSlots.state_of(w) if w != null else from.get_slot_state(at)
+		out.append("Loaded: %d / %d rounds" % [int(state.get("magazine", 0)), item.weapon.magazine_size])
+		var names := []
+		for id in state.get("attachments", []):
+			var att := ItemDatabase.get_attachment(StringName(str(id)))
+			if att != null:
+				names.append(att.display_name)
+		out.append("Fitted: " + (", ".join(names) if not names.is_empty() else "nothing"))
+	if on_bar:
+		out.append("Double-click or Hold to take it out  ·  right-click to take it off the bar")
+	else:
+		out.append("Right-click or drag it onto the quick bar to carry it in hand")
+	return out

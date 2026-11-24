@@ -176,6 +176,10 @@ var _current_height := 0.0
 var _bob_distance := 0.0
 var _death_tween: Tween
 var _using_item: ItemDefinition = null
+## The item in use came from your hands (fire to use): holding fire doesn't
+## cancel it (Increment 32).
+var _use_from_hand := false
+var _fire_was := false
 var _use_left := 0.0
 
 ## The ladder being climbed, or null.
@@ -204,8 +208,11 @@ var _craft_count := 0
 @onready var health: HealthComponent = %HealthComponent
 ## The gun in hand, if any. Set by WeaponSlots when you switch.
 var weapon: HitscanWeapon
-## The loadout (%WeaponSlots): up to four guns, number keys / mouse wheel.
+## What's in your hands (%WeaponSlots), from the quick bar: keys 1-8 / the wheel.
 @onready var weapon_slots: WeaponSlots = get_node_or_null("%WeaponSlots")
+## The quick bar (Increment 32): eight slots you fill yourself. A child of
+## the Inventory node (so it's never mistaken for the backpack).
+var quick_bar: QuickBar
 @onready var interactor: PlayerInteractor = get_node_or_null("%Interactor")
 @onready var inventory: PlayerInventory = get_node_or_null("%Inventory")
 
@@ -225,7 +232,14 @@ func _ready() -> void:
 	_base_fov = camera.fov
 	health.died.connect(_on_health_died)
 	landed.connect(_on_landed)
+	if inventory != null:
+		quick_bar = QuickBar.new()
+		quick_bar.name = "QuickBar"
+		quick_bar.owner_inventory = inventory
+		inventory.add_child(quick_bar)
+		inventory.bar = quick_bar
 	if weapon_slots != null:
+		weapon_slots.bar = quick_bar
 		weapon_slots.setup(self, camera.get_node("WeaponMount"))
 	else:
 		# Older scenes: a single %Weapon under the camera
@@ -343,6 +357,9 @@ func respawn_at(spawn: Transform3D) -> void:
 	is_crouching = false
 	_current_height = stand_height
 	_apply_height(stand_height)
+	# You always come back with a blade (Increment 32: unless you're carrying one)
+	if weapon_slots != null and not _carries_blade():
+		weapon_slots.give_starting_weapons(true)
 	if weapon_slots != null and weapon_slots.current_slot > 0:
 		weapon_slots.equip_immediately(weapon_slots.pending_slot if weapon_slots.pending_slot != 0 else weapon_slots.current_slot)
 	# Never respawn without ammo for a gun you still have (GameMode usually
@@ -392,6 +409,12 @@ func get_item_in_use() -> ItemDefinition:
 	return _using_item
 
 
+## Is the item in use the one in your hands (fire used it; holding fire
+## doesn't cancel it)?
+func is_using_from_hand() -> bool:
+	return _using_item != null and _use_from_hand
+
+
 ## Starts using an item from the inventory (validated). Returns true if begun.
 ## Called for the quick-heal key and from the inventory screen.
 func request_use_item(item: ItemDefinition) -> bool:
@@ -400,6 +423,7 @@ func request_use_item(item: ItemDefinition) -> bool:
 		item_use_refused.emit(reason)
 		return false
 	_using_item = item
+	_use_from_hand = false
 	_use_left = item.use_time
 	item_use_started.emit(item, item.use_time)
 	if item.use_time <= 0.0:
@@ -430,7 +454,11 @@ func cancel_item_use() -> void:
 func request_drop_slot(index: int, quantity: int = -1) -> Pickup:
 	if inventory == null or is_dead():
 		return null
-	var taken := inventory.take_from_slot(index, quantity)
+	return _drop_from(inventory, index, quantity)
+
+
+func _drop_from(from: InventoryComponent, index: int, quantity: int) -> Pickup:
+	var taken := from.take_from_slot(index, quantity)
 	if taken.is_empty():
 		return null
 	var forward := -global_basis.z
@@ -441,7 +469,7 @@ func request_drop_slot(index: int, quantity: int = -1) -> Pickup:
 	if not hit.is_empty():
 		at = hit["position"]
 	var parent := get_parent() if get_parent() != null else get_tree().current_scene
-	var pickup := Pickup.spawn(parent, taken["item"], taken["qty"], at)
+	var pickup := Pickup.spawn(parent, taken["item"], taken["qty"], at, taken.get("state", {}))
 	item_dropped.emit(taken["item"], taken["qty"])
 	return pickup
 
@@ -472,6 +500,15 @@ func _use_refusal_reason(item: ItemDefinition) -> String:
 
 
 func _update_item_use(frame: InputFrame, delta: float) -> void:
+	var fire_pressed := frame.fire and not _fire_was
+	_fire_was = frame.fire
+	# A medkit or food in your hands: fire uses it
+	var held := weapon_slots.held_item() if weapon_slots != null else null
+	if fire_pressed and held != null and not is_using_item():
+		if held.category == ItemDefinition.Category.MEDICAL or held.category == ItemDefinition.Category.FOOD:
+			if request_use_item(held):
+				_use_from_hand = true
+			return
 	if frame.use_heal:
 		if is_using_item():
 			cancel_item_use()
@@ -487,7 +524,7 @@ func _update_item_use(frame: InputFrame, delta: float) -> void:
 	if not is_using_item():
 		return
 	var sprinting := frame.sprint and frame.move.y < -0.3
-	if frame.fire or sprinting:
+	if (frame.fire and not _use_from_hand) or sprinting:
 		cancel_item_use()
 		return
 	_use_left -= delta
@@ -594,11 +631,9 @@ func request_take_all() -> int:
 	return total
 
 
-## A gun in a container goes into its loadout slot, not the backpack
-## (Increment 16.6). If that slot already holds this gun or a better one, you
-## take a magazine of its ammo instead, as with a gun lying on the ground.
-## Your own guns come back out of your dropped gear with their attachments
-## and loaded rounds. Returns 1 if the gun left the container.
+## A gun in a container goes onto your quick bar (or your backpack if the
+## bar's full), as it was: your own guns come back out of your dropped gear
+## with their attachments and loaded rounds. Returns 1 if it left.
 func _take_gun(c: SalvageContainer, slot: int, report: bool) -> int:
 	var item := c.inventory.get_slot_item(slot)
 	var def := item.weapon
@@ -607,12 +642,13 @@ func _take_gun(c: SalvageContainer, slot: int, report: bool) -> int:
 		if report:
 			transfer_refused.emit(reason)
 		return 0
+	var state := c.inventory.get_slot_state(slot)
+	if c is DeathCache:
+		var legacy := (c as DeathCache).legacy_state(def.id)  # caches from before Increment 32
+		if not legacy.is_empty():
+			state = InventoryComponent.clean_state(item, legacy)
 	c.inventory.take_from_slot(slot, 1)
-	var dest := receive_gun(def, false)
-	if dest == GUN_TO_SLOT:
-		var w := weapon_slots.get_weapon(def.slot)
-		if w != null and c is DeathCache:
-			(c as DeathCache).restore_gun(w)
+	receive_gun(def, false, state)
 	return 1
 
 
@@ -917,6 +953,7 @@ func save_state() -> Dictionary:
 		"health": health.current_health,
 		"inventory": inventory.to_data() if inventory != null else [],
 		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
+		"quick_bar": quick_bar.to_data() if quick_bar != null else [],
 		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
 		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
 		"maps": _maps_data(),
@@ -957,8 +994,15 @@ func load_state(data: Dictionary) -> void:
 		inventory.set_pack(pack_def if pack_def != null and pack_def.is_pack() else null)
 		inventory.from_data(data["inventory"])
 	var loadout: Variant = data.get("loadout")
-	if weapon_slots != null and loadout is Dictionary and not (loadout as Dictionary).is_empty():
-		weapon_slots.load_state(loadout)
+	if weapon_slots != null and quick_bar != null and data.get("quick_bar") is Array:
+		quick_bar.clear()
+		quick_bar.from_data(data["quick_bar"])
+		if quick_bar.get_free_slot_count() == quick_bar.slot_count:
+			weapon_slots.give_starting_weapons()  # never left with nothing in hand
+		weapon_slots.load_state(loadout if loadout is Dictionary else {})
+	elif weapon_slots != null and loadout is Dictionary and not (loadout as Dictionary).is_empty():
+		# Saves from before the quick bar: guns into slots 1-5 as they were
+		weapon_slots.migrate_loadout(loadout)
 	elif weapon != null:
 		# Version-1 saves from before the loadout: one magazine for the rifle
 		weapon.cancel_reload()
@@ -998,58 +1042,45 @@ func is_switching_weapon() -> bool:
 	return weapon_slots != null and weapon_slots.is_switching()
 
 
-## Picks up a gun (validated in WeaponSlots). Returns true if it was new.
-## With only a blade in hand, the new gun comes straight out.
-func give_weapon(def: WeaponDefinition) -> bool:
-	if weapon_slots == null or is_dead():
+## Puts a gun on your quick bar (validated in WeaponSlots), loaded unless
+## `state` says otherwise. With only a blade (or nothing) in hand, the new gun
+## comes straight out. Returns false if the bar is full.
+func give_weapon(def: WeaponDefinition, state: Dictionary = {}) -> bool:
+	if weapon_slots == null or quick_bar == null or is_dead() or def == null:
 		return false
-	if not weapon_slots.give_weapon(def):
+	var at := quick_bar.first_empty() + 1
+	# Bare-handed: nothing (or only a blade) in hand or coming out
+	var showing := weapon_slots.pending_slot if weapon_slots.pending_slot != 0 else weapon_slots.current_slot
+	var in_hand := weapon_slots.get_item(showing)
+	var bare := in_hand == null or (in_hand.weapon != null and in_hand.weapon.melee)
+	if not weapon_slots.give_weapon(def, state):
 		return false
-	var w := weapon_slots.get_weapon(def.slot)
-	if inventory != null and w != null:
-		w.set_ammo_source(inventory)
-	if weapon != null and weapon.definition.melee and not def.melee:
-		weapon_slots.request_slot(def.slot)
+	last_bar_slot = at
+	if bare and not def.melee and weapon_slots.current_slot != at:
+		weapon_slots.request_slot(at)
 	return true
 
 
-## Why a crafted or found gun can't go into its weapon slot ("" = it can):
-## the slot already holds this gun or a better one. (It can still go into
-## your backpack as a spare: see gun_destination.)
-func weapon_refusal_reason(def: WeaponDefinition) -> String:
-	if weapon_slots == null:
-		return "Can't carry that"
-	var existing := weapon_slots.get_weapon(def.slot)
-	if existing == null:
-		return ""
-	if existing.base_definition.id == def.id:
-		return "You already have a " + def.display_name
-	if existing.base_definition.tier > def.tier:
-		return "Your %s is better" % existing.base_definition.display_name
-	return ""
+# ---------------------------------------------------------------- the quick bar (Increment 32)
 
-
-# ---------------------------------------------------------------- spare guns (Increment 16.7)
+## The quick bar slot (1-8) the last gun you got went onto.
+var last_bar_slot := 0
 
 ## Where a gun you get goes:
-const GUN_TO_SLOT := "slot"          ## into its weapon slot (a worse gun there goes to your backpack)
-const GUN_TO_BACKPACK := "backpack"  ## into your backpack as a spare
-## The rounds in a gun's magazine, a spare's attachments: anything that
-## doesn't fit when a gun goes into the backpack is dropped at your feet.
+const GUN_TO_SLOT := "slot"          ## onto the first empty slot of your quick bar
+const GUN_TO_BACKPACK := "backpack"  ## into your backpack (the bar's full)
+
 
 ## Where `def` would go if you got it now ("" = nowhere: no room).
 func gun_destination(def: WeaponDefinition) -> String:
-	if def == null or weapon_slots == null or is_dead():
-		return ""
-	var existing := weapon_slots.get_weapon(def.slot)
-	if existing == null:
-		return GUN_TO_SLOT
-	if weapon_refusal_reason(def) == "" and _can_stow(existing):
-		return GUN_TO_SLOT  # an upgrade: the old one becomes a spare
-	if def.melee:
+	if def == null or weapon_slots == null or quick_bar == null or is_dead():
 		return ""
 	var item := ItemDatabase.find_weapon_item(def.id)
-	if item != null and inventory != null and inventory.can_add(item, 1) >= 1:
+	if item == null:
+		return ""
+	if quick_bar.can_add(item, 1) >= 1:
+		return GUN_TO_SLOT
+	if inventory != null and inventory.can_add(item, 1) >= 1:
 		return GUN_TO_BACKPACK
 	return ""
 
@@ -1061,130 +1092,195 @@ func gun_refusal_reason(def: WeaponDefinition) -> String:
 	if def == null or weapon_slots == null or is_dead():
 		return "Can't carry that"
 	var item := ItemDatabase.find_weapon_item(def.id)
-	if item != null and inventory != null and inventory.get_refusal_reason(item, 1) != "":
-		return "No room for a spare %s: %s" % [def.display_name, inventory.get_refusal_reason(item, 1).to_lower()]
-	return "No room for a spare " + def.display_name
+	if item == null or inventory == null:
+		return "Can't carry that"
+	var why := inventory.get_refusal_reason(item, 1)
+	if why != "":
+		return "No room for the %s: %s" % [def.display_name, why.to_lower()]
+	return "No room for the " + def.display_name
 
 
-## Gives you a gun you found, crafted or took: into its slot, or into your
-## backpack as a spare. Returns where it went ("" = refused, nothing changed).
-## Found guns come loaded.
-func receive_gun(def: WeaponDefinition, announce := true) -> String:
+## Gives you a gun you found, crafted or took: onto your quick bar, or into
+## your backpack if the bar's full. Found and crafted guns come loaded; a gun
+## out of your own dropped gear comes back as it was (`state`). Returns where
+## it went ("" = refused, nothing changed).
+func receive_gun(def: WeaponDefinition, announce := true, state: Dictionary = {}) -> String:
 	var dest := gun_destination(def)
+	if state.is_empty() and def != null:
+		state = {"magazine": def.magazine_size, "attachments": []}
 	match dest:
 		GUN_TO_SLOT:
-			if weapon_slots.get_weapon(def.slot) != null:
-				_stow_gun(def.slot)
-			give_weapon(def)
+			give_weapon(def, state)
 			weapon_picked_up.emit(def)
 		GUN_TO_BACKPACK:
-			inventory.add_item(ItemDatabase.find_weapon_item(def.id), 1)
+			inventory.add_item(ItemDatabase.find_weapon_item(def.id), 1, state)
 			if announce:
 				gun_stowed.emit(def)
 	return dest
 
 
-## Takes a spare gun out of backpack slot `index` and puts it in its weapon
-## slot; whatever was there goes into the backpack in its place. Spares are
-## carried unloaded, so it comes out with an empty magazine: reload.
-func request_equip_spare(index: int) -> bool:
-	var item := inventory.get_slot_item(index) if inventory != null else null
-	var reason := _equip_spare_refusal(item)
-	if reason != "":
-		gun_refused.emit(reason)
-		return false
-	var def := item.weapon
-	inventory.take_from_slot(index, 1)
-	if weapon_slots.get_weapon(def.slot) != null:
-		# A swap never fails for weight: you're trading one gun for another
-		var limit := inventory.max_weight
-		inventory.max_weight = 0.0
-		_stow_gun(def.slot, index)
-		inventory.max_weight = limit
-	give_weapon(def)
-	var w := weapon_slots.get_weapon(def.slot)
-	w.cancel_reload()
-	w.ammo_in_magazine = 0
-	w.ammo_changed.emit(w.ammo_in_magazine, w.reserve_ammo)
-	weapon_slots.request_slot(def.slot)
-	gun_equipped.emit(def)
-	return true
-
-
-func _equip_spare_refusal(item: ItemDefinition) -> String:
-	if is_dead() or weapon_slots == null or inventory == null:
+## Why you can't move what's in backpack slot `index` onto bar slot
+## `bar_slot` (0-based) ("" = you can). Whatever's on that bar slot swaps
+## into the backpack.
+func bar_refusal_reason(index: int, bar_slot: int) -> String:
+	if is_dead() or inventory == null or quick_bar == null:
 		return "Can't do that now"
-	if item == null or item.weapon == null:
-		return "That's not a gun"
-	var existing := weapon_slots.get_weapon(item.weapon.slot)
-	if existing != null and existing.base_definition.id == item.weapon.id:
-		return "You already have a %s in your hands" % item.weapon.display_name
-	if existing != null and ItemDatabase.find_weapon_item(existing.base_definition.id) == null:
-		return "Can't put away your " + existing.base_definition.display_name
+	var item := inventory.get_slot_item(index)
+	if item == null:
+		return "Nothing there"
+	var why := QuickBar.refusal_reason(item)
+	if why != "":
+		return why
+	if bar_slot < 0 or bar_slot >= quick_bar.slot_count:
+		return "No such slot"
 	return ""
 
 
-## Puts the gun in weapon slot `slot` into your backpack (validated): its
-## attachments come off into the backpack too, and the rounds in its magazine
-## go back with your ammo. Blades stay where they are.
-func request_stow_gun(slot: int) -> bool:
-	var w := weapon_slots.get_weapon(slot) if weapon_slots != null else null
-	var reason := ""
-	if is_dead() or w == null:
-		reason = "Nothing to put away"
-	elif w.definition.melee:
-		reason = "Your blade stays on your belt"
-	elif not _can_stow(w):
-		var item := ItemDatabase.find_weapon_item(w.base_definition.id)
-		reason = "No room in your backpack" if item == null or inventory.get_refusal_reason(item, 1) == "" else inventory.get_refusal_reason(item, 1)
+## Moves backpack slot `index` onto bar slot `bar_slot` (0-based; -1 = a
+## stack of the same thing already there, else the first empty slot). A
+## stack of medkits or food goes up whole. Whatever was there swaps into
+## its place.
+## Validated; a refusal emits gun_refused. Returns true if anything moved.
+func request_move_to_bar(index: int, bar_slot: int = -1) -> bool:
+	if bar_slot < 0 and quick_bar != null:
+		var item := inventory.get_slot_item(index) if inventory != null else null
+		bar_slot = _bar_slot_for(item)
+		if bar_slot < 0 and item != null and QuickBar.holdable(item):
+			gun_refused.emit("Your quick bar's full")
+			return false
+	var reason := bar_refusal_reason(index, maxi(bar_slot, 0))
 	if reason != "":
 		gun_refused.emit(reason)
 		return false
-	var def := w.base_definition
-	_stow_gun(slot)
-	gun_stowed.emit(def)
+	cancel_item_use()
+	var moved := _swap_between(inventory, index, quick_bar, bar_slot)
+	if not moved:
+		gun_refused.emit("Your quick bar's full")
+	return moved
+
+
+## Moves bar slot `bar_slot` (0-based) into the backpack: onto `index` if
+## given (swapping what's there, if that can go on the bar), else wherever it
+## fits. Validated. Returns true if it moved.
+func request_move_to_backpack(bar_slot: int, index: int = -1) -> bool:
+	if is_dead() or inventory == null or quick_bar == null or quick_bar.is_slot_empty(bar_slot):
+		gun_refused.emit("Nothing there")
+		return false
+	cancel_item_use()
+	var item := quick_bar.get_slot_item(bar_slot)
+	if index >= 0:
+		# Onto that backpack slot, swapping what's there up onto the bar (if
+		# it can go there; otherwise it goes wherever it fits)
+		var there := inventory.get_slot_item(index)
+		if there == null or there == item or QuickBar.holdable(there):
+			var before := quick_bar.get_slot_item(bar_slot)
+			if _swap_between(quick_bar, bar_slot, inventory, index):
+				if before.weapon != null:
+					gun_stowed.emit(before.weapon)
+				return true
+			if there == null or QuickBar.holdable(there):
+				return false
+	var qty := quick_bar.get_slot_quantity(bar_slot)
+	var moved := quick_bar.transfer_slot_to(bar_slot, inventory, qty)
+	if moved < qty:
+		gun_refused.emit("No room in your backpack" if moved == 0 else "Not all of it fits")
+	if moved > 0 and item.weapon != null:
+		gun_stowed.emit(item.weapon)
+	return moved > 0
+
+
+## Rearranges the quick bar: `from` onto `to` (0-based), swapping.
+func request_move_in_bar(from: int, to: int) -> bool:
+	if is_dead() or quick_bar == null:
+		return false
+	return quick_bar.move_slot(from, to)
+
+
+## Drops bar slot `bar_slot` (0-based) on the ground in front of you (a gun
+## with its rounds and attachments). Returns the Pickup, or null.
+func request_drop_bar_slot(bar_slot: int, quantity: int = -1) -> Pickup:
+	if quick_bar == null or is_dead():
+		return null
+	var item := quick_bar.get_slot_item(bar_slot)
+	if item != null and item.weapon != null and item.weapon.melee and not _carries_blade(bar_slot):
+		gun_refused.emit("Keep your blade")
+		return null
+	return _drop_from(quick_bar, bar_slot, quantity)
+
+
+## The bar slot `item` would go to: a stack of it already there, else the
+## first empty slot (-1 = none).
+func _bar_slot_for(item: ItemDefinition) -> int:
+	if item == null or quick_bar == null:
+		return -1
+	if not InventoryComponent.has_state(item):
+		for i in quick_bar.slot_count:
+			var there := quick_bar.get_slot_item(i)
+			if there == item and quick_bar.get_slot_quantity(i) < item.max_stack:
+				return i
+	return quick_bar.first_empty()
+
+
+## Moves `a[ai]` onto `b[bi]` whole, swapping with what's there (or topping
+## up a stack of the same thing). Never fails for weight: what's carried
+## stays carried. Returns false if nothing could move.
+func _swap_between(a: InventoryComponent, ai: int, b: InventoryComponent, bi: int) -> bool:
+	var before := inventory.get_total_weight()
+	if not _swap_raw(a, ai, b, bi):
+		return false
+	# A gun coming off the bar into the backpack weighs again: not past what
+	# you can carry (unless you were already over)
+	var after := inventory.get_total_weight()
+	if inventory.max_weight > 0.0 and after > inventory.max_weight + 0.001 and after > before + 0.001:
+		_swap_raw(b, bi, a, ai)
+		gun_refused.emit("Too heavy")
+		return false
 	return true
 
 
-func _can_stow(w: HitscanWeapon) -> bool:
-	if w == null or w.definition.melee or inventory == null:
+func _swap_raw(a: InventoryComponent, ai: int, b: InventoryComponent, bi: int) -> bool:
+	if a.is_slot_empty(ai):
 		return false
-	var item := ItemDatabase.find_weapon_item(w.base_definition.id)
-	return item != null and inventory.can_add(item, 1) >= 1
+	var item := a.get_slot_item(ai)
+	var there := b.get_slot_item(bi)
+	if b == quick_bar and not QuickBar.holdable(item):
+		return false
+	if there == item and not InventoryComponent.has_state(item):
+		var n := b.add_to_stack(bi, a.get_slot_quantity(ai))
+		if n > 0:
+			a.take_from_slot(ai, n)
+		return n > 0
+	if there != null and a == quick_bar and not QuickBar.holdable(there):
+		return false
+	var mine := a.take_from_slot(ai)
+	var theirs := b.take_from_slot(bi) if there != null else {}
+	b.add_to_slot(bi, mine["item"], mine["qty"], mine.get("state", {}), true)
+	if not theirs.is_empty():
+		a.add_to_slot(ai, theirs["item"], theirs["qty"], theirs.get("state", {}), true)
+	return true
 
 
-## Moves the gun in `slot` into the backpack (at `prefer` if that backpack
-## slot is free), with its attachments and loaded rounds alongside.
-func _stow_gun(slot: int, prefer := -1) -> void:
-	var w := weapon_slots.get_weapon(slot)
-	if w == null:
-		return
-	var item := ItemDatabase.find_weapon_item(w.base_definition.id)
-	var extras: Array = []  # [ItemDefinition, qty]
-	for att_slot in w.attachments.keys():
-		var att := w.remove_attachment(att_slot)
-		var att_item := ItemDatabase.find_attachment_item(att.id) if att != null else null
-		if att_item != null:
-			extras.append([att_item, 1])
-	w.cancel_reload()
-	var ammo := ItemDatabase.find_ammo_item(w.definition.ammo_type)
-	if ammo != null and w.ammo_in_magazine > 0:
-		extras.append([ammo, w.ammo_in_magazine])
-	w.ammo_in_magazine = 0
-	weapon_slots.remove_weapon(slot)
-	if prefer >= 0 and inventory.is_slot_empty(prefer):
-		inventory.add_to_slot(prefer, item, 1)
-	else:
-		inventory.add_item(item, 1)
-	for e in extras:
-		var left: int = e[1] - inventory.receive(e[0], e[1])
-		if left > 0:
-			_drop_at_feet(e[0], left)
+## Are you carrying a blade (on the bar but for bar slot `except`, or in
+## your backpack)?
+func _carries_blade(except := -1) -> bool:
+	for inv: InventoryComponent in [quick_bar, inventory]:
+		if inv == null:
+			continue
+		for i in inv.slot_count:
+			var it := inv.get_slot_item(i)
+			if (inv != quick_bar or i != except) and it != null and it.weapon != null and it.weapon.melee:
+				return true
+	return false
 
 
-func _drop_at_feet(item: ItemDefinition, qty: int) -> void:
+## Puts `slot`'s gun (1-based, as WeaponSlots counts) into your backpack.
+func request_stow_gun(slot: int) -> bool:
+	return request_move_to_backpack(slot - 1)
+
+
+func _drop_at_feet(item: ItemDefinition, qty: int, state: Dictionary = {}) -> void:
 	var parent := get_parent() if get_parent() != null else get_tree().current_scene
-	Pickup.spawn(parent, item, qty, global_position + Vector3.UP * 0.3)
+	Pickup.spawn(parent, item, qty, global_position + Vector3.UP * 0.3, state)
 
 
 # ---------------------------------------------------------------- backpacks (Increment 16.8)

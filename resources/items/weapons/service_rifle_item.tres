@@ -10,7 +10,7 @@
 script = ExtResource("2_l2x2e")
 id = &"service_rifle"
 display_name = "Service Rifle"
-description = "Military 5.56 mm rifle, full-auto. Takes a red dot, scope, suppressor, extended magazine and foregrip. Slot 1."
+description = "Military 5.56 mm rifle, full-auto. Takes a red dot, scope, suppressor, extended magazine and foregrip."
 category = 3
 icon = ExtResource("1_l2x2e")
 max_stack = 1

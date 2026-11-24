@@ -1,9 +1,9 @@
 class_name DeathCache
 extends SalvageContainer
 ## Your gear, left where you died (Increment 16.6). When a player dies, the
-## game mode moves everything in their backpack and every gun they carried
-## (with its attachments and the rounds in its magazine) into one of these,
-## and they come back with only their blade. Walk back and open it (no
+## game mode moves everything in their backpack and on their quick bar (each
+## gun with its attachments and the rounds in its magazine) into one of
+## these, and they come back with only their blade. Walk back and open it (no
 ## search) to take it all again. It shows on the compass, with a beam of
 ## light above it, and disappears once it's empty and closed.
 ##
@@ -14,7 +14,9 @@ const SCENE := "res://scenes/world/containers/death_cache.tscn"
 ## Never closer than this to the ash-storm edge (m), so fetching it is safe.
 const EDGE_MARGIN := 12.0
 
-## Weapon id -> {"attachments": [ids], "magazine": rounds}
+## Caches from before Increment 32 kept their guns' states apart: weapon id
+## -> {"attachments": [ids], "magazine": rounds}. Now each gun's entry
+## carries its own.
 var guns := {}
 
 
@@ -33,43 +35,36 @@ func get_prompt(_interactor: Node3D) -> String:
 ## `parent`, and takes it off them. Returns the cache, or null if they had
 ## nothing to drop. Runs on the authority (GameMode).
 static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> DeathCache:
-	var stacks: Array = []  # [ItemDefinition, qty]
+	var stacks: Array = []  # [ItemDefinition, qty, state]
 	if player.inventory != null:
 		for i in player.inventory.slot_count:
 			var item := player.inventory.get_slot_item(i)
 			if item != null:
-				stacks.append([item, player.inventory.get_slot_quantity(i)])
-	var gun_states := {}
-	if player.weapon_slots != null:
-		for w in player.weapon_slots.owned():
-			if w.definition.melee:
-				continue
-			var item := ItemDatabase.find_weapon_item(w.base_definition.id)
-			if item == null:
-				continue
-			stacks.append([item, 1])
-			var atts := []
-			for slot in w.attachments:
-				atts.append(String((w.attachments[slot] as AttachmentDefinition).id))
-			gun_states[String(w.base_definition.id)] = {"attachments": atts, "magazine": w.ammo_in_magazine}
+				stacks.append([item, player.inventory.get_slot_quantity(i), player.inventory.get_slot_state(i)])
+	# The quick bar (Increment 32): all but your blade
+	var bar := player.quick_bar
+	if bar != null:
+		for i in bar.slot_count:
+			var item := bar.get_slot_item(i)
+			if item != null and not (item.weapon != null and item.weapon.melee):
+				stacks.append([item, bar.get_slot_quantity(i), bar.get_slot_state(i)])
 	# The backpack you had on (Increment 16.8); your satchel stays with you
 	if player.inventory != null and player.inventory.pack != null:
-		stacks.append([player.inventory.pack, 1])
+		stacks.append([player.inventory.pack, 1, {}])
 	# What you wore (Increment 22): its wear is remembered for when it's back on
 	for slot in ArmourSet.SLOTS:
 		if player.armour.worn(slot) != null:
-			stacks.append([player.armour.worn(slot), 1])
+			stacks.append([player.armour.worn(slot), 1, {}])
 	if stacks.is_empty():
 		return null
 	var cache := (load(SCENE) as PackedScene).instantiate() as DeathCache
 	cache.name = "DeathCache_%d" % (Time.get_ticks_usec() % 1000000000)
-	cache.guns = gun_states
 	var inv := cache.get_node("%Inventory") as InventoryComponent
 	inv.slot_count = maxi(8, stacks.size())
 	inv._resize()
 	inv.max_weight = 0.0
 	for s in stacks:
-		inv.add_item(s[0], s[1])
+		inv.add_item(s[0], s[1], s[2])
 	parent.add_child(cache)
 	# Died out of the world (fell through it, or out of the bottom of a
 	# building, 30.1): the gear goes where you last stood on solid ground
@@ -126,21 +121,12 @@ static func resting_place(parent: Node3D, at: Vector3, exclude: CollisionObject3
 	return p
 
 
-## Puts a gun's attachments and loaded rounds back as they were.
-func restore_gun(w: HitscanWeapon) -> void:
-	var state: Variant = guns.get(String(w.base_definition.id))
-	if not state is Dictionary:
-		return
-	for att_id in (state as Dictionary).get("attachments", []):
-		var att := ItemDatabase.get_attachment(StringName(str(att_id)))
-		if att != null and att.fits(w.base_definition.id):
-			w.fit_attachment(att)
-	var mag: Variant = (state as Dictionary).get("magazine")
-	if mag is int or mag is float:
-		w.cancel_reload()
-		w.ammo_in_magazine = clampi(int(mag), 0, w.definition.magazine_size)
-		w.ammo_changed.emit(w.ammo_in_magazine, w.reserve_ammo)
-	guns.erase(String(w.base_definition.id))
+## A gun's state from a cache saved before Increment 32 (once: {} after, or
+## if there's none, and the gun comes out unloaded).
+func legacy_state(id: StringName) -> Dictionary:
+	var state: Variant = guns.get(String(id))
+	guns.erase(String(id))
+	return (state as Dictionary).duplicate(true) if state is Dictionary else {}
 
 
 func is_empty() -> bool:

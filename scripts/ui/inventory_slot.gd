@@ -20,6 +20,12 @@ var screen: Control
 
 var _style_normal: StyleBoxFlat
 var _style_selected: StyleBoxFlat
+## Quick bar cells (Increment 32): the key in the top-left corner, a note
+## (a gun's rounds) along the bottom, and a green edge for what's in hand.
+var _corner: Label
+var _note: Label
+var _style_in_hand: StyleBoxFlat
+var _in_hand := false
 
 @onready var _icon: TextureRect = %Icon
 @onready var _qty: Label = %Quantity
@@ -36,11 +42,51 @@ func _ready() -> void:
 	_style_selected.border_color = Color(0.95, 0.75, 0.3)
 	_style_selected.set_border_width_all(2)
 	_style_selected.bg_color = Color(0.2, 0.17, 0.1, 0.9)
+	_style_in_hand = _style_normal.duplicate()
+	_style_in_hand.border_color = Color(0.55, 0.85, 0.5)
+	_style_in_hand.set_border_width_all(2)
 	add_theme_stylebox_override("panel", _style_normal)
 
 
+## The key that picks this cell (quick bar), shown in its corner.
+func set_corner(text: String) -> void:
+	if _corner == null:
+		_corner = _small_label(HORIZONTAL_ALIGNMENT_LEFT, VERTICAL_ALIGNMENT_TOP, Color(0.85, 0.8, 0.65))
+	_corner.text = text
+
+
+## A short line along the bottom (a gun's rounds), "" for none.
+func set_note(text: String) -> void:
+	if _note == null:
+		_note = _small_label(HORIZONTAL_ALIGNMENT_LEFT, VERTICAL_ALIGNMENT_BOTTOM, Color(0.8, 0.9, 1.0))
+	_note.text = text
+
+
+## Marks the cell as what's in your hands (quick bar).
+func set_in_hand(on: bool) -> void:
+	_in_hand = on
+
+
+func _small_label(h: HorizontalAlignment, v: VerticalAlignment, colour: Color) -> Label:
+	var l := Label.new()
+	l.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	l.offset_left = 4
+	l.offset_top = 1
+	l.offset_right = -4
+	l.offset_bottom = -1
+	l.horizontal_alignment = h
+	l.vertical_alignment = v
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.add_theme_font_size_override("font_size", 12)
+	l.add_theme_color_override("font_color", colour)
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	l.add_theme_constant_override("outline_size", 3)
+	(get_node("Content") as Control).add_child(l)
+	return l
+
+
 func show_stack(item: ItemDefinition, quantity: int, selected: bool) -> void:
-	add_theme_stylebox_override("panel", _style_selected if selected else _style_normal)
+	add_theme_stylebox_override("panel", _style_selected if selected else (_style_in_hand if _in_hand else _style_normal))
 	if item == null:
 		_icon.texture = null
 		_qty.text = ""
@@ -77,8 +123,8 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	# A backpack slot, or a gun dragged off a weapon slot (Increment 16.7)
-	return data is Dictionary and (data.has("inventory_slot") or data.has("weapon_slot") or data.has("pack_slot"))
+	# A backpack or quick bar slot, or the backpack you wear
+	return data is Dictionary and (data.has("inventory_slot") or data.has("pack_slot"))
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:

@@ -75,7 +75,7 @@ func show_gunsmith(on: bool) -> void:
 		# Start on the gun in your hand (not just the lowest slot: the pistol
 		# and rifle both take an extended magazine)
 		if player.weapon != null and not player.weapon.definition.melee:
-			gunsmith.selected_slot = player.weapon.base_definition.slot
+			gunsmith.selected_slot = player.weapon_slots.slot_of(player.weapon)
 		gunsmith.refresh()
 
 

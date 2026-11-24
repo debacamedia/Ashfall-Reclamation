@@ -5,6 +5,10 @@ extends Node
 ## storage buildings later.
 ##
 ## Each slot is either null or a Dictionary {"item": ItemDefinition, "qty": int}.
+## A gun's slot also carries its own "state" (Increment 32): the rounds in
+## its magazine and its attachments, {"magazine": int, "attachments": [ids]},
+## kept wherever it goes (backpack, quick bar, a chest, your gear). Things
+## with a state never stack.
 ##
 ## AUTHORITY: every method that changes contents (add_item, remove_item,
 ## move_slot, transfer_slot_to, receive…) runs only where the game state
@@ -54,6 +58,33 @@ func get_slot_quantity(index: int) -> int:
 	return get_slot(index).get("qty", 0)
 
 
+## A gun's own state in slot `index` (a copy), or {} for anything else.
+func get_slot_state(index: int) -> Dictionary:
+	var st: Variant = get_slot(index).get("state")
+	return (st as Dictionary).duplicate(true) if st is Dictionary else {}
+
+
+## Things that carry a state of their own (guns: Increment 32).
+static func has_state(item: ItemDefinition) -> bool:
+	return item != null and item.weapon != null
+
+
+## A gun's state, checked and filled in: {"magazine", "attachments"}. A gun
+## with none (found in a crate, or saved before Increment 32) is as found:
+## loaded, with nothing fitted.
+static func clean_state(item: ItemDefinition, raw: Variant) -> Dictionary:
+	if not has_state(item):
+		return {}
+	var d: Dictionary = raw if raw is Dictionary and not (raw as Dictionary).is_empty() else {"magazine": item.weapon.magazine_size}
+	var mag: Variant = d.get("magazine", 0)
+	var atts: Array = []
+	if d.get("attachments") is Array:
+		for a in d["attachments"]:
+			if a is String or a is StringName:
+				atts.append(String(a))
+	return {"magazine": maxi(int(mag), 0) if (mag is int or mag is float) else 0, "attachments": atts}
+
+
 func is_slot_empty(index: int) -> bool:
 	return get_slot(index).is_empty()
 
@@ -85,8 +116,8 @@ func can_add(item: ItemDefinition, quantity: int) -> int:
 	var room := 0
 	for s in _slots:
 		if s == null:
-			room += item.max_stack
-		elif s["item"] == item:
+			room += item.max_stack if not has_state(item) else 1
+		elif s["item"] == item and not has_state(item):
 			room += item.max_stack - s["qty"]
 	var fit := mini(quantity, room)
 	if max_weight > 0.0 and item.weight > 0.0:
@@ -99,12 +130,18 @@ func can_add(item: ItemDefinition, quantity: int) -> int:
 ## `quantity` × `item` would fit. Changes nothing and emits nothing (used to
 ## check a crafting recipe's output before starting it).
 func can_exchange(remove: Dictionary, item: ItemDefinition, quantity: int) -> bool:
-	var saved := _slots.duplicate(true)
+	# (The same entries put back as they were: a gun's entry is followed by
+	# its live weapon, so it mustn't be swapped for a copy)
+	var saved := _slots.duplicate()
+	var qtys := _slots.map(func(e: Variant) -> int: return e["qty"] if e != null else 0)
 	set_block_signals(true)
 	for it: ItemDefinition in remove:
 		remove_item(it.id, int(remove[it]))
 	var fits := can_add(item, quantity) >= quantity
 	_slots = saved
+	for i in _slots.size():
+		if _slots[i] != null:
+			_slots[i]["qty"] = qtys[i]
 	set_block_signals(false)
 	return fits
 
@@ -123,14 +160,15 @@ func get_refusal_reason(item: ItemDefinition, quantity: int) -> String:
 # ---------------------------------------------------------------- changes
 
 ## Adds up to `quantity`, filling existing stacks first. Returns how many fit.
-func add_item(item: ItemDefinition, quantity: int) -> int:
+## A gun goes in with `state` (or as found: loaded, nothing fitted).
+func add_item(item: ItemDefinition, quantity: int, state: Dictionary = {}) -> int:
 	var to_add := can_add(item, quantity)
 	if to_add <= 0:
 		return 0
 	var left := to_add
 	var changed := PackedInt32Array()
 	for i in _slots.size():
-		if left == 0:
+		if left == 0 or has_state(item):
 			break
 		var s = _slots[i]
 		if s != null and s["item"] == item and s["qty"] < item.max_stack:
@@ -142,23 +180,50 @@ func add_item(item: ItemDefinition, quantity: int) -> int:
 		if left == 0:
 			break
 		if _slots[i] == null:
-			var n := mini(left, item.max_stack)
-			_slots[i] = {"item": item, "qty": n}
+			var n := mini(left, item.max_stack) if not has_state(item) else 1
+			_slots[i] = _entry(item, n, state)
 			left -= n
 			changed.append(i)
 	contents_changed.emit(changed)
 	return to_add
 
 
+func _entry(item: ItemDefinition, qty: int, state: Variant) -> Dictionary:
+	var e := {"item": item, "qty": qty}
+	if has_state(item):
+		e["state"] = clean_state(item, state)
+	return e
+
+
 ## Puts `quantity` of `item` into empty slot `index` (if it's empty and it
 ## fits). Returns how many went in.
-func add_to_slot(index: int, item: ItemDefinition, quantity: int) -> int:
+## `ignore_weight`: it's moving within what you carry (no heavier).
+func add_to_slot(index: int, item: ItemDefinition, quantity: int, state: Dictionary = {}, ignore_weight := false) -> int:
 	if index < 0 or index >= _slots.size() or _slots[index] != null:
 		return 0
-	var n := mini(can_add(item, quantity), item.max_stack)
+	var limit := max_weight
+	if ignore_weight:
+		max_weight = 0.0
+	var n := mini(can_add(item, quantity), item.max_stack if not has_state(item) else 1)
+	max_weight = limit
 	if n <= 0:
 		return 0
-	_slots[index] = {"item": item, "qty": n}
+	_slots[index] = _entry(item, n, state)
+	contents_changed.emit(PackedInt32Array([index]))
+	return n
+
+
+## Tops up the stack in slot `index` with up to `quantity` more of what's
+## in it (not guns: each is its own). Returns how many went on. Weight isn't
+## checked: for moving what's already carried.
+func add_to_stack(index: int, quantity: int) -> int:
+	var s := get_slot(index)
+	if s.is_empty() or has_state(s["item"]) or quantity <= 0:
+		return 0
+	var n := mini(quantity, (s["item"] as ItemDefinition).max_stack - int(s["qty"]))
+	if n <= 0:
+		return 0
+	s["qty"] += n
 	contents_changed.emit(PackedInt32Array([index]))
 	return n
 
@@ -201,8 +266,8 @@ func set_capacity(slots: int, weight: float) -> bool:
 
 
 ## Pickups and other outside sources use this: adds and announces.
-func receive(item: ItemDefinition, quantity: int) -> int:
-	var added := add_item(item, quantity)
+func receive(item: ItemDefinition, quantity: int, state: Dictionary = {}) -> int:
+	var added := add_item(item, quantity, state)
 	if added > 0:
 		item_received.emit(item, added)
 	return added
@@ -228,7 +293,8 @@ func remove_item(id: StringName, quantity: int) -> int:
 	return quantity - left
 
 
-## Takes up to `quantity` from one slot. Returns {"item", "qty"} taken ({} if none).
+## Takes up to `quantity` from one slot. Returns {"item", "qty"} taken ({} if
+## none), and a gun's "state".
 func take_from_slot(index: int, quantity: int = -1) -> Dictionary:
 	var s := get_slot(index)
 	if s.is_empty():
@@ -240,7 +306,10 @@ func take_from_slot(index: int, quantity: int = -1) -> Dictionary:
 	if s["qty"] <= 0:
 		_slots[index] = null
 	contents_changed.emit(PackedInt32Array([index]))
-	return {"item": s["item"], "qty": n}
+	var out := {"item": s["item"], "qty": n}
+	if s.has("state"):
+		out["state"] = (s["state"] as Dictionary).duplicate(true)
+	return out
 
 
 ## Moves a slot onto another: merges same items (up to the stack limit),
@@ -262,7 +331,7 @@ func move_slot(from: int, to: int, quantity: int = -1) -> bool:
 		else:
 			_slots[to] = {"item": src["item"], "qty": amount}
 			src["qty"] -= amount
-	elif dst["item"] == src["item"]:
+	elif dst["item"] == src["item"] and not has_state(src["item"]):
 		var n := mini(amount, (src["item"] as ItemDefinition).max_stack - dst["qty"])
 		if n <= 0:
 			return false
@@ -286,7 +355,7 @@ func transfer_slot_to(index: int, other: InventoryComponent, quantity: int = -1)
 	if s.is_empty() or other == null or other == self:
 		return 0
 	var want: int = s["qty"] if quantity < 0 else mini(quantity, s["qty"])
-	var moved := other.receive(s["item"], want)
+	var moved := other.receive(s["item"], want, get_slot_state(index))
 	if moved > 0:
 		take_from_slot(index, moved)
 	return moved
@@ -306,7 +375,10 @@ func to_data() -> Array:
 	for i in _slots.size():
 		var s = _slots[i]
 		if s != null:
-			out.append({"id": String((s["item"] as ItemDefinition).id), "qty": s["qty"], "slot": i})
+			var e := {"id": String((s["item"] as ItemDefinition).id), "qty": s["qty"], "slot": i}
+			if s.has("state"):
+				e["state"] = (s["state"] as Dictionary).duplicate(true)
+			out.append(e)
 	return out
 
 
@@ -322,7 +394,7 @@ func from_data(data: Array) -> void:
 		var qty := int(entry.get("qty", 0))
 		if item == null or slot < 0 or slot >= _slots.size() or qty <= 0 or _slots[slot] != null:
 			continue
-		_slots[slot] = {"item": item, "qty": mini(qty, item.max_stack)}
+		_slots[slot] = _entry(item, mini(qty, item.max_stack) if not has_state(item) else 1, entry.get("state"))
 	contents_changed.emit(PackedInt32Array(range(_slots.size())))
 
 

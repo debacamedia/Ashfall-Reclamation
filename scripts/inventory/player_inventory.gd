@@ -16,6 +16,55 @@ const SATCHEL_WEIGHT := 30.0
 ## The backpack you're wearing (an item with pack_slots), or null for the
 ## satchel. Change it through PlayerController.request_wear_pack.
 var pack: ItemDefinition
+## The quick bar (Increment 32): part of what you carry. Its medkits and
+## food count toward your weight (its guns don't) and are found and used with
+## the backpack's (backpack first).
+var bar: QuickBar
+
+
+func get_total_weight() -> float:
+	return super.get_total_weight() + (bar.get_total_weight() if bar != null else 0.0)
+
+
+func count_of(id: StringName) -> int:
+	return super.count_of(id) + (bar.count_of(id) if bar != null else 0)
+
+
+## Backpack first, then the quick bar.
+func remove_item(id: StringName, quantity: int) -> int:
+	var n := super.remove_item(id, quantity)
+	if n < quantity and bar != null:
+		n += bar.remove_item(id, quantity - n)
+	return n
+
+
+## A crafting check mustn't take anything off the bar for good either.
+func can_exchange(remove: Dictionary, item: ItemDefinition, quantity: int) -> bool:
+	if bar == null:
+		return super.can_exchange(remove, item, quantity)
+	var saved := bar._slots.duplicate()
+	var qtys := bar._slots.map(func(e: Variant) -> int: return e["qty"] if e != null else 0)
+	bar.set_block_signals(true)
+	var fits := super.can_exchange(remove, item, quantity)
+	bar._slots = saved
+	for i in bar._slots.size():
+		if bar._slots[i] != null:
+			bar._slots[i]["qty"] = qtys[i]
+	bar.set_block_signals(false)
+	return fits
+
+
+## Every item carried, backpack and quick bar.
+func _carried() -> Array[ItemDefinition]:
+	var out: Array[ItemDefinition] = []
+	for i in slot_count:
+		if get_slot_item(i) != null:
+			out.append(get_slot_item(i))
+	if bar != null:
+		for i in bar.slot_count:
+			if bar.get_slot_item(i) != null:
+				out.append(bar.get_slot_item(i))
+	return out
 
 
 static func slots_for(def: ItemDefinition) -> int:
@@ -53,9 +102,8 @@ func give_starting_items() -> void:
 ## The medical item to use for a quick heal (largest heal first), or null.
 func find_best_medical() -> ItemDefinition:
 	var best: ItemDefinition = null
-	for i in slot_count:
-		var item := get_slot_item(i)
-		if item != null and item.category == ItemDefinition.Category.MEDICAL:
+	for item in _carried():
+		if item.category == ItemDefinition.Category.MEDICAL:
 			if best == null or item.heal_amount > best.heal_amount:
 				best = item
 	return best
@@ -66,9 +114,8 @@ func find_best_medical() -> ItemDefinition:
 ## filling one there is. Null with nothing to eat.
 func find_best_food(missing: float) -> ItemDefinition:
 	var foods: Array[ItemDefinition] = []
-	for i in slot_count:
-		var item := get_slot_item(i)
-		if item != null and item.food_value > 0.0 and not foods.has(item):
+	for item in _carried():
+		if item.food_value > 0.0 and not foods.has(item):
 			foods.append(item)
 	if foods.is_empty():
 		return null
@@ -82,19 +129,25 @@ func find_best_food(missing: float) -> ItemDefinition:
 ## How many things to eat you carry.
 func count_food() -> int:
 	var total := 0
-	for i in slot_count:
-		var item := get_slot_item(i)
-		if item != null and item.food_value > 0.0:
-			total += get_slot_quantity(i)
+	for inv: InventoryComponent in [self, bar]:
+		if inv == null:
+			continue
+		for i in inv.slot_count:
+			var item := inv.get_slot_item(i)
+			if item != null and item.food_value > 0.0:
+				total += inv.get_slot_quantity(i)
 	return total
 
 
 func count_medical() -> int:
 	var total := 0
-	for i in slot_count:
-		var item := get_slot_item(i)
-		if item != null and item.category == ItemDefinition.Category.MEDICAL:
-			total += get_slot_quantity(i)
+	for inv: InventoryComponent in [self, bar]:
+		if inv == null:
+			continue
+		for i in inv.slot_count:
+			var item := inv.get_slot_item(i)
+			if item != null and item.category == ItemDefinition.Category.MEDICAL:
+				total += inv.get_slot_quantity(i)
 	return total
 
 

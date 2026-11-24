@@ -146,8 +146,8 @@ func test_travel_round_trip_keeps_player_and_region_state() -> void:
 	await wait_physics(3)
 	p = _player(b)
 	check(p.global_position.distance_to((b.get_node("Arrivals/FromA") as Node3D).global_position) < 0.5, "arrived at the road in (%s)" % p.global_position)
-	check(p.weapon_slots.get_weapon(1) != null and p.weapon_slots.get_weapon(1).base_definition == RIFLE, "rifle carried")
-	check(p.weapon_slots.get_weapon(5) != null, "machete carried")
+	check(p.weapon_slots.find_slot(RIFLE.id) > 0, "rifle carried")
+	check(p.weapon_slots.find_slot(&"machete") > 0, "machete carried")
 	check(p.inventory.count_of(&"electronics") == 3, "inventory carried")
 	check_near(p.health.current_health, 63.0, 0.01, "health carried")
 	# Loot B

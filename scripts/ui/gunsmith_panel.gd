@@ -44,10 +44,10 @@ func refresh() -> void:
 		_clear_slots()
 		return
 	if player.weapon_slots.get_weapon(selected_slot) == null or player.weapon_slots.get_weapon(selected_slot).definition.melee:
-		selected_slot = guns[0].base_definition.slot
+		selected_slot = player.weapon_slots.slot_of(guns[0])
 	for w in guns:
 		var b := Button.new()
-		b.text = "%d  %s" % [w.base_definition.slot, w.base_definition.display_name]
+		b.text = "%d  %s" % [player.weapon_slots.slot_of(w), w.base_definition.display_name]
 		var item := ItemDatabase.find_weapon_item(w.base_definition.id)
 		if item != null:
 			b.icon = item.icon
@@ -57,9 +57,9 @@ func refresh() -> void:
 		b.custom_minimum_size = Vector2(250, 40)
 		b.focus_mode = Control.FOCUS_NONE
 		b.toggle_mode = true
-		b.button_pressed = w.base_definition.slot == selected_slot
+		b.button_pressed = player.weapon_slots.slot_of(w) == selected_slot
 		b.pressed.connect(func() -> void:
-			selected_slot = w.base_definition.slot
+			selected_slot = player.weapon_slots.slot_of(w)
 			refresh())
 		_guns.add_child(b)
 	_show_gun(player.weapon_slots.get_weapon(selected_slot))
@@ -92,14 +92,14 @@ func _show_gun(w: HitscanWeapon) -> void:
 		row.add_child(label)
 		if fitted != null:
 			row.add_child(_button("Remove", func() -> void:
-				if not player.request_remove_attachment(w.base_definition.slot, slot):
+				if not player.request_remove_attachment(player.weapon_slots.slot_of(w), slot):
 					pass
 				refresh()))
 		for item: ItemDefinition in fitting:
 			if fitted != null and item.attachment == fitted:
 				continue
 			row.add_child(_button("Fit " + item.display_name, func() -> void:
-				player.request_fit_attachment(w.base_definition.slot, item)
+				player.request_fit_attachment(player.weapon_slots.slot_of(w), item)
 				refresh()))
 		_slots.add_child(row)
 	if _slots.get_child_count() == 0:
