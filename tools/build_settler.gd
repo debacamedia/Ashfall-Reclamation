@@ -122,9 +122,9 @@ func _run() -> void:
 	# machete
 	var gun := _slot(person, "Gun", "RightHand", Vector3(0, 0.08, 0))
 	gun.set_meta("space", "bone")
-	_box(gun, "Body", Vector3(0.05, 0.09, 0.42), Vector3(0, 0.03, -0.16), steel)
-	_box(gun, "Stock", Vector3(0.045, 0.09, 0.18), Vector3(0, 0.0, 0.1), wood)
-	_box(gun, "Grip", Vector3(0.035, 0.11, 0.045), Vector3(0, -0.04, -0.02), steel)
+	# (30: the Service Rifle from the Ultimate Gun Pack, 0.8 m long, its
+	# pistol grip in the hand, the barrel ahead)
+	_rifle(gun)
 	var hammer := _slot(person, "Hammer", "RightHand", Vector3(0, 0.08, 0))
 	_box(hammer, "Handle", Vector3(0.34, 0.035, 0.035), Vector3(0.12, 0, 0), wood)
 	_box(hammer, "Head", Vector3(0.06, 0.05, 0.15), Vector3(0.29, 0, 0), steel)
@@ -201,6 +201,29 @@ func _run() -> void:
 	print("wrote ", OUT, " (", error_string(err), ")")
 	s.free()
 	quit()
+
+
+## The rifle a settler carries (Increment 30): the pack's gun, muzzle
+## forward (-Z), the grip (about 30% along from the butt) at the hand.
+func _rifle(parent: Node) -> void:
+	var mesh := load("res://assets/models/quaternius/guns/built/service_rifle.res") as ArrayMesh
+	var a := mesh.get_aabb()
+	var sc := 0.8 / a.size.x
+	var tip := a.position.x + a.size.x
+	var lo := INF
+	var hi := -INF
+	for i in mesh.get_surface_count():
+		for p: Vector3 in mesh.surface_get_arrays(i)[Mesh.ARRAY_VERTEX]:
+			if p.x > tip - a.size.x * 0.02:
+				lo = minf(lo, p.y)
+				hi = maxf(hi, p.y)
+	var basis := Basis(Vector3.UP, PI / 2.0).scaled(Vector3.ONE * sc)
+	var grip := Vector3(a.position.x + a.size.x * 0.3, (lo + hi) / 2.0, a.get_center().z)
+	var mi := MeshInstance3D.new()
+	mi.name = "Rifle"
+	mi.mesh = mesh
+	mi.transform = Transform3D(basis, Vector3(0, 0.03, 0) - basis * grip)
+	_add(parent, mi)
 
 
 func _add(parent: Node, child: Node) -> void:

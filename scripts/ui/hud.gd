@@ -19,6 +19,8 @@ var _wanted_ui_scale := UiScale.DEFAULT
 @export var low_health_threshold := 0.3
 
 @onready var _debug_label: Label = %DebugLabel
+## The fast-forward badge (F4, debug builds)
+var _speed_label: Label
 @onready var _crosshair: Crosshair = %Crosshair
 @onready var _ammo_label: Label = %AmmoLabel
 @onready var _weapon_label: Label = %WeaponLabel
@@ -367,6 +369,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_debug"):
 		_debug_label.visible = not _debug_label.visible
 	var k := event as InputEventKey
+	# F4 (debug builds only): fast-forward 1×, 2×, 4× (Increment 30)
+	if k != null and k.pressed and not k.echo and k.physical_keycode == KEY_F4 and not (k.ctrl_pressed or k.meta_pressed or k.alt_pressed) \
+			and GameSpeed.allowed():
+		var speed := GameSpeed.cycle()
+		_show_speed()
+		show_notice("Game speed %d×%s" % [roundi(speed), "" if speed == 1.0 else " (F4 for %d×)" % roundi(GameSpeed.SPEEDS[(GameSpeed.SPEEDS.find(speed) + 1) % GameSpeed.SPEEDS.size()])],
+			Color(1.0, 0.85, 0.5))
+		get_viewport().set_input_as_handled()
+		return
 	if k != null and k.pressed and not k.echo and (k.ctrl_pressed or k.meta_pressed):
 		match k.physical_keycode:
 			KEY_EQUAL, KEY_KP_ADD:
@@ -378,6 +389,26 @@ func _unhandled_input(event: InputEvent) -> void:
 			_:
 				return
 		get_viewport().set_input_as_handled()
+
+
+## The fast-forward badge (Increment 30), top right while above 1×.
+func _show_speed() -> void:
+	if _speed_label == null:
+		_speed_label = Label.new()
+		_speed_label.name = "SpeedLabel"
+		_speed_label.add_theme_font_size_override("font_size", 22)
+		_speed_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.5))
+		_speed_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+		_speed_label.add_theme_constant_override("outline_size", 6)
+		_speed_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+		_speed_label.offset_left = -170.0
+		_speed_label.offset_right = -18.0
+		_speed_label.offset_top = 14.0
+		_speed_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		add_child(_speed_label)
+	var speed := GameSpeed.current()
+	_speed_label.visible = speed != 1.0
+	_speed_label.text = ">> %d× SPEED" % roundi(speed)
 
 
 ## A resized window keeps the size you chose, as far as it fits.

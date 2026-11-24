@@ -58,11 +58,11 @@ _surfaces = [{
 [sub_resource type="BoxShape3D" id="BoxShape3D_giy73"]
 size = Vector3(4, 2.4, 0.42)
 
-[node name="Palisade" type="Node3D" unique_id=385791701]
+[node name="Palisade" type="Node3D" unique_id=238595853]
 script = ExtResource("1_kdipv")
 definition = ExtResource("2_lsi7v")
 
-[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=1389933601]
+[node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=1509658663]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 stream = ExtResource("3_87wwx")
@@ -70,13 +70,13 @@ volume_db = -2.0
 unit_size = 4.0
 bus = &"SFX"
 
-[node name="Body" type="StaticBody3D" parent="." unique_id=1102558272]
+[node name="Body" type="StaticBody3D" parent="." unique_id=789922499]
 collision_layer = 2
 collision_mask = 0
 
-[node name="Palisade" type="MeshInstance3D" parent="Body" unique_id=1359853302]
+[node name="Palisade" type="MeshInstance3D" parent="Body" unique_id=1685210546]
 mesh = SubResource("ArrayMesh_ysx4m")
 
-[node name="Wall" type="CollisionShape3D" parent="Body" unique_id=1372709634]
+[node name="Wall" type="CollisionShape3D" parent="Body" unique_id=2130557753]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("BoxShape3D_giy73")

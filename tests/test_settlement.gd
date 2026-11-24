@@ -80,8 +80,14 @@ func test_claim_once_the_raiders_are_gone() -> void:
 	var zone := await load_zone(["AshCreekFarms"])
 	var st := _farm(zone)
 	var p := await _to_board(zone)
-	await wait_physics(30)
-	var n := st.raiders_here()
+	# (The farm's spawner wakes on its next check once you're near, up to a
+	# second or so after you arrive; it used to be given just half a second)
+	var n := 0
+	for i in 180:
+		await wait_physics(1)
+		n = st.raiders_here()
+		if n > 0 and i >= 30:
+			break
 	check(n > 0, "raiders hold the farm (%d)" % n)
 	var refused := []
 	st.refused.connect(func(r: String) -> void: refused.append(r))
