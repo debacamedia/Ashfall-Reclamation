@@ -99,6 +99,10 @@ static func _mark_interiors(site: Node3D, shells: Array, st: Stats) -> void:
 		var g := n as GeometryInstance3D
 		if g.has_meta("no_draw_distance"):
 			continue
+		# A building's own walls (built from pieces, Increment 31) aren't
+		# things inside it
+		if g.get_parent() != null and g.get_parent().has_meta("shell"):
+			continue
 		var size := Zone._size_of(g)
 		if size <= 0.0:
 			continue

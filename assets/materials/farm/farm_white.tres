@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/normal.png" id="1"]
+[ext_resource type="Texture2D" path="res://assets/ashfall_pack_v1/textures/wood_weathered/roughness.png" id="2"]
+
+[resource]
+resource_name = "Farm trim, white"
+albedo_color = Color(0.72, 0.7, 0.65, 1)
+roughness = 0.92
+roughness_texture = ExtResource("2")
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("1")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true
