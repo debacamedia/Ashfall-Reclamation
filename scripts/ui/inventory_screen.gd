@@ -173,6 +173,9 @@ func toggle() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Typing in a text box (your name in the Field Manual, 33.1): keys are letters
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
 	if player == null or not player.controlled_locally or player.current_container != null:
 		return
 	var hud := get_parent().get_parent() as HUD if get_parent() != null else null

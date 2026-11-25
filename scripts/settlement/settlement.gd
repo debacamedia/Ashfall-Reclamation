@@ -101,8 +101,6 @@ const RAID_COLOR := Color(1.0, 0.3, 0.25)
 const SITE_SCENE := "res://scenes/settlement/construction_site.tscn"
 ## How far from you a building can be planned (m).
 const PLAN_REACH := 14.0
-const NAMES := ["Ada", "Ben", "Cora", "Dale", "Edie", "Finn", "Greta", "Hank", "Iris", "Joel", "Kit", "Lena",
-	"Milo", "Nora", "Otis", "Pearl", "Quinn", "Rosa", "Sam", "Tess", "Vic", "Wade", "Yara", "Zeke"]
 
 @export var settlement_name := "Ash Creek Farms"
 ## The Landmark (place) this settlement is.
@@ -1531,6 +1529,7 @@ func spawn_newcomer() -> Settler:
 	s.name = "Settler%d" % _next_id
 	_next_id += 1
 	s.settler_name = _free_name()
+	s.sex = SettlerNames.sex_of(s.settler_name)
 	s.look_seed = randi()
 	s.spawned = true
 	var at := get_node_or_null("ArrivalPoint") as Node3D
@@ -1544,8 +1543,9 @@ func _free_name() -> String:
 	var used := {}
 	for n in get_tree().get_nodes_in_group("settlers"):
 		used[(n as Settler).settler_name] = true
-	var free := NAMES.filter(func(n: String) -> bool: return not used.has(n))
-	return free[randi() % free.size()] if not free.is_empty() else "Drifter %d" % _next_id
+	# Over a thousand names (33.1); the old 24 are among them
+	var picked := SettlerNames.pick(used)
+	return picked if picked != "" else "Drifter %d" % _next_id
 
 
 ## Called by a settler when they reach the farm.
