@@ -1,6 +1,6 @@
 # Increment 33.1: the main menu, a thousand names, and your name
 
-**Status:** RESULTS_LINE
+**Status:** done, 24 Nov 2026. 588 tests: 586 passed in the full run. The dry-fire click sound and the open-gate navmesh check failed there, as before, and pass alone.
 
 You asked for three things before Increment 34:
 
@@ -84,7 +84,7 @@ Your name is saved with your game and shown on its card in the menu. A new game 
 
 ## Tests
 
-Three new suites:
+Two new suites (9 tests):
 
 - `tests/test_names.gd` (4): the names, newcomers, old Drifters (and the Tailor fix), and your name.
 - `tests/test_main_menu.gd` (5): games and their saves, old saves becoming a first game, the menu's pages, settings, and the game opening on the menu.
