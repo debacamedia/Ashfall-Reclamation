@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2222m"]
+albedo_color = Color(0.29, 0.31, 0.2, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_78517"]
+size = Vector3(0.15, 0.004, 0.21)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oemp2"]
+albedo_color = Color(0.86, 0.8, 0.63, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_1eckl"]
+size = Vector3(0.142, 0.014, 0.202)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0p2t3"]
+size = Vector3(0.15, 0.004, 0.21)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fwil8"]
+size = Vector3(0.006, 0.022, 0.21)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8bi5g"]
+albedo_color = Color(0.82, 0.76, 0.58, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_5uajd"]
+size = Vector3(0.11, 0.001, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w006n"]
+albedo_color = Color(0.2, 0.18, 0.13, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_1jcbi"]
+size = Vector3(0.07, 0.001, 0.008)
+
+[node name="FieldManualWorld" type="Node3D" unique_id=2091907820]
+
+[node name="BackCover" type="MeshInstance3D" parent="." unique_id=2136176013]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.002, 0)
+material_override = SubResource("StandardMaterial3D_2222m")
+mesh = SubResource("BoxMesh_78517")
+
+[node name="Pages" type="MeshInstance3D" parent="." unique_id=628483713]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.003, 0.011, 0)
+material_override = SubResource("StandardMaterial3D_oemp2")
+mesh = SubResource("BoxMesh_1eckl")
+
+[node name="FrontCover" type="MeshInstance3D" parent="." unique_id=56944937]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+material_override = SubResource("StandardMaterial3D_2222m")
+mesh = SubResource("BoxMesh_0p2t3")
+
+[node name="Spine" type="MeshInstance3D" parent="." unique_id=490689325]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.075, 0.011, 0)
+material_override = SubResource("StandardMaterial3D_2222m")
+mesh = SubResource("BoxMesh_fwil8")
+
+[node name="Band" type="MeshInstance3D" parent="." unique_id=2025067202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.005, 0.0225, -0.05)
+material_override = SubResource("StandardMaterial3D_8bi5g")
+mesh = SubResource("BoxMesh_5uajd")
+
+[node name="Stencil" type="MeshInstance3D" parent="." unique_id=18162847]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.005, 0.0232, -0.05)
+material_override = SubResource("StandardMaterial3D_w006n")
+mesh = SubResource("BoxMesh_1jcbi")

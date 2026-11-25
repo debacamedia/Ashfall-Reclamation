@@ -213,6 +213,11 @@ var weapon: HitscanWeapon
 ## The quick bar (Increment 32): eight slots you fill yourself. A child of
 ## the Inventory node (so it's never mistaken for the backpack).
 var quick_bar: QuickBar
+## The Field Manual (Increment 33): chapters open, tips shown, the book.
+var field_manual: FieldManualProgress
+## Asks the HUD to open the Field Manual (you took it in hand, or fired
+## with it held).
+signal manual_requested
 @onready var interactor: PlayerInteractor = get_node_or_null("%Interactor")
 @onready var inventory: PlayerInventory = get_node_or_null("%Inventory")
 
@@ -241,6 +246,9 @@ func _ready() -> void:
 	if weapon_slots != null:
 		weapon_slots.bar = quick_bar
 		weapon_slots.setup(self, camera.get_node("WeaponMount"))
+		weapon_slots.switched.connect(func(slot: int) -> void:
+			if _is_manual(weapon_slots.get_item(slot)):
+				manual_requested.emit())
 	else:
 		# Older scenes: a single %Weapon under the camera
 		weapon = get_node_or_null("%Weapon")
@@ -248,6 +256,10 @@ func _ready() -> void:
 			weapon.aim_camera = camera
 			if inventory != null:
 				weapon.set_ammo_source(inventory)
+	field_manual = FieldManualProgress.new()
+	field_manual.player = self
+	add_child(field_manual)
+	field_manual.give_book()  # a new game: on slot 8 (a loaded game decides for itself)
 	if controlled_locally:
 		camera.make_current()
 	else:
@@ -409,6 +421,11 @@ func get_item_in_use() -> ItemDefinition:
 	return _using_item
 
 
+## Is `item` the Field Manual?
+static func _is_manual(item: ItemDefinition) -> bool:
+	return item != null and item.id == &"field_manual"
+
+
 ## Is the item in use the one in your hands (fire used it; holding fire
 ## doesn't cancel it)?
 func is_using_from_hand() -> bool:
@@ -504,6 +521,9 @@ func _update_item_use(frame: InputFrame, delta: float) -> void:
 	_fire_was = frame.fire
 	# A medkit or food in your hands: fire uses it
 	var held := weapon_slots.held_item() if weapon_slots != null else null
+	if fire_pressed and _is_manual(held):
+		manual_requested.emit()
+		return
 	if fire_pressed and held != null and not is_using_item():
 		if held.category == ItemDefinition.Category.MEDICAL or held.category == ItemDefinition.Category.FOOD:
 			if request_use_item(held):
@@ -954,6 +974,7 @@ func save_state() -> Dictionary:
 		"inventory": inventory.to_data() if inventory != null else [],
 		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
 		"quick_bar": quick_bar.to_data() if quick_bar != null else [],
+		"manual": field_manual.save_state() if field_manual != null else {},
 		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
 		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
 		"maps": _maps_data(),
@@ -1030,6 +1051,10 @@ func load_state(data: Dictionary) -> void:
 			if id is String:
 				map_for(id).from_data(raw_maps[id])
 	_map_timer = 0.0
+	# The Field Manual (Increment 33). A game from before it gets the book,
+	# every chapter open
+	if field_manual != null:
+		field_manual.load_state(data.get("manual"))
 
 
 static func _number(value: Variant, fallback: float) -> float:

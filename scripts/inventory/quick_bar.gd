@@ -37,6 +37,11 @@ static func holdable(item: ItemDefinition) -> bool:
 		or item.category == ItemDefinition.Category.FOOD
 
 
+## Does `item` stay with you when you die (your blade, the Field Manual)?
+static func kept_on_death(item: ItemDefinition) -> bool:
+	return item != null and (item.keep_on_death or (item.weapon != null and item.weapon.melee))
+
+
 ## Why `item` can't go on the bar ("" = it can).
 static func refusal_reason(item: ItemDefinition) -> String:
 	if item == null:

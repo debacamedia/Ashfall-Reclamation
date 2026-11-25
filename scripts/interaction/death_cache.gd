@@ -39,14 +39,14 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 	if player.inventory != null:
 		for i in player.inventory.slot_count:
 			var item := player.inventory.get_slot_item(i)
-			if item != null:
+			if item != null and not item.keep_on_death:
 				stacks.append([item, player.inventory.get_slot_quantity(i), player.inventory.get_slot_state(i)])
-	# The quick bar (Increment 32): all but your blade
+	# The quick bar (Increment 32): all but your blade (and the Field Manual)
 	var bar := player.quick_bar
 	if bar != null:
 		for i in bar.slot_count:
 			var item := bar.get_slot_item(i)
-			if item != null and not (item.weapon != null and item.weapon.melee):
+			if item != null and not QuickBar.kept_on_death(item):
 				stacks.append([item, bar.get_slot_quantity(i), bar.get_slot_state(i)])
 	# The backpack you had on (Increment 16.8); your satchel stays with you
 	if player.inventory != null and player.inventory.pack != null:
@@ -77,8 +77,16 @@ static func drop_for(player: PlayerController, parent: Node3D, at: Vector3) -> D
 		if player.armour.worn(slot) != null:
 			player._keep_wear(player.armour.take_off(slot))
 	if player.inventory != null:
+		# What stays with you (the Field Manual) stays where it was
+		var kept := []
+		for i in player.inventory.slot_count:
+			var it := player.inventory.get_slot_item(i)
+			if it != null and it.keep_on_death:
+				kept.append([i, it, player.inventory.get_slot_quantity(i)])
 		player.inventory.clear()
 		player.inventory.set_pack(null)
+		for k in kept:
+			player.inventory.add_to_slot(k[0], k[1], k[2], {}, true)
 	if player.weapon_slots != null:
 		player.weapon_slots.remove_guns()
 	return cache

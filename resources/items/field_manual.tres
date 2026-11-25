@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/icons/field_manual.png" id="1_nj4py"]
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_p0pov"]
+[ext_resource type="PackedScene" path="res://scenes/items/models/field_manual_world.tscn" id="2_nj4py"]
+
+[resource]
+script = ExtResource("1_p0pov")
+id = &"field_manual"
+display_name = "Field Manual"
+description = "Outpost 17's issue copy of the Reclamation Field Manual, annotated in red pen by Sgt. Ada Vance. Press N to read it, or hold it and fire."
+category = 5
+icon = ExtResource("1_nj4py")
+max_stack = 1
+weight = 0.0
+base_value = 0
+world_model = ExtResource("2_nj4py")
+pickup_hold_time = 0.3
+holdable = true
+keep_on_death = true
