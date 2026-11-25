@@ -136,6 +136,9 @@ func handle_slot_drop(data: Dictionary, target: InventorySlot) -> void:
 # ---------------------------------------------------------------- open / close
 
 func _input(event: InputEvent) -> void:
+	# Typing in a text box (your name in the Field Manual, 33.1): keys are letters
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
 	if not visible or player == null:
 		return
 	if event.is_action_pressed("inventory") or event.is_action_pressed("pause") or event.is_action_pressed("interact"):

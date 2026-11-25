@@ -8,9 +8,9 @@ extends Control
 ##    when this is the editor's Godot (Run, or F5 in the editor) and the lists
 ##    are out of date, the boot screen rebuilds them (godot --headless
 ##    --import, the same as opening the editor) and starts the game again.
-## 2. CONTINUE. Loads your latest save (the autosave or the quick save,
-##    whichever is newer) and turns autosaving on. With no save, or with
-##    `-- --new-game` on the command line, a new game starts.
+## 2. THE MAIN MENU (Increment 33.1): continue, start or load a game. With
+##    `-- --new-game` on the command line a new game starts straight away,
+##    and with `-- --continue` your last game carries on (for testing).
 ##
 ## No class_name, and only engine types here and in the boot scene: it has
 ## to run while the lists are out of date.
@@ -19,6 +19,8 @@ const GAME_LEVEL := "res://levels/early_zone/early_zone.tscn"
 ## Given to the game when it restarts after rebuilding, so it never loops.
 const AFTER_UPDATE_ARG := "--after-update"
 const NEW_GAME_ARG := "--new-game"
+const CONTINUE_ARG := "--continue"
+const MENU := "res://scenes/ui/main_menu.tscn"
 ## Give up waiting for the rebuild after this long and start anyway.
 const REBUILD_TIMEOUT := 900.0
 
@@ -133,8 +135,9 @@ func _start_rebuild() -> bool:
 func _restart() -> void:
 	_status.text = "Starting…"
 	var args := PackedStringArray(["--path", ProjectSettings.globalize_path("res://"), "--", AFTER_UPDATE_ARG])
-	if OS.get_cmdline_user_args().has(NEW_GAME_ARG):
-		args.append(NEW_GAME_ARG)
+	for a in [NEW_GAME_ARG, CONTINUE_ARG]:
+		if OS.get_cmdline_user_args().has(a):
+			args.append(a)
 	OS.create_process(OS.get_executable_path(), args)
 	get_tree().quit()
 
@@ -143,11 +146,18 @@ func _restart() -> void:
 
 func _start_game() -> void:
 	var saves := get_node_or_null("/root/SaveManager")
-	if saves != null and saves.has_method("continue_game"):
-		saves.set("autosave_enabled", true)
-		if not OS.get_cmdline_user_args().has(NEW_GAME_ARG) and saves.call("continue_game") == OK:
+	var args := OS.get_cmdline_user_args()
+	if saves != null and saves.has_method("start_new_game"):
+		saves.call("migrate_legacy")
+		if args.has(NEW_GAME_ARG):
+			saves.call("start_new_game", "", "")
 			return
-	get_tree().change_scene_to_file(GAME_LEVEL)
+		if args.has(CONTINUE_ARG):
+			var id: String = saves.call("latest_game")
+			if id != "":
+				saves.call("play_game", id)
+				return
+	get_tree().change_scene_to_file(MENU if ResourceLoader.exists(MENU) else GAME_LEVEL)
 
 
 func _build_ui() -> void:

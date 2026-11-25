@@ -65,6 +65,9 @@ const ARMOUR_LOOKS := {"leather": [Color(0.42, 0.27, 0.15), 0.0], "plated": [Col
 @export_multiline var greeting := ""
 ## Picks their shirt and skin colours.
 @export var look_seed := 0
+## 1 a woman, 0 a man, -1 as the look seed has it (Increment 33.1: a
+## newcomer's body follows their name).
+@export var sex := -1
 
 @export_group("Movement")
 @export var walk_speed := 1.6
@@ -1226,6 +1229,29 @@ func _pick(group: Node, jitter: float) -> Vector3:
 	return NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, p)
 
 
+# ---------------------------------------------------------------- names (33.1)
+
+## Before Increment 33.1 a settlement that ran out of its 24 names called
+## newcomers "Drifter 7". They get a real name now, one that suits how they
+## look (and they look the same as before).
+func _rename_drifter() -> void:
+	if not RegEx.create_from_string("^Drifter \\d+$").search(settler_name):
+		return
+	if look_seed == 0:
+		look_seed = hash(settler_name)  # the look they had, kept
+	var female := HumanBody.female_by_seed(look_seed) if sex < 0 else sex == 1
+	var used := {}
+	if is_inside_tree():
+		for n in get_tree().get_nodes_in_group("settlers"):
+			used[(n as Settler).settler_name] = true
+	var rng := RandomNumberGenerator.new()
+	rng.seed = look_seed
+	var name_now := SettlerNames.pick_for(used, female, rng)
+	if name_now != "":
+		settler_name = name_now
+		sex = 1 if female else 0
+
+
 # ---------------------------------------------------------------- looks
 
 func _apply_look() -> void:
@@ -1238,7 +1264,7 @@ func _apply_look() -> void:
 	body.trousers = TROUSERS[rng.randi() % TROUSERS.size()]
 	body.boots = BOOTS[rng.randi() % BOOTS.size()]
 	body.long_sleeves = rng.randf() < 0.55
-	body.pick_looks(seed_value)
+	body.pick_looks(seed_value, sex)
 	body.rebuild()
 	_parts.clear()
 	for n in visual.find_children("*", "Node3D", true, false):
@@ -1474,7 +1500,7 @@ func save_state() -> Dictionary:
 	return {
 		"name": settler_name, "role": role, "position": [p.x, p.y, p.z], "yaw": rotation.y,
 		"settlement": String(settlement.settlement_id) if settlement != null else "",
-		"arrived": _arrived, "recruitable": recruitable, "spawned": spawned, "look": look_seed,
+		"arrived": _arrived, "recruitable": recruitable, "spawned": spawned, "look": look_seed, "sex": sex,
 		"gun": String(gun.id) if gun != null else "", "ammo": ammo + magazine,
 		"health": health.current_health, "next_meal": next_meal, "unfed": unfed_hours,
 		"gone": _gone or is_dead() or state == State.LEAVING,
@@ -1492,9 +1518,12 @@ func load_state(data: Dictionary) -> void:
 	spawned = data.get("spawned") is bool and data["spawned"]
 	recruitable = data.get("recruitable") is bool and data["recruitable"]
 	look_seed = int(Settlement._num(data.get("look"), look_seed))
+	var raw_sex := int(Settlement._num(data.get("sex"), -1))
+	sex = raw_sex if raw_sex in [0, 1] else -1
+	_rename_drifter()
 	_apply_look()
 	var r := int(Settlement._num(data.get("role"), 0))
-	role = r as Role if r >= 0 and r <= Role.ARMORER else Role.NONE
+	role = r as Role if r >= 0 and r < Role.size() else Role.NONE
 	var raw_p: Variant = data.get("position")
 	if raw_p is Array and raw_p.size() == 3 and raw_p.all(func(v: Variant) -> bool: return (v is float or v is int) and is_finite(float(v))):
 		global_position = Vector3(raw_p[0], raw_p[1], raw_p[2])

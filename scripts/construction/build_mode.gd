@@ -504,6 +504,9 @@ func _process(_delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Typing in a text box (your name in the Field Manual, 33.1): keys are letters
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
 	if player == null or not player.controlled_locally or player.player_input.ui_open:
 		return
 	if event.is_action_pressed("build_mode"):

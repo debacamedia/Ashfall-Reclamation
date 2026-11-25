@@ -1,8 +1,9 @@
 class_name PauseMenu
 extends Control
-## The Esc menu (Increment 24.1): Resume, Save game, Load last save, New
-## game and Quit. The game pauses while it's open. Quit saves first (to the
-## autosave slot), so the next launch carries on from here.
+## The Esc menu (Increment 24.1): Resume, Save game, Load last save,
+## Settings, Main menu and Quit. The game pauses while it's open. Main menu
+## and Quit save first (to the autosave slot), so Continue carries on from
+## here. (New game moved to the main menu in Increment 33.1.)
 ##
 ## Built in code by the HUD. Esc only opens it when no other window is open
 ## (Esc closes those first).
@@ -17,6 +18,8 @@ var _status: Label
 var _new_button: Button
 ## New game needs a second click.
 var _confirm_new := false
+var _settings_box: VBoxContainer
+var _buttons_box: VBoxContainer
 
 
 func _init() -> void:
@@ -53,8 +56,18 @@ func _init() -> void:
 	_button(box, "Resume", "Resume  (Esc)", close)
 	_button(box, "Save", "Save game  (F5)", _save)
 	_button(box, "Load", "Load last save  (F9)", _load)
-	_new_button = _button(box, "NewGame", "New game", _new_game)
+	_button(box, "SettingsButton", "Settings", _show_settings)
+	_new_button = _button(box, "MainMenu", "Save and go to the main menu", _to_menu)
 	_button(box, "Quit", "Save and quit", _quit)
+	# Settings, in place of the buttons while they're shown
+	_settings_box = VBoxContainer.new()
+	_settings_box.name = "SettingsBox"
+	_settings_box.visible = false
+	_settings_box.add_theme_constant_override("separation", 12)
+	_settings_box.add_child(SettingsPanel.new())
+	_button(_settings_box, "SettingsBack", "Back", _hide_settings)
+	box.add_child(_settings_box)
+	_buttons_box = box
 	_info = _label("", 14, TEXT)
 	_info.name = "Info"
 	_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -75,7 +88,7 @@ func open() -> void:
 		return
 	visible = true
 	_confirm_new = false
-	_new_button.text = "New game"
+	_hide_settings()
 	_status.text = ""
 	_refresh_info()
 	player.player_input.set_ui_open(true)
@@ -92,6 +105,9 @@ func close() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Typing in a text box (your name in the Field Manual, 33.1): keys are letters
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
 	if player == null or not player.controlled_locally:
 		return
 	if not event.is_action_pressed("pause"):
@@ -134,20 +150,27 @@ func _load() -> void:
 	saves.continue_game()
 
 
-func _new_game() -> void:
-	if not _confirm_new:
-		_confirm_new = true
-		_new_button.text = "Start over? Click again"
-		_status.text = "Your saves are kept until the game saves over them"
+func _show_settings() -> void:
+	for c in _buttons_box.get_children():
+		if c is Button:
+			(c as Button).visible = false
+	_settings_box.visible = true
+
+
+func _hide_settings() -> void:
+	if _settings_box == null:
 		return
+	for c in _buttons_box.get_children():
+		if c is Button:
+			(c as Button).visible = true
+	_settings_box.visible = false
+
+
+func _to_menu() -> void:
 	close()
-	var world := get_node_or_null("/root/WorldManager")
-	if world != null:
-		world.reset()
 	var saves := _saves()
-	if saves != null and saves.autosave_enabled:
-		saves.autosave_enabled = true  # the next autosave is a full interval away
-	get_tree().change_scene_to_file(GAME_LEVEL)
+	if saves != null and saves.has_method("quit_to_menu"):
+		saves.quit_to_menu()
 
 
 func _quit() -> void:

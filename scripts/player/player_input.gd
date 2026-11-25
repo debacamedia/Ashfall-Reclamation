@@ -53,6 +53,7 @@ var _last_forward_tap := -10.0
 
 func _ready() -> void:
 	ensure_bar_keys()
+	GameSettings.ensure_loaded()
 	capture_mouse()
 	# Things that take the rifle out of your hands also drop toggled aim
 	var player := get_parent() as PlayerController
@@ -109,7 +110,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if ui_open:
 		return
 	if event is InputEventMouseMotion and is_mouse_captured():
-		var delta := (event as InputEventMouseMotion).relative * mouse_sensitivity
+		var delta := (event as InputEventMouseMotion).relative * mouse_sensitivity * GameSettings.mouse_scale  # (Settings, 33.1)
 		if invert_y:
 			delta.y = -delta.y
 		_look_accumulator += delta

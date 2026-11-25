@@ -120,12 +120,21 @@ func _ready() -> void:
 		build()
 
 
-## Picks a body, skin, hair and hair colour from a seed (the same seed, the
-## same person).
-func pick_looks(seed_value: int) -> void:
+## Whether `seed_value` alone makes a woman (as pick_looks does with no sex).
+static func female_by_seed(seed_value: int) -> bool:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
-	female = rng.randf() < 0.45
+	return rng.randf() < 0.45
+
+
+## Picks a body, skin, hair and hair colour from a seed (the same seed, the
+## same person). `sex` 1 makes them a woman, 0 a man, -1 leaves it to the
+## seed (Increment 33.1: a name decides it for newcomers).
+func pick_looks(seed_value: int, sex := -1) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var by_seed := rng.randf() < 0.45
+	female = by_seed if sex < 0 else sex == 1
 	skin_tone = rng.randi() % SKIN_TONES.size()
 	var hairs: Array = HAIRS_FEMALE if female else HAIRS_MALE
 	hair = hairs[rng.randi() % hairs.size()]

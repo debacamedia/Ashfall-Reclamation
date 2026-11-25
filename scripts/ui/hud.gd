@@ -95,6 +95,7 @@ func _ready() -> void:
 	_bar_width = _health_fill.size.x
 	_build_food_bar()
 	# Interface size (Increment 16.7): saved, and re-fitted when the window changes
+	add_to_group("hud")
 	_wanted_ui_scale = UiScale.saved()
 	ui_scale = UiScale.apply(get_window(), _wanted_ui_scale)
 	get_window().size_changed.connect(_refit_ui_scale)
@@ -458,6 +459,12 @@ func _refit_ui_scale() -> void:
 
 
 ## Sets, saves and announces the interface size (clamped to what fits).
+## The interface size was changed in Settings (33.1): use the saved one.
+func refresh_ui_scale() -> void:
+	_wanted_ui_scale = UiScale.saved()
+	ui_scale = UiScale.apply(get_window(), _wanted_ui_scale)
+
+
 func set_ui_scale(value: float) -> void:
 	_wanted_ui_scale = clampf(snappedf(value, 0.01), UiScale.MIN, UiScale.largest_for(Vector2(get_window().size)))
 	ui_scale = _wanted_ui_scale

@@ -122,6 +122,9 @@ func select(recipe: RecipeDefinition) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Typing in a text box (your name in the Field Manual, 33.1): keys are letters
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
 	if player == null:  # the HUD only ever binds its own (local) player
 		return
 	if not visible:

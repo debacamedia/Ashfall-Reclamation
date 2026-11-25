@@ -203,6 +203,9 @@ func request_remove_pin(number: int) -> void:
 # ---------------------------------------------------------------- input
 
 func _input(event: InputEvent) -> void:
+	# Typing in a text box (your name in the Field Manual, 33.1): keys are letters
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
 	if player == null or not player.controlled_locally:
 		return
 	if not visible:

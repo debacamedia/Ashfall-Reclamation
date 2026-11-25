@@ -215,6 +215,10 @@ var weapon: HitscanWeapon
 var quick_bar: QuickBar
 ## The Field Manual (Increment 33): chapters open, tips shown, the book.
 var field_manual: FieldManualProgress
+## What you want to be called (Increment 33.1), written in the Field Manual.
+## "" until you write it: call_name() is "Survivor" till then.
+var player_name := ""
+signal name_changed(new_name: String)
 ## Asks the HUD to open the Field Manual (you took it in hand, or fired
 ## with it held).
 signal manual_requested
@@ -419,6 +423,37 @@ func get_item_use_progress() -> float:
 
 func get_item_in_use() -> ItemDefinition:
 	return _using_item
+
+
+## The name people call you by: yours, or "Survivor".
+func call_name() -> String:
+	return player_name if player_name != "" else "Survivor"
+
+
+## The longest name the manual takes.
+const NAME_MAX := 24
+
+
+## `raw` made fit to be a name: trimmed, single spaces, no markup or control
+## characters, at most NAME_MAX letters.
+static func clean_name(raw: String) -> String:
+	var out := ""
+	for ch in raw.strip_edges():
+		if ch in "[]{}<>\\|" or ch.unicode_at(0) < 32:
+			continue
+		if ch == " " and out.ends_with(" "):
+			continue
+		out += ch
+	return out.strip_edges().left(NAME_MAX).strip_edges()
+
+
+## Writes your name in the manual. Returns the name as kept.
+func set_player_name(raw: String) -> String:
+	var n := clean_name(raw)
+	if n != player_name:
+		player_name = n
+		name_changed.emit(n)
+	return n
 
 
 ## Is `item` the Field Manual?
@@ -975,6 +1010,7 @@ func save_state() -> Dictionary:
 		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
 		"quick_bar": quick_bar.to_data() if quick_bar != null else [],
 		"manual": field_manual.save_state() if field_manual != null else {},
+		"player_name": player_name,
 		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
 		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
 		"maps": _maps_data(),
@@ -1055,6 +1091,7 @@ func load_state(data: Dictionary) -> void:
 	# every chapter open
 	if field_manual != null:
 		field_manual.load_state(data.get("manual"))
+	player_name = clean_name(str(data.get("player_name", ""))) if data.get("player_name") is String else ""
 
 
 static func _number(value: Variant, fallback: float) -> float:

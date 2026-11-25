@@ -31,6 +31,9 @@ var _prev: Button
 var _next: Button
 var _hand_font: Font
 var _type_font: Font
+## Your name, written on the cover page (Increment 33.1).
+var name_field: LineEdit
+const BLUE_INK := Color(0.13, 0.22, 0.48)
 
 
 func _init() -> void:
@@ -127,6 +130,40 @@ func _left_page() -> Control:
 	rule.color = INK
 	rule.custom_minimum_size = Vector2(0, 2)
 	box.add_child(rule)
+	# "Issued to": where you write your name
+	var issued := HBoxContainer.new()
+	issued.name = "IssuedTo"
+	issued.add_theme_constant_override("separation", 10)
+	var lab := _label("Issued to:", 16, FADED.lerp(INK, 0.5), _type_font)
+	lab.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	issued.add_child(lab)
+	name_field = LineEdit.new()
+	name_field.name = "NameField"
+	name_field.placeholder_text = "write your name here"
+	name_field.max_length = PlayerController.NAME_MAX
+	name_field.flat = true
+	name_field.custom_minimum_size = Vector2(300, 40)
+	name_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_field.add_theme_font_override("font", _hand_font)
+	name_field.add_theme_font_size_override("font_size", 30)
+	name_field.add_theme_color_override("font_color", BLUE_INK)
+	name_field.add_theme_color_override("font_placeholder_color", Color(BLUE_INK, 0.35))
+	name_field.add_theme_color_override("caret_color", BLUE_INK)
+	name_field.add_theme_color_override("selection_color", Color(BLUE_INK, 0.2))
+	var under := StyleBoxFlat.new()
+	under.bg_color = Color(0, 0, 0, 0)
+	under.border_color = FADED
+	under.border_width_bottom = 1
+	under.content_margin_left = 2
+	name_field.add_theme_stylebox_override("normal", under)
+	var under_focus := under.duplicate() as StyleBoxFlat
+	under_focus.border_color = BLUE_INK
+	under_focus.border_width_bottom = 2
+	name_field.add_theme_stylebox_override("focus", under_focus)
+	name_field.text_submitted.connect(func(_t: String) -> void: _commit_name(); name_field.release_focus())
+	name_field.focus_exited.connect(_commit_name)
+	issued.add_child(name_field)
+	box.add_child(issued)
 	var gap := Control.new()
 	gap.custom_minimum_size.y = 6
 	box.add_child(gap)
@@ -234,6 +271,15 @@ func _progress() -> FieldManualProgress:
 	return player.field_manual if player != null else null
 
 
+## Writes what's in the name field in as your name (cleaned up).
+func _commit_name() -> void:
+	if player == null or name_field == null:
+		return
+	var kept := player.set_player_name(name_field.text)
+	if name_field.text != kept:
+		name_field.text = kept
+
+
 func is_open() -> bool:
 	return visible
 
@@ -245,6 +291,7 @@ func open(at: StringName = &"") -> void:
 	if at == &"":
 		at = m.page_to_open()
 	m.used_tip()
+	name_field.text = player.player_name
 	visible = true
 	player.player_input.set_ui_open(true)
 	_refresh_contents()
@@ -254,6 +301,8 @@ func open(at: StringName = &"") -> void:
 func close() -> void:
 	if not visible:
 		return
+	if name_field.has_focus():
+		name_field.release_focus()  # (keeps what's written)
 	visible = false
 	if player != null:
 		player.player_input.set_ui_open(false)
@@ -321,6 +370,15 @@ func _input(event: InputEvent) -> void:
 				and player.current_container == null and not player.is_dead() and not player.is_driving():
 			open()
 			get_viewport().set_input_as_handled()
+		return
+	if name_field.has_focus():
+		# Writing your name: every key's a letter, but Esc puts the pen down
+		if event.is_action_pressed("pause") or (event is InputEventMouseButton and (event as InputEventMouseButton).pressed \
+				and not name_field.get_global_rect().has_point((event as InputEventMouseButton).position)):
+			_commit_name()
+			name_field.release_focus()
+			if event.is_action_pressed("pause"):
+				get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed(ACTION) or event.is_action_pressed("pause"):
 		close()
