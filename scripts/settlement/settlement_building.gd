@@ -25,6 +25,10 @@ extends Structure
 
 ## More beds for the settlement.
 @export var beds := 0
+## Part of the place from the start (33.2: Outpost 17's mess kitchen), not
+## built by your settlers: always there, so saves from before it existed
+## don't remove it, and raiders and dismantling leave it alone.
+@export var prebuilt := false
 ## A pen (21.5): what lives in it, and how many it holds.
 @export var animal_kind: StringName = &""
 @export var animal_capacity := 0
@@ -51,6 +55,8 @@ var _animal_seed := 0
 func _ready() -> void:
 	super._ready()
 	add_to_group("settlement_buildings")
+	if prebuilt:
+		remove_from_group("structures")
 	if storage != null:
 		var proxy := storage.get_node_or_null("Prop")
 		if proxy != null:
@@ -104,6 +110,14 @@ func _markers(group: String) -> Array[Node3D]:
 			if c is Node3D:
 				out.append(c)
 	return out
+
+
+func is_save_removable() -> bool:
+	return not prebuilt
+
+
+func _rebakes() -> bool:
+	return not prebuilt
 
 
 ## Broken by raiders: the settlement puts it back on the building list.

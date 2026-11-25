@@ -64,7 +64,7 @@ signal loaded(path: String)
 signal failed(reason: String)
 
 const FORMAT := "ashfall_save"
-const SAVE_VERSION := 4
+const SAVE_VERSION := 5
 const QUICK_SLOT := "quicksave"
 const AUTO_SLOT := "autosave"
 ## The level the old Outpost 17 / Halden's Crossing levels became part of.
@@ -78,6 +78,18 @@ const SITE_MIGRATION := {
 ## Where saves go. Tests point this somewhere else.
 ## Places built out in Increment 16 (blockouts with nothing to save before):
 ## a version 3 save leaves everything in them as it is.
+## Outpost 17 rebuilt (Increment 33.2, save version 5): what's gone (a save
+## from before that lists it forgets it), and where things moved (a save
+## from before keeps what it says of them, but not where they were).
+const O17_REMOVED := [
+	"Outpost17/Buildings/CommandPost", "Outpost17/Buildings/Barracks", "Outpost17/Buildings/Warehouse",
+	"Outpost17/Props/ContainerB", "Outpost17/Props/ContainerC",
+	"Outpost17/Props/YardPositionN", "Outpost17/Props/YardPositionW",
+	"Outpost17/FiringRange/RangeTower", "Outpost17/FiringRange/FiringLineN", "Outpost17/FiringRange/FiringLineS",
+	"Outpost17/FiringRange/LaneGravel", "Outpost17/FiringRange/Target35m", "Outpost17/FiringRange/Target50m",
+	"Outpost17/FiringRange/Distance35m", "Outpost17/FiringRange/Distance50m", "Outpost17/FiringRange/Backstop",
+]
+const O17_MOVED := ["Outpost17/Loot/", "Outpost17/Props/", "Outpost17/Pack2/", "Outpost17/Vehicles/", "Outpost17/FiringRange/"]
 const PLACES_ADDED_V4 := ["SaintMercyClinic", "AshCreekFarms", "SmugglersGulch", "BlackRidgeMine", "NorthwatchOutpost"]
 
 var save_dir := "user://saves"
@@ -386,6 +398,8 @@ func _apply_after_scene_change(data: Dictionary, path: String) -> void:
 ## Upgrades older save versions.
 ##   1 → 2: no other regions remembered yet.
 ##   2 → 3: Outpost 17 and Halden's Crossing became sites in the early zone.
+##   3 → 4: the five new places kept as they are.
+##   4 → 5: Outpost 17 rebuilt (33.2).
 func _migrate(data: Dictionary) -> Dictionary:
 	if int(data.get("version", 1)) < 2:
 		data["regions"] = {}
@@ -396,7 +410,42 @@ func _migrate(data: Dictionary) -> Dictionary:
 	if int(data.get("version", 3)) < 4:
 		data = mark_new_places_untouched(data)
 		data["version"] = 4
+	if int(data.get("version", 4)) < 5:
+		data = rebuilt_outpost_17(data)
+		data["version"] = 5
 	return data
+
+
+## Outpost 17 rebuilt (Increment 33.2): a save from before forgets what's
+## gone and lets what moved stay where the new layout has it (it still
+## says what was taken, searched or scrapped). In the early zone's own
+## save, or its remembered state while you're in another zone.
+static func rebuilt_outpost_17(data: Dictionary) -> Dictionary:
+	if str(data.get("level", "")) == ZONE_LEVEL and data.get("nodes") is Array:
+		data["nodes"] = _rebuilt_o17_entries(data["nodes"])
+	var regions: Variant = data.get("regions")
+	if regions is Dictionary and (regions as Dictionary).get(ZONE_LEVEL) is Dictionary:
+		var state: Dictionary = regions[ZONE_LEVEL]
+		if state.get("nodes") is Array:
+			state["nodes"] = _rebuilt_o17_entries(state["nodes"])
+	return data
+
+
+static func _rebuilt_o17_entries(entries: Array) -> Array:
+	var out := []
+	for e in entries:
+		if not e is Dictionary:
+			out.append(e)
+			continue
+		var path := str((e as Dictionary).get("path", ""))
+		if O17_REMOVED.any(func(r: String) -> bool: return path == r or path.begins_with(r + "/")):
+			continue
+		if O17_MOVED.any(func(m: String) -> bool: return path.begins_with(m)) and (e as Dictionary).get("data") is Dictionary:
+			var d: Dictionary = e["data"]
+			for key in ["position", "origin", "basis", "yaw"]:
+				d.erase(key)
+		out.append(e)
+	return out
 
 
 ## A save from before the five places were built knows nothing of their

@@ -290,6 +290,19 @@ func is_dead() -> bool:
 	return health.is_dead()
 
 
+## Do you carry a gun (on your quick bar or in your backpack), not just a
+## blade? (33.2: what it takes to claim Outpost 17.)
+func has_gun() -> bool:
+	for inv: InventoryComponent in [quick_bar, inventory]:
+		if inv == null:
+			continue
+		for i in inv.slot_count:
+			var it := inv.get_slot_item(i)
+			if it != null and it.weapon != null and not it.weapon.melee:
+				return true
+	return false
+
+
 ## Advances the character by one physics tick. The same frames always give
 ## the same result, so the host can re-run a guest's movement.
 func simulate(frame: InputFrame, delta: float) -> void:

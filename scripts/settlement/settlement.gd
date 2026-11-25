@@ -124,6 +124,9 @@ const PLAN_REACH := 14.0
 @export var claim_radius := 75.0
 ## Guards defend within this far of the board (m).
 @export var defend_radius := 90.0
+## Only claimable once you carry a gun (33.2: Outpost 17, where you start
+## with nothing but the machete).
+@export var needs_gun := false
 
 @export_group("Time")
 ## Seconds of play in one settlement hour.
@@ -1056,6 +1059,8 @@ func claim_refusal_reason(player: Node3D) -> String:
 	var n := raiders_here()
 	if n > 0:
 		return "Raiders are still here (%d left): clear %s first" % [n, place_word]
+	if needs_gun and player is PlayerController and not (player as PlayerController).has_gun():
+		return "Find a gun first: you'll need more than a machete to hold %s" % place_word
 	return ""
 
 

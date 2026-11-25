@@ -94,7 +94,9 @@ func test_props_clear_on_the_floor_and_navigable() -> void:
 		q.exclude = [p.get_rid()]
 		var hits := space.intersect_shape(q, 8).filter(func(h: Dictionary) -> bool: return (h["collider"] as CollisionObject3D).collision_layer != PhysicsLayers.TERRAIN)
 		check(hits.is_empty(), "%s clear of walls, props and loot (%s)" % [p.name, hits.map(func(h: Dictionary) -> String: return str((h["collider"] as Node).name))])
-		check(absf(p.global_position.y) < 0.01, "%s stands on the ground" % p.name)
+		# (33.2: the field radio stands on the radio room's table)
+		var under := space.intersect_ray(PhysicsRayQueryParameters3D.create(p.global_position + Vector3.UP * 0.05, p.global_position + Vector3.DOWN * 0.05, PhysicsLayers.WORLD_SOLID, [p.get_rid()]))
+		check(absf(p.global_position.y) < 0.01 or not under.is_empty(), "%s stands on the ground (or a table)" % p.name)
 	# Every container and bench is still reachable on foot from the spawn
 	var map := lvl.get_world_3d().navigation_map
 	await wait_for_navigation(map)
@@ -168,7 +170,7 @@ func test_saves_from_before_pack2_still_load() -> void:
 	check(saves.validate(data) == "", "save made before Pack 2 is valid")
 	# It's for the old Outpost 17 level: it moves into the zone (version 3)
 	data = saves._migrate(data)
-	check(data["level"] == ZONE_PATH and int(data["version"]) == 4, "moved into the early zone")
+	check(data["level"] == ZONE_PATH and int(data["version"]) == 5, "moved into the early zone")
 	var lvl := await _load_level()
 	# Pack 2 adds nothing to the save but its props, which (Increment 14)
 	# can be moved and scrapped

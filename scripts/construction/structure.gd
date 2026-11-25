@@ -35,7 +35,7 @@ func _ready() -> void:
 	add_to_group("structures")
 	add_to_group("persist")
 	_init_common()
-	if definition != null and definition.blocks_navigation:
+	if definition != null and definition.blocks_navigation and _rebakes():
 		NavRebaker.request(self)
 
 
@@ -46,8 +46,14 @@ func _init_common() -> void:
 	_hit_sound = get_node_or_null("%HitSound")
 
 
+## Does putting it in (or taking it out) change the navmesh? (Not for
+## something built into a place: the zone's navmesh already has it.)
+func _rebakes() -> bool:
+	return true
+
+
 func _exit_tree() -> void:
-	if definition != null and definition.blocks_navigation and is_queued_for_deletion():
+	if definition != null and definition.blocks_navigation and is_queued_for_deletion() and _rebakes():
 		NavRebaker.request(self)
 
 
@@ -197,7 +203,7 @@ func load_state(data: Dictionary) -> void:
 	var h: Variant = data.get("health")
 	if _is_number(h):
 		health = clampf(float(h), 1.0, get_max_health())
-	if definition != null and definition.blocks_navigation:
+	if definition != null and definition.blocks_navigation and _rebakes():
 		NavRebaker.request(self)
 
 

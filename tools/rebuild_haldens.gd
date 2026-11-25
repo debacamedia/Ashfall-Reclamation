@@ -19,6 +19,8 @@ extends SceneTree
 ## (saved in levels/haldens_crossing/kit/).
 ##
 ##   godot --headless --path . -s res://tools/rebuild_haldens.gd
+## (Increment 33.2: `-- outpost` gives Outpost 17's buildings, from
+## tools/rebuild_outpost_17.gd, the kit's steel walls the same way.)
 ## then rebake the early zone's navigation:
 ##   godot --headless --path . -s res://tools/build_early_zone.gd -- zone-only bake
 
@@ -101,6 +103,15 @@ const BUILDINGS := [
 	{"name": "GasKiosk", "w": 8, "d": 6, "style": "metal", "doors": {"w": [[0.0, 1.4]]}, "front": "w"},
 ]
 
+## Outpost 17's buildings (33.2), as tools/rebuild_outpost_17.gd builds them
+const OUTPOST_LEVEL := "res://levels/outpost_17/outpost_17.tscn"
+const OUTPOST_BUILDINGS := [
+	{"name": "CommandPost", "w": 11, "d": 8, "style": "metal", "doors": {"s": [[0.2, 1.6]]}},
+	{"name": "MessHall", "w": 10, "d": 7, "style": "metal", "doors": {"s": [[0.0, 1.6]]}},
+	{"name": "Barracks", "w": 11, "d": 8, "style": "metal", "doors": {"s": [[0.0, 1.6]]}},
+	{"name": "StoresWorkshop", "w": 12, "d": 16, "style": "garage", "doors": {"e": [[-3.0, 4.0]]}, "bays": true},
+]
+
 var _rng := RandomNumberGenerator.new()
 var _meshes := {}
 var _tris := {}
@@ -129,15 +140,18 @@ func _initialize() -> void:
 					print(line)
 		quit()
 		return
-	_level = (load(LEVEL) as PackedScene).instantiate() as Node3D
-	for spec: Dictionary in BUILDINGS:
+	var outpost := OS.get_cmdline_user_args().has("outpost")
+	var level := OUTPOST_LEVEL if outpost else LEVEL
+	_level = (load(level) as PackedScene).instantiate() as Node3D
+	for spec: Dictionary in (OUTPOST_BUILDINGS if outpost else BUILDINGS):
 		_rebuild(spec)
-	_street_dressing()
+	if not outpost:
+		_street_dressing()
 	var ps := PackedScene.new()
 	var err := ps.pack(_level)
 	assert(err == OK)
-	err = ResourceSaver.save(ps, LEVEL)
-	print("saved ", LEVEL, ": ", error_string(err))
+	err = ResourceSaver.save(ps, level)
+	print("saved ", level, ": ", error_string(err))
 	for k in _stats:
 		print("  ", k, ": ", _stats[k])
 	_level.free()

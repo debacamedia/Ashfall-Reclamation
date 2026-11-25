@@ -275,7 +275,8 @@ func test_crafting_and_salvage_sounds() -> void:
 
 func test_containers_keep_their_paint() -> void:
 	var lvl := await _level(OUTPOST)
-	for c in ["Props/ContainerA", "Props/ContainerB", "Props/ContainerC", "Props/ContainerD"]:
+	# (33.2: two of the four are left, by the water tower)
+	for c in ["Props/ContainerA", "Props/ContainerD"]:
 		var n := lvl.get_node(c)
 		var mat := (n.get_node("Body") as MeshInstance3D).material_override as StandardMaterial3D
 		check(mat.albedo_texture != null and mat.resource_name.begins_with("AF3_container_paint"), "%s: weathered paint" % c)
