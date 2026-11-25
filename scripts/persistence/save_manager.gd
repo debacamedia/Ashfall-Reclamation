@@ -47,6 +47,14 @@ extends Node
 ## (continue_game). Saves live in user://saves, outside the project, so
 ## pulling an update never touches them.
 ##
+## GAMES (Increment 33.1): the main menu keeps separate games. Each is a
+## folder, user://saves/games/<id>/, holding its own autosave and quick save
+## and a game.json (its name, your name, where you were, when you last
+## played, how long you've played). use_game() points save_dir at one; the
+## quick save, autosave and Continue then work inside it. Saves from before
+## (straight in user://saves) become a first game the first time the menu
+## opens (migrate_legacy). Tests that set save_dir and no game work as before.
+##
 ## AUTHORITY: in co-op only the host saves and loads (the world state lives
 ## there); clients will receive the result through normal replication.
 
@@ -73,6 +81,16 @@ const SITE_MIGRATION := {
 const PLACES_ADDED_V4 := ["SaintMercyClinic", "AshCreekFarms", "SmugglersGulch", "BlackRidgeMine", "NorthwatchOutpost"]
 
 var save_dir := "user://saves"
+## Where games are kept (save_dir points into one of them while it's played).
+var root_dir := "user://saves"
+## The game being played ("" before the menu picks one, and in tests).
+var current_game := ""
+## Seconds played in the current game (kept in its game.json).
+var play_seconds := 0.0
+## Your name for a new game, given to the player once its level is up.
+var _pending_new_name := ""
+const GAME_META := "game.json"
+const MENU_SCENE := "res://scenes/ui/main_menu.tscn"
 
 ## Minutes of play between autosaves.
 @export var autosave_minutes := 5.0
@@ -89,6 +107,9 @@ var autosave_left := 300.0
 
 
 func _process(delta: float) -> void:
+	if current_game != "" and not get_tree().paused and get_tree().current_scene != null \
+			and _player_in(get_tree().current_scene) != null:
+		play_seconds += delta
 	if not autosave_enabled:
 		return
 	autosave_left -= delta
@@ -209,6 +230,8 @@ func save_game(slot := QUICK_SLOT, world_root: Node = null) -> Error:
 	err = DirAccess.rename_absolute(tmp, path)
 	if err != OK:
 		return _fail("Can't write the save file", err)
+	if current_game != "":
+		_update_meta(root)
 	saved.emit(path)
 	return OK
 
@@ -456,6 +479,224 @@ static func _move_entries(entries: Variant, level: String) -> Array:
 
 
 ## The WorldManager autoload (other regions' state), if present.
+# ---------------------------------------------------------------- games (33.1)
+
+func games_dir() -> String:
+	return root_dir.path_join("games")
+
+
+func game_dir(id: String) -> String:
+	return games_dir().path_join(id.validate_filename())
+
+
+## A game's details: {"id", "name", "player_name", "place", "created",
+## "last_played" (unix), "play_seconds", "has_save"}, or {} if there's no
+## such game.
+func game_info(id: String) -> Dictionary:
+	var dir := game_dir(id)
+	if not DirAccess.dir_exists_absolute(dir):
+		return {}
+	var meta := read_save_file(dir.path_join(GAME_META))
+	var info := {"id": id, "name": str(meta.get("name", "Game")), "player_name": str(meta.get("player_name", "")),
+		"place": str(meta.get("place", "Outpost 17")), "created": _num(meta.get("created"), 0.0),
+		"last_played": _num(meta.get("last_played"), 0.0), "play_seconds": _num(meta.get("play_seconds"), 0.0)}
+	info["has_save"] = FileAccess.file_exists(dir.path_join(AUTO_SLOT + ".json")) or FileAccess.file_exists(dir.path_join(QUICK_SLOT + ".json"))
+	return info
+
+
+static func _num(v: Variant, fallback: float) -> float:
+	return float(v) if (v is float or v is int) and is_finite(float(v)) else fallback
+
+
+## Every game, the last played first.
+func list_games() -> Array:
+	var out := []
+	var d := DirAccess.open(games_dir())
+	if d == null:
+		return out
+	for id in d.get_directories():
+		var info := game_info(id)
+		if not info.is_empty():
+			out.append(info)
+	out.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["last_played"]) > float(b["last_played"]))
+	return out
+
+
+## The game Continue would carry on (the last one played that has a save),
+## or "".
+func latest_game() -> String:
+	for g: Dictionary in list_games():
+		if g["has_save"]:
+			return g["id"]
+	return ""
+
+
+## Makes a new game's folder and picks it. Returns its id.
+func create_game(game_name: String, player_name := "") -> String:
+	var stamp := int(Time.get_unix_time_from_system())
+	var id := "game_%d" % stamp
+	var n := 2
+	while DirAccess.dir_exists_absolute(game_dir(id)):
+		id = "game_%d_%d" % [stamp, n]
+		n += 1
+	DirAccess.make_dir_recursive_absolute(game_dir(id))
+	var clean := game_name.strip_edges().left(40)
+	_write_meta(id, {"name": clean if clean != "" else "Game %d" % (list_games().size() + 1), "player_name": player_name,
+		"place": "Outpost 17", "created": stamp, "last_played": stamp, "play_seconds": 0.0})
+	use_game(id)
+	return id
+
+
+## Points saving and loading at game `id`.
+func use_game(id: String) -> void:
+	current_game = id
+	save_dir = game_dir(id)
+	play_seconds = float(game_info(id).get("play_seconds", 0.0))
+
+
+func rename_game(id: String, game_name: String) -> void:
+	var clean := game_name.strip_edges().left(40)
+	if clean == "" or game_info(id).is_empty():
+		return
+	var meta := read_save_file(game_dir(id).path_join(GAME_META))
+	meta["name"] = clean
+	_write_meta(id, meta)
+
+
+## Deletes game `id` and its saves, for good.
+func delete_game(id: String) -> void:
+	var dir := game_dir(id)
+	var d := DirAccess.open(dir)
+	if d == null:
+		return
+	for f in d.get_files():
+		DirAccess.remove_absolute(dir.path_join(f))
+	DirAccess.remove_absolute(dir)
+	if current_game == id:
+		current_game = ""
+		save_dir = root_dir
+
+
+func _write_meta(id: String, meta: Dictionary) -> void:
+	var f := FileAccess.open(game_dir(id).path_join(GAME_META), FileAccess.WRITE)
+	if f != null:
+		f.store_string(JSON.stringify(meta, "\t"))
+		f.close()
+
+
+## After a save: when, how long, where and who.
+func _update_meta(root: Node) -> void:
+	var meta := read_save_file(game_dir(current_game).path_join(GAME_META))
+	meta["last_played"] = int(Time.get_unix_time_from_system())
+	meta["play_seconds"] = play_seconds
+	var p := _player_in(root) as PlayerController
+	if p != null:
+		meta["place"] = place_of(p)
+		if p.player_name != "":
+			meta["player_name"] = p.player_name
+	if not meta.has("name"):
+		meta["name"] = "Game"
+	_write_meta(current_game, meta)
+
+
+## Where `player` is, for a game's card: the place they're at, or the
+## nearest place, or the zone.
+static func place_of(player: Node3D) -> String:
+	var best := ""
+	var best_d := INF
+	for n in player.get_tree().get_nodes_in_group("landmarks"):
+		var l := n as Landmark
+		# Places have a radius; your truck, your gear and raid markers don't
+		if l == null or l.display_name == "" or l.radius <= 0.0:
+			continue
+		var d := Vector2(l.global_position.x - player.global_position.x, l.global_position.z - player.global_position.z).length()
+		if d < best_d:
+			best_d = d
+			best = l.display_name if d <= l.radius else "near " + l.display_name
+	return best if best != "" else "The wastes"
+
+
+## Saves from before games had folders (straight in root_dir) become a
+## first game, "Your first game". Once; does nothing if there are none.
+func migrate_legacy() -> String:
+	var old := []
+	for slot: String in [AUTO_SLOT, QUICK_SLOT]:
+		var path := root_dir.path_join(slot + ".json")
+		if FileAccess.file_exists(path):
+			old.append(path)
+	if old.is_empty():
+		return ""
+	var newest := 0
+	for path: String in old:
+		newest = maxi(newest, FileAccess.get_modified_time(path))
+	var keep_dir := save_dir
+	var keep_game := current_game
+	var id := create_game("Your first game")
+	for path: String in old:
+		DirAccess.rename_absolute(path, game_dir(id).path_join(path.get_file()))
+	var meta := read_save_file(game_dir(id).path_join(GAME_META))
+	meta["last_played"] = newest
+	meta["created"] = newest
+	# Your name and where you were, from the newest save
+	var data := read_save_file(game_dir(id).path_join((AUTO_SLOT if FileAccess.file_exists(game_dir(id).path_join(AUTO_SLOT + ".json")) else QUICK_SLOT) + ".json"))
+	for e in data.get("nodes", []):
+		if e is Dictionary and str(e.get("path", "")) == "Player" and e.get("data") is Dictionary:
+			meta["player_name"] = str((e["data"] as Dictionary).get("player_name", ""))
+	_write_meta(id, meta)
+	current_game = keep_game
+	save_dir = keep_dir
+	return id
+
+
+## Plays game `id` from its newest save (a game made but never saved starts
+## fresh). Autosaving goes on.
+func play_game(id: String) -> Error:
+	use_game(id)
+	_reset_world()
+	autosave_enabled = true
+	if latest_slot() != "" and continue_game() == OK:
+		return OK
+	get_tree().change_scene_to_file(ZONE_LEVEL)
+	return OK
+
+
+## Starts a new game called `game_name`, with you as `player_name`.
+func start_new_game(game_name: String, player_name: String) -> String:
+	var id := create_game(game_name, PlayerController.clean_name(player_name))
+	_reset_world()
+	autosave_enabled = true
+	_pending_new_name = PlayerController.clean_name(player_name)
+	get_tree().change_scene_to_file(ZONE_LEVEL)
+	_begin_new_game.call_deferred()
+	return id
+
+
+func _begin_new_game() -> void:
+	for i in 4:
+		await get_tree().process_frame
+	var p := _player_in(get_tree().current_scene) as PlayerController
+	if p != null and _pending_new_name != "":
+		p.set_player_name(_pending_new_name)
+	_pending_new_name = ""
+	# Saved straight away, so the game is in the menu's list
+	if p != null:
+		save_game(AUTO_SLOT)
+
+
+## Back to the main menu (saving first).
+func quit_to_menu() -> void:
+	if autosave_enabled:
+		autosave()
+	autosave_enabled = false
+	get_tree().paused = false
+	get_tree().change_scene_to_file(MENU_SCENE)
+
+
+func _reset_world() -> void:
+	if _world() != null and _world().has_method("reset"):
+		_world().reset()
+
+
 func _world() -> Node:
 	return get_node_or_null("/root/WorldManager")
 
