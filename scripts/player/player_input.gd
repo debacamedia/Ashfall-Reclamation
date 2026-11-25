@@ -66,7 +66,8 @@ func _ready() -> void:
 			player.weapon_slots.switch_started.connect(func(_slot: int) -> void: cancel_aim())
 
 
-## Keys 1-8 pick quick bar slots (Increment 32). Keys 1-5 are in the project's
+## Keys 1-8 pick quick bar slots (Increment 32), and N opens the Field
+## Manual (33). Keys 1-5 are in the project's
 ## input map; 6-8 are added here if they're missing (and left alone if a
 ## player has bound them).
 static func ensure_bar_keys() -> void:
@@ -78,6 +79,12 @@ static func ensure_bar_keys() -> void:
 		var key := InputEventKey.new()
 		key.physical_keycode = KEY_0 + i
 		InputMap.action_add_event(action, key)
+	# N opens the Field Manual (Increment 33)
+	if not InputMap.has_action(FieldManualScreen.ACTION):
+		InputMap.add_action(FieldManualScreen.ACTION)
+		var n := InputEventKey.new()
+		n.physical_keycode = KEY_N
+		InputMap.action_add_event(FieldManualScreen.ACTION, n)
 
 
 ## Magic Mouse / trackpad swipes arrive as pan gestures, which the GUI

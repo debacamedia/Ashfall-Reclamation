@@ -202,7 +202,7 @@ func test_the_bar_is_saved_and_loaded() -> void:
 	p.request_move_to_bar(_index_of(p, MEDKIT), 5)
 	p.weapon_slots.equip_immediately(3)
 	var data := JSON.parse_string(JSON.stringify(p.save_state())) as Dictionary
-	check(data.get("quick_bar") is Array and (data["quick_bar"] as Array).size() == 4, "four things on the bar saved")
+	check(data.get("quick_bar") is Array and (data["quick_bar"] as Array).size() == 5, "five things on the bar saved (the Field Manual too)")
 	var p2 := PLAYER_SCENE.instantiate() as PlayerController
 	p2.controlled_locally = false
 	p2.position = Vector3(4, 0.05, 0)
@@ -255,7 +255,7 @@ func test_dying_drops_the_bar_but_your_blade() -> void:
 	for i in 8:
 		if p.quick_bar.get_slot_item(i) != null:
 			bar_left.append(p.quick_bar.get_slot_item(i).id)
-	check(bar_left == [&"machete"], "only the machete left on the bar (%s)" % [bar_left])
+	check(bar_left == [&"machete", &"field_manual"], "only the machete and the Field Manual left on the bar (%s)" % [bar_left])
 	var mags := []
 	for i in c.inventory.slot_count:
 		if c.inventory.get_slot_item(i) == SHOTGUN_ITEM:

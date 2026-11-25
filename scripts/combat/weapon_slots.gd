@@ -22,6 +22,9 @@ signal switch_started(to_slot: int)
 signal weapon_equipped(weapon: HitscanWeapon)
 ## The selected slot changed (a gun, an item, or empty hands).
 signal selection_changed(slot: int)
+## A switch you made finished: `slot` is in your hands now (not loading or
+## respawning). The Field Manual opens on it (Increment 33).
+signal switched(slot: int)
 
 const SLOT_COUNT := QuickBar.SIZE
 ## Seconds to bring up something that isn't a gun (a medkit, food).
@@ -175,7 +178,7 @@ func remove_guns() -> void:
 		return
 	for i in bar.slot_count:
 		var item := bar.get_slot_item(i)
-		if item != null and not (item.weapon != null and item.weapon.melee):
+		if item != null and not QuickBar.kept_on_death(item):
 			bar.take_from_slot(i)
 	pending_slot = 0
 	_holstering = false
@@ -220,7 +223,10 @@ func cycle(direction: int) -> bool:
 	var from := pending_slot if pending_slot != 0 else current_slot
 	for i in range(1, SLOT_COUNT + 1):
 		var s := wrapi(from + direction * i, 1, SLOT_COUNT + 1)
-		if get_item(s) != null and s != from:
+		var it := get_item(s)
+		# The wheel passes over the Field Manual: it opens on its key (33),
+		# not in the middle of a fight
+		if it != null and s != from and not (it.keep_on_death and it.weapon == null):
 			return request_slot(s)
 	return false
 
@@ -241,6 +247,7 @@ func tick(delta: float) -> void:
 		if w != null:
 			weapon_equipped.emit(w)
 		selection_changed.emit(current_slot)
+		switched.emit(current_slot)
 
 
 ## Instantly takes out a slot (respawn, loading a save).

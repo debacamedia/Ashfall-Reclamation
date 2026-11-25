@@ -47,6 +47,9 @@ var _speed_label: Label
 @onready var _weapon_strip: Label = get_node_or_null("%WeaponStrip")
 ## The quick bar along the bottom (Increment 32): replaces the weapon strip.
 var quick_bar_hud: QuickBarHud
+## The Field Manual (N) and its tips (Increment 33).
+var field_manual_screen: FieldManualScreen
+var manual_tip: ManualTipCard
 @onready var crafting_screen: CraftingScreen = get_node_or_null("%CraftingScreen")
 @onready var _hint: Label = get_node_or_null("%HintLabel")
 @onready var _scope: Control = get_node_or_null("%ScopeOverlay")
@@ -109,6 +112,10 @@ func _ready() -> void:
 	$Root.add_child(quick_bar_hud)
 	if _weapon_strip != null:
 		_weapon_strip.visible = false
+	field_manual_screen = FieldManualScreen.new()
+	add_child(field_manual_screen)
+	manual_tip = ManualTipCard.new()
+	$Root.add_child(manual_tip)
 	pause_menu = PauseMenu.new()
 	add_child(pause_menu)
 	_death_screen.visible = false
@@ -138,8 +145,12 @@ func _process(delta: float) -> void:
 	map_screen.player = player
 	settlement_screen.player = player
 	pause_menu.player = player
+	field_manual_screen.player = player
 	if player == null:
 		return
+	_note_for_manual()
+	if field_manual_screen.visible or driving_now():
+		manual_tip.visible = false
 	_bind_settlements()
 	if player.weapon != _weapon:
 		_bind_weapon(player.weapon)
@@ -156,6 +167,11 @@ func _process(delta: float) -> void:
 	if _player_signals_bound != player:
 		_player_signals_bound = player
 		player.item_use_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
+		player.manual_requested.connect(func() -> void:
+			if not field_manual_screen.visible and not player.player_input.ui_open:
+				field_manual_screen.open())
+		if player.field_manual != null:
+			player.field_manual.tip.connect(manual_tip.show_tip)
 		player.transfer_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.weapon_picked_up.connect(func(def: WeaponDefinition) -> void:
 			show_notice("%s  →  quick bar %d" % [def.display_name, player.last_bar_slot], Color(0.75, 0.9, 1.0)))
@@ -239,7 +255,7 @@ func _process(delta: float) -> void:
 	_crosshair.visible = not driving
 	compass.get_node("PlaceBanner").visible = not window_open
 	# The map covers the top of the screen, where the compass is
-	compass.modulate.a = 0.0 if map_screen.visible or settlement_screen.visible else 1.0
+	compass.modulate.a = 0.0 if map_screen.visible or settlement_screen.visible or field_manual_screen.visible else 1.0
 	quick_bar_hud.player = player
 	for c: CanvasItem in [quick_bar_hud, _quick_slot, _eat_slot, _weapon_label, _ammo_label]:
 		if c != null:
@@ -362,9 +378,27 @@ func _update_drive_panel() -> void:
 		_told_empty = false
 
 
+func driving_now() -> bool:
+	return player != null and player.is_driving()
+
+
+## Tells the Field Manual what you've opened (the map, crafting, the
+## settlement screen): it opens or points to the chapters on them.
+func _note_for_manual() -> void:
+	var m := player.field_manual
+	if m == null:
+		return
+	if map_screen.visible:
+		m.saw(&"map")
+	if crafting_screen != null and crafting_screen.visible:
+		m.saw(&"crafting")
+	if settlement_screen.visible:
+		m.saw(&"settlement_screen")
+
+
 ## A full-screen window is open: inventory, container, crafting or the map.
 func is_window_open() -> bool:
-	return inventory_screen.visible or (container_screen != null and container_screen.visible) \
+	return field_manual_screen.visible or inventory_screen.visible or (container_screen != null and container_screen.visible) \
 		or (crafting_screen != null and crafting_screen.visible) or (map_screen != null and map_screen.visible) \
 		or (settlement_screen != null and settlement_screen.visible)
 

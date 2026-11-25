@@ -53,6 +53,8 @@ enum Category { RESOURCE, AMMO, MEDICAL, WEAPON, TOOL, MISC, PART, ATTACHMENT, S
 ## Can go on the quick bar though it isn't a gun, medical or food (the
 ## Field Manual: Increment 32).
 @export var holdable := false
+## Stays with you when you die (Increment 33: the Field Manual), like your blade.
+@export var keep_on_death := false
 
 
 @export_group("Backpack")
