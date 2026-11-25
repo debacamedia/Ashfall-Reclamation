@@ -323,7 +323,7 @@ func _stores() -> StaticBody3D:
 	_move_in("Loot/WarehouseShelfElectronics", b, Vector3(-5.35, 1.34, 6.7))
 	_move_in("Loot/WarehouseFuel", b, Vector3(-1.4, 0, 3.6))
 	_move_in("Loot/WarehouseAmmo", b, Vector3(1.2, 0, -6.6))
-	_move_in("SalvagePiles/WarehousePallet", b, Vector3(3.4, 0, -5.4), 8)
+	_move_in("SalvagePiles/WarehousePallet", b, Vector3(3.5, 0, -1.0), 8)
 	_move_in("SalvagePiles/WarehousePallet2", b, Vector3(3.4, 0, 6.2), -12)
 	# The salvage sign by the bay
 	_move("Signage/WarehouseSalvage", k.at(b, Vector3(6.01, 2.6, -6.2)))

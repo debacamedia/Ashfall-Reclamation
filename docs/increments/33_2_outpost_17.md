@@ -1,6 +1,6 @@
 # Increment 33.2: Outpost 17 rebuilt, and yours to claim
 
-**Status:** RESULTS_LINE
+**Status:** done, 24 Nov 2026. 593 tests. The full run had two failures, both fixed and now passing: there was no room beside a warehouse crate to move it, and a survivor asked to come before you held a place answered for Outpost 17 rather than the place nearest her.
 
 You asked for a full revamp of Outpost 17. It was the first area, and it still looked like a test level. You also asked that it become a place you can claim and have settlers at. This is the build you approved on its proof:
 
@@ -113,6 +113,7 @@ Your game carries on:
   - `test_art_pack3.gd` checks the paint on the two containers left.
   - The art pack tests allow the field radio on its table.
   - The tests that check a save's version expect 5.
+- **Fixed on the way:** with no place held, a survivor you ask now answers for the place nearest her (Maya for Ash Creek), not whichever settlement came first.
 - **Fixed on the way:** a building that's part of a place from the start no longer asks for the navmesh round it to be rebaked when the level loads (the mess kitchen did, and paths across the zone broke while it ran).
 
 ## Next
