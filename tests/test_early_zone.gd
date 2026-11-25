@@ -408,7 +408,7 @@ func test_old_saves_move_into_the_zone() -> void:
 	var old := _v2_save_in_town()
 	check(saves.validate(old) == "", "a version 2 save is still valid")
 	var data: Dictionary = saves._migrate(old.duplicate(true))
-	check(int(data["version"]) == 4 and data["level"] == ZONE_PATH, "now a version 4 save of the zone")
+	check(int(data["version"]) == 5 and data["level"] == ZONE_PATH, "now a version 5 save of the zone")
 	check((data["regions"] as Dictionary).is_empty(), "both old levels are part of the zone now")
 	var by_path := {}
 	for e: Dictionary in data["nodes"]:
@@ -474,7 +474,7 @@ func test_save_and_load_across_the_zone() -> void:
 	await _teleport(p, HALDENS_AT + Vector3(-20, 0.05, 10))
 	check(saves.save_game("zone_test", zone) == OK, "saved in the town")
 	var data: Dictionary = saves.read_save_file(saves.slot_path("zone_test"))
-	check(int(data["version"]) == 4 and data["level"] == ZONE_PATH and not data.has("untouched"), "one level, version 4")
+	check(int(data["version"]) == 5 and data["level"] == ZONE_PATH and not data.has("untouched"), "one level, version 5")
 	await _free(zone)
 	var zone2 := await load_zone()
 	check(saves.load_game("zone_test", zone2) == OK, "loaded into a fresh zone")

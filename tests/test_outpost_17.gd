@@ -5,6 +5,10 @@ extends "res://tests/test_case.gd"
 ## Since Increment 15 the outpost is a site in the early zone, standing at
 ## the zone's origin, so its coordinates are unchanged. `_level` is the zone
 ## (player, HUD, game mode), `_site` the outpost itself.
+##
+## Increment 33.2 rebuilt it (tests/test_outpost_settlement.gd): the walls
+## reach east to x 61.25 with the firing range inside them, the buildings
+## are new, and the range tower is gone.
 
 const DT := 1.0 / 60.0
 
@@ -63,7 +67,7 @@ func test_perimeter_wall_blocks() -> void:
 
 func test_can_enter_barracks_door() -> void:
 	await _load_level()
-	# Barracks at (12, 0, -16); its door faces +Z at z = -13
+	# Barracks at (12, 0, -15.6); its door faces +Z at z = -11.6
 	await _teleport(Vector3(12, 0.05, -8), 0)
 	await _walk(Vector2(0, -1), 180)
 	check(_player.global_position.z < -14.5, "walked in through the barracks door (z=%.1f)" % _player.global_position.z)
@@ -91,8 +95,8 @@ func test_firing_range_targets_take_damage() -> void:
 	var dummy := _site.get_node("FiringRange/Target10mA") as TargetDummy
 	check(dummy != null, "10 m target exists")
 	await _arm_rifle()
-	# Stand at the firing line, aim at the torso of the 10 m target
-	await _teleport(Vector3(13.5, 0.05, 34), -90)
+	# Stand at the firing line (behind its sandbags), aim at the torso of the 10 m target
+	await _teleport(Vector3(dummy.global_position.x, 0.05, 20.6), 0)
 	var torso := dummy.global_position + Vector3(0, 1.3, 0)
 	var eye := _player.head.global_position
 	var flat := Vector2(torso.x - eye.x, torso.z - eye.z).length()
@@ -114,19 +118,17 @@ func test_firing_range_targets_take_damage() -> void:
 
 # ---------------------------------------------------------------- Increment 3
 
-func test_climb_range_tower_and_jump_off_takes_fall_damage() -> void:
+## (33.2: the range tower, a 6 m platform for testing falls, is gone; a long
+## fall by a guard tower still hurts.)
+func test_long_falls_still_hurt() -> void:
 	await _load_level()
-	# Bottom of the ramp is at x = 26, z = 47; walk up toward -X
-	await _teleport(Vector3(27.5, 0.05, 47), 90)
-	await _walk(Vector2(0, -1), 300)
-	check(_player.global_position.y > 5.8, "reached the 6 m platform (y=%.2f)" % _player.global_position.y)
-	check_near(_player.health.current_health, 100.0, 0.01, "climbing the stairs does no damage")
-	# Turn to face +Z (the open back edge) and walk off
-	_player.rotation_degrees.y = 180
-	await _walk(Vector2(0, -1), 150)
-	check(_player.global_position.y < 0.2, "fell to the ground")
+	check(_site.get_node_or_null("FiringRange/RangeTower") == null, "the range tower's gone")
+	var tower := _site.get_node("GuardTowers/GuardTower3") as Node3D
+	await _teleport(tower.global_position + Vector3(0, 9.0, 0) + (Vector3(14.7, 0, 0) - tower.global_position).normalized() * 3.5, 0)
+	await _walk(Vector2.ZERO, 150)
+	check(_player.global_position.y < 0.3, "fell to the ground")
 	var taken := 100.0 - _player.health.current_health
-	check_between(taken, 15.0, 45.0, "a 6 m fall hurts but doesn't kill")
+	check_between(taken, 15.0, 70.0, "a 9 m fall hurts but doesn't kill (%.0f)" % taken)
 
 
 func test_burning_barrel_hurts_when_touched() -> void:
@@ -185,10 +187,15 @@ func test_navmesh_routes_through_gate_into_buildings() -> void:
 	check(path.size() > 2, "path from the south spawn to the barracks exists")
 	if path.size() > 0:
 		check(path[path.size() - 1].distance_to(Vector3(12, 0.5, -15.5)) < 1.0, "path ends inside the barracks")
+		# (where the path crosses the line of the south wall)
 		var via_gate := false
-		for pt in path:
-			if absf(pt.x) < 4.0 and pt.z > 21.0 and pt.z < 28.0:
-				via_gate = true
+		for i in range(1, path.size()):
+			var a := path[i - 1]
+			var c := path[i]
+			if (a.z - 24.5) * (c.z - 24.5) <= 0.0 and absf(a.z - c.z) > 0.001:
+				var x := lerpf(a.x, c.x, (24.5 - a.z) / (c.z - a.z))
+				if absf(x) < 4.5:
+					via_gate = true
 		check(via_gate, "path goes through the main gate")
 
 
@@ -209,7 +216,7 @@ func test_spawner_fills_outside_the_walls() -> void:
 	check(raiders.size() == 3, "3 raiders alive (got %d)" % raiders.size())
 	for r in raiders:
 		var p := r.global_position
-		check(absf(p.x) > 33.0 or absf(p.z) > 26.0, "raider spawned outside the walls at %s" % p.snappedf(0.1))
+		check(p.x < -33.0 or p.x > 62.5 or absf(p.z) > 26.0, "raider spawned outside the walls at %s" % p.snappedf(0.1))
 		check(p.distance_to(_player.global_position) > 25.0, "not near the player")
 
 
@@ -274,7 +281,7 @@ func test_hud_prompt_and_notice_for_range_ammo() -> void:
 	var hud := _level.get_node("HUD") as HUD
 	var ammo := _site.get_node("Loot/RangeAmmoA") as Pickup
 	await _arm_rifle()
-	await _teleport(Vector3(10.2, 0.05, 35.4), 0)
+	await _teleport(Vector3(ammo.global_position.x, 0.05, ammo.global_position.z + 1.3), 0)
 	var eye := _player.head.global_position
 	var target := ammo.global_position + Vector3(0, 0.1, 0)
 	var flat := Vector3(target.x - eye.x, 0, target.z - eye.z)
@@ -296,9 +303,9 @@ func test_hud_prompt_and_notice_for_range_ammo() -> void:
 
 func test_can_pick_loot_off_warehouse_shelves() -> void:
 	await _load_level()
-	for spec in [["WarehouseShelfScrap", Vector3(-22.8, 0.05, 13.0)], ["WarehouseShelfCloth", Vector3(-22.8, 0.05, 3.0)]]:
+	for spec in [["WarehouseShelfScrap"], ["WarehouseShelfCloth"]]:
 		var pk := _site.get_node("Loot/" + spec[0]) as Pickup
-		await _teleport(spec[1], 90)
+		await _teleport(Vector3(pk.global_position.x + 1.7, 0.05, pk.global_position.z), 90)
 		var eye := _player.head.global_position
 		var target := pk.global_position + Vector3(0, 0.1, 0)
 		var flat := Vector3(target.x - eye.x, 0, target.z - eye.z)
@@ -342,7 +349,8 @@ func test_every_guard_tower_can_be_climbed() -> void:
 	for tower: Node3D in towers:
 		var ladder := tower.get_node("Ladder") as Ladder
 		var out := ladder.get_outward()
-		check(out.dot(-tower.global_position.normalized()) > 0.5, "%s ladder faces into the compound" % tower.name)
+		var foot := ladder.global_position + out * 2.0
+		check(foot.x > -31.5 and foot.x < 61.0 and absf(foot.z) < 24.0, "%s ladder faces into the compound" % tower.name)
 		# Stand 1.2 m out from the ladder, facing it
 		_player.health.revive(1.0)
 		await _teleport(ladder.global_position + out * 1.2 + Vector3.UP * 0.05, rad_to_deg(atan2(out.x, out.z)))

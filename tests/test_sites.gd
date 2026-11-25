@@ -347,7 +347,7 @@ func test_an_older_save_leaves_the_new_places_alone() -> void:
 	data["nodes"] = (data["nodes"] as Array).filter(func(e: Dictionary) -> bool:
 		return not SITES.keys().any(func(k: String) -> bool: return str(e["path"]).begins_with(k + "/")))
 	data = saves._migrate(data)
-	check(int(data["version"]) == 4, "migrated to version 4")
+	check(int(data["version"]) == 5, "migrated to version 5 (33.2)")
 	for key in SITES:
 		check((data["untouched"] as Array).has(key), "%s untouched" % key)
 	var before := {}
