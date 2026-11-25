@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="StructureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1_di1tm"]
+[ext_resource type="Resource" path="res://resources/items/wood_plank.tres" id="2_ilxgu"]
+[ext_resource type="Resource" path="res://resources/items/scrap_metal.tres" id="3_n73tj"]
+[ext_resource type="Script" path="res://scripts/construction/structure_definition.gd" id="4_1b5nx"]
+
+[resource]
+script = ExtResource("4_1b5nx")
+id = &"rock_face"
+display_name = "Rock Face"
+scene_path = "res://scenes/settlement/rock_face.tscn"
+max_health = 700.0
+footprint = Vector3(5, 3, 2.4)
+repair_cost = Dictionary[ExtResource("1_di1tm"), int]({
+ExtResource("2_ilxgu"): 2,
+ExtResource("3_n73tj"): 1
+})
+dismantle_return = Dictionary[ExtResource("1_di1tm"), int]({
+ExtResource("2_ilxgu"): 6,
+ExtResource("3_n73tj"): 3
+})
+movable = false

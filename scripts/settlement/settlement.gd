@@ -366,7 +366,8 @@ func wood_spots() -> Array[Node3D]:
 	return out
 
 
-## Where Miners work (23): the rock faces in a mine's tunnel.
+## Where Miners work (23): the rock faces in a mine's tunnel, then (33.3)
+## two at each Rock Face you've had built.
 func mine_spots() -> Array[Node3D]:
 	var out: Array[Node3D] = []
 	var g := get_node_or_null("MineSpots")
@@ -374,6 +375,8 @@ func mine_spots() -> Array[Node3D]:
 		for c in g.get_children():
 			if c is Node3D:
 				out.append(c)
+	for bld in buildings():
+		out.append_array(bld.mine_spots())
 	return out
 
 
@@ -695,19 +698,55 @@ func site_refusal_reason(player: PlayerController, plan: StringName, xform: Tran
 	q.transform = Transform3D(xform.basis, xform.origin + Vector3.UP * (box.size.y * 0.5 + 0.08))
 	q.collision_mask = PhysicsLayers.WORLD_SOLID | PhysicsLayers.PLAYER | PhysicsLayers.NPCS | PhysicsLayers.INTERACTABLES
 	q.collide_with_areas = true
+	var rock_plan := SettlementPlans.against_rock(plan)
 	for hit in space.intersect_shape(q, 16):
 		var obj := hit["collider"] as CollisionObject3D
 		if obj == null or obj.collision_layer == PhysicsLayers.TERRAIN:
 			continue
 		if obj is ConstructionSite:
 			return "Something's already planned there"
+		# (a Rock Face's timbers go right up to the rock behind it)
+		if rock_plan and SettlementPlans.is_rock(obj):
+			continue
 		return "Something's in the way"
+	if rock_plan:
+		var why := _rock_reason(space, def, xform)
+		if why != "":
+			return why
 	for c in _corners(def, xform) + [xform.origin]:
-		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(c + Vector3.UP * 1.0, c + Vector3.DOWN * 1.0, PhysicsLayers.WORLD_SOLID))
+		var hit := SettlementPlans.ground_under_rock(space, c + Vector3.UP * 1.0, c + Vector3.DOWN * 1.0) if rock_plan \
+			else space.intersect_ray(PhysicsRayQueryParameters3D.create(c + Vector3.UP * 1.0, c + Vector3.DOWN * 1.0, PhysicsLayers.WORLD_SOLID))
 		if hit.is_empty():
 			return "Needs solid ground"
 		if absf((hit["position"] as Vector3).y - xform.origin.y) > 0.35:
 			return "The ground is too uneven"
+	return ""
+
+
+## A Rock Face (33.3) needs rock behind it, along its back (-Z), and room in
+## front where the Miners stand.
+func _rock_reason(space: PhysicsDirectSpaceState3D, def: StructureDefinition, xform: Transform3D) -> String:
+	var back := -def.footprint.z * 0.5
+	var hits := 0
+	for x in [-0.4, 0.0, 0.4]:
+		for y in [0.6, 1.6]:
+			var from := xform * Vector3(x * def.footprint.x, y, back + 0.5)
+			var to := xform * Vector3(x * def.footprint.x, y, back - 1.0)
+			var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(from, to, PhysicsLayers.WORLD_SOLID))
+			if not hit.is_empty() and SettlementPlans.is_rock(hit["collider"]):
+				hits += 1
+	if hits < 5:
+		return "Put its back against rock"
+	# Its front half clear of the rock
+	var q := PhysicsShapeQueryParameters3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(def.footprint.x - 0.4, 1.8, def.footprint.z * 0.5)
+	q.shape = box
+	q.transform = Transform3D(xform.basis, xform * Vector3(0, 1.0, def.footprint.z * 0.25))
+	q.collision_mask = PhysicsLayers.WORLD_SOLID
+	for hit in space.intersect_shape(q, 8):
+		if SettlementPlans.is_rock(hit["collider"]):
+			return "Too far into the rock: no room to dig"
 	return ""
 
 
@@ -1239,7 +1278,7 @@ func role_refusal_reason(role: Settler.Role) -> String:
 	if role == Settler.Role.ARMORER and armorer_spots().is_empty():
 		return "No weapons bench here: Armorers work at Northwatch's armory"
 	if role == Settler.Role.MINER and mine_spots().is_empty():
-		return "No mine here: Miners work at Black Ridge Mine"
+		return "No rock to mine here: plan a Rock Face against rock in build mode (B)"
 	if role == Settler.Role.WOODCUTTER and wood_spots().is_empty():
 		return "No woodlot here"
 	if role == Settler.Role.FARMER and farm_spots().is_empty():

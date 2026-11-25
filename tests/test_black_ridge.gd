@@ -116,7 +116,7 @@ func test_miners_dig_scrap_metal() -> void:
 	var farm := _farm(zone)
 	await _claim(zone, farm)
 	await _claim(zone, mine)
-	check(farm.role_refusal_reason(Settler.Role.MINER).begins_with("No mine here"), "no Miners at the farm: %s" % farm.role_refusal_reason(Settler.Role.MINER))
+	check(farm.role_refusal_reason(Settler.Role.MINER).begins_with("No rock to mine here"), "no Miners at the farm: %s" % farm.role_refusal_reason(Settler.Role.MINER))
 	check(mine.role_refusal_reason(Settler.Role.FARMER).begins_with("No fields here"), "no Farmers at the mine (until a farm plot): %s" % mine.role_refusal_reason(Settler.Role.FARMER))
 	check(mine.role_refusal_reason(Settler.Role.WOODCUTTER) == "No woodlot here", "nor Woodcutters")
 	var a := await _newcomer(zone, mine, Settler.Role.MINER)

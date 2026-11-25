@@ -48,6 +48,9 @@ const PLANS := {
 	# Increment 22: leather from hides
 	&"tanning_rack": {"name": "Tanning Rack", "structure": "tanning_rack", "placeable": true, "hours": 2.0,
 		"cost": {&"wood_plank": 8, &"scrap_metal": 2, &"cloth": 2}, "about": "Put Raw Hides in its tub: each comes out as 3 Leather after a few hours"},
+	# Increment 33.3: more room to mine, against rock
+	&"rock_face": {"name": "Rock Face", "structure": "rock_face", "placeable": true, "hours": 3.0, "against_rock": true,
+		"cost": {&"wood_plank": 10, &"scrap_metal": 4, &"metal_pipe": 1}, "about": "Timbered workings cut into rock: work for two more Miners. Put its back against rock"},
 	&"fence": {"name": "Fence", "structure": "farm_fence", "placeable": false, "hours": 0.25, "length": 4.0,
 		"cost": {&"wood_plank": 1}, "about": "Split-rail fence, in 4 m lengths"},
 	# Increment 27: a gate in a settlement's fence
@@ -73,6 +76,50 @@ const FENCE_SCRAP_EVERY := 4
 
 static func has(id: StringName) -> bool:
 	return PLANS.has(id)
+
+
+## Does `id` go with its back against rock (33.3: the Rock Face)?
+static func against_rock(id: StringName) -> bool:
+	return PLANS.has(id) and bool(PLANS[id].get("against_rock", false))
+
+
+## Where a Rock Face goes when you look at rock at `point` (its `normal`):
+## its back to the rock, its front out the way the rock faces (or toward
+## `toward` where the rock is flat on top).
+static func against_rock_xform(point: Vector3, normal: Vector3, toward: Vector3, def: StructureDefinition) -> Transform3D:
+	var out := Vector3(normal.x, 0, normal.z)
+	if out.length() < 0.05:
+		out = Vector3(toward.x, 0, toward.z)
+	out = out.normalized()
+	var at := point + out * (def.footprint.z * 0.5 - 0.2)
+	return Transform3D(Basis(Vector3.UP, atan2(out.x, out.z)), at)
+
+
+## The ground under `at`, looking through any rock (a Rock Face's back
+## corners stand under the rock's bulge): the hit, or {} for none.
+static func ground_under_rock(space: PhysicsDirectSpaceState3D, from: Vector3, to: Vector3, exclude: Array[RID] = []) -> Dictionary:
+	var skip := exclude.duplicate()
+	for i in 4:
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(from, to, PhysicsLayers.WORLD_SOLID, skip))
+		if hit.is_empty() or not is_rock(hit["collider"]):
+			return hit
+		skip.append((hit["collider"] as CollisionObject3D).get_rid())
+	return {}
+
+
+## Is `collider` rock: the ridges, outcrops and boulders (convex rock meshes in
+## a rock material), anything marked "rock"?
+static func is_rock(collider: Object) -> bool:
+	var n := collider as Node
+	if n == null:
+		return false
+	if n.has_meta("rock"):
+		return true
+	for c in n.get_children():
+		var mi := c as MeshInstance3D
+		if mi != null and mi.material_override != null and mi.material_override.resource_path.get_file().begins_with("rock_"):
+			return true
+	return false
 
 
 ## Plans laid out as runs (fences, gates): a site is a run of pieces this

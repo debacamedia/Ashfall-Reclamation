@@ -8,14 +8,15 @@ extends Control
 ## Each game is its own folder of saves (SaveManager's games). Built in code;
 ## the scene is just this script on a Control.
 
-const ART := "res://assets/ui/menu_background.jpg"
+## The rebuilt Outpost 17, where you start (33.3; 33.1 had Halden's Crossing)
+const ART := "res://assets/ui/menu_background_outpost.jpg"
 const AMBER := Color(0.95, 0.72, 0.38)
 const TEXT := Color(0.88, 0.86, 0.8)
 const DIM := Color(0.6, 0.58, 0.53)
 const RED := Color(0.9, 0.42, 0.33)
 const PANEL := Color(0.07, 0.068, 0.06, 0.93)
 ## Shown at the bottom left.
-const VERSION := "Increment 33.1"
+const VERSION := "Increment 33.3"
 
 var saves: Node
 var buttons := {}
