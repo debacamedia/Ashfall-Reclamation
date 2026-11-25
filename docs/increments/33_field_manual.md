@@ -1,6 +1,9 @@
 # Increment 33: the Field Manual
 
-**Status:** RESULTS_LINE
+**Status:** complete. 10 of the tests are new (`tests/test_field_manual.gd`). In the full run, 577 of 579 passed. The two that failed pass on their own, and neither touches the manual:
+
+- **The open-gate navmesh check:** it has now failed twice in full runs and passed every time alone, so it's flaky and needs a look.
+- **The dry-fire click sound.**
 
 This is the second step of story mode from the proofs you approved: the booklet every player starts with, explaining how the game is meant to be played. It's the Reclamation Field Manual, Outpost 17's issue copy, annotated in red pen by its last owner, **Sgt. Ada Vance**. Her notes are the first threads of **The Last Order**.
 
