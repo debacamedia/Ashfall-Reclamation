@@ -94,6 +94,9 @@ func test_holding_e_helps_build_everything() -> void:
 	var st := await _claimed(zone)
 	var p := _player(zone)
 	for plan in SettlementPlans.placeable():
+		# (a Rock Face goes against rock, not in the farmyard: tests/test_more_mining.gd)
+		if SettlementPlans.against_rock(plan):
+			continue
 		for old in st.sites():
 			old.queue_free()
 		await wait_physics(2)
