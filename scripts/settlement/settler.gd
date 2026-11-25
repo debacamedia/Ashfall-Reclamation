@@ -253,7 +253,7 @@ func status_text() -> String:
 		Role.RANCHER:
 			return settlement.rancher_status()
 		Role.MINER:
-			return "Mining" if not settlement.mine_spots().is_empty() else "No mine here"
+			return "Mining" if not settlement.mine_spots().is_empty() else "No rock face here"
 		Role.ARMORER:
 			return settlement.armorer_status() if not settlement.armorer_spots().is_empty() else "No weapons bench here"
 		Role.TAILOR:

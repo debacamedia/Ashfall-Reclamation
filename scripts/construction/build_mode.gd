@@ -353,7 +353,14 @@ func update_preview() -> void:
 		point += flat * (def.footprint.z * 0.5)
 	# Face the structure across your view unless you've rotated it yourself
 	var xform := ConstructionRules.snap(point, yaw + rad_to_deg(player.rotation.y))
-	var gy := _ground_y(space, xform.origin, exclude)
+	# (33.3) A Rock Face looked at against rock: its back to the rock, its
+	# front out the way the rock faces
+	if plan != &"" and SettlementPlans.against_rock(plan) and not hit.is_empty() and SettlementPlans.is_rock(hit["collider"]):
+		xform = SettlementPlans.against_rock_xform(hit["position"], hit["normal"], -forward, def)
+		var under := SettlementPlans.ground_under_rock(space, xform.origin + Vector3.UP * 1.5, xform.origin + Vector3.DOWN * 3.0, exclude)
+		if not under.is_empty():
+			xform.origin.y = (under["position"] as Vector3).y
+	var gy := NAN if plan != &"" and SettlementPlans.against_rock(plan) else _ground_y(space, xform.origin, exclude)
 	if not is_nan(gy):
 		xform.origin.y = gy
 	# Join onto what's already built nearby (R then sets the joint's angle)

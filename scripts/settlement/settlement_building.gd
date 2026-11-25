@@ -11,6 +11,7 @@ extends Structure
 ##                (storehouse shelves)
 ##   GuardSpots/* where guards stand (guard post, tower)
 ##   FarmSpots/*  where farmers work: two per field (farm plot)
+##   MineSpots/*  where Miners dig: two per Rock Face (33.3)
 ##   %Fridge      the kitchen's store of cooked food (21.5): not one of the
 ##                settlement's stores (raiders don't look in it); settlers
 ##                eat from it first
@@ -100,6 +101,11 @@ func guard_spots() -> Array[Node3D]:
 
 func farm_spots() -> Array[Node3D]:
 	return _markers("FarmSpots")
+
+
+## Where Miners dig at a Rock Face (33.3).
+func mine_spots() -> Array[Node3D]:
+	return _markers("MineSpots")
 
 
 func _markers(group: String) -> Array[Node3D]:

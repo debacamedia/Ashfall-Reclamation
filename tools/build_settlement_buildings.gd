@@ -24,8 +24,10 @@ extends SceneTree
 ##                 palisade (27.1)
 ##   sheep_pen     a pen for 6 sheep, with a shearing stand (28)
 ##   tailors_table  a Tailor's work table, spinning wheel and loom (28)
+##   rock_face     timbered workings against rock, for two more Miners (33.3)
 ##
 ##   godot --headless --path . -s res://tools/build_settlement_buildings.gd
+##   … -- rock_face   (just the one; any of the ids above works the same way)
 
 const Kit := preload("res://tools/site_kit.gd")
 const SCENES := "res://scenes/settlement/"
@@ -54,6 +56,12 @@ func _run() -> void:
 	M["wire"] = _plain(Color(0.55, 0.55, 0.55), 0.5)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SCENES))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(DEFS))
+	var only := OS.get_cmdline_user_args()
+	if not only.is_empty():
+		for id in only:
+			call("_" + id)
+		quit()
+		return
 	_fence()
 	_guard_post()
 	_guard_tower()
@@ -74,6 +82,8 @@ func _run() -> void:
 	# 28: sheep, and a Tailor's Table
 	_pen("SheepPen", "sheep_pen", "Sheep Pen", &"sheep", 6, Vector2(12, 10), 1.1)
 	_tailors_table()
+	# 33.3: more room to mine
+	_rock_face()
 	quit()
 
 
@@ -506,6 +516,43 @@ func _tailors_table() -> void:
 	_box(body, "BasketWool", Vector3(0.42, 0.08, 0.42), Vector3(-1.75, 0.38, 0.2), wool, false)
 	_markers(b, "TailorSpots", [Vector3(-0.6, 0, 0.05)])
 	_finish(b, "tailors_table")
+
+
+## A Rock Face (33.3): workings cut into rock, for two more Miners. Its back
+## (-Z) goes against the rock: two timber sets lagged with boards, a spot in
+## front of each where a Miner swings a pickaxe (MineSpots, facing the rock),
+## a cart on a short run of rails, a spoil heap and a rack of tools.
+func _rock_face() -> void:
+	var b := _begin("RockFace", "rock_face", "Rock Face", Vector3(5.0, 3.0, 2.4), 700.0,
+		{&"wood_plank": 2, &"scrap_metal": 1}, {&"wood_plank": 6, &"scrap_metal": 3})
+	var body := _body(b)
+	var rock := load("res://levels/early_zone/materials/rock_dark.tres") as Material
+	for set_x in [-1.3, 1.3]:
+		for dx in [-0.75, 0.75]:
+			_box(body, "Post", Vector3(0.22, 2.6, 0.22), Vector3(set_x + dx, 1.3, -0.95), M["wood"], true)
+		_box(body, "Cap", Vector3(1.8, 0.24, 0.3), Vector3(set_x, 2.72, -0.95), M["wood"], false)
+		for i in 4:
+			_box(body, "Lagging", Vector3(1.5, 0.22, 0.06), Vector3(set_x, 0.5 + i * 0.6, -1.12), M["wood_plain"], false)
+		# The face itself, broken rock showing between the timbers
+		_box(body, "Face", Vector3(1.3, 2.4, 0.1), Vector3(set_x, 1.2, -1.17), rock, false)
+	_box(body, "Brace", Vector3(0.18, 0.18, 1.4), Vector3(0, 2.3, -0.4), M["wood"], false)
+	# Rails and an ore cart between the two
+	_box(body, "RailL", Vector3(0.08, 0.06, 2.2), Vector3(-0.3, 0.03, 0.0), M["rust"], false)
+	_box(body, "RailR", Vector3(0.08, 0.06, 2.2), Vector3(0.3, 0.03, 0.0), M["rust"], false)
+	_box(body, "Cart", Vector3(0.9, 0.7, 1.1), Vector3(0, 0.5, 0.45), M["rust"], true)
+	_box(body, "Ore", Vector3(0.7, 0.18, 0.9), Vector3(0, 0.88, 0.45), rock, false)
+	# Spoil, a tool rack and a lantern
+	_box(body, "Spoil", Vector3(1.1, 0.4, 0.9), Vector3(2.15, 0.2, 0.55), rock, false)
+	_box(body, "ToolRack", Vector3(0.08, 1.2, 0.7), Vector3(-2.35, 0.6, 0.2), M["wood"], false)
+	for i in 3:
+		_box(body, "Pick%d" % i, Vector3(0.05, 1.0, 0.05), Vector3(-2.3, 0.75, -0.05 + i * 0.25), M["rust"], false)
+	var lamp := _plain(Color(1.0, 0.8, 0.45), 0.4)
+	lamp.emission_enabled = true
+	lamp.emission = Color(1.0, 0.7, 0.35)
+	lamp.emission_energy_multiplier = 1.5
+	_box(body, "Lantern", Vector3(0.16, 0.24, 0.16), Vector3(0, 2.1, -0.4), lamp, false)
+	_markers(b, "MineSpots", [Vector3(-1.3, 0, -0.35), Vector3(1.3, 0, -0.35)])
+	_finish(b, "rock_face")
 
 
 ## The Tanning Rack (22): a wooden frame with a hide stretched on it, and a
