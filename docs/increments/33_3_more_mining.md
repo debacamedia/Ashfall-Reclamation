@@ -1,6 +1,6 @@
 # Increment 33.3: more room to mine, and the new outpost on the menu
 
-**Status:** RESULTS_LINE
+**Status:** done, 24 Nov 2026. 596 tests: 592 passed in the full run. Two failures were tests that hadn't heard of the Rock Face (the count of things to plan, and a test that plans each one in a farmyard); both are fixed. The other two, the spike trap's speed and the outfits' colours, pass alone: I'd run other suites alongside the full run by mistake, which slows the timing-sensitive ones.
 
 After 33.2 you asked for a way to add more Miners at the mine: a new building you place on rocks inside the walls, to give them more room to dig. You also said yes to two things for later: stairs on Outpost 17's towers (still to come), and the rebuilt outpost on the main menu (done here).
 
@@ -59,7 +59,10 @@ In a real window, at Black Ridge:
   - the Rock Face;
   - six Miners at the mine, the two new ones digging at the Rock Face;
   - no Miners where there's no rock.
-- **Changed:** `test_black_ridge.gd` has the Miner job's new wording.
+- **Changed:**
+  - `test_black_ridge.gd` has the Miner job's new wording.
+  - `test_settlement_building.gd` counts thirteen things to plan.
+  - `test_health_and_stairs.gd` leaves the Rock Face out of its farmyard.
 
 ## Next
 
