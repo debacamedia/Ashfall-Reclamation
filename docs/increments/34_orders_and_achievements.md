@@ -1,6 +1,6 @@
 # Increment 34: orders and achievements, Story or Free Play
 
-**Status:** in testing, 26 Nov 2026. Built from the approved proofs (Story: *The Last Order*; orders with no item rewards and a compass marker only for the order you track; 33 achievements; Free Play opens every chapter of the manual, with no orders and no story achievements).
+**Status:** done, 26 Nov 2026. 610 tests: 609 passed in the full run. The other was an old test of the *"You only have a machete…"* line, which now shows only in Free Play; it's updated and passes. Built from the approved proofs (Story: *The Last Order*; orders with no item rewards and a compass marker only for the order you track; 33 achievements; Free Play opens every chapter of the manual, with no orders and no story achievements).
 
 ## Story or Free Play
 
@@ -124,6 +124,7 @@ In a real window:
   - what you do;
   - Free Play has no story ones;
   - the game's card and the menu.
+- **Changed:** `test_gun_crafting.gd`'s first-minutes hint test now checks Story (no hint, the orders lead) and Free Play (the hint).
 
 ## Next
 
