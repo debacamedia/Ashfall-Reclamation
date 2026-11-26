@@ -56,3 +56,11 @@ static func initials(a: Dictionary) -> String:
 		if out.length() < 2 and p[0] == p[0].to_upper():
 			out += p[0]
 	return out if out != "" else String(a["name"]).left(2)
+
+
+## The achievement called `id`, or {}.
+static func find(id: StringName) -> Dictionary:
+	for a: Dictionary in LIST:
+		if a["id"] == id:
+			return a
+	return {}

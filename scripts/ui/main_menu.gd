@@ -16,7 +16,7 @@ const DIM := Color(0.6, 0.58, 0.53)
 const RED := Color(0.9, 0.42, 0.33)
 const PANEL := Color(0.07, 0.068, 0.06, 0.93)
 ## Shown at the bottom left.
-const VERSION := "Increment 33.3"
+const VERSION := "Increment 34"
 
 var saves: Node
 var buttons := {}
@@ -273,20 +273,68 @@ func _new_game_page() -> Control:
 	var you := _line("Survivor", "PlayerName")
 	you.max_length = PlayerController.NAME_MAX
 	box.add_child(you)
-	var mode := _label("Story  ·  you start at Outpost 17 with a machete and Sgt. Vance's Field Manual.\nFree Play and the story's orders arrive with the next update.", 16, TEXT)
-	mode.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	box.add_child(mode)
+	box.add_child(_label("How do you want to play?", 17, DIM))
+	var modes := HBoxContainer.new()
+	modes.name = "Modes"
+	modes.add_theme_constant_override("separation", 12)
+	box.add_child(modes)
+	var group := ButtonGroup.new()
+	var story := _mode_card(modes, group, "Story", "The Last Order",
+		"Wake in Outpost 17's barracks with a machete. Sgt. Vance's Field Manual is in his footlocker. Orders lead the way, one chapter at a time.")
+	_mode_card(modes, group, "FreePlay", "Free Play",
+		"Same start, no orders: every chapter of the manual is open and the map is yours. Story achievements are off.")
+	story.button_pressed = true
 	var start := _button("Start", "Start")
 	start.custom_minimum_size = Vector2(180, 46)
 	start.pressed.connect(func() -> void:
 		if saves != null:
-			saves.call("start_new_game", game_name.text, you.text))
+			var picked := group.get_pressed_button()
+			saves.call("start_new_game", game_name.text, you.text,
+				"free_play" if picked != null and picked.name == "FreePlay" else "story"))
 	box.add_child(start)
 	you.text_submitted.connect(func(_t: String) -> void: start.pressed.emit())
 	game_name.text_submitted.connect(func(_t: String) -> void: you.grab_focus())
 	game_name.call_deferred("grab_focus")
 	game_name.call_deferred("select_all")
 	return box
+
+
+## A Story / Free Play choice: a toggle card with its name and a line on it.
+func _mode_card(parent: Control, group: ButtonGroup, id: String, title: String, text: String) -> Button:
+	var b := Button.new()
+	b.name = id
+	b.toggle_mode = true
+	b.button_group = group
+	b.focus_mode = Control.FOCUS_ALL
+	b.custom_minimum_size = Vector2(300, 128)
+	var off := StyleBoxFlat.new()
+	off.bg_color = Color(1, 1, 1, 0.03)
+	off.border_color = Color(0.32, 0.3, 0.25)
+	off.set_border_width_all(1)
+	off.set_corner_radius_all(3)
+	var on := off.duplicate() as StyleBoxFlat
+	on.bg_color = Color(0.91, 0.71, 0.29, 0.1)
+	on.border_color = AMBER
+	on.set_border_width_all(2)
+	for state: String in ["normal", "hover", "focus"]:
+		b.add_theme_stylebox_override(state, off)
+	for state: String in ["pressed", "hover_pressed"]:
+		b.add_theme_stylebox_override(state, on)
+	var box := VBoxContainer.new()
+	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 14)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_theme_constant_override("separation", 4)
+	var t := _label(title, 22, TEXT)
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(t)
+	var d := _label(text, 14, DIM)
+	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	d.custom_minimum_size.x = 270
+	d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(d)
+	b.add_child(box)
+	parent.add_child(b)
+	return b
 
 
 func _load_page() -> Control:
@@ -331,7 +379,8 @@ func _game_card(g: Dictionary) -> Control:
 	title.name = "GameTitle"
 	info.add_child(title)
 	var who := String(g["player_name"])
-	var line := "%s%s  ·  %s" % ["as " + who + "  ·  " if who != "" else "", g["place"], play_time(float(g["play_seconds"]))]
+	var mode_name := "Free Play" if g.get("mode", "story") == "free_play" else "Story"
+	var line := "%s  ·  %s%s  ·  %s" % [mode_name, "as " + who + "  ·  " if who != "" else "", g["place"], play_time(float(g["play_seconds"]))]
 	info.add_child(_label(line, 15, DIM))
 	var last := when(float(g["last_played"]))
 	info.add_child(_label(("Last played " + last) if last != "" else "Never played", 14, DIM))
@@ -380,7 +429,9 @@ func _game_card(g: Dictionary) -> Control:
 func _achievements_page() -> Control:
 	var box := _page_box("Achievements")
 	box.name = "AchievementsPage"
-	var note := _label("0 of %d earned. They start counting with the next update, when the story's orders arrive." % Achievements.count(), 16, DIM)
+	var have := earned_everywhere(saves)
+	var note := _label("%d of %d earned, across all your games. Story ones only count in Story." % [have.size(), Achievements.count()], 16, DIM)
+	note.name = "Earned"
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(note)
 	var scroll := ScrollContainer.new()
@@ -403,11 +454,22 @@ func _achievements_page() -> Control:
 		list.add_child(grid)
 		for a: Dictionary in Achievements.LIST:
 			if a["category"] == cat:
-				grid.add_child(_achievement_row(a))
+				grid.add_child(_achievement_row(a, have.has(String(a["id"]))))
 	return box
 
 
-func _achievement_row(a: Dictionary) -> Control:
+## Every achievement any game has earned (each game keeps its own).
+static func earned_everywhere(save_manager: Node) -> Dictionary:
+	var out := {}
+	if save_manager == null:
+		return out
+	for g: Dictionary in save_manager.call("list_games"):
+		for id: String in g.get("achievements", []):
+			out[id] = true
+	return out
+
+
+func _achievement_row(a: Dictionary, got := false) -> Control:
 	var row := HBoxContainer.new()
 	row.name = "Ach_" + String(a["id"])
 	row.custom_minimum_size.x = 400
@@ -415,13 +477,14 @@ func _achievement_row(a: Dictionary) -> Control:
 	row.add_theme_constant_override("separation", 10)
 	var medal := PanelContainer.new()
 	var ms := StyleBoxFlat.new()
-	ms.bg_color = Color(0.2, 0.19, 0.16)
-	ms.border_color = Color(0.36, 0.34, 0.28)
+	ms.bg_color = Color(0.84, 0.64, 0.26) if got else Color(0.2, 0.19, 0.16)
+	ms.border_color = Color(0.96, 0.84, 0.5) if got else Color(0.36, 0.34, 0.28)
 	ms.set_border_width_all(2)
 	ms.set_corner_radius_all(22)
 	medal.add_theme_stylebox_override("panel", ms)
 	medal.custom_minimum_size = Vector2(44, 44)
-	var ml := _label("?" if a["hidden"] else Achievements.initials(a), 17, DIM)
+	var secret: bool = a["hidden"] and not got
+	var ml := _label("?" if secret else Achievements.initials(a), 17, Color(0.23, 0.16, 0.03) if got else DIM)
 	ml.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	ml.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	medal.add_child(ml)
@@ -429,11 +492,13 @@ func _achievement_row(a: Dictionary) -> Control:
 	var t := VBoxContainer.new()
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	t.add_theme_constant_override("separation", 0)
-	t.add_child(_label("Hidden" if a["hidden"] else String(a["name"]), 18, TEXT))
-	var d := _label("Keep playing" if a["hidden"] else String(a["text"]), 14, DIM)
+	t.add_child(_label("Hidden" if secret else String(a["name"]), 18, AMBER if got else TEXT))
+	var d := _label("Keep playing" if secret else String(a["text"]), 14, DIM)
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	t.add_child(d)
 	row.add_child(t)
+	if got:
+		row.set_meta("earned", true)
 	return row
 
 

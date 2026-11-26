@@ -50,6 +50,9 @@ var quick_bar_hud: QuickBarHud
 ## The Field Manual (N) and its tips (Increment 33).
 var field_manual_screen: FieldManualScreen
 var manual_tip: ManualTipCard
+## Orders and achievements (34)
+var order_tracker: OrderTracker
+var achievement_toast: AchievementToast
 @onready var crafting_screen: CraftingScreen = get_node_or_null("%CraftingScreen")
 @onready var _hint: Label = get_node_or_null("%HintLabel")
 @onready var _scope: Control = get_node_or_null("%ScopeOverlay")
@@ -58,6 +61,7 @@ var manual_tip: ManualTipCard
 const SOUND_HIT := preload("res://assets/ashfall_pack_v3/audio/ui_hitmarker.wav")
 const SOUND_KILL := preload("res://assets/ashfall_pack_v3/audio/ui_kill_confirm.wav")
 const SOUND_DENIED := preload("res://assets/ashfall_pack_v3/audio/ui_denied.wav")
+const SOUND_EARNED := preload("res://assets/ashfall_pack_v3/audio/craft_complete.wav")
 
 var _weapon: HitscanWeapon
 var _health: HealthComponent
@@ -117,6 +121,12 @@ func _ready() -> void:
 	add_child(field_manual_screen)
 	manual_tip = ManualTipCard.new()
 	$Root.add_child(manual_tip)
+	order_tracker = OrderTracker.new()
+	$Root.add_child(order_tracker)
+	achievement_toast = AchievementToast.new()
+	$Root.add_child(achievement_toast)
+	order_tracker.player = player
+	achievement_toast.player = player
 	pause_menu = PauseMenu.new()
 	add_child(pause_menu)
 	_death_screen.visible = false
@@ -147,8 +157,12 @@ func _process(delta: float) -> void:
 	settlement_screen.player = player
 	pause_menu.player = player
 	field_manual_screen.player = player
+	order_tracker.player = player
+	achievement_toast.player = player
 	if player == null:
 		return
+	# (the tracker steps aside while a window's open)
+	order_tracker.modulate.a = 0.0 if is_window_open() or field_manual_screen.visible else 1.0
 	_note_for_manual()
 	if field_manual_screen.visible or driving_now():
 		manual_tip.visible = false
@@ -173,6 +187,17 @@ func _process(delta: float) -> void:
 				field_manual_screen.open())
 		if player.field_manual != null:
 			player.field_manual.tip.connect(manual_tip.show_tip)
+		if player.story != null:
+			player.story.chapter_done.connect(func(id: StringName) -> void:
+				var c := Orders.chapter(id)
+				var next := player.story.current_chapter()
+				var line := "%s · %s: done." % [c["label"], c["title"]]
+				if not next.is_empty():
+					line += "  Next: %s · %s" % [next["label"], next["title"]]
+				show_notice(line, Color(0.95, 0.82, 0.45))
+				_play_ui(SOUND_EARNED))
+			player.story.achievement_earned.connect(func(_id: StringName) -> void: _play_ui(SOUND_EARNED))
+			player.story.message.connect(func(text: String) -> void: show_notice(text, Color(0.75, 0.9, 1.0)))
 		player.transfer_refused.connect(func(_r: String) -> void: _play_ui(SOUND_DENIED))
 		player.weapon_picked_up.connect(func(def: WeaponDefinition) -> void:
 			show_notice("%s  →  quick bar %d" % [def.display_name, player.last_bar_slot], Color(0.75, 0.9, 1.0)))

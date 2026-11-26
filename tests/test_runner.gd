@@ -73,6 +73,8 @@ const SUITES := [
 	"res://tests/test_build_clearance.gd",
 	"res://tests/test_haldens_rebuilt.gd",
 	"res://tests/test_farm_style.gd",
+	"res://tests/test_orders.gd",
+	"res://tests/test_achievements.gd",
 ]
 
 
