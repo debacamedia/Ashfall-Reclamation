@@ -280,7 +280,7 @@ func _new_game_page() -> Control:
 	box.add_child(modes)
 	var group := ButtonGroup.new()
 	var story := _mode_card(modes, group, "Story", "Story · The Last Order",
-		"Wake in Outpost 17's barracks. Sgt. Vance's Field Manual is in his footlocker; his orders lead the way.")
+		"Wake in Outpost 17's barracks. Sgt. Vance's Field Manual is in her footlocker; her orders lead the way.")
 	_mode_card(modes, group, "FreePlay", "Free Play",
 		"No orders: the whole manual's open and the map is yours. Story achievements are off.")
 	story.button_pressed = true
