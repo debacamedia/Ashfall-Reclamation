@@ -141,8 +141,11 @@ func is_empty() -> bool:
 	return inventory.get_free_slot_count() == inventory.slot_count
 
 
-func _on_closed(_by: Node3D) -> void:
+func _on_closed(by: Node3D) -> void:
 	if is_empty() and users.is_empty():
+		# Back for It (34)
+		if by is PlayerController and (by as PlayerController).story != null:
+			(by as PlayerController).story.got_gear_back()
 		queue_free()
 
 

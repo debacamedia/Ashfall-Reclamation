@@ -378,6 +378,10 @@ func test_first_minutes_hint() -> void:
 	await _run(p, 3)
 	await get_tree().process_frame
 	var hint := hud.get_node("%HintLabel") as Label
+	# In Story the orders say what to do; the hint is for Free Play (34)
+	check(not hint.visible, "no hint in Story: the orders lead")
+	p.story.mode = StoryProgress.Mode.FREE_PLAY
+	await get_tree().process_frame
 	check(hint.visible and hint.text.contains("pallet"), "hint: find wood (%s)" % hint.text)
 	check((hud.get_node("%AmmoLabel") as Label).text == "—", "no ammo count for a machete")
 	p.inventory.add_item(WOOD, 1)

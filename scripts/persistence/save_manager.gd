@@ -101,6 +101,7 @@ var current_game := ""
 var play_seconds := 0.0
 ## Your name for a new game, given to the player once its level is up.
 var _pending_new_name := ""
+var _pending_mode := "story"
 const GAME_META := "game.json"
 const MENU_SCENE := "res://scenes/ui/main_menu.tscn"
 
@@ -548,7 +549,9 @@ func game_info(id: String) -> Dictionary:
 	var meta := read_save_file(dir.path_join(GAME_META))
 	var info := {"id": id, "name": str(meta.get("name", "Game")), "player_name": str(meta.get("player_name", "")),
 		"place": str(meta.get("place", "Outpost 17")), "created": _num(meta.get("created"), 0.0),
-		"last_played": _num(meta.get("last_played"), 0.0), "play_seconds": _num(meta.get("play_seconds"), 0.0)}
+		"last_played": _num(meta.get("last_played"), 0.0), "play_seconds": _num(meta.get("play_seconds"), 0.0),
+		"mode": "free_play" if str(meta.get("mode", "story")) == "free_play" else "story",
+		"achievements": (meta.get("achievements") as Array).filter(func(a: Variant) -> bool: return a is String) if meta.get("achievements") is Array else []}
 	info["has_save"] = FileAccess.file_exists(dir.path_join(AUTO_SLOT + ".json")) or FileAccess.file_exists(dir.path_join(QUICK_SLOT + ".json"))
 	return info
 
@@ -643,6 +646,10 @@ func _update_meta(root: Node) -> void:
 		meta["place"] = place_of(p)
 		if p.player_name != "":
 			meta["player_name"] = p.player_name
+		# What you've earned and how you play (34), for the menu
+		if p.story != null:
+			meta["mode"] = "free_play" if p.story.mode == StoryProgress.Mode.FREE_PLAY else "story"
+			meta["achievements"] = p.story.earned.keys().map(func(k: StringName) -> String: return String(k))
 	if not meta.has("name"):
 		meta["name"] = "Game"
 	_write_meta(current_game, meta)
@@ -709,12 +716,17 @@ func play_game(id: String) -> Error:
 	return OK
 
 
-## Starts a new game called `game_name`, with you as `player_name`.
-func start_new_game(game_name: String, player_name: String) -> String:
+## Starts a new game called `game_name`, with you as `player_name`, in
+## Story or Free Play (34: "story" or "free_play").
+func start_new_game(game_name: String, player_name: String, mode := "story") -> String:
 	var id := create_game(game_name, PlayerController.clean_name(player_name))
+	var meta := read_save_file(game_dir(id).path_join(GAME_META))
+	meta["mode"] = "free_play" if mode == "free_play" else "story"
+	_write_meta(id, meta)
 	_reset_world()
 	autosave_enabled = true
 	_pending_new_name = PlayerController.clean_name(player_name)
+	_pending_mode = meta["mode"]
 	get_tree().change_scene_to_file(ZONE_LEVEL)
 	_begin_new_game.call_deferred()
 	return id
@@ -727,6 +739,11 @@ func _begin_new_game() -> void:
 	if p != null and _pending_new_name != "":
 		p.set_player_name(_pending_new_name)
 	_pending_new_name = ""
+	# Story: you wake in the barracks, the manual in Vance's footlocker.
+	# Free Play: every chapter open (34)
+	if p != null and p.story != null:
+		p.story.begin(StoryProgress.Mode.FREE_PLAY if _pending_mode == "free_play" else StoryProgress.Mode.STORY)
+	_pending_mode = "story"
 	# Saved straight away, so the game is in the menu's list
 	if p != null:
 		save_game(AUTO_SLOT)

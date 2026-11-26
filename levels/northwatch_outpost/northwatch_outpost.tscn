@@ -59,6 +59,7 @@
 [ext_resource type="Script" path="res://scripts/settlement/water_pump.gd" id="57_qtwuq"]
 [ext_resource type="PackedScene" path="res://scenes/world/containers/food_shelves.tscn" id="58_6tubl"]
 [ext_resource type="Resource" path="res://resources/loot/weapons_locker.tres" id="59_w775t"]
+[ext_resource type="Script" path="res://scripts/story/story_radio.gd" id="60_vnmlu"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_iwl4n"]
 size = Vector3(36, 3.2, 0.6)
@@ -383,6 +384,9 @@ size = Vector3(0.15, 2.8, 2.2)
 
 [sub_resource type="BoxMesh" id="BoxMesh_rlg81"]
 size = Vector3(0.14, 2.85, 0.14)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tktku"]
+size = Vector3(0.9, 0.6, 0.6)
 
 [node name="NorthwatchOutpost" type="Node3D" unique_id=1326971794]
 metadata/region_name = "Northwatch Outpost"
@@ -1736,3 +1740,13 @@ metadata/defence = true
 metadata/stage = 2
 
 [node name="Sites" type="Node3D" parent="Settlement" unique_id=27707633]
+
+[node name="StoryRadio" type="Area3D" parent="." unique_id=1034972032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.6, 0.9, -12.7)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("60_vnmlu")
+
+[node name="Shape" type="CollisionShape3D" parent="StoryRadio" unique_id=660945909]
+shape = SubResource("BoxShape3D_tktku")

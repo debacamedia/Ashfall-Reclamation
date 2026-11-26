@@ -81,7 +81,7 @@ func note(id: StringName) -> void:
 ## The chapter N should open at: the last tip's, just after it, else the
 ## page you were on.
 func page_to_open() -> StringName:
-	return _tip_id if _tip_left > 0.0 and opened.has(_tip_id) else (page if opened.has(page) else opened[0])
+	return _tip_id if _tip_left > 0.0 and opened.has(_tip_id) else (page if opened.has(page) or page in [&"orders", &"achievements"] else opened[0])
 
 
 ## Read it: N used the tip.
@@ -177,7 +177,7 @@ func load_state(data: Variant) -> void:
 		if known.has(id) and not tipped.has(id):
 			tipped.append(id)
 	var p := StringName(str(d.get("page", "staying_alive")))
-	page = p if known.has(p) else &"staying_alive"
+	page = p if known.has(p) or p in [&"orders", &"achievements"] else &"staying_alive"
 	given = bool(d.get("given", true))
 	if not given:
 		give_book()

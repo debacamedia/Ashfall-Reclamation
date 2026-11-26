@@ -215,6 +215,8 @@ var weapon: HitscanWeapon
 var quick_bar: QuickBar
 ## The Field Manual (Increment 33): chapters open, tips shown, the book.
 var field_manual: FieldManualProgress
+## Your story: Story or Free Play, orders, achievements (Increment 34).
+var story: StoryProgress
 ## What you want to be called (Increment 33.1), written in the Field Manual.
 ## "" until you write it: call_name() is "Survivor" till then.
 var player_name := ""
@@ -264,6 +266,11 @@ func _ready() -> void:
 	field_manual.player = self
 	add_child(field_manual)
 	field_manual.give_book()  # a new game: on slot 8 (a loaded game decides for itself)
+	# Orders and achievements (34)
+	story = StoryProgress.new()
+	story.name = "Story"
+	story.player = self
+	add_child(story)
 	if controlled_locally:
 		camera.make_current()
 	else:
@@ -1027,6 +1034,7 @@ func save_state() -> Dictionary:
 		"magazine": weapon.ammo_in_magazine if weapon != null else 0,
 		"quick_bar": quick_bar.to_data() if quick_bar != null else [],
 		"manual": field_manual.save_state() if field_manual != null else {},
+		"story": story.save_state() if story != null else {},
 		"player_name": player_name,
 		"loadout": weapon_slots.save_state() if weapon_slots != null else {},
 		"pack": String(inventory.pack.id) if inventory != null and inventory.pack != null else "",
@@ -1108,6 +1116,9 @@ func load_state(data: Dictionary) -> void:
 	# every chapter open
 	if field_manual != null:
 		field_manual.load_state(data.get("manual"))
+	# Orders and achievements (34): a game from before carries on in Story
+	if story != null:
+		story.load_state(data.get("story"))
 	player_name = clean_name(str(data.get("player_name", ""))) if data.get("player_name") is String else ""
 
 

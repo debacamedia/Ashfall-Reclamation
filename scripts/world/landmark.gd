@@ -33,7 +33,8 @@ static func at(tree: SceneTree, p: Vector3) -> Landmark:
 	var best_d := INF
 	for n in tree.get_nodes_in_group("landmarks"):
 		var l := n as Landmark
-		if l == null:
+		# (markers with no radius, like a pin or an order, aren't places)
+		if l == null or l.radius <= 0.0:
 			continue
 		var d := l.flat_distance(p)
 		if d <= l.radius and d < best_d:

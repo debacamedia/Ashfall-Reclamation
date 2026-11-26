@@ -7,7 +7,7 @@ extends SceneTree
 ##   levels/ash_creek_farms/ash_creek_farms.tscn
 ##   levels/smugglers_gulch/smugglers_gulch.tscn
 ##   levels/black_ridge_mine/black_ridge_mine.tscn
-##   levels/northwatch_outpost/northwatch_outpost.tscn
+##   levels/northwatch_outpost/northwatch_outpost.tscn (then add_story_radio.gd puts the story radio back)
 ## and the loot tables they use (resources/loot/*.tres).
 ##
 ## Run from the project root, then rebuild the zone (its navmesh):

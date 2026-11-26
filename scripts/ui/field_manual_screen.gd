@@ -16,7 +16,10 @@ const INK := Color(0.17, 0.14, 0.09)
 const FADED := Color(0.17, 0.14, 0.09, 0.38)
 const PEN := Color(0.64, 0.15, 0.11)
 const LEATHER := Color(0.16, 0.13, 0.09)
-const PAGE_SIZE := Vector2(530, 600)
+const PAGE_SIZE := Vector2(530, 640)
+## The two pages that aren't chapters (34)
+const ORDERS := &"orders"
+const ACHIEVEMENTS := &"achievements"
 
 var player: PlayerController
 ## The chapter on the right-hand page.
@@ -172,33 +175,23 @@ func _left_page() -> Control:
 	_contents.add_theme_constant_override("separation", 2)
 	box.add_child(_contents)
 	for c: Dictionary in FieldManualText.CHAPTERS:
-		var b := Button.new()
-		b.name = "Chapter%d" % c["n"]
-		b.flat = true
-		b.focus_mode = Control.FOCUS_NONE
-		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.custom_minimum_size.y = 34
-		b.add_theme_font_override("font", _type_font)
-		b.add_theme_font_size_override("font_size", 19)
-		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
-			b.add_theme_color_override(state, INK)
-		b.add_theme_color_override("font_disabled_color", FADED)
-		var hover := StyleBoxFlat.new()
-		hover.bg_color = Color(0.17, 0.14, 0.09, 0.08)
-		b.add_theme_stylebox_override("hover", hover)
-		b.add_theme_stylebox_override("pressed", hover)
-		var num := _label("", 19, INK, _type_font)
-		num.name = "Page"
-		num.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		num.offset_right = -6
-		num.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		num.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		num.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		b.add_child(num)
+		var b := _contents_button("Chapter%d" % c["n"])
 		var id: StringName = c["id"]
 		b.pressed.connect(func() -> void: show_chapter(id))
 		_contents.add_child(b)
 		_chapter_buttons[id] = b
+	# Your orders and achievements (34)
+	var rule2 := ColorRect.new()
+	rule2.color = FADED
+	rule2.custom_minimum_size = Vector2(0, 1)
+	_contents.add_child(rule2)
+	for extra: Array in [[ORDERS, "Orders"], [ACHIEVEMENTS, "Achievements"]]:
+		var b := _contents_button(String(extra[0]).capitalize().replace(" ", ""))
+		b.name = String(extra[1])
+		var page_id: StringName = extra[0]
+		b.pressed.connect(func() -> void: show_chapter(page_id))
+		_contents.add_child(b)
+		_chapter_buttons[page_id] = b
 	var fill := Control.new()
 	fill.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_child(fill)
@@ -209,6 +202,34 @@ func _left_page() -> Control:
 	note.rotation_degrees = -2.0
 	box.add_child(note)
 	return page
+
+
+## A line in the contents.
+func _contents_button(node_name: String) -> Button:
+	var b := Button.new()
+	b.name = node_name
+	b.flat = true
+	b.focus_mode = Control.FOCUS_NONE
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	b.custom_minimum_size.y = 34
+	b.add_theme_font_override("font", _type_font)
+	b.add_theme_font_size_override("font_size", 19)
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
+		b.add_theme_color_override(state, INK)
+	b.add_theme_color_override("font_disabled_color", FADED)
+	var hover := StyleBoxFlat.new()
+	hover.bg_color = Color(0.17, 0.14, 0.09, 0.08)
+	b.add_theme_stylebox_override("hover", hover)
+	b.add_theme_stylebox_override("pressed", hover)
+	var num := _label("", 19, INK, _type_font)
+	num.name = "Page"
+	num.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	num.offset_right = -6
+	num.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	num.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	num.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(num)
+	return b
 
 
 func _right_page() -> Control:
@@ -239,6 +260,8 @@ func _right_page() -> Control:
 	# Keycaps' backgrounds stop at their own text (they covered commas)
 	_body.add_theme_constant_override("text_highlight_h_padding", 0)
 	_body.add_theme_constant_override("text_highlight_v_padding", 1)
+	_body.meta_underlined = true
+	_body.meta_clicked.connect(_on_link)
 	box.add_child(_body)
 	var foot := HBoxContainer.new()
 	_prev = _turn_button("‹  Back", -1)
@@ -295,7 +318,10 @@ func open(at: StringName = &"") -> void:
 	visible = true
 	player.player_input.set_ui_open(true)
 	_refresh_contents()
-	show_chapter(at if m.is_open(at) else m.page)
+	if at == ORDERS or at == ACHIEVEMENTS:
+		show_chapter(at)
+	else:
+		show_chapter(at if m.is_open(at) else (m.page if m.is_open(m.page) or m.page in [ORDERS, ACHIEVEMENTS] else &"staying_alive"))
 
 
 func close() -> void:
@@ -325,6 +351,9 @@ func readable() -> Array[StringName]:
 
 
 func show_chapter(id: StringName) -> void:
+	if id == ORDERS or id == ACHIEVEMENTS:
+		_show_extra(id)
+		return
 	var c := FieldManualText.chapter(id)
 	if c.is_empty() or _progress() == null or not _progress().is_open(id):
 		return
@@ -341,6 +370,96 @@ func show_chapter(id: StringName) -> void:
 	_refresh_contents()
 
 
+## Your orders or your achievements (34), on the right-hand page.
+func _show_extra(id: StringName) -> void:
+	var st := player.story if player != null else null
+	if st == null:
+		return
+	chapter_id = id
+	_progress().page = id
+	_prev.disabled = true
+	_next.disabled = true
+	if id == ORDERS:
+		_sub.text = "Orders  ·  %s" % Orders.ACT_TITLE
+		_body.text = orders_text(st)
+		var c := st.current_chapter()
+		_title.text = "Free Play: no orders" if not st.is_story() else ("Act 1 done" if c.is_empty() else "%s · %s" % [c["label"], c["title"]])
+	else:
+		_sub.text = "Achievements  ·  %d of %d" % [st.earned.size(), Achievements.count()]
+		_title.text = "Achievements"
+		_body.text = achievements_text(st)
+	_body.scroll_to_line(0)
+	_refresh_contents()
+
+
+## The orders page: the chapters done, this chapter's orders (click one to
+## track it), and the ones to come.
+static func orders_text(st: StoryProgress) -> String:
+	if not st.is_story():
+		return "This game is Free Play: no orders, every chapter of this manual open. Start a new game in Story to follow Sgt. Vance's last order."
+	var out := []
+	var current := st.current_chapter()
+	var tracked := st.tracked_order()
+	var reached := true
+	for c: Dictionary in Orders.CHAPTERS:
+		if c == current:
+			# (the page's heading names this chapter)
+			for o: Dictionary in c["orders"]:
+				var line: String = o["text"]
+				var pr := st.progress_of(o)
+				if int(pr[1]) > 0:
+					line += "  (%d / %d)" % [pr[0], pr[1]]
+				if st.is_done(o["id"]):
+					out.append("[color=#6a6150]✓  [s]%s[/s][/color]" % line)
+				elif o == tracked:
+					out.append("☐  [b]%s[/b]  [color=#8a6d1f]◂ on your compass[/color]" % line)
+				else:
+					out.append("☐  [url=track:%s]%s[/url]" % [o["id"], line])
+			out.append("[font=%s][font_size=24][color=#a3261c]%s[/color][/font_size][/font]" % [FieldManualText.HAND_FONT, c["note"]])
+			reached = false
+		elif reached and not current.is_empty() or current.is_empty():
+			out.append("[color=#6a6150]✓  %s · %s[/color]" % [c["label"], c["title"]])
+		else:
+			out.append("[color=#a59a83]%s · %s[/color]" % [c["label"], c["title"]])
+	if current.is_empty():
+		out.append("")
+		out.append("Act 1 is done. Act 2 comes with a later update.")
+	else:
+		out.append("")
+		out.append("[color=#6a6150]Click an order to track it on your compass.[/color]")
+	return "\n".join(out)
+
+
+## The achievements page: the ones earned, then the rest (the hidden ones
+## as "Hidden").
+static func achievements_text(st: StoryProgress) -> String:
+	var got := []
+	var rest := []
+	for a: Dictionary in Achievements.LIST:
+		if st.has_earned(a["id"]):
+			got.append("[color=#8a6d1f]●[/color]  [b]%s[/b]  ·  %s" % [a["name"], a["text"]])
+		elif not st.can_earn(a["id"]):
+			rest.append("[color=#a59a83]○  %s  ·  in Story only[/color]" % a["name"])
+		elif a["hidden"]:
+			rest.append("[color=#a59a83]○  Hidden  ·  keep playing[/color]")
+		else:
+			rest.append("[color=#6a6150]○  %s  ·  %s[/color]" % [a["name"], a["text"]])
+	var out := []
+	if got.is_empty():
+		out.append("[color=#6a6150]None yet.[/color]")
+	out.append_array(got)
+	out.append("")
+	out.append_array(rest)
+	return "\n".join(out)
+
+
+func _on_link(meta: Variant) -> void:
+	var m := str(meta)
+	if m.begins_with("track:") and player != null and player.story != null:
+		player.story.track(StringName(m.trim_prefix("track:")))
+		_show_extra(ORDERS)
+
+
 ## Turns a chapter on (+1) or back (-1), skipping those not reached yet.
 func turn(step: int) -> void:
 	var list := readable()
@@ -350,6 +469,22 @@ func turn(step: int) -> void:
 
 
 func _refresh_contents() -> void:
+	var st := player.story if player != null else null
+	for extra: Array in [[ORDERS, "Orders"], [ACHIEVEMENTS, "Achievements"]]:
+		var b := _chapter_buttons.get(extra[0]) as Button
+		if b == null:
+			continue
+		b.text = "%s%s" % ["▸ " if chapter_id == extra[0] else "   ", extra[1]]
+		var num := b.get_node("Page") as Label
+		num.text = ""
+		if st != null and extra[0] == ORDERS and st.is_story():
+			var done := 0
+			for o in Orders.all_ids():
+				if st.is_done(o):
+					done += 1
+			num.text = "%d / %d" % [done, Orders.count()]
+		elif st != null and extra[0] == ACHIEVEMENTS:
+			num.text = "%d / %d" % [st.earned.size(), Achievements.count()]
 	for c: Dictionary in FieldManualText.CHAPTERS:
 		var b := _chapter_buttons[c["id"]] as Button
 		var ok := _progress() != null and _progress().is_open(c["id"])

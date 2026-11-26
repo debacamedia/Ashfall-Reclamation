@@ -582,6 +582,7 @@ func _on_damaged(_amount: float, info: DamageInfo) -> void:
 
 
 func _on_died(_info: DamageInfo) -> void:
+	StoryProgress.on_raider_killed(self, _info)  # (34: orders and achievements)
 	state = State.DEAD
 	state_changed.emit(state)
 	target = null
