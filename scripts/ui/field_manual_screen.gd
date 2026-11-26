@@ -403,7 +403,7 @@ static func orders_text(st: StoryProgress) -> String:
 	var reached := true
 	for c: Dictionary in Orders.CHAPTERS:
 		if c == current:
-			out.append("[b]%s · %s[/b]" % [c["label"], c["title"]])
+			# (the page's heading names this chapter)
 			for o: Dictionary in c["orders"]:
 				var line: String = o["text"]
 				var pr := st.progress_of(o)

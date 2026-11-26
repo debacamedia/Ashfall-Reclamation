@@ -279,10 +279,10 @@ func _new_game_page() -> Control:
 	modes.add_theme_constant_override("separation", 12)
 	box.add_child(modes)
 	var group := ButtonGroup.new()
-	var story := _mode_card(modes, group, "Story", "The Last Order",
-		"Wake in Outpost 17's barracks with a machete. Sgt. Vance's Field Manual is in his footlocker. Orders lead the way, one chapter at a time.")
+	var story := _mode_card(modes, group, "Story", "Story · The Last Order",
+		"Wake in Outpost 17's barracks. Sgt. Vance's Field Manual is in his footlocker; his orders lead the way.")
 	_mode_card(modes, group, "FreePlay", "Free Play",
-		"Same start, no orders: every chapter of the manual is open and the map is yours. Story achievements are off.")
+		"No orders: the whole manual's open and the map is yours. Story achievements are off.")
 	story.button_pressed = true
 	var start := _button("Start", "Start")
 	start.custom_minimum_size = Vector2(180, 46)
@@ -306,7 +306,7 @@ func _mode_card(parent: Control, group: ButtonGroup, id: String, title: String, 
 	b.toggle_mode = true
 	b.button_group = group
 	b.focus_mode = Control.FOCUS_ALL
-	b.custom_minimum_size = Vector2(300, 128)
+	b.custom_minimum_size = Vector2(300, 140)
 	var off := StyleBoxFlat.new()
 	off.bg_color = Color(1, 1, 1, 0.03)
 	off.border_color = Color(0.32, 0.3, 0.25)
@@ -472,7 +472,7 @@ static func earned_everywhere(save_manager: Node) -> Dictionary:
 func _achievement_row(a: Dictionary, got := false) -> Control:
 	var row := HBoxContainer.new()
 	row.name = "Ach_" + String(a["id"])
-	row.custom_minimum_size.x = 400
+	row.custom_minimum_size.x = 340
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 10)
 	var medal := PanelContainer.new()

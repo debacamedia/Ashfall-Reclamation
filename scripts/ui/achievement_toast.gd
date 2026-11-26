@@ -31,7 +31,7 @@ func _init() -> void:
 	anchor_top = 0.0
 	offset_right = -18
 	offset_left = -418
-	offset_top = 64
+	offset_top = 150
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.08, 0.075, 0.06, 0.94)
 	style.border_color = AMBER

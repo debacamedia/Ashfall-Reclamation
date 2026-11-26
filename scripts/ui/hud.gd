@@ -799,7 +799,9 @@ func _update_hint() -> void:
 			if not w.definition.melee:
 				has_gun = true
 	var window_open := is_window_open()
-	_hint.visible = not has_gun and not player.is_dead() and not window_open and player.vehicle == null
+	# (in Story the orders say what to do next, so this is for Free Play)
+	var orders := player.story != null and player.story.is_story() and not player.story.act_finished()
+	_hint.visible = not has_gun and not player.is_dead() and not window_open and player.vehicle == null and not orders
 	if _hint.visible:
 		var wood := player.inventory.count_of(&"wood") if player.inventory != null else 0
 		_hint.text = ("You only have a machete.  Press K and craft a Pipe Pistol." if wood > 0

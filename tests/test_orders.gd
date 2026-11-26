@@ -154,7 +154,7 @@ func test_the_tracker_and_the_manual_page() -> void:
 	check(rest.contains("of 4 done in this chapter") and rest.contains("N for your orders"), "and the rest: %s" % rest)
 	# The manual's Orders page
 	var text := FieldManualScreen.orders_text(p.story)
-	check(text.contains("Hold and wait") and text.contains("[url=track:wake]") and text.contains("[s]Take the Field Manual"), "the manual lists this chapter's orders, done ones struck out, the rest to track")
+	check(text.contains("Command says hold") and text.contains("[url=track:wake]") and text.contains("[s]Take the Field Manual"), "the manual lists this chapter's orders, done ones struck out, the rest to track")
 	check(not text.contains("Answer the radio"), "not the chapters to come")
 	hud.field_manual_screen._on_link("track:wake")
 	check(p.story.tracked_order()["id"] == &"wake", "click one to track it")
